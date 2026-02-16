@@ -57,15 +57,14 @@
         }
 
         header {
-            position: fixed;
+            position: absolute;
             top: 0;
             width: 100%;
-            padding: 30px 40px;
+            padding: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            backdrop-filter: blur(10px);
         }
 
         .logo {
@@ -272,7 +271,10 @@
     <div class="cursor"></div>
     <header>
         <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
-        <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
+        <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn"
+            style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; cursor: pointer; font-family: var(--font-code); font-size: 0.8rem;">
+            /// МЕНЮ
+        </button>
     </header>
 
     <main class="about-hero">

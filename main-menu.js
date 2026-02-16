@@ -20,6 +20,7 @@ const MainMenu = (() => {
 
     let menuItems = [];
     let isOpen = false;
+    let userLoggedIn = false;
 
     /**
      * Load menu items from Supabase or use fallback
@@ -54,9 +55,18 @@ const MainMenu = (() => {
     }
 
     /**
+     * Check auth status
+     */
+    function checkAuth() {
+        const token = localStorage.getItem('sb-yirszunrxtunvzpxwvqz-auth-token') || localStorage.getItem('alab_resident_id');
+        userLoggedIn = !!token;
+    }
+
+    /**
      * Render the menu
      */
     function render() {
+        checkAuth();
         // Remove existing
         const existing = document.getElementById('alab-main-menu');
         if (existing) existing.remove();
@@ -70,6 +80,13 @@ const MainMenu = (() => {
             <nav class="menu-overlay ${isOpen ? 'open' : ''}">
                 <div class="menu-overlay-inner">
                     <button class="menu-close hover-trigger" onclick="MainMenu.toggle()">✕</button>
+                    
+                    <div class="menu-profile-section" style="margin-bottom: 40px;">
+                        <a href="login.html" class="cabinet-btn hover-trigger">
+                            <i>👤</i> ${lang === 'en' ? 'CABINET' : 'ЛИЧНЫЙ КАБИНЕТ'}
+                        </a>
+                    </div>
+
                     <ul class="menu-list">
                         ${menuItems.map(item => `
                             <li>
@@ -248,8 +265,37 @@ const MainMenu = (() => {
 
             .lang-btn.active {
                 background: var(--tech-blue, #00E5FF);
-                color: black;
+                color: #000;
                 border-color: var(--tech-blue, #00E5FF);
+            }
+
+            .cabinet-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 15px;
+                padding: 15px 40px;
+                background: rgba(255, 42, 42, 0.1);
+                border: 1px solid var(--accent, #FF2A2A);
+                color: white;
+                text-decoration: none;
+                font-family: var(--font-code, 'JetBrains Mono', monospace);
+                font-weight: 700;
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+                border-radius: 4px;
+                transition: 0.3s;
+                margin-bottom: 20px;
+            }
+
+            .cabinet-btn:hover {
+                background: var(--accent, #FF2A2A);
+                color: white;
+                box-shadow: 0 0 30px rgba(255, 42, 42, 0.3);
+            }
+
+            .cabinet-btn i {
+                font-style: normal;
+                font-size: 1.2rem;
             }
 
             .lang-divider {
