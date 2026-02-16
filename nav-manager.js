@@ -26,7 +26,7 @@ const ResidentNav = {
         const sidebar = document.createElement('aside');
         sidebar.className = 'sidebar';
         sidebar.innerHTML = `
-            <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB" style="width: 35px; margin-bottom: 15px;"></a>
+            <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
             <button class="join-btn-sidebar hover-trigger" onclick="openQuiz()">
                 <i>+</i> <span>ВСТУПИТЬ</span>
             </button>
@@ -50,7 +50,7 @@ const ResidentNav = {
         const bottomNav = document.createElement('nav');
         bottomNav.className = 'bottom-nav';
         bottomNav.innerHTML = `
-            <a href="index.html" class="logo-bottom hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+            <a href="index.html" class="logo-bottom hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
             <a href="social-feed.html" class="nav-item-bottom hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}">
                 <i>📡</i> <span>Лента</span>
             </a>

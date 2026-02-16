@@ -56,7 +56,7 @@ const Sidebar = (() => {
         sidebar.className = 'alab-sidebar';
         sidebar.innerHTML = `
             <a href="index.html" class="sidebar-logo hover-trigger" title="A-LAB Home">
-                <img src="A-lab_logo.svg" alt="A-LAB" style="width: 35px; height: auto;">
+                <img src="A-lab-logo.svg" alt="A-LAB" style="width: 35px; height: auto;">
             </a>
             <nav class="sidebar-nav">
                 ${items.map(item => `

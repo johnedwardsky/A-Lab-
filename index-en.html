@@ -102,8 +102,15 @@
         }
 
         .logo img {
-            height: 35px;
+            height: 50px;
             width: auto;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 15px rgba(255, 42, 42, 0.6));
         }
 
         .logo span {
@@ -584,7 +591,7 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index-en.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+        <a href="index-en.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
         <div style="display: flex; gap: 20px; align-items: center;">
             <div class="lang-switcher"
                 style="font-family: var(--font-code); font-size: 0.7rem; display: flex; gap: 10px;">
