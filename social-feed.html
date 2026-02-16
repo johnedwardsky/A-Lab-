@@ -117,7 +117,74 @@
             font-family: var(--font-main);
             overflow: hidden;
             display: flex;
+            /* Mandatory flex for 3-column */
             height: 100vh;
+            margin: 0;
+            flex-direction: row;
+        }
+
+        /* Standard Header from other A-Lab pages */
+        header.standard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            z-index: 900;
+            pointer-events: none;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .menu-btn {
+            background: rgba(255, 42, 42, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: var(--font-code);
+            font-weight: 800;
+            font-size: 0.75rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn:hover {
+            background: var(--accent);
+            color: black;
+            box-shadow: 0 0 20px rgba(255, 42, 42, 0.4);
+        }
+
+        /* Cursor */
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--tech-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hovered {
+            width: 30px;
+            height: 30px;
+            background: var(--tech-blue);
+            opacity: 0.5;
         }
 
         /* Cursor */
@@ -144,15 +211,15 @@
 
         /* Main Content */
         .feed-container {
-            flex-grow: 1;
+            flex: 1;
             padding: 40px;
             margin-left: 80px;
-            /* Clearance for fixed sidebar */
+            /* Clearance for sidebar-premium */
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            /* Main page should not scroll, only feed-scroll */
             height: 100vh;
+            position: relative;
         }
 
         .feed-scroll {
@@ -1033,6 +1100,13 @@
 
     <!-- Navigation is injected by nav-manager.js -->
 
+    <!-- Standard Header Controls -->
+    <header class="standard-header">
+        <div class="header-controls">
+            <a href="index.html" class="menu-btn hover-trigger">/// МЕНЮ</a>
+        </div>
+    </header>
+
     <main class="feed-container">
         <div class="feed-scroll">
             <div style="margin-bottom: 40px;">
@@ -1127,12 +1201,6 @@
                         style="padding: 5px 10px;">COPY</button>
                 </div>
             </div>
-        </div>
-
-        <div id="toast"
-            style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--tech-blue); color: black; padding: 10px 25px; border-radius: 50px; font-family: var(--font-code); font-size: 0.8rem; font-weight: 800; z-index: 10000; display: none; box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3);">
-            LINK_COPIED_TO_CLIPBOARD
-        </div>
         </div>
     </main>
 
@@ -1369,6 +1437,11 @@
         }
 
     </script>
+    <div id="toast"
+        style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--tech-blue); color: black; padding: 10px 25px; border-radius: 50px; font-family: var(--font-code); font-size: 0.8rem; font-weight: 800; z-index: 10000; display: none; box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3);">
+        LINK_COPIED_TO_CLIPBOARD
+    </div>
+
     <!-- A-LAB Web3 & Social Integration -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
