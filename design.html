@@ -105,7 +105,8 @@
         }
 
         /* --- HEADER (Standardized) --- */
-        header { pointer-events: none; 
+        header {
+            pointer-events: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -302,15 +303,17 @@
         }
 
         .case-overlay {
-            position: fixed;
+            position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
             padding: 40px;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            z-index: 2;
             transform: translateY(20px);
             opacity: 0;
             transition: 0.4s;
+            pointer-events: none;
         }
 
         .case-card:hover img {
@@ -448,7 +451,17 @@
             color: #333;
         }
 
-        @media (max-width: 1024px) { .logo { top: 20px; left: 20px; position: fixed !important; } .logo img { height: 35px; }
+        @media (max-width: 1024px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
             .trends-grid {
                 grid-template-columns: 1fr;
             }

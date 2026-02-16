@@ -58,7 +58,8 @@
         }
 
         /* --- HEADER (Standardized) --- */
-        header { pointer-events: none; 
+        header {
+            pointer-events: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -269,7 +270,7 @@
         }
 
         .case-overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -279,6 +280,7 @@
             flex-direction: column;
             justify-content: flex-end;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            z-index: 2;
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.4s;
@@ -364,7 +366,17 @@
             box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
         }
 
-        @media (max-width: 1024px) { .logo { top: 20px; left: 20px; position: fixed !important; } .logo img { height: 35px; }
+        @media (max-width: 1024px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
             .grid-3 {
                 grid-template-columns: 1fr;
             }
