@@ -280,9 +280,25 @@ const MainMenu = (() => {
                 transition: 0.3s;
             }
 
+            /* Tech-blue underline effect */
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: -5px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: #00E5FF; /* Tech blue */
+                transition: width 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            }
+
             .nav-link:hover, .nav-link.active {
                 color: white;
                 padding-left: 10px;
+            }
+
+            .nav-link:hover::after, .nav-link.active::after {
+                width: 100%;
             }
 
             .nav-link:hover::before, .nav-link.active::before {
@@ -374,9 +390,20 @@ const MainMenu = (() => {
                 .menu-links-section {
                     padding: 30px;
                     border: none;
+                    text-align: center;
+                    align-items: center;
+                }
+                .menu-nav-list {
+                    align-items: center;
+                    width: 100%;
                 }
                 .nav-link {
                     font-size: 2rem;
+                    width: auto;
+                    margin: 0 auto;
+                }
+                .nav-link::before {
+                    display: none;
                 }
                 .menu-header-mobile {
                     position: relative;
