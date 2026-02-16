@@ -242,14 +242,30 @@
     background: rgba(255, 42, 42, 0.05);
 }
 
-/* Layout adjustments */
-.has-resident-nav .hero,
-.has-resident-nav .main-container,
-.has-resident-nav .messages-container,
-.has-resident-nav .feed-container,
-.has-resident-nav .projects-grid,
-.has-resident-nav .residents-grid {
-    margin-left: 80px;
+@media (min-width: 769px) {
+
+    /* Layout adjustments - Push content when sidebar expands */
+    .has-resident-nav .hero,
+    .has-resident-nav .main-container,
+    .has-resident-nav .messages-container,
+    .has-resident-nav .feed-container,
+    .has-resident-nav .projects-grid,
+    .has-resident-nav .residents-grid,
+    .has-resident-nav .main-content {
+        margin-left: 80px !important;
+        transition: margin-left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    }
+
+    /* Push effect on hover */
+    body.has-resident-nav:has(.sidebar:hover) .hero,
+    body.has-resident-nav:has(.sidebar:hover) .main-container,
+    body.has-resident-nav:has(.sidebar:hover) .messages-container,
+    body.has-resident-nav:has(.sidebar:hover) .feed-container,
+    body.has-resident-nav:has(.sidebar:hover) .projects-grid,
+    body.has-resident-nav:has(.sidebar:hover) .residents-grid,
+    body.has-resident-nav:has(.sidebar:hover) .main-content {
+        margin-left: 220px !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -310,6 +326,7 @@ body.light-theme .more-item {
 body.light-theme .more-item:hover {
     background: rgba(0, 0, 0, 0.03);
 }
+
 /* Light Theme Logo fixes */
 body.light-theme .sidebar .logo img,
 body.light-theme .logo-bottom img {
