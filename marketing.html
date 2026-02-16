@@ -92,8 +92,14 @@
         }
 
         .logo img {
-            height: 35px;
+            height: 50px;
             width: auto;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
         }
 
         .logo span {

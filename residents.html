@@ -143,6 +143,79 @@
             opacity: 0.8;
         }
 
+        /* --- HEADER (Standardized) --- */
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 100;
+            pointer-events: none;
+            backdrop-filter: none;
+        }
+
+        .header-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+            z-index: 1000;
+            align-items: center;
+        }
+
+        .logo {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
+        }
+
+        .menu-btn {
+            pointer-events: auto;
+            position: relative;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn:hover {
+            background: transparent;
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.2);
+            transform: translateY(-2px);
+        }
+
         .noise-overlay {
             position: fixed;
             top: 0;
@@ -577,6 +650,15 @@
 <body>
     <div class="noise-overlay"></div>
     <div class="cursor"></div>
+
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <div class="header-controls">
+            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+                МЕНЮ</button>
+        </div>
+    </header>
+
     <!-- Navigation is injected by nav-manager.js -->
 
     <section class="hero">
@@ -975,6 +1057,7 @@
     <script src="supabase-client.js"></script>
     <script src="i18n.js"></script>
     <script src="nda-manager.js"></script>
+    <script src="main-menu.js"></script>
     <script src="nav-manager.js"></script>
     <script src="residents-manager-v2.js"></script>
 </body>
