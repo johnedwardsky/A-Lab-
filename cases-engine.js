@@ -179,6 +179,26 @@ const ALabCases = {
             lang: "ru",
             image_url: "case_eco.png"
         },
+        {
+            id: 209,
+            title: "LegalVoice AI",
+            result_value: "99.8%",
+            result_label: "Accuracy",
+            description: "Специализированный транскрибатор для юристов: распознавание речи в судах с автоматическим выделением терминов и статей кодекса.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case_luxury.png"
+        },
+        {
+            id: 210,
+            title: "SalesFlow CRM",
+            result_value: "+42%",
+            result_label: "Efficiency",
+            description: "Интеллектуальная CRM-экосистема: предиктивный скоринг лидов, авто-генерация офферов и AI-трекинг продуктивности отдела продаж.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case_luxury_retail.png"
+        },
         // --- DIGITAL CATEGORY (EN) ---
         {
             id: 205,
@@ -219,6 +239,26 @@ const ALabCases = {
             category: "digital",
             lang: "en",
             image_url: "case_eco.png"
+        },
+        {
+            id: 211,
+            title: "LegalVoice AI",
+            result_value: "99.8%",
+            result_label: "Accuracy",
+            description: "Specialized legal transcriber: court speech recognition with automated terminology and legal citation extraction.",
+            category: "digital",
+            lang: "en",
+            image_url: "case_luxury.png"
+        },
+        {
+            id: 212,
+            title: "SalesFlow CRM",
+            result_value: "+42%",
+            result_label: "Efficiency",
+            description: "Intelligent CRM ecosystem: predictive lead scoring, automated offer generation, and AI-driven sales team productivity tracking.",
+            category: "digital",
+            lang: "en",
+            image_url: "case_luxury_retail.png"
         }
     ],
 
