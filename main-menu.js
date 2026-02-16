@@ -237,8 +237,11 @@ const MainMenu = (() => {
                 text-decoration: none;
                 font-weight: 700;
                 transition: 0.3s;
-                text-transform: uppercase;
-                letter-spacing: 1px;
+                /* text-transform: uppercase; removed */
+                /* letter-spacing: 1px; removed */
+                font-family: 'JetBrains Mono', monospace;
+                padding-left: 15px;
+                border-left: 1px solid rgba(255,255,255,0.2);
             }
 
             .auth-text-btn:hover {
