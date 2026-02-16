@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | A-LAB.TECH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.3s, height 0.3s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        /* Background Grid */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .error-container {
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 40px;
+        }
+
+        .error-code {
+            font-size: clamp(8rem, 20vw, 15rem);
+            font-weight: 800;
+            line-height: 0.8;
+            background: linear-gradient(135deg, var(--accent), var(--tech-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+
+            0%,
+            100% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+        }
+
+        .error-title {
+            font-family: var(--font-code);
+            font-size: 1.5rem;
+            color: var(--tech-blue);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: #888;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .btn-home {
+            display: inline-block;
+            background: var(--accent);
+            color: black;
+            padding: 18px 50px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.3);
+        }
+
+        .btn-home:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 42, 42, 0.5);
+        }
+
+        .error-details {
+            margin-top: 50px;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #333;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .error-details div {
+            margin-bottom: 8px;
+        }
+
+        .error-details span {
+            color: var(--tech-blue);
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--tech-blue);
+            border-radius: 50%;
+            animation: float 10s infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(100px, -100px);
+            }
+
+            50% {
+                transform: translate(-50px, -200px);
+            }
+
+            75% {
+                transform: translate(-150px, -100px);
+            }
+        }
+
+        .particle:nth-child(1) {
+            top: 20%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            top: 40%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+
+        .particle:nth-child(3) {
+            top: 60%;
+            left: 30%;
+            animation-delay: 4s;
+        }
+
+        .particle:nth-child(4) {
+            top: 80%;
+            left: 70%;
+            animation-delay: 6s;
+        }
+
+        .particle:nth-child(5) {
+            top: 30%;
+            left: 50%;
+            animation-delay: 8s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <div class="grid-bg"></div>
+
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <div class="error-title">// PAGE_NOT_FOUND</div>
+        <p class="error-message">
+            Запрошенная страница не существует в нашей реальности.<br>
+            Возможно, она была перемещена в параллельное измерение или никогда не существовала.
+        </p>
+        <a href="index.html" class="btn-home hover-trigger">Вернуться в Core</a>
+
+        <div class="error-details">
+            <div><span>STATUS_CODE:</span> 404</div>
+            <div><span>ERROR_TYPE:</span> RESOURCE_NOT_FOUND</div>
+            <div><span>TIMESTAMP:</span> <span id="timestamp"></span></div>
+            <div><span>SUGGESTION:</span> Проверьте URL или вернитесь на главную страницу</div>
+        </div>
+    </div>
+
+    <script>
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // Timestamp
+        document.getElementById('timestamp').innerText = new Date().toISOString();
+    </script>
+</body>
+
+</html>

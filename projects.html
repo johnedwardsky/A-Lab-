@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | ПРОЕКТЫ</title>
+    <link rel="stylesheet" href="resident-nav.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .sidebar {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .nav-item {
+            color: #555;
+        }
+
+        body.light-theme .nav-item:hover,
+        body.light-theme .nav-item.active {
+            background: rgba(0, 0, 0, 0.03);
+            color: #1d1d1f;
+        }
+
+        body.light-theme .project-card {
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            color: #1d1d1f;
+        }
+
+        body.light-theme h1,
+        body.light-theme h2,
+        body.light-theme h3,
+        body.light-theme p,
+        body.light-theme .project-title,
+        body.light-theme .project-desc {
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .theme-toggle {
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .filter-btn {
+            color: #444;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .filter-btn.active,
+        body.light-theme .filter-btn:hover {
+            color: #000;
+            background: rgba(0, 0, 0, 0.05);
+            border-color: #000;
+        }
+
+        body.light-theme .btn-view {
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .btn-view:hover {
+            background: #1d1d1f;
+            color: #fff;
+            border-color: #1d1d1f;
+        }
+
+        body.light-theme .project-id {
+            background: rgba(0, 0, 0, 0.05);
+            color: #4a4a4a;
+        }
+
+        body.light-theme .progress-bg {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .progress-label {
+            color: #666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            transition: background 0.3s;
+        }
+
+        /* --- CURSOR --- */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 20000;
+            transition: width 0.3s ease-out, height 0.3s ease-out, background 0.3s ease-out, opacity 0.15s ease-out;
+            mix-blend-mode: normal;
+            will-change: transform;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        /* Shared styles are used */
+
+        /* --- CONTENT --- */
+        .main-content {
+            padding: 50px 80px;
+            width: 100%;
+        }
+
+        .header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+        }
+
+        .title-group h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            line-height: 0.9;
+        }
+
+        .title-group p {
+            font-family: var(--font-code);
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        /* --- FILTERS --- */
+        .filter-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #aaa;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            transition: 0.3s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            color: white;
+            border-color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        /* --- PROJECT GRID --- */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .project-id {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--tech-blue);
+            padding: 5px 12px;
+            background: rgba(0, 229, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .project-status {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #999;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .astra-cost {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+        }
+
+        .astra-cost i {
+            font-style: normal;
+            font-size: 0.9em;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #444;
+        }
+
+        .status-dot.active {
+            background: #00FF1A;
+            box-shadow: 0 0 10px #00FF1A;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .project-desc {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        /* --- PROGRESS BAR --- */
+        .progress-section {
+            margin-bottom: 25px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+            color: #999;
+        }
+
+        .progress-bg {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--tech-blue), var(--accent));
+            border-radius: 10px;
+        }
+
+        /* --- FOOTER CARD --- */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .team-stack {
+            display: flex;
+        }
+
+        .team-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--surface);
+            margin-left: -10px;
+            overflow: hidden;
+            background: #222;
+        }
+
+        .team-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .team-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-view {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: white;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .btn-view:hover {
+            border-color: white;
+            background: white;
+            color: black;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 40px 20px;
+            }
+
+            .header-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 30px;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+
+    <!-- Navigation is injected by nav-manager.js -->
+
+    <main class="main-content">
+        <div class="header-box">
+            <div class="title-group">
+                <h1 data-i18n="page_projects.title">Active_Projects</h1>
+                <p data-i18n="page_projects.subtitle">СПИСОК ТЕКУЩИХ И ЗАВЕРШЕННЫХ РАЗРАБОТОК ЛАБОРАТОРИИ</p>
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active hover-trigger" data-i18n="page_projects.filter_all">ВСЕ</button>
+                <button class="filter-btn hover-trigger" data-i18n="page_projects.filter_active">В РАБОТЕ</button>
+                <button class="filter-btn hover-trigger" data-i18n="page_projects.filter_done">ЗАВЕРШЕНО</button>
+                <button class="filter-btn hover-trigger">R&D</button>
+            </div>
+        </div>
+
+        <div class="project-grid">
+            <!-- Project 1 -->
+            <div class="project-card hover-trigger">
+                <div class="card-header">
+                    <div class="project-id">PRJ-001 / MATRIX</div>
+                    <div class="project-status">
+                        <div class="astra-cost"><i>💎</i> 5,000</div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <div class="status-dot active"></div> IN PROGRESS
+                        </div>
+                    </div>
+                </div>
+                <h3 class="project-title">Project: Matrix Core</h3>
+                <p class="project-desc" data-i18n="page_projects.prj1_desc">Разработка ядра системы управления данными с
+                    использованием графовых БД и
+                    нейронных связей для визуализации.</p>
+                <div class="progress-section">
+                    <div class="progress-label"><span>PROGRESS</span> <span>85%</span></div>
+                    <div class="progress-bg">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="team-stack">
+                        <div class="team-avatar"><img src="alex_river.png"></div>
+                        <div class="team-avatar"><img src="maya_neural.png"></div>
+                    </div>
+                    <a href="#" class="btn-view">OPEN_FILE</a>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card hover-trigger">
+                <div class="card-header">
+                    <div class="project-id">PRJ-005 / NEURAL_UI</div>
+                    <div class="project-status">
+                        <div class="astra-cost"><i>💎</i> 3,200</div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <div class="status-dot active"></div> TESTING
+                        </div>
+                    </div>
+                </div>
+                <h3 class="project-title">Neural Landing V2</h3>
+                <p class="project-desc" data-i18n="page_projects.prj2_desc">Экспериментальный интерфейс, адаптирующийся
+                    под поведение пользователя в режиме
+                    реального времени.</p>
+                <div class="progress-section">
+                    <div class="progress-label"><span>PROGRESS</span> <span>42%</span></div>
+                    <div class="progress-bg">
+                        <div class="progress-fill" style="width: 42%;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="team-stack">
+                        <div class="team-avatar"><img src="max_neural.png"></div>
+                    </div>
+                    <a href="#" class="btn-view">OPEN_FILE</a>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card hover-trigger">
+                <div class="card-header">
+                    <div class="project-id">PRJ-012 / AUTO_CHASSIS</div>
+                    <div class="project-status">
+                        <div class="astra-cost" style="filter: grayscale(1); opacity: 0.7;"><i>💎</i> 12,000</div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <div class="status-dot"></div> ARCHIVED
+                        </div>
+                    </div>
+                </div>
+                <h3 class="project-title">Smart EV Chassis</h3>
+                <p class="project-desc" data-i18n="page_projects.prj3_desc">R&D прототип электронной платформы для
+                    автономных электромобилей с интеграцией
+                    HMI.</p>
+                <div class="progress-section">
+                    <div class="progress-label"><span>PROGRESS</span> <span>100%</span></div>
+                    <div class="progress-bg">
+                        <div class="progress-fill" style="width: 100%; background: #00FF1A;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="team-stack">
+                        <div class="team-avatar"><img src="viktor_code.png"></div>
+                    </div>
+                    <a href="#" class="btn-view">VIEW_LOGS</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursor.style.transform = `translate3d(${mouseX - 7.5}px, ${mouseY - 7.5}px, 0)`;
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // Theme handled by nav-manager.js
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+        }
+    </script>
+    <script src="nav-manager.js"></script>
+</body>
+
+</html>

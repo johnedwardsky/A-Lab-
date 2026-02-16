@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка отправки | A-LAB.TECH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.3s, height 0.3s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        /* Background effect */
+        .bg-glow {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 42, 42, 0.08) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            filter: blur(100px);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .error-container {
+            text-align: center;
+            z-index: 10;
+            max-width: 700px;
+            padding: 60px 40px;
+            background: rgba(11, 13, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .error-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            background: rgba(255, 42, 42, 0.1);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .error-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .error-subtitle {
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            color: var(--tech-blue);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: #aaa;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .error-message strong {
+            color: white;
+        }
+
+        .info-box {
+            background: rgba(255, 42, 42, 0.05);
+            border: 1px solid rgba(255, 42, 42, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            color: #999;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-box li::before {
+            content: '→';
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: black;
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 42, 42, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #444;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 40px 30px;
+            }
+
+            .error-title {
+                font-size: 2rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <div class="bg-glow"></div>
+
+    <div class="error-container">
+        <div class="error-icon">✕</div>
+
+        <h1 class="error-title">Ошибка отправки</h1>
+        <div class="error-subtitle">// TRANSMISSION_FAILED</div>
+
+        <p class="error-message">
+            К сожалению, при отправке вашей заявки произошла ошибка.<br>
+            <strong>Данные не были сохранены</strong>. Пожалуйста, попробуйте еще раз.
+        </p>
+
+        <div class="info-box">
+            <h3>Возможные причины:</h3>
+            <ul>
+                <li>Проблемы с подключением к интернету</li>
+                <li>Временные технические работы на сервере</li>
+                <li>Не все обязательные поля были заполнены</li>
+                <li>Превышено время ожидания ответа</li>
+            </ul>
+        </div>
+
+        <div class="info-box" style="background: rgba(0, 229, 255, 0.05); border-color: rgba(0, 229, 255, 0.2);">
+            <h3 style="color: var(--tech-blue);">Что делать?</h3>
+            <ul>
+                <li>Проверьте подключение к интернету</li>
+                <li>Убедитесь, что все поля формы заполнены корректно</li>
+                <li>Попробуйте отправить заявку снова через несколько минут</li>
+                <li>Если проблема повторяется, свяжитесь с нами напрямую через Telegram</li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <a href="javascript:history.back()" class="btn btn-primary hover-trigger">Попробовать снова</a>
+            <a href="index.html" class="btn btn-secondary hover-trigger">На главную</a>
+        </div>
+
+        <div class="footer-note">
+            ERROR_CODE: FORM_SUBMISSION_FAILED<br>
+            TIMESTAMP: <span id="timestamp"></span><br>
+            <br>
+            Если проблема сохраняется, напишите нам: <a href="https://t.me/alab_core"
+                style="color: var(--tech-blue); text-decoration: none;">@alab_core</a>
+        </div>
+    </div>
+
+    <script>
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // Timestamp
+        document.getElementById('timestamp').innerText = new Date().toISOString();
+    </script>
+</body>
+
+</html>

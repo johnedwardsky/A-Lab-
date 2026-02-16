@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | О КОМПАНИИ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            opacity: 0.8;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .back-btn {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .about-hero {
+            padding: 150px 40px 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero-tag {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hero-tag::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        h1 {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 80px;
+        }
+
+        .member-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.4s;
+        }
+
+        .member-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+        }
+
+        .member-portrait {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .member-portrait img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(1);
+            transition: 0.6s;
+        }
+
+        .member-card:hover .member-portrait img {
+            filter: grayscale(0);
+            transform: scale(1.05);
+        }
+
+        .member-info h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .member-role {
+            font-family: var(--font-code);
+            color: var(--accent);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .member-bio {
+            color: #aaa;
+            line-height: 1.6;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        .btn-connect {
+            display: inline-block;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: black;
+            background: var(--accent);
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn-connect:hover {
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.3);
+            transform: scale(1.05);
+        }
+
+        .company-mission {
+            margin-top: 150px;
+            padding: 100px;
+            background: #000;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .mission-title {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.8rem;
+            margin-bottom: 40px;
+        }
+
+        .mission-text {
+            font-size: 2.5rem;
+            font-weight: 400;
+            line-height: 1.2;
+            color: #fff;
+        }
+
+        .mission-text span {
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        footer {
+            padding: 80px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #444;
+        }
+
+        @media (max-width: 1024px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .company-mission {
+                padding: 40px;
+            }
+
+            .mission-text {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
+    </header>
+
+    <main class="about-hero">
+        <div class="hero-tag" data-i18n="page_about.hero_tag">INSIDE THE CORE // FOUNDERS</div>
+        <h1><span data-i18n="page_about.hero_title_line1">Мы объединяем</span> <br> <span
+                data-i18n="page_about.hero_title_line2">интеллект и</span> <br> <span
+                data-i18n="page_about.hero_title_line3">технологии</span>.</h1>
+
+        <div class="team-grid">
+            <!-- Ivan Lakshinsky -->
+            <div class="member-card hover-trigger">
+                <div class="member-portrait">
+                    <img src="ivan_tech.png" alt="Ivan Lakshinsky">
+                </div>
+                <div class="member-info">
+                    <div class="member-role" data-i18n="page_about.ivan_role">CEO & FOUNDER</div>
+                    <h2 data-i18n="page_about.ivan_name">Иван Лакшинский</h2>
+                    <p class="member-bio" data-i18n="page_about.ivan_bio">Визионер и стратег с 12-летним опытом в Deep
+                        Tech. Руководит развитием
+                        компании, определяя ключевые технологические векторы и формируя культуру инноваций.</p>
+                    <a href="profile.html?id=ivan-lakshinsky" class="btn-connect"
+                        data-i18n="page_about.ivan_btn">Увидеть в сети</a>
+                </div>
+            </div>
+
+            <!-- Alexey Pak -->
+            <div class="member-card hover-trigger">
+                <div class="member-portrait">
+                    <img src="alexey_tech.png" alt="Alexey Pak">
+                </div>
+                <div class="member-info">
+                    <div class="member-role" data-i18n="page_about.alexey_role">Director of Strategic Development</div>
+                    <h2 data-i18n="page_about.alexey_name">Алексей Пак</h2>
+                    <p class="member-bio" data-i18n="page_about.alexey_bio">Эксперт по глобальному масштабированию и
+                        стратегическому партнерству. Алексей
+                        выстраивает мосты между технологиями и бизнесом мирового уровня.</p>
+                    <a href="profile.html?id=alexey-pak" class="btn-connect" data-i18n="page_about.alexey_btn">Связаться
+                        в сети</a>
+                </div>
+            </div>
+        </div>
+
+        <section class="company-mission">
+            <div class="mission-title" data-i18n="page_about.mission_tag">// OUR_MISSION</div>
+            <p class="mission-text" data-i18n-html="page_about.mission_text">
+                Мы создаем среду, где <span>цифровой интеллект</span> становится продолжением человеческого творчества,
+                ломая барьеры между невозможным и реализованным.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <div>© 2025 A-LAB.TECH // CORE TEAM</div>
+        <div style="display:flex; gap:20px;">
+            <a href="#" style="color:inherit; text-decoration:none;">INSTAGRAM</a>
+            <a href="#" style="color:inherit; text-decoration:none;">TELEGRAM</a>
+        </div>
+    </footer>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursorX = mouseX;
+            cursorY = mouseY;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+    </script>
+    <!-- A-LAB Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="i18n.js"></script>
+    <script src="nda-manager.js"></script>
+</body>
+
+</html>

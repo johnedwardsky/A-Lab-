@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | ДИЗАЙН И АЙДЕНТИКА</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            opacity: 0.8;
+        }
+
+        /* --- BACKGROUND ELEMENTS --- */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50vw;
+            height: 50vh;
+            background: radial-gradient(circle at top right, rgba(255, 42, 42, 0.05), transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 229, 255, 0.1);
+            z-index: 1000;
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(-100vh);
+            }
+
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .back-btn {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 150px 40px 100px;
+        }
+
+        .hero-section {
+            margin-bottom: 100px;
+        }
+
+        .hero-tag {
+            font-family: var(--font-code);
+            color: var(--accent);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .hero-desc {
+            font-size: 1.5rem;
+            color: #888;
+            max-width: 800px;
+            line-height: 1.4;
+        }
+
+        /* --- TRENDS SECTION --- */
+        .trends-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 150px;
+        }
+
+        .trend-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            transition: 0.4s;
+        }
+
+        .trend-card:hover {
+            border-color: var(--tech-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.1);
+            background: #0d111a;
+        }
+
+        .trend-num {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.7rem;
+            margin-bottom: 20px;
+        }
+
+        .trend-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .trend-card p {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* --- CASES SECTION --- */
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 150px;
+        }
+
+        .case-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
+            border: 1px solid var(--border);
+            background: #000;
+        }
+
+        .case-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0) brightness(0.9);
+            transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .case-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .case-card:hover img {
+            filter: grayscale(0);
+            transform: scale(1.05);
+        }
+
+        .case-card:hover .case-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .case-tag {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .case-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        /* --- FORM SECTION --- */
+        .lead-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            background: linear-gradient(135deg, #05070a, #000);
+            padding: 100px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lead-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255, 42, 42, 0.03), transparent 50%);
+            z-index: 0;
+        }
+
+        .form-info,
+        .form-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-info h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .form-info p {
+            color: #999;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            background: #0b0d14;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--accent);
+            background: #0d111a;
+        }
+
+        textarea {
+            height: 120px;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #777;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: black;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 42, 42, 0.4);
+        }
+
+        footer {
+            padding: 80px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #333;
+        }
+
+        @media (max-width: 1024px) {
+            .trends-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .lead-section {
+                grid-template-columns: 1fr;
+                gap: 50px;
+                padding: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="scanline"></div>
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
+    </header>
+
+    <main class="container">
+        <section class="hero-section">
+            <div class="hero-tag" data-i18n="page_design.hero_tag">// IDENTITY & DESIGN LAB</div>
+            <h1 data-i18n-html="page_design.hero_title">Дизайн, который <br> ломает <span>рынок</span>.</h1>
+            <p class="hero-desc" data-i18n="page_design.hero_desc">Мы не просто рисуем картинки. Мы создаем визуальные
+                языки, которые кодируют ценности
+                вашего бренда и напрямую влияют на капитализацию.</p>
+        </section>
+
+        <div class="trends-grid">
+            <div class="trend-card hover-trigger">
+                <div class="trend-num">01 // TREND</div>
+                <h3 data-i18n="page_design.trend1_title">Immersive Experience</h3>
+                <p data-i18n="page_design.trend1_desc">Интерфейсы завтрашнего дня — это не просто кнопки, а живые
+                    организмы, реагирующие на контекст и предугадывающие намерения.</p>
+            </div>
+            <div class="trend-card hover-trigger">
+                <div class="trend-num">02 // TREND</div>
+                <h3 data-i18n="page_design.trend2_title">Neural Aesthetics</h3>
+                <p data-i18n="page_design.trend2_desc">Симбиоз человеческого творчества и мощи генеративных моделей для
+                    создания визуальных миров, ранее недоступных воображению.</p>
+            </div>
+            <div class="trend-card hover-trigger">
+                <div class="trend-num">03 // TREND</div>
+                <h3 data-i18n="page_design.trend3_title">Technical Brutalism</h3>
+                <p data-i18n="page_design.trend3_desc">Возвращение к функциональной чистоте. Дизайн как инженерное
+                    решение: честный, контрастный и бескомпромиссный.</p>
+            </div>
+        </div>
+
+        <h2 class="section-title" data-i18n="page_design.cases_title">Кейсы Design</h2>
+        <div class="cases-grid" id="casesContainer" data-category="design">
+            <!-- Content populated by cases-engine.js -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #555;">ЗАГРУЗКА КЕЙСОВ...</div>
+        </div>
+
+        <section class="lead-section">
+            <div class="form-info">
+                <h2 data-i18n-html="page_design.form_title">Нужен <br> сильный <br> дизайн?</h2>
+                <p data-i18n-html="page_design.form_subtitle">// ОТПРАВЬТЕ ЗАПРОС ПРЯМО В CORE <br> МЫ СВЯЖЕМСЯ В
+                    ТЕЧЕНИИ 4-Х ЧАСОВ.</p>
+            </div>
+            <div class="form-container">
+                <form id="leadForm">
+                    <div class="form-group">
+                        <label data-i18n="page_design.form_name">Ваше имя</label>
+                        <input type="text" placeholder="Введите имя..." required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="page_design.form_company">Название компании</label>
+                        <input type="text" placeholder="Project / Company name..." required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="page_design.form_task">Описание задачи</label>
+                        <textarea placeholder="Опишите в двух словах ваш проект..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit hover-trigger" data-i18n="page_design.form_submit">Отправить
+                        запрос</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div>© 2025 A-LAB.TECH // DESIGN UNIT</div>
+        <div>INSTAGRAM // BEHANCE // TELEGRAM</div>
+    </footer>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursorX = mouseX;
+            cursorY = mouseY;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        document.getElementById('leadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button');
+            const name = form.querySelector('input[type="text"]').value;
+            const company = form.querySelectorAll('input[type="text"]')[1].value;
+            const task = form.querySelector('textarea').value;
+
+            btn.innerText = 'ОТПРАВКА...';
+            btn.disabled = true;
+
+            const { success, error } = await window.ALabCore.submitLead({
+                name: name,
+                contact: company, // Using company as contact for now or adding field
+                message: task,
+                source: 'design',
+                source_detail: 'Design Page Form'
+            });
+
+            if (success) {
+                alert('Запрос зашифрован и официально зарегистрирован в A-LAB. Наш арт-директор свяжется с вами в течение 4-х часов.');
+                form.reset();
+            } else {
+                alert('Ошибка отправки: ' + (error?.message || 'Повторите позже'));
+            }
+            btn.innerText = 'Отправить запрос';
+            btn.disabled = false;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="cases-engine.js?v=1.1"></script>
+    <script>
+        // Force init if DOMContentLoaded already fired or to be double sure
+        if (typeof ALabCases !== 'undefined') {
+            ALabCases.init('design', 'casesContainer');
+        }
+    </script>
+    <script src="i18n.js"></script>
+    <script src="nda-manager.js"></script>
+</body>
+
+</html>

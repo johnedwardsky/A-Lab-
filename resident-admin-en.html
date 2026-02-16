@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | WORKSTATION</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --panel: #0d111a;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* --- CURSOR --- */
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--tech-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--tech-blue);
+            opacity: 0.5;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 80px;
+            background: #000;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            gap: 30px;
+        }
+
+        .side-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .side-icon:hover,
+        .side-icon.active {
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .side-icon.active {
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+        }
+
+        /* --- CONTENT --- */
+        .main-container {
+            flex-grow: 1;
+            padding: 40px;
+            margin-left: 80px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+        }
+
+        .header-top {
+            grid-column: span 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-top h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header-top .mode-badge {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--tech-blue);
+            border: 1px solid var(--tech-blue);
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .tab-content.no-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 1200px) {
+            .tab-content.active {
+                grid-template-columns: 1fr;
+            }
+
+            .right-panel {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100% !important;
+                height: 60px;
+                bottom: 0;
+                top: auto;
+                flex-direction: row;
+                padding: 0 10px;
+                justify-content: space-around;
+                border-right: none;
+                border-top: 1px solid var(--border);
+                background: rgba(0, 0, 0, 0.95);
+            }
+
+            .sidebar:hover {
+                width: 100% !important;
+            }
+
+            .sidebar .side-icon span {
+                display: none;
+            }
+
+            .sidebar .logo {
+                display: none;
+            }
+
+            .main-container {
+                margin-left: 0;
+                padding: 20px;
+                padding-bottom: 80px;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .action-bar {
+                left: 20px;
+                right: 20px;
+                bottom: 80px;
+                flex-direction: column;
+            }
+
+            .btn-save {
+                width: 100%;
+            }
+
+            .admin-theme-toggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* --- THEME TOGGLE (ADMIN) --- */
+        .admin-theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            z-index: 101;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --panel: #fcfcfd;
+            --text: #1d1d1f;
+            --border: rgba(0, 0, 0, 0.08);
+            --tech-blue: #008fa4;
+        }
+
+        body.light-theme .preview-mini-inner {
+            background: #f5f5f7 !important;
+        }
+
+        body.light-theme .preview-mini img {
+            filter: none !important;
+        }
+
+        body.light-theme .sidebar {
+            background: rgba(255, 255, 255, 0.9);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .side-icon {
+            color: #666;
+        }
+
+        body.light-theme .side-icon:hover,
+        body.light-theme .side-icon.active {
+            background: rgba(0, 143, 164, 0.05);
+            color: var(--tech-blue);
+        }
+
+        body.light-theme .section-card,
+        body.light-theme .preview-mini,
+        body.light-theme .pulse-manager,
+        body.light-theme .stat-box {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.05);
+            color: #1d1d1f;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        body.light-theme .form-input,
+        body.light-theme .form-textarea {
+            background: #fff !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .form-select-dark {
+            background: #fff !important;
+            color: #1d1d1f !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .form-label {
+            color: #666;
+        }
+
+        body.light-theme .section-title {
+            color: #888;
+        }
+
+        body.light-theme h1,
+        body.light-theme p {
+            color: #1d1d1f;
+        }
+
+        /* --- EDITOR SECTIONS --- */
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '>';
+            color: var(--tech-blue);
+        }
+
+        /* --- FORMS --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-input:hover,
+        .form-textarea:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--tech-blue);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .form-textarea {
+            height: 120px;
+            resize: none;
+        }
+
+        /* --- STATUS SELECTOR --- */
+        .status-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .status-btn {
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: #555;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            text-align: center;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: none;
+        }
+
+        .status-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-btn.active.open {
+            border-color: #00FF41;
+            color: #00FF41;
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .status-btn.active.busy {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(255, 42, 42, 0.05);
+        }
+
+        .status-btn.active.away {
+            border-color: #FFB800;
+            color: #FFB800;
+            background: rgba(255, 184, 0, 0.05);
+        }
+
+        /* --- RIGHT PANEL: PREVIEW & TOOLS --- */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .preview-mini {
+            background: #000;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .preview-header {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 1px solid #111;
+            padding-bottom: 10px;
+        }
+
+        /* --- PULSE MANAGER --- */
+        .pulse-manager {
+            background: #050505;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-pulse {
+            width: 100%;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: var(--font-code);
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-top: 15px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: none;
+        }
+
+        .btn-pulse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .interactive-tag {
+            transition: all 0.2s;
+            cursor: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .interactive-tag:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        /* --- SAVE BAR --- */
+        .action-bar {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: black;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.2);
+            transition: 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 42, 42, 0.3);
+        }
+
+        /* --- NOISE --- */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.03;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise"></div>
+    <div class="cursor"></div>
+
+    <header>
+        <button class="admin-theme-toggle hover-trigger" onclick="toggleTheme()" id="themeBtn">☽</button>
+    </header>
+
+    <aside class="sidebar">
+        <a href="index-en.html" class="logo hover-trigger" style="margin-bottom: 40px;">
+            <img src="A-lab_logo.svg" alt="A-LAB" style="width: 40px; height: auto;">
+        </a>
+        <a href="#" class="side-icon active hover-trigger" title="Profile Editor" onclick="switchTab('profile')">👤</a>
+        <a href="#" class="side-icon hover-trigger" title="Social Feed" onclick="switchTab('feed')">📡</a>
+        <a href="#" class="side-icon hover-trigger" title="Portfolio" onclick="switchTab('portfolio')">🖼️</a>
+        <a href="#" class="side-icon hover-trigger" title="Intelligence & R&D" onclick="switchTab('rd')">🧠</a>
+        <a href="#" class="side-icon hover-trigger" title="Settings" onclick="switchTab('settings')">⚙️</a>
+        <div style="margin-top: auto;"></div>
+        <a href="index-en.html" class="side-icon hover-trigger" title="Disconnect">🔌</a>
+    </aside>
+
+    <div class="main-container">
+
+        <div class="header-top">
+            <div>
+                <h1 id="workstationTitle">Profile Workstation</h1>
+                <p style="color: #888; font-size: 0.8rem; font-family: var(--font-code);">LOC_ID: M-NEURAL_X4 // STATUS:
+                    SECURED</p>
+            </div>
+            <div class="mode-badge" id="modeBadge">IDENTITY_MANAGEMENT_MODE</div>
+        </div>
+
+        <!-- PROFILE TAB -->
+        <div class="tab-content active" id="profile-tab">
+
+            <div class="left-col">
+
+                <section class="section-card">
+                    <div class="section-title">Identity Core</div>
+                    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Display Name</label>
+                            <input type="text" class="form-input" value="Maya Neural">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Professional Role</label>
+                            <input type="text" class="form-input" value="AI Engineer & Artist">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Personal Bio // Fragment</label>
+                        <textarea
+                            class="form-textarea">Blurring lines between code and brush. My works are a symbiosis of neural networks and human imagination.</textarea>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Network Presence (Links)</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Portfolio URL</label>
+                            <input type="text" class="form-input" value="behance.net/mneural">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">GitHub / Dev Link</label>
+                            <input type="text" class="form-input" value="github.com/mneural">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telegram Contact</label>
+                            <input type="text" class="form-input" value="t.me/mneural">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Twitter / X</label>
+                            <input type="text" class="form-input" placeholder="Optional">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Skills & Intelligence (Tags)</div>
+                    <div class="form-group">
+                        <label class="form-label">Current Skillset</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                            <span class="interactive-tag hover-trigger"
+                                style="background: var(--tech-blue); color: black; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-code);">AI_ENGINEERING
+                                <span style="cursor: pointer; opacity: 0.5;">\u00d7</span></span>
+                            <span class="interactive-tag hover-trigger"
+                                style="background: var(--tech-blue); color: black; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-code);">UI_DESIGN
+                                <span style="cursor: pointer; opacity: 0.5;">\u00d7</span></span>
+                            <span class="interactive-tag hover-trigger"
+                                style="background: var(--tech-blue); color: black; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-code);">R&D
+                                <span style="cursor: pointer; opacity: 0.5;">\u00d7</span></span>
+                            <span class="interactive-tag hover-trigger"
+                                style="border: 1px dashed var(--tech-blue); color: var(--tech-blue); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-code);">+
+                                ADD_NEW</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="right-panel">
+
+                <section class="section-card" style="padding: 20px;">
+                    <div class="section-title">Availability Status</div>
+                    <div class="status-selector">
+                        <button class="status-btn open active hover-trigger">OPEN</button>
+                        <button class="status-btn busy hover-trigger">DEEP</button>
+                        <button class="status-btn away hover-trigger">AWAY</button>
+                    </div>
+                    <p style="font-size: 0.6rem; color: #888; margin-top: 15px; font-family: var(--font-code);">THIS
+                        WILL CHANGE YOUR INDICATOR COLOR IN THE COMMUNITY LIST</p>
+                </section>
+
+                <section class="preview-mini">
+                    <div class="preview-header">LIVE_CARD_PREVIEW</div>
+                    <div class="preview-mini-inner"
+                        style="border: 1px solid var(--border); border-radius: 10px; overflow: hidden; position: relative;">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop"
+                            style="width:100%; filter: grayscale(1);">
+                        <div style="padding: 15px; background: #0b0d14;" class="preview-mini-inner">
+                            <div style="font-family: var(--font-code); font-size: 0.5rem; color: var(--tech-blue);">AI
+                                ENGINEER</div>
+                            <div style="font-weight: 800; font-size: 0.8rem; margin-top: 5px;" class="chat-name">Maya
+                                Neural</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="pulse-manager">
+                    <div class="section-title">Broadcast (Pulse)</div>
+                    <input type="text" class="form-input" placeholder="What's happening?">
+                    <button class="btn-pulse hover-trigger">Broadcast to Network</button>
+                </section>
+
+            </div>
+
+        </div> <!-- End Profile Tab -->
+
+        <!-- FEED TAB -->
+        <div class="tab-content" id="feed-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Latest Posts</div>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div
+                            style="background: rgba(0,0,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                            <div style="font-size: 0.7rem; color: #555; margin-bottom: 5px;">2 HOURS AGO</div>
+                            <p style="font-size: 0.9rem;">Just deployed the new neural engine for R&D Lab. Testing
+                                results look promising.</p>
+                            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                <button class="status-btn hover-trigger" style="padding: 5px 10px;">Edit</button>
+                                <button class="status-btn hover-trigger"
+                                    style="padding: 5px 10px; border-color: var(--accent); color: var(--accent);">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="section-card">
+                    <div class="section-title">New Post</div>
+                    <div class="form-group">
+                        <textarea class="form-textarea" placeholder="What's on your mind?"></textarea>
+                    </div>
+                    <button class="btn-pulse hover-trigger" style="margin-top: 0;">Publish to Feed</button>
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Engagement Stats</div>
+                    <div class="stats" style="flex-direction: column; gap: 20px;">
+                        <div class="stat-item">
+                            <span class="stat-value">1,204</span>
+                            <span class="stat-label">Total Reach</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">84</span>
+                            <span class="stat-label">Shared Intelligence</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- PORTFOLIO TAB -->
+        <div class="tab-content" id="portfolio-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Gallery Slots</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="border: 2px dashed var(--border); border-radius: 15px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                            class="hover-trigger">
+                            <span style="font-size: 2rem; color: #222;">+</span>
+                        </div>
+                        <div style="position: relative; border-radius: 15px; overflow: hidden;" class="hover-trigger">
+                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            <button
+                                style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; color: white; width: 30px; height: 30px; border-radius: 50%;">×</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Visibility Settings</div>
+                    <div class="form-group">
+                        <label class="form-label">Portfolio Mode</label>
+                        <select class="form-input form-select-dark" style="border: 1px solid var(--border);">
+                            <option>PUBLIC</option>
+                            <option>RESIDENTS ONLY</option>
+                            <option>PRIVATE</option>
+                        </select>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- R&D TAB -->
+        <div class="tab-content no-sidebar" id="rd-tab">
+            <section class="section-card">
+                <div class="section-title">Neural Assets Manager</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div class="pulse-manager">
+                        <div style="font-size: 0.7rem; color: var(--tech-blue); margin-bottom: 10px;">PROMPT_CORE_V1
+                        </div>
+                        <p style="font-size: 0.8rem; color: #888;">Advanced lighting prompt for SDXL...</p>
+                        <button class="status-btn hover-trigger" style="width: 100%; margin-top: 15px;">Update</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div class="tab-content no-sidebar" id="settings-tab">
+            <section class="section-card">
+                <div class="section-title">General Settings</div>
+                <div style="max-width: 600px;">
+                    <div class="form-group">
+                        <label class="form-label">Interface Language</label>
+                        <select class="form-input form-select-dark" style="border: 1px solid var(--border);">
+                            <option>ENGLISH</option>
+                            <option>RUSSIAN</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notifications</label>
+                        <button class="status-btn active open hover-trigger">ENABLED</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-save hover-trigger">Commit Changes // Sync</button>
+        </div>
+
+    </div>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        const triggers = document.querySelectorAll('.hover-trigger');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        function updateTriggers() {
+            const newTriggers = document.querySelectorAll('.hover-trigger');
+            newTriggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        }
+        updateTriggers();
+
+        // Status buttons toggle
+        const sBtns = document.querySelectorAll('.status-btn');
+        sBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.innerText.length < 15) { // Simple filter for status buttons
+                    const parent = btn.parentElement;
+                    parent.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            });
+        });
+
+        // Content switching logic
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.side-icon').forEach(i => i.classList.remove('active'));
+
+            document.getElementById(`${tab}-tab`).classList.add('active');
+
+            // Highlight icon
+            const iconIndex = {
+                'profile': 0,
+                'feed': 1,
+                'portfolio': 2,
+                'rd': 3,
+                'settings': 4
+            };
+            document.querySelectorAll('.side-icon')[iconIndex[tab]].classList.add('active');
+
+            // Update header
+            const titles = {
+                'profile': 'Profile Workstation',
+                'feed': 'Social Network Manager',
+                'portfolio': 'Gallery Engine',
+                'rd': 'Intelligence Access',
+                'settings': 'System Preferences'
+            };
+            const badges = {
+                'profile': 'IDENTITY_MANAGEMENT_MODE',
+                'feed': 'ECOSYSTEM_INTERACTION_MODE',
+                'portfolio': 'VISUAL_ASSET_MODE',
+                'rd': 'RESEARCH_CONTRIBUTION_MODE',
+                'settings': 'CORE_SYSTEM_MODE'
+            }
+            document.getElementById('workstationTitle').innerText = titles[tab];
+            document.getElementById('modeBadge').innerText = badges[tab];
+            updateTriggers();
+        }
+
+        // --- THEME TOGGLE ---
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            body.classList.toggle('light-theme');
+
+            if (body.classList.contains('light-theme')) {
+                btn.innerText = '☀';
+                localStorage.setItem('theme', 'light');
+            } else {
+                btn.innerText = '☽';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Init Theme
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('themeBtn').innerText = '☀';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | RESIDENT PROFILE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .noise-overlay {
+            opacity: 0.03;
+            filter: invert(1);
+        }
+
+        body.light-theme .logo img {
+            filter: none;
+        }
+
+
+        body.light-theme .profile-main,
+        body.light-theme .achievement-badges .badge,
+        body.light-theme .stat-item,
+        body.light-theme .skill-tag,
+        body.light-theme .intelligence-block,
+        body.light-theme .connection-node,
+        body.light-theme h1,
+        body.light-theme h2,
+        body.light-theme h3,
+        body.light-theme p,
+        body.light-theme span:not(.meta-tag) {
+            background: #fff;
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .profile-main {
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        body.light-theme .skill-tag {
+            padding: 12px 24px;
+            border-radius: 12px;
+        }
+
+        body.light-theme .stat-item {
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        body.light-theme .achievement-badges .badge {
+            padding: 15px 20px;
+            border-radius: 16px;
+        }
+
+        body.light-theme .intelligence-block {
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        body.light-theme .connection-node {
+            padding: 15px;
+            border-radius: 16px;
+        }
+
+        body.light-theme .link-card {
+            padding: 30px;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        body.light-theme .back-btn,
+        body.light-theme .theme-toggle {
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            margin-right: 15px;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        /* --- CURSOR --- */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s, border-color 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            opacity: 0.8;
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 900;
+            opacity: 0.07;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .back-btn {
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        /* --- PROFILE HERO --- */
+        .profile-hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            background: radial-gradient(circle at 60% 40%, rgba(255, 42, 42, 0.1), transparent 60%);
+            z-index: -1;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 60px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .profile-image-container {
+            position: relative;
+        }
+
+        .profile-image {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 30px;
+            background: #000;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.5);
+            transition: 0.5s;
+        }
+
+        .profile-image:hover img {
+            filter: grayscale(0);
+            transform: scale(1.02);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #000;
+            border: 1px solid var(--tech-blue);
+            color: var(--tech-blue);
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            border-radius: 50px;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        .profile-main h3 {
+            font-family: var(--font-code);
+            color: var(--accent);
+            font-size: 1rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .profile-main h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .profile-main .bio {
+            font-size: 1.25rem;
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-family: var(--font-code);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--tech-blue);
+        }
+
+        .stat-label {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        /* --- CONTENT SECTIONS --- */
+        .section-title {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #555;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 60px;
+        }
+
+        .skill-tag {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            transition: 0.3s;
+        }
+
+        .skill-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- EXTERNAL LINKS --- */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 100px;
+        }
+
+        .link-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 160px;
+            transition: 0.4s;
+        }
+
+        .link-card:hover {
+            border-color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .link-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .link-card .name {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .link-card .url {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: auto;
+        }
+
+        /* --- PORTFOLIO --- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 100px;
+        }
+
+        .portfolio-item {
+            background: var(--surface);
+            border-radius: 20px;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.8);
+            transition: 0.6s;
+        }
+
+        .portfolio-item:hover img {
+            filter: grayscale(0);
+            transform: scale(1.05);
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .portfolio-item:hover .portfolio-overlay {
+            opacity: 1;
+        }
+
+        /* --- ACHIEVEMENTS --- */
+        .achievement-badges {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            width: 50px;
+            height: 50px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(255, 42, 42, 0.05);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.1);
+            position: relative;
+        }
+
+        .badge:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        /* --- SHARED INTELLIGENCE --- */
+        .intelligence-block {
+            background: #000;
+            border: 1px solid var(--tech-blue);
+            padding: 20px;
+            border-radius: 12px;
+            font-family: var(--font-code);
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .intelligence-block::before {
+            content: 'SHARED_INTELLIGENCE //';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg);
+            padding: 0 10px;
+            font-size: 0.7rem;
+            color: var(--tech-blue);
+        }
+
+        .prompt-text {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+
+        /* --- THE MATRIX (CONNECTIONS) --- */
+        .matrix-web {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .connection-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .node-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .connection-node:hover .node-img {
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .node-name {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        /* --- TERMINAL CHAT --- */
+        .terminal-chat {
+            background: #050505;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: var(--font-code);
+            margin-bottom: 100px;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #111;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: #444;
+            font-size: 0.7rem;
+        }
+
+        .terminal-output {
+            height: 150px;
+            overflow-y: auto;
+            color: #888;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .terminal-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .terminal-prompt {
+            color: var(--accent);
+        }
+
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            width: 100%;
+            outline: none;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 60px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #555;
+        }
+
+        @media (max-width: 1024px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-image-container {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- ASTRA WALLET --- */
+        .wallet-card {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(0, 0, 0, 0.4));
+            border: 1px solid var(--tech-blue);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wallet-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: var(--tech-blue);
+            filter: blur(80px);
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        body.light-theme .wallet-card {
+            background: linear-gradient(135deg, #f0f8ff, #fff);
+            border-color: rgba(0, 229, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 229, 255, 0.15);
+        }
+
+        .wallet-balance {
+            font-family: var(--font-code);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        body.light-theme .wallet-balance {
+            color: #1d1d1f;
+        }
+
+        .currency-label {
+            font-size: 1rem;
+            color: var(--tech-blue);
+        }
+
+        .wallet-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .wallet-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            cursor: none;
+            transition: 0.3s;
+        }
+
+        body.light-theme .wallet-btn {
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .wallet-btn:hover {
+            border-color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--tech-blue);
+        }
+
+        /* --- RESPONSIVENESS --- */
+        @media (max-width: 1024px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .profile-hero {
+                padding: 120px 20px 60px;
+            }
+
+            .stats {
+                gap: 20px;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 20px;
+            }
+
+            .logo img {
+                height: 25px;
+            }
+
+            .back-btn {
+                padding: 6px 15px;
+                font-size: 0.7rem;
+            }
+
+            .wallet-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .wallet-balance {
+                font-size: 1.8rem;
+            }
+
+            .wallet-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .wallet-btn {
+                flex: 1;
+                text-align: center;
+                padding: 12px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise-overlay"></div>
+    <div class="cursor"></div>
+
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+        <div style="margin-left: auto; display: flex; align-items: center;">
+            <button class="theme-toggle hover-trigger" onclick="toggleTheme()" id="themeBtn">☽</button>
+            <a href="residents.html" class="back-btn hover-trigger">
+                <— Ко всем резидентам</a>
+        </div>
+    </header>
+
+    <div class="hero-bg"></div>
+
+    <section class="profile-hero">
+        <div class="profile-container">
+            <div class="profile-image-container">
+                <div class="profile-image hover-trigger">
+                    <img id="profileImg" src="" alt="Profile Image">
+                </div>
+                <div class="status-badge">ONLINE // A-LAB CORE</div>
+            </div>
+
+            <div class="profile-main">
+                <div class="achievement-badges" id="achievementList">
+                    <!-- Programmatically populated -->
+                    <div style="color: #444; font-size: 0.7rem; font-family: var(--font-code);">
+                        INITIALIZING_BADGE_ENGINE...</div>
+                </div>
+
+                <style>
+                    .badge.verified {
+                        border-color: #00FF41;
+                        box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+                    }
+
+                    .badge.verified::before {
+                        content: '✓';
+                        position: absolute;
+                        top: -5px;
+                        right: -5px;
+                        background: #00FF41;
+                        color: #000;
+                        font-size: 0.6rem;
+                        width: 14px;
+                        height: 14px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 800;
+                    }
+
+                    .badge-mint-btn {
+                        position: absolute;
+                        bottom: -25px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-size: 0.5rem;
+                        background: var(--surface);
+                        border: 1px solid var(--border);
+                        color: var(--text);
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        opacity: 0;
+                        transition: 0.3s;
+                        white-space: nowrap;
+                        z-index: 10;
+                    }
+
+                    .badge:hover .badge-mint-btn {
+                        opacity: 1;
+                        bottom: -20px;
+                    }
+
+                    .badge-mint-btn:hover {
+                        border-color: var(--tech-blue);
+                        color: var(--tech-blue);
+                    }
+                </style>
+                <h3 id="profileRole"></h3>
+                <h1 id="profileName"></h1>
+                <p id="profileBio" class="bio"></p>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <span id="statProjects" class="stat-value">0</span>
+                        <span class="stat-label">Проектов</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="statExhibitions" class="stat-value">0</span>
+                        <span class="stat-label">Выставок</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="statExp" class="stat-value">0</span>
+                        <span class="stat-label">Лет Опыта</span>
+                    </div>
+                </div>
+
+                <!-- ASTRA WALLET SECTION -->
+                <div class="wallet-card hover-trigger">
+                    <div>
+                        <div style="font-family: var(--font-code); color: #888; font-size: 0.7rem; margin-bottom: 5px;">
+                            ASTRA WALLET // ID: 0x48...B2</div>
+                        <div class="wallet-balance" id="walletBalance">
+                            150 <span class="currency-label">ASTRA</span>
+                        </div>
+                        <div style="color: #666; font-size: 0.8rem; margin-top: 5px;" id="walletUsd">≈ $225.00 USD</div>
+                    </div>
+                    <div class="wallet-actions">
+                        <button class="wallet-btn hover-trigger">Send</button>
+                        <button class="wallet-btn hover-trigger">Receive</button>
+                        <button class="wallet-btn hover-trigger">Swap</button>
+                    </div>
+                </div>
+
+                <div class="section-title">Технологический Стек</div>
+                <div id="skillsContainer" class="skills-grid"></div>
+
+                <div class="section-title">Shared Intelligence</div>
+                <div class="intelligence-block">
+                    <div style="color: white; margin-bottom: 5px;">> latest_prompt_leak.txt</div>
+                    <div class="prompt-text">
+                        "Act as a minimalist UI architect. Generate a layout using grid systems that prioritize negative
+                        space and high-contrast typography..."
+                    </div>
+                </div>
+
+                <div class="section-title">The Matrix // Connections</div>
+                <div class="matrix-web">
+                    <a href="profile.html?id=maya-neural" class="connection-node hover-trigger">
+                        <div class="node-img"><img src="maya_neural.png"
+                                style="width:100%; height:100%; object-fit:cover;"></div>
+                        <div class="node-name">Maya Neural</div>
+                    </a>
+                    <a href="profile.html?id=viktor-code" class="connection-node hover-trigger">
+                        <div class="node-img"><img src="viktor_code.png"
+                                style="width:100%; height:100%; object-fit:cover;"></div>
+                        <div class="node-name">Viktor Code</div>
+                    </a>
+                </div>
+
+                <div class="section-title">Внешние Источники</div>
+                <div id="linksContainer" class="links-grid"></div>
+
+                <div class="section-title">Избранные Работы</div>
+                <div id="portfolioGrid" class="portfolio-grid"></div>
+
+                <div class="section-title">Terminal Chat</div>
+                <div class="terminal-chat">
+                    <div class="terminal-header">
+                        <span>CONNECTION: SECURE</span>
+                        <span>ALAB_TERMINAL_V4.0</span>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput">
+                        [SYSTEM] Соединение с пользователем установлено.<br>
+                        [SYSTEM] Введите сообщение для начала диалога...<br>
+                    </div>
+                    <div class="terminal-input-row">
+                        <span class="terminal-prompt">></span>
+                        <input type="text" class="terminal-input" id="terminalInput"
+                            placeholder="Введите команду или сообщение...">
+                    </div>
+                </div>
+
+                <div style="margin-top: 50px;">
+                    <button class="back-btn hover-trigger"
+                        style="background: var(--accent); border-color: var(--accent); color: black; font-weight: 800; font-size: 1rem; padding: 15px 40px;">Связаться
+                        в Telegram</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div>© 2025 ARTIFACT LAB // PROFILE</div>
+        <div>INSTAGRAM</div>
+        <div>TELEGRAM</div>
+        <div>A-LAB.TECH</div>
+    </footer>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        const triggers = document.querySelectorAll('.hover-trigger');
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+        if (!isMobile) {
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function updateCursor() {
+                cursorX = mouseX;
+                cursorY = mouseY;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                requestAnimationFrame(updateCursor);
+            }
+            updateCursor();
+
+            const setupCursor = () => {
+                document.querySelectorAll('.hover-trigger').forEach(trigger => {
+                    trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                    trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                });
+            };
+            setupCursor();
+        }
+
+        // --- DATA MOCKUP ---
+        const residentsData = {
+            'alex-river': {
+                name: 'Alex River',
+                role: 'Lead UI/UX Designer',
+                bio: 'Я проектирую цифровые экосистемы, которые сочетают в себе эстетику и функциональность. Моя цель — создавать интерфейсы, которые чувствуются живыми.',
+                img: 'alex_river.png',
+                tokens: 150,
+                stats: { projects: 42, exhibitions: 5, exp: 8 },
+                skills: ['Figma', 'React', 'Three.js', 'WebGPU', 'AI Prototyping'],
+                links: [
+                    { name: 'Behance', url: 'behance.net/ariver', icon: 'Bē' },
+                    { name: 'Dribbble', url: 'dribbble.com/ariver', icon: 'Dr' },
+                    { name: 'Personal Site', url: 'ariver.design', icon: '🌐' }
+                ],
+                works: [
+                    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800&auto=format&fit=crop'
+                ]
+            },
+            'maya-neural': {
+                name: 'Maya Neural',
+                role: 'AI Engineer & Artist',
+                bio: 'Стирая грани между кодом и кистью. Мои работы — это симбиоз нейронных сетей и человеческого воображения.',
+                img: 'maya_neural.png',
+                tokens: 150,
+                stats: { projects: 128, exhibitions: 12, exp: 4 },
+                skills: ['Python', 'PyTorch', 'Stable Diffusion', 'C4D', 'MLOps'],
+                links: [
+                    { name: 'GitHub', url: 'github.com/mneural', icon: 'Gh' },
+                    { name: 'Foundation', url: 'foundation.app/maya', icon: 'F' },
+                    { name: 'X / Twitter', url: 'x.com/mayaneural', icon: 'X' }
+                ],
+                works: [
+                    'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'
+                ]
+            },
+            'viktor-code': {
+                name: 'Viktor Code',
+                role: 'Full-Stack Developer',
+                bio: 'Архитектор высоконагруженных систем. Создаю масштабируемые решения для миллионов пользователей.',
+                img: 'viktor_code.png',
+                tokens: 150,
+                stats: { projects: 67, exhibitions: 3, exp: 9 },
+                skills: ['Node.js', 'React', 'AWS', 'Docker', 'Kubernetes'],
+                links: [
+                    { name: 'GitHub', url: 'github.com/vcode', icon: 'Gh' },
+                    { name: 'LinkedIn', url: 'linkedin.com/in/vcode', icon: 'Li' },
+                    { name: 'Blog', url: 'vcode.dev', icon: '📝' }
+                ],
+                works: [
+                    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800&auto=format&fit=crop'
+                ]
+            },
+            'sophia-brand': {
+                name: 'Sophia Brand',
+                role: 'Brand Strategist',
+                bio: 'Создаю идентичность брендов будущего. Каждый проект — это история, которая резонирует с аудиторией.',
+                img: 'sophia_brand.png',
+                tokens: 150,
+                stats: { projects: 34, exhibitions: 8, exp: 11 },
+                skills: ['Branding', 'Strategy', 'Marketing', 'Adobe Suite', 'Storytelling'],
+                links: [
+                    { name: 'Behance', url: 'behance.net/sbrand', icon: 'Bē' },
+                    { name: 'LinkedIn', url: 'linkedin.com/in/sbrand', icon: 'Li' },
+                    { name: 'Portfolio', url: 'sophiabrand.com', icon: '🌐' }
+                ],
+                works: [
+                    'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'
+                ]
+            },
+            'max-neural': {
+                name: 'Max Neural',
+                role: 'ML Engineer',
+                bio: 'Разработчик нейронных сетей и AI-решений. Специализируюсь на NLP и компьютерном зрении.',
+                img: 'max_neural.png',
+                tokens: 150,
+                stats: { projects: 89, exhibitions: 6, exp: 5 },
+                skills: ['PyTorch', 'TensorFlow', 'NLP', 'Computer Vision', 'MLOps'],
+                links: [
+                    { name: 'GitHub', url: 'github.com/maxneural', icon: 'Gh' },
+                    { name: 'Papers', url: 'arxiv.org/maxneural', icon: '📄' },
+                    { name: 'X / Twitter', url: 'x.com/maxneural', icon: 'X' }
+                ],
+                works: [
+                    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800&auto=format&fit=crop'
+                ]
+            },
+            'elena-motion': {
+                name: 'Elena Motion',
+                role: 'Motion Designer',
+                bio: 'Создаю захватывающие анимации и motion-графику. Каждый кадр — это искусство в движении.',
+                img: 'elena_motion.png',
+                tokens: 150,
+                stats: { projects: 56, exhibitions: 9, exp: 6 },
+                skills: ['After Effects', 'Cinema 4D', '3D Animation', 'Blender', 'Houdini'],
+                links: {
+                    vimeo: 'vimeo.com/elenamotion',
+                    instagram: 'instagram.com/elenamotion',
+                    portfolio: 'elenamotion.art'
+                },
+                works: [
+                    'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'
+                ]
+            },
+            'ivan-lakshinsky': {
+                name: 'Иван Лакшинский',
+                role: 'CEO & Chief Admin',
+                img: 'ivan_tech.png',
+                tokens: 50000,
+                bio: 'Основатель лаборатории. Архитектор цифровых реальностей. Создаю системы, которые живут собственной жизнью.',
+                stats: { projects: 42, exhibitions: 15, exp: 12 },
+                skills: ['System Arch', 'AI Strategy', 'Future Tech', 'Leadership'],
+                links: {
+                    portfolio: 'lakshinsky.com',
+                    telegram: '@ivan_lak',
+                    linkedin: 'linkedin/in/ivan'
+                },
+                works: [
+                    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800',
+                    'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800',
+                    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800',
+                    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800'
+                ]
+            },
+            'alexey-pak': {
+                name: 'Алексей Пак',
+                role: 'Strategic Director',
+                img: 'alexey_tech.png',
+                tokens: 50000,
+                bio: 'Стратегическое развитие и масштабирование. Строю мосты между технологиями A-Lab и глобальным рынком.',
+                stats: { projects: 85, exhibitions: 5, exp: 15 },
+                skills: ['Global BizDev', 'Negotiations', 'Strategy', 'Scalability'],
+                links: {
+                    portfolio: 'alexeypak.com',
+                    telegram: '@alexey_pak'
+                },
+                works: [
+                    'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=800',
+                    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800'
+                ]
+            },
+        };
+
+        async function initProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const residentId = urlParams.get('id') || 'ivan-lakshinsky';
+
+            // Check if it's a UUID
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(residentId);
+
+            let data;
+            if (isUuid) {
+                data = await fetchFromDB(residentId);
+            } else {
+                data = residentsData[residentId] || residentsData['ivan-lakshinsky'];
+            }
+
+            if (data) populatePage(data);
+        }
+
+        async function fetchFromDB(uuid) {
+            const db = window.ALabCore?.db;
+            if (!db) return null;
+
+            try {
+                const { data: r, error } = await db
+                    .from('residents')
+                    .select('*')
+                    .eq('user_id', uuid)
+                    .single();
+
+                if (error) throw error;
+
+                // Map DB schema to UI data structure
+                return {
+                    name: r.full_name,
+                    role: r.role || 'RESIDENT',
+                    img: r.avatar_url || 'maya_neural.png',
+                    bio: r.bio || '',
+                    tokens: 300, // TODO: Fetch from astra_balances if needed
+                    stats: { projects: 0, exhibitions: 0, exp: 0 }, // Placeholder
+                    skills: r.skills || [],
+                    links: r.links || {},
+                    works: [] // Fetch from portfolio_items if needed
+                };
+            } catch (e) {
+                console.error('[PROFILE] DB Fetch error:', e);
+                return null;
+            }
+        }
+
+        function populatePage(data) {
+            document.getElementById('profileName').innerText = data.name;
+            document.getElementById('profileRole').innerText = (data.role || 'RESIDENT').toUpperCase();
+            document.getElementById('profileBio').innerText = data.bio;
+            document.getElementById('profileImg').src = data.img;
+
+            if (data.stats) {
+                document.getElementById('statProjects').innerText = data.stats.projects || 0;
+                document.getElementById('statExhibitions').innerText = data.stats.exhibitions || 0;
+                document.getElementById('statExp').innerText = data.stats.exp || 0;
+            }
+
+            // Update Wallet dynamic
+            const tokenAmount = data.tokens || 0;
+            document.getElementById('walletBalance').innerHTML = `${tokenAmount.toLocaleString()} <span class="currency-label">ASTRA</span>`;
+            const usdValue = (tokenAmount * 1.5).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            document.getElementById('walletUsd').innerText = `≈ ${usdValue}`;
+
+            const skillsContainer = document.getElementById('skillsContainer');
+            skillsContainer.innerHTML = '';
+            (data.skills || []).forEach(skill => {
+                const tag = document.createElement('div');
+                tag.className = 'skill-tag';
+                tag.innerText = skill;
+                skillsContainer.appendChild(tag);
+            });
+
+            const linksContainer = document.getElementById('linksContainer');
+            if (linksContainer) {
+                linksContainer.innerHTML = '';
+                Object.entries(data.links || {}).forEach(([key, url]) => {
+                    const card = document.createElement('a');
+                    card.href = url.startsWith('http') ? url : 'https://' + url;
+                    card.target = '_blank';
+                    card.className = 'link-card hover-trigger';
+                    card.innerHTML = `
+                        <div class="icon">${getIcon(key)}</div>
+                        <div class="name">${key.toUpperCase()}</div>
+                        <div class="url">${url}</div>
+                    `;
+                    linksContainer.appendChild(card);
+                });
+            }
+
+            // Initialize Astra Wallet
+            const initWallet = () => {
+                const walletCard = document.querySelector('.wallet-card');
+                if (!walletCard) return;
+
+                // Handle connect button
+                const connectBtn = document.getElementById('walletConnectBtn') ||
+                    walletCard.querySelector('.wallet-btn:first-child');
+                if (connectBtn) {
+                    connectBtn.id = 'walletConnectBtn';
+                    connectBtn.onclick = () => window.Web3Manager?.connectWallet();
+                }
+
+                // Listen for web3 status
+                document.addEventListener('alab:web3-status', (e) => {
+                    const { connected, account } = e.detail;
+                    const addrLabel = walletCard.querySelector('div:first-child div:first-child');
+                    const balanceVal = document.getElementById('walletBalance');
+
+                    if (connected) {
+                        addrLabel.innerText = `ETH_WALLET // ${account.substring(0, 6)}...${account.substring(38)}`;
+                        addrLabel.style.color = 'var(--tech-blue)';
+                    } else {
+                        addrLabel.innerText = 'ASTRA WALLET // NOT CONNECTED';
+                        addrLabel.style.color = '#888';
+                    }
+                });
+            };
+
+            // Run wallet init
+            initWallet();
+
+            const portfolioGrid = document.getElementById('portfolioGrid');
+            if (portfolioGrid) {
+                portfolioGrid.innerHTML = '';
+                (data.works || []).forEach((work, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'portfolio-item hover-trigger';
+                    item.innerHTML = `
+                        <img src="${work}" alt="Project ${index + 1}">
+                        <div class="portfolio-overlay">
+                            <div style="font-family: var(--font-code); font-size: 0.7rem; color: var(--tech-blue);">PROJECT ${index + 1}</div>
+                            <div style="font-weight: 800; font-size: 1.2rem;">Case Study Title</div>
+                        </div>
+                    `;
+                    portfolioGrid.appendChild(item);
+                });
+            }
+
+            // Re-bind cursor
+            document.querySelectorAll('.hover-trigger').forEach(trigger => {
+                trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        }
+
+        function getIcon(key) {
+            const icons = { 'portfolio': '🌐', 'telegram': '✈️', 'linkedin': '💼', 'github': '💻', 'twitter': '🐦' };
+            return icons[key.toLowerCase()] || '🔗';
+        }
+
+        // Initialize
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initProfile);
+        } else {
+            initProfile();
+        }
+
+        // --- TERMINAL LOGIC ---
+        const termInput = document.getElementById('terminalInput');
+        const termOutput = document.getElementById('terminalOutput');
+
+        if (termInput) {
+            termInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && termInput.value.trim() !== '') {
+                    const val = termInput.value;
+                    termOutput.innerHTML += `<div><span style="color:var(--tech-blue)">[USER]</span> ${val}</div>`;
+                    termInput.value = '';
+                    termOutput.scrollTop = termOutput.scrollHeight;
+                    setTimeout(() => {
+                        termOutput.innerHTML += `<div><span style="color:var(--accent)">[SYSTEM]</span> Сообщение зашифровано и отправлено резиденту.</div>`;
+                        termOutput.scrollTop = termOutput.scrollHeight;
+                    }, 1000);
+                }
+            });
+        }
+
+        // --- THEME TOGGLE ---
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            body.classList.toggle('light-theme');
+            if (body.classList.contains('light-theme')) {
+                btn.innerText = '☀';
+                localStorage.setItem('theme', 'light');
+            } else {
+                btn.innerText = '☽';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('themeBtn').innerText = '☀';
+        }
+    </script>
+    <!-- A-LAB Web3 & Identity Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="web3-manager.js"></script>
+    <script src="search-manager.js"></script>
+    <script src="i18n.js"></script>
+</body>
+
+</html>

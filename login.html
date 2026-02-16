@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | AUTH_PORTAL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- BACKGROUND VIZ --- */
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 42, 42, 0.05) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            filter: blur(100px);
+        }
+
+        .auth-container {
+            width: 400px;
+            background: rgba(11, 13, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 50px 40px;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-logo img {
+            height: 40px;
+            margin-bottom: 20px;
+        }
+
+        .auth-logo h2 {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--tech-blue);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .form-input::placeholder {
+            color: #888;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--tech-blue);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--accent);
+            color: black;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.3);
+        }
+
+        .auth-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .auth-footer a {
+            color: var(--tech-blue);
+            text-decoration: none;
+        }
+
+        .error-msg {
+            background: rgba(255, 42, 42, 0.1);
+            color: var(--accent);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid rgba(255, 42, 42, 0.2);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="auth-container">
+        <div class="auth-logo">
+            <img src="A-lab_logo.svg" alt="A-LAB">
+            <h2>ACCESS_PROTOCOL</h2>
+        </div>
+
+        <div id="errorMsg" class="error-msg"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">IDENTIFIER (email)</label>
+                <input type="email" id="email" class="form-input" placeholder="core@a-lab.tech" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">ENCRYPTION_KEY (password)</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-login">Initialize Session</button>
+        </form>
+
+        <div class="auth-footer">
+            У вас еще нет ID? <a href="register-resident.html">Пройти регистрацию</a><br><br>
+            Unauthorized access is strictly prohibited.<br>
+            <a href="index.html">/// TERMINATE_SESSION</a>
+        </div>
+    </div>
+
+    <!-- SUPABASE & AUTH -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMsg = document.getElementById('errorMsg');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            errorMsg.style.display = 'none';
+
+            const { data, error } = await ALabAuth.signIn(email, password);
+
+            if (error) {
+                errorMsg.innerText = error.message;
+                errorMsg.style.display = 'block';
+            } else {
+                const db = window.ALabCore.db;
+                // Check if admin
+                const { data: profile } = await db
+                    .from('residents')
+                    .select('is_admin')
+                    .eq('user_id', data.user.id)
+                    .single();
+
+                if (profile && profile.is_admin) {
+                    window.location.href = 'cms-admin.html';
+                } else {
+                    window.location.href = 'resident-workspace-ru.html';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

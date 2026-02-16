@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | R&D ЛАБОРАТОРИЯ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* --- UI ELEMENTS --- */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            /* Super high z-index */
+            transition: width 0.3s, height 0.3s;
+            mix-blend-mode: normal;
+            /* Normal blend mode to be visible over dark modal */
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .back-btn {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .back-btn:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 150px 40px 100px;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            margin-bottom: 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            background: linear-gradient(180deg, #fff, #888);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            padding: 15px 30px;
+            background: rgba(0, 229, 255, 0.05);
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        .hero p::before,
+        .hero p::after {
+            content: '+';
+            position: absolute;
+            color: var(--tech-blue);
+            font-size: 1.2rem;
+        }
+
+        .hero p::before {
+            top: -10px;
+            left: -6px;
+        }
+
+        .hero p::after {
+            bottom: -10px;
+            right: -6px;
+        }
+
+        /* --- SECTIONS --- */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 100px 0 50px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-badge {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: #888;
+        }
+
+        /* --- CARDS --- */
+        .rd-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .rd-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rd-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            position: relative;
+            overflow: hidden;
+            transition: 0.4s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Угловые маркеры для стиля "Лаборатория" */
+        .rd-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border-top: 2px solid var(--border);
+            border-left: 2px solid var(--border);
+            transition: 0.3s;
+            z-index: 2;
+        }
+
+        .rd-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            border-bottom: 2px solid var(--border);
+            border-right: 2px solid var(--border);
+            transition: 0.3s;
+            z-index: 2;
+        }
+
+        .rd-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 229, 255, 0.1);
+        }
+
+        .rd-card:hover::before,
+        .rd-card:hover::after {
+            border-color: var(--tech-blue);
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-image {
+            height: 300px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+            filter: grayscale(0.8) contrast(1.2);
+        }
+
+        .rd-card:hover .card-image img {
+            transform: scale(1.05);
+            filter: grayscale(0) contrast(1.1);
+        }
+
+        /* Сканирующая линия в картинке */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--tech-blue);
+            box-shadow: 0 0 10px var(--tech-blue);
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .rd-card:hover .scan-line {
+            animation: scanImage 2s linear infinite;
+            opacity: 1;
+        }
+
+        @keyframes scanImage {
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Data Grid Overlay */
+        .data-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(0, 229, 255, 0.1) 19px, rgba(0, 229, 255, 0.1) 20px),
+                repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0, 229, 255, 0.1) 19px, rgba(0, 229, 255, 0.1) 20px);
+            opacity: 0;
+            z-index: 3;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .rd-card:hover .data-grid {
+            opacity: 1;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 10px;
+            height: 10px;
+            background: var(--tech-blue);
+            border-radius: 50%;
+            z-index: 6;
+            box-shadow: 0 0 10px var(--tech-blue);
+            opacity: 0;
+            animation: pulse-indicator 2s infinite;
+        }
+
+        .rd-card:hover .status-indicator {
+            opacity: 1;
+        }
+
+        @keyframes pulse-indicator {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        /* Holographic Effect */
+        .holo-effect {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 229, 255, 0.1),
+                    transparent);
+            z-index: 4;
+            pointer-events: none;
+            transition: left 0.6s;
+        }
+
+        .rd-card:hover .holo-effect {
+            left: 100%;
+        }
+
+        .card-content {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+        }
+
+        .meta-tag {
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #888;
+            transition: all 0.3s;
+        }
+
+        .meta-tag.active {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--tech-blue);
+        }
+
+        .rd-card:hover .meta-tag.active {
+            background: rgba(0, 229, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+        }
+
+        .rd-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .rd-card:hover h3 {
+            color: var(--tech-blue);
+        }
+
+        .rd-card p {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        .tech-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .spec-item {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .spec-item::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--tech-blue);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .rd-card:hover .spec-item {
+            color: #aaa;
+        }
+
+        .rd-card:hover .spec-item::before {
+            box-shadow: 0 0 8px var(--tech-blue);
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.5);
+            }
+        }
+
+        /* Loading Metrics Animation */
+        .loading-metric {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--tech-blue);
+            opacity: 0;
+            z-index: 6;
+            transition: opacity 0.3s;
+        }
+
+        .rd-card:hover .loading-metric {
+            opacity: 1;
+            animation: loadingText 2s infinite;
+        }
+
+        @keyframes loadingText {
+
+            0%,
+            100% {
+                content: 'LOADING...';
+            }
+
+            33% {
+                content: 'ANALYZING...';
+            }
+
+            66% {
+                content: 'PROCESSING...';
+            }
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 60px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #555;
+            background: #050505;
+        }
+
+        /* --- DECORATION --- */
+        .lab-grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background:
+                linear-gradient(90deg, transparent 95%, rgba(255, 255, 255, 0.03) 95%),
+                linear-gradient(transparent 95%, rgba(255, 255, 255, 0.03) 95%);
+            background-size: 200px 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <div class="lab-grid-overlay"></div>
+
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="back-btn hover-trigger" data-i18n="page_rd.back_btn">← BACK TO CORE</a>
+    </header>
+
+    <div class="container">
+
+        <section class="hero">
+            <div style="font-family: var(--font-code); color: var(--accent); margin-bottom: 15px; letter-spacing: 2px;"
+                data-i18n="page_rd.hero_tag">
+                SECURE AREA // LEVEL 5</div>
+            <h1>R&D LABORATORY</h1>
+            <p data-i18n="page_rd.hero_desc">Центр передовых разработок. От ИИ и IT до промышленного инжиниринга,
+                авиастроения и робототехники.</p>
+        </section>
+
+        <!-- REAL SECTOR -->
+        <div class="section-header">
+            <div class="section-title">
+                <span style="color:var(--tech-blue)">// </span> <span
+                    data-i18n="page_rd.section_industrial">ИНДУСТРИАЛЬНЫЕ РЕШЕНИЯ</span>
+            </div>
+            <div class="section-badge">REAL SECTOR</div>
+        </div>
+
+        <div class="rd-grid">
+            <!-- AUTOMOTIVE -->
+            <div class="rd-card hover-trigger">
+                <div class="card-image">
+                    <div class="scan-line"></div>
+                    <div class="data-grid"></div>
+                    <div class="status-indicator"></div>
+                    <div class="holo-effect"></div>
+                    <img src="rd_automotive.png" alt="Automotive R&D">
+                    <div class="loading-metric">ANALYZING...</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active">PROTOTYPE</span>
+                        <span class="meta-tag">AUTOMOTIVE</span>
+                    </div>
+                    <h3 data-i18n="page_rd.auto_title">Автомобильные инновации</h3>
+                    <p data-i18n="page_rd.auto_desc">Разработка электронных шасси будущего, систем автономного вождения
+                        и интерфейсов (HMI) для
+                        электромобилей нового поколения.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">EV PLATFORMS</div>
+                        <div class="spec-item">AUTONOMOUS LVL 4</div>
+                        <div class="spec-item">HMI SYSTEMS</div>
+                        <div class="spec-item">CAD ENGINEERING</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- AIR BRIDGES -->
+            <div class="rd-card hover-trigger" onclick="window.location.href='project_air_bridges.html'"
+                style="cursor: pointer;">
+                <div class="card-image" style="background: #000;">
+                    <div class="scan-line"></div>
+                    <div class="data-grid"></div>
+                    <div class="status-indicator"></div>
+                    <div class="holo-effect"></div>
+
+                    <div
+                        style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+                        <svg width="160" height="100" viewBox="0 0 160 100" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M40 50H120" stroke="var(--tech-blue)" stroke-width="1" stroke-dasharray="4 4" />
+                            <circle cx="40" cy="50" r="12" stroke="var(--tech-blue)" stroke-width="1.5" />
+                            <circle cx="120" cy="50" r="12" stroke="var(--tech-blue)" stroke-width="1.5" />
+                            <rect x="55" y="45" width="50" height="15" rx="7.5" fill="rgba(0, 229, 255, 0.05)"
+                                stroke="var(--tech-blue)" stroke-width="1" />
+                            <path d="M80 60V75M72 75H88" stroke="var(--accent)" stroke-width="1.5" />
+                        </svg>
+                    </div>
+
+                    <div class="loading-metric">NETWORK_V1: SCANNING</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active">AEROSPACE</span>
+                        <span class="meta-tag">LOGISTICS</span>
+                    </div>
+                    <h3 data-i18n="page_rd.air_bridges_title">Воздушные мосты</h3>
+                    <p data-i18n="page_rd.air_bridges_desc">Интеллектуальная сеть автономной логистики. Создание
+                        транспортных коридоров для доставки грузов в труднодоступные регионы.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">VR REMOTE CONTROL</div>
+                        <div class="spec-item">500KG+ PAYLOAD</div>
+                        <div class="spec-item">600KM RANGE</div>
+                        <div class="spec-item">AI AUTONOMY</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AEROSPACE -->
+            <div class="rd-card hover-trigger">
+                <div class="card-image">
+                    <div class="scan-line"></div>
+                    <div class="data-grid"></div>
+                    <div class="status-indicator"></div>
+                    <div class="holo-effect"></div>
+                    <img src="rd_aerospace.png" alt="Aerospace R&D">
+                    <div class="loading-metric">PROCESSING...</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active">CONFIDENTIAL</span>
+                        <span class="meta-tag">AEROSPACE</span>
+                    </div>
+                    <h3 data-i18n="page_rd.aero_title">Авиакосмические системы</h3>
+                    <p data-i18n="page_rd.aero_desc">Аэродинамическое моделирование, разработка композитных материалов и
+                        авионики. Проектирование БПЛА
+                        и систем управления полетом.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">AERODYNAMICS</div>
+                        <div class="spec-item">UAV CONTROL</div>
+                        <div class="spec-item">COMPOSITES</div>
+                        <div class="spec-item">AVIONICS</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DELPHINUS X1: AQUA EXOSKELETON -->
+            <div class="rd-card hover-trigger" onclick="window.location.href='project_dolphin_exoskeleton.html'"
+                style="cursor: pointer;">
+                <div class="card-image">
+                    <div class="scan-line" style="background: #00E5FF;"></div>
+                    <div class="data-grid"></div>
+                    <div class="status-indicator" style="background: #00E5FF;"></div>
+                    <div class="holo-effect"></div>
+                    <img src="delphinus_minimal.png" alt="Delphinus X1">
+                    <div class="loading-metric">HYDRO_LINK: CONNECTED</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active"
+                            style="color: #00E5FF; background: rgba(0, 229, 255, 0.1);">ACTIVE_PHASE</span>
+                        <span class="meta-tag">AQUATIC</span>
+                    </div>
+                    <h3>DELPHINUS X1</h3>
+                    <p>Гидродинамический экзоскелет, превращающий человека в совершенного хищника водной стихии.
+                        Биомимикрия и реактивная тяга.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">30 KM/H SPEED</div>
+                        <div class="spec-item">JET FLIPPERS</div>
+                        <div class="spec-item">D-FIN STABILIZER</div>
+                        <div class="spec-item">BIO-AERODYNAMICS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INDUSTRIAL -->
+        <div class="section-header">
+            <div class="section-title">
+                <span style="color:var(--accent)">// </span> <span
+                    data-i18n="page_rd.section_manufacturing">ПРОМЫШЛЕННЫЙ ИНЖИНИРИНГ</span>
+            </div>
+            <div class="section-badge">MANUFACTURING</div>
+        </div>
+
+        <div class="rd-grid">
+            <!-- M01: PERSONAL SYSTEM -->
+            <div class="rd-card hover-trigger" onclick="window.location.href='m01-internal.html'"
+                style="cursor: pointer;">
+                <div class="card-image">
+                    <div class="scan-line"></div>
+                    <div class="data-grid"></div>
+                    <div class="status-indicator"></div>
+                    <div class="holo-effect"></div>
+                    <img src="m01_model.png" alt="M01 System">
+                    <div class="loading-metric">SYSTEM ACTIVE...</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active" style="color: var(--tech-green);">INNOVATION</span>
+                        <span class="meta-tag">WEARABLE TECH</span>
+                    </div>
+                    <h3>PROJECT M01: SYSTEM</h3>
+                    <p data-i18n="page_rd.m01_desc">Персональное устройство нового поколения. Симбиоз защиты здоровья,
+                        AR-технологий и сменного
+                        стиля.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">AR VISOR</div>
+                        <div class="spec-item">HEPA FILTER</div>
+                        <div class="spec-item">AI ASSIST</div>
+                        <div class="spec-item">MODULAR</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INDUSTRIAL ROBOTICS -->
+            <div class="rd-card hover-trigger">
+                <div class="card-image">
+                    <div class="scan-line"></div>
+                    <div class="data-grid"></div>
+                    <div class="status-indicator"></div>
+                    <div class="holo-effect"></div>
+                    <img src="rd_industrial.png" alt="Industrial R&D">
+                    <div class="loading-metric">LOADING...</div>
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active">AUTOMATION</span>
+                        <span class="meta-tag">ROBOTICS</span>
+                    </div>
+                    <h3 data-i18n="page_rd.robot_title">Робототехника и Производство</h3>
+                    <p data-i18n="page_rd.robot_desc">Автоматизация производственных линий, внедрение IoT датчиков и
+                        разработка промышленных
+                        роботов-манипуляторов.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">IND 4.0</div>
+                        <div class="spec-item">PLC SYSTEMS</div>
+                        <div class="spec-item">SMART FACTORY</div>
+                        <div class="spec-item">PREDICTIVE MAINT</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI & IT -->
+            <div class="rd-card hover-trigger" id="ai-card">
+                <div class="card-image">
+                    <canvas id="neural-canvas"
+                        style="position: absolute; top:0; left:0; width:100%; height:100%; z-index:4; opacity:0; transition: opacity 0.5s; pointer-events:none;"></canvas>
+                    <div class="scan-line"></div>
+                    <img src="rd_ai_tech.png" alt="AI Lab">
+                </div>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active">DIGITAL</span>
+                        <span class="meta-tag">AI / ML</span>
+                    </div>
+                    <h3 data-i18n="page_rd.ai_title">AI & Цифровые Экосистемы</h3>
+                    <p data-i18n="page_rd.ai_desc">Разработка архитектур нейронных сетей, LLM и высоконагруженных
+                        облачных систем для обработки Big
+                        Data.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">NEURAL NETS</div>
+                        <div class="spec-item">CLOUD ARCH</div>
+                        <div class="spec-item">BIG DATA</div>
+                        <div class="spec-item">CYBERSEC</div>
+                    </div>
+                </div>
+            </div>
+            <!-- EXPERIMENTAL / SOFTWARE R&D -->
+            <div class="section-header">
+                <div class="section-title">
+                    <span style="color:var(--tech-blue)">// </span> <span
+                        data-i18n="page_rd.section_experimental">ЦИФРОВЫЕ ЛАБОРАТОРНЫЕ МОДУЛИ</span>
+                </div>
+                <div class="section-badge">LAB_EXPERIMENTAL</div>
+            </div>
+
+            <div class="rd-grid" id="casesContainer" data-category="rd" style="margin-bottom: 100px;">
+                <!-- Content populated by cases-engine.js -->
+                <div
+                    style="grid-column: 1/-1; text-align: center; padding: 50px; color: #555; font-family: var(--font-code);">
+                    [ INITIALIZING R&D DATA STREAM... ]</div>
+            </div>
+
+        </div>
+
+        <script src="cases-engine.js?v=1.2"></script>
+
+        <!-- STEALTH MODE / NDA SECTION -->
+        <div class="stealth-section">
+            <div class="stealth-bg">
+                <div class="stealth-card"></div>
+                <div class="stealth-card"></div>
+                <div class="stealth-card"></div>
+            </div>
+
+            <div class="stealth-overlay">
+                <div class="lock-icon">🔒</div>
+                <h2 data-i18n="page_rd.stealth_title">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH СТАРТАПЫ</h2>
+                <p data-i18n="page_rd.stealth_desc">Доступ к информации о проектах в режиме "Stealth" предоставляется
+                    только
+                    аккредитованным партнерам после
+                    подписания NDA.</p>
+                <div style="font-family: var(--font-code); color: var(--accent); margin-bottom: 30px;">ACCESS LEVEL:
+                    RESTRICTED</div>
+
+                <button class="btn-action hover-trigger" onclick="openNdaModal()"
+                    data-i18n="page_rd.stealth_btn">ЗАПРОСИТЬ
+                    ДОСТУП & ПОДПИСАТЬ NDA</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NDA MODAL -->
+    <div class="modal" id="ndaModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeNdaModal()">&times;</span>
+            <h2 style="color:var(--text); margin-bottom:10px;">NDA ACCESS REQUEST</h2>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">Подпишите электронное соглашение о
+                неразглашении для доступа к закрытым материалам.</p>
+
+            <form id="ndaForm" onsubmit="handleNdaSubmit(event)">
+                <input type="text" id="nda-name" class="form-input" placeholder="Имя Фамилия" required>
+                <input type="email" id="nda-email" class="form-input" placeholder="Корпоративная почта" required>
+                <input type="text" id="nda-company" class="form-input" placeholder="Название компании" required>
+
+                <label class="checkbox-container">
+                    <input type="checkbox" id="nda-agree" required>
+                    <span class="checkmark"></span>
+                    <span class="label-text">Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать
+                        полученную информацию.</span>
+                </label>
+
+                <button type="submit" class="btn-submit hover-trigger">ПОДПИСАТЬ & ОТПРАВИТЬ</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div>© 2026 A-LAB.TECH // R&D DIVISION</div>
+        <div>SECURE CONNECTION ESTABLISHED</div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="ndaToast">
+        <div class="toast-icon">✓</div>
+        <div>
+            <div style="color:var(--tech-blue); font-weight:700; margin-bottom:5px;">REQUEST SENT</div>
+            <div style="font-size:0.8rem; color:#888;">NDA & Access Link sent to your email.</div>
+        </div>
+    </div>
+
+    <style>
+        /* Stealth Section Styles */
+        .stealth-section {
+            position: relative;
+            margin-top: 150px;
+            padding: 100px 40px;
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(10, 0, 0, 0.8);
+        }
+
+        .stealth-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            opacity: 0.2;
+            filter: blur(10px);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .stealth-card {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 10px;
+            height: 100%;
+            width: 100%;
+        }
+
+        .stealth-overlay {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .stealth-overlay h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .stealth-overlay p {
+            color: #ccc;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: pulse-lock 2s infinite;
+        }
+
+        @keyframes pulse-lock {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Modal Styles Upgrade */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+            cursor: none;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: rgba(11, 13, 20, 0.9);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+            padding: 50px;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 42, 42, 0.1);
+            backdrop-filter: blur(20px);
+            transform: scale(0.9);
+            animation: scaleUp 0.3s forwards;
+        }
+
+        @keyframes scaleUp {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: 0.3s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            border-radius: 12px;
+            color: white;
+            font-family: var(--font-main);
+            margin-bottom: 20px;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 42, 42, 0.05);
+            box-shadow: 0 0 20px rgba(255, 42, 42, 0.1);
+        }
+
+        /* Checkbox Upgrade */
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .checkbox-container:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .checkbox-container input {
+            display: none;
+        }
+
+        .checkmark {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: 0.3s;
+        }
+
+        .checkbox-container input:checked+.checkmark {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .checkbox-container input:checked+.checkmark::after {
+            content: '✓';
+            color: black;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Modern Slide Button */
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: black;
+            font-weight: 800;
+            padding: 20px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-code);
+            font-size: 1rem;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 20px rgba(255, 42, 42, 0.2);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(255, 42, 42, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-loading {
+            background: #333;
+            color: #888;
+            pointer-events: none;
+        }
+
+        /* Success Toast */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: var(--surface);
+            border: 1px solid var(--tech-blue);
+            padding: 20px 30px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: var(--text);
+            font-family: var(--font-code);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            transform: translateY(150px);
+            opacity: 0;
+            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 11000;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 35px;
+            height: 35px;
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--tech-blue);
+            border: 1px solid var(--tech-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+    </style>
+
+    <script>
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.cursor');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.querySelectorAll('.hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // NDA & Modal Logic
+        function openNdaModal() {
+            const modal = document.getElementById('ndaModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNdaModal() {
+            const modal = document.getElementById('ndaModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showToast() {
+            const toast = document.getElementById('ndaToast');
+            toast.classList.add('active');
+
+            // Auto hide after 5s
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 5000);
+        }
+
+        async function handleNdaSubmit(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+
+            // Loading State
+            btn.innerText = 'ENCRYPTING & SENDING...';
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+
+            const name = document.getElementById('nda-name').value;
+            const email = document.getElementById('nda-email').value;
+            const company = document.getElementById('nda-company').value;
+
+            try {
+                // Determine Supabase client
+                let sb = null;
+                if (window.supabase && window.supabase.from) {
+                    sb = window.supabase;
+                } else if (window.ALabCore && window.ALabCore.db) {
+                    sb = window.ALabCore.db;
+                }
+
+                if (sb) {
+                    const { error } = await sb.from('nda_requests').insert({
+                        full_name: name,
+                        email: email,
+                        company: company,
+                        status: 'pending'
+                    });
+                    if (error) throw error;
+                } else {
+                    console.warn('Supabase not connected. Simulating request.');
+                    await new Promise(r => setTimeout(r, 1500));
+                }
+
+                closeNdaModal();
+                showToast();
+                e.target.reset();
+
+            } catch (err) {
+                console.error('NDA Error:', err);
+                alert('Connection Error. Please try again.');
+            } finally {
+                btn.innerText = originalText;
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('ndaModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('ndaModal')) closeNdaModal();
+        });
+
+        // --- NEURAL NETWORK ANIMATION ---
+        const canvas = document.getElementById('neural-canvas');
+        const aiCard = document.getElementById('ai-card');
+
+        if (canvas && aiCard) {
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            let animationFrame;
+
+            function resize() {
+                const rect = aiCard.querySelector('.card-image').getBoundingClientRect();
+                width = canvas.width = rect.width;
+                height = canvas.height = rect.height;
+            }
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 1.5;
+                    this.vy = (Math.random() - 0.5) * 1.5;
+                    this.size = Math.random() * 2 + 1;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 229, 255, 0.9)';
+                    ctx.fill();
+                }
+            }
+
+            function initPars() {
+                particles = [];
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                particles.forEach((p, index) => {
+                    p.update();
+                    p.draw();
+
+                    for (let j = index + 1; j < particles.length; j++) {
+                        const p2 = particles[j];
+                        const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+
+                        if (dist < 100) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(0, 229, 255, ${1 - dist / 100})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                });
+
+                animationFrame = requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('load', () => {
+                resize();
+                initPars();
+                animate();
+            });
+
+            window.addEventListener('resize', resize);
+
+            aiCard.addEventListener('mouseenter', () => {
+                canvas.style.opacity = '1';
+            });
+
+            aiCard.addEventListener('mouseleave', () => {
+                canvas.style.opacity = '0';
+            });
+        }
+    </script>
+    <!-- A-LAB Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="i18n.js"></script>
+    <script src="nda-manager.js"></script>
+</body>
+
+</html>

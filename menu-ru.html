@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | НАВИГАЦИЯ СИСТЕМЫ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s, border-color 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            opacity: 0.8;
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.1;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .close-btn {
+            font-family: var(--font-code);
+            color: var(--accent);
+            text-decoration: none;
+            border: 1px solid var(--accent);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+
+        .menu-container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .menu-links {
+            padding: 120px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid var(--border);
+        }
+
+        .nav-link {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            /* Smaller desktop font */
+            font-weight: 800;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            line-height: 1.1;
+            transition: 0.4s;
+            position: relative;
+            width: fit-content;
+            margin-bottom: 10px;
+        }
+
+        .nav-link::before {
+            content: attr(data-index);
+            position: absolute;
+            left: -50px;
+            top: 10px;
+            font-size: 1rem;
+            font-family: var(--font-code);
+            color: var(--accent);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white;
+            padding-left: 20px;
+        }
+
+        .nav-link:hover::before {
+            opacity: 1;
+            left: -50px;
+        }
+
+        .nav-link.active {
+            color: white;
+        }
+
+        .menu-preview {
+            background: linear-gradient(135deg, #111 0%, #050505 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-preview::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05;
+        }
+
+        .preview-box {
+            max-width: 400px;
+            display: none;
+            animation: fadeIn 0.4s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .preview-box.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .preview-box h2 {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .preview-box p {
+            line-height: 1.6;
+            color: #aaa;
+        }
+
+        @media (max-width: 1024px) {
+            .menu-container {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-preview {
+                display: none;
+            }
+
+            .menu-links {
+                padding: 100px 30px;
+                width: 100%;
+                border-right: none;
+            }
+
+            .nav-link {
+                font-size: 6vw;
+                /* Smaller mobile font */
+            }
+
+            .nav-link::before {
+                position: relative;
+                left: 0;
+                margin-bottom: 10px;
+                display: block;
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="cursor"></div>
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="close-btn hover-trigger">/// ЗАКРЫТЬ</a>
+    </header>
+
+    <div class="menu-container">
+        <nav class="menu-links">
+            <a href="index.html" class="nav-link hover-trigger" data-index="01" data-target="home">Главная</a>
+            <a href="social-feed.html" class="nav-link hover-trigger" data-index="02" data-target="feed">Social Feed</a>
+            <a href="residents.html" class="nav-link hover-trigger" data-index="03"
+                data-target="residents">Резиденты</a>
+            <a href="messages.html" class="nav-link hover-trigger" data-index="04" data-target="messages">Messenger</a>
+            <a href="projects.html" class="nav-link hover-trigger" data-index="05"
+                data-target="projects">Проекты_Lab</a>
+            <a href="consulting.html" class="nav-link hover-trigger" data-index="06" data-target="consulting">Tech
+                Консалтинг</a>
+            <a href="design.html" class="nav-link hover-trigger" data-index="07" data-target="design">Дизайн</a>
+            <a href="digital.html" class="nav-link hover-trigger" data-index="08" data-target="digital">Digital & AI</a>
+            <a href="marketing.html" class="nav-link hover-trigger" data-index="09"
+                data-target="marketing">Маркетинг</a>
+            <a href="rd.html" class="nav-link hover-trigger" data-index="10" data-target="rd">R&D Лаб</a>
+            <a href="about.html" class="nav-link hover-trigger" data-index="11" data-target="about">О компании</a>
+        </nav>
+
+        <aside class="menu-preview">
+            <div class="preview-box active" id="home-preview">
+                <h2>CORE_SYST</h2>
+                <p>Центральный интерфейс управления всеми подразделениями лаборатории.</p>
+            </div>
+            <div class="preview-box" id="feed-preview">
+                <h2>SOCIAL_PULSE</h2>
+                <p>Внутренняя лента событий и коммуникаций между резидентами.</p>
+            </div>
+            <div class="preview-box" id="residents-preview">
+                <h2>ENTITY_DB</h2>
+                <p>База данных резидентов и аккредитованных партнеров экосистемы.</p>
+            </div>
+            <div class="preview-box" id="messages-preview">
+                <h2>COMMS_LINK</h2>
+                <p>Зашифрованный мессенджер для безопасной связи внутри ядра.</p>
+            </div>
+            <div class="preview-box" id="projects-preview">
+                <h2>PRJ_DASHBOARD</h2>
+                <p>Мониторинг активных разработок и прогресса по текущим целям.</p>
+            </div>
+            <div class="preview-box" id="consulting-preview">
+                <h2>TECH_STRATEGY</h2>
+                <p>Аудит готовности бизнеса, технологический стек и стратегии внедрения AI для масштабирования.</p>
+            </div>
+            <div class="preview-box" id="design-preview">
+                <h2>VISUAL_UNIT</h2>
+                <p>Разработки в области брендинга, дизайна и визуальных коммуникаций нового поколения.</p>
+            </div>
+            <div class="preview-box" id="digital-preview">
+                <h2>TECH_INTEGRATION</h2>
+                <p>IT-решения, AI-агенты и автоматизация сложных бизнес-цепочек.</p>
+            </div>
+            <div class="preview-box" id="marketing-preview">
+                <h2>GROWTH_HACKING</h2>
+                <p>Маркетинг на основе данных, предиктивная аналитика и воронки будущего.</p>
+            </div>
+            <div class="preview-box" id="rd-preview">
+                <h2>EXPERIMENTAL_LAB</h2>
+                <p>Доступ к закрытым разработкам и инновационным технологиям лаборатории.</p>
+            </div>
+            <div class="preview-box" id="about-preview">
+                <h2>CORE_FOUNDERS</h2>
+                <p>Люди, стоящие за созданием экосистемы A-Lab.</p>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursorX = mouseX;
+            cursorY = mouseY;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+
+        const links = document.querySelectorAll('.nav-link');
+        const previews = document.querySelectorAll('.preview-box');
+
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                const target = link.getAttribute('data-target') + '-preview';
+                previews.forEach(p => p.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+                cursor.classList.add('hovered');
+            });
+            link.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | REGISTRATION</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.03) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            filter: blur(100px);
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(11, 13, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 50px 40px;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-logo img {
+            height: 35px;
+            margin-bottom: 20px;
+        }
+
+        .auth-logo h2 {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--tech-blue);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 10px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.02);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+        }
+
+        .btn-register {
+            width: 100%;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+            font-family: var(--font-code);
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3);
+        }
+
+        .auth-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #555;
+            font-family: var(--font-code);
+        }
+
+        .auth-footer a {
+            color: var(--tech-blue);
+            text-decoration: none;
+        }
+
+        .code-status {
+            font-size: 0.6rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .valid {
+            color: #00FF41;
+        }
+
+        .invalid {
+            color: var(--accent);
+        }
+
+        /* SUCCESS VIEW */
+        #successView {
+            display: none;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: #00FF41;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="auth-container">
+
+        <div id="registerFormView">
+            <div class="auth-logo">
+                <img src="A-lab_logo.svg" alt="A-LAB">
+                <h2>REGISTRATION_PROTOCOL</h2>
+            </div>
+
+            <form id="regForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label">Email // Электронная почта</label>
+                    <input type="email" id="email" class="form-input" placeholder="core@a-lab.tech" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Full Name // Имя и Фамилия</label>
+                    <input type="text" id="fullName" class="form-input" placeholder="Артем Квантум" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Desired Resident ID (Login)</label>
+                    <div
+                        style="display: flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 10px; padding-left: 15px;">
+                        <span style="color: #555; font-family: var(--font-code); font-size: 0.9rem;">ID.</span>
+                        <input type="text" id="residentId" class="form-input"
+                            style="border: none !important; background: transparent !important;" placeholder="K_ARTEM"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Encryption Key (Password)</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-register" id="submitBtn">Complete Registration</button>
+            </form>
+        </div>
+
+        <div id="successView">
+            <div class="success-icon">✔️</div>
+            <h2 style="font-family: var(--font-code); color: var(--tech-blue); margin-bottom: 15px;">ID_CREATED</h2>
+            <p style="font-size: 0.9rem; color: #888; margin-bottom: 30px; line-height: 1.5;">Протокол регистрации
+                завершен успешно. Теперь вы являетесь официальным резидентом A-LAB.</p>
+            <a href="resident-workspace-ru.html" class="btn-register"
+                style="display: block; text-decoration: none; text-align: center;">Войти в
+                Workstation</a>
+        </div>
+
+        <div class="auth-footer">
+            Уже есть официальный ID? <a href="login.html">Авторизоваться</a><br><br>
+            Проблемы с регистрацией? <a href="#">Служба Безопасности</a>
+        </div>
+    </div>
+
+    <!-- SUPABASE & AUTH -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
+
+
+    <script>
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const fullName = document.getElementById('fullName').value;
+            const residentId = document.getElementById('residentId').value;
+
+            btn.innerText = 'WAIT_FOR_ENCRYPTION...';
+            btn.disabled = true;
+
+            try {
+                // Auth Sign Up (Trigger handle_new_user in DB will create the profile)
+                const { data, error } = await ALabAuth.signUp(email, password, {
+                    full_name: fullName,
+                    resident_id: residentId
+                });
+
+                if (error) throw error;
+
+                // Success Transition
+                document.getElementById('registerFormView').style.display = 'none';
+                document.getElementById('successView').style.display = 'block';
+
+            } catch (err) {
+                alert('REG_ERROR: ' + err.message);
+                btn.innerText = 'Complete Registration';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | Visual Sitemap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --text: #ffffff;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--tech-blue);
+        }
+
+        h1 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 60px;
+            border-left: 4px solid var(--border);
+            padding-left: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .mermaid {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        /* Status Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-family: var(--font-code);
+            color: #888;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        .status-badge {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .status-ok {
+            color: #00FF41;
+            border: 1px solid #00FF41;
+        }
+
+        .status-todo {
+            color: var(--tech-blue);
+            border: 1px solid var(--tech-blue);
+        }
+
+        /* Grid Wireframe Simulation */
+        .wireframe-grid {
+            display: grid;
+            grid-template-columns: 80px 1fr 250px;
+            gap: 15px;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .wire-box {
+            border: 1px dashed #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #666;
+            background: rgba(0, 229, 255, 0.02);
+        }
+
+        .footer {
+            margin-top: 100px;
+            text-align: center;
+            color: #444;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+        }
+
+        /* Mermaid Theme Override */
+        :root {
+            --mermaid-font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        mermaid.initialize({
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#0b0d14',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#00E5FF',
+                lineColor: '#FF2A2A',
+                secondaryColor: '#00E5FF',
+                tertiaryColor: '#030407'
+            }
+        });
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>A-LAB.CORE // SYSTEM MAP</h1>
+            <p style="color: #888; font-family: var(--font-code);">PROJECT_ID: ALAB-77X // STATUS: AUDITED</p>
+        </header>
+
+        <section id="sitemap">
+            <h2>1. Карта переходов (User Flow)</h2>
+            <div class="card">
+                <div class="mermaid">
+                    graph TD
+                    subgraph "Public Entry"
+                    Index["index.html (Hero)"] --> About["about.html"]
+                    Index --> RD["rd.html (Lab)"]
+                    Index --> Projects["projects.html"]
+                    Index --> Residents["residents.html"]
+                    end
+
+                    subgraph "Authentication"
+                    Login["login.html"]
+                    Register["register-resident.html"]
+                    end
+
+                    subgraph "Resident Ecosystem"
+                    Profile["profile.html (Public View)"]
+                    Feed["social-feed.html"]
+                    Messages["messages.html"]
+                    end
+
+                    subgraph "Internal Workspaces"
+                    Workplace["resident-workspace-ru.html"]
+                    Admin["resident-admin-ru.html (M-NEURAL)"]
+                    end
+
+                    %% Logic Connections
+                    Projects --> Index
+                    Residents --> Profile
+                    Index --> Login
+                    Login --> Workplace
+                    Workplace --> Feed
+                    Workplace --> Admin
+                    Admin --> Workplace
+                </div>
+            </div>
+        </section>
+
+        <section id="status">
+            <h2>2. Текущий статус функций</h2>
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Система</th>
+                            <th>Статус</th>
+                            <th>Коротко</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Авторизация</td>
+                            <td><span class="status-badge status-ok">OK</span></td>
+                            <td>Вход, сессии, профили резидентов.</td>
+                        </tr>
+                        <tr>
+                            <td>Социальная лента</td>
+                            <td><span class="status-badge status-ok">OK</span></td>
+                            <td>Посты, голосование, реалтайм синхронизация.</td>
+                        </tr>
+                        <tr>
+                            <td>Web3 Identity</td>
+                            <td><span class="status-badge status-todo">TODO</span></td>
+                            <td>Финализация минтинга достижений в блокчейне.</td>
+                        </tr>
+                        <tr>
+                            <td>Astra Rewards</td>
+                            <td><span class="status-badge status-todo">TODO</span></td>
+                            <td>Автоматизация клейма токенов.</td>
+                        </tr>
+                        <tr>
+                            <td>NDA Access</td>
+                            <td><span class="status-badge status-todo">TODO</span></td>
+                            <td>Автоматизированная выдача ключей.</td>
+                        </tr>
+                        <tr>
+                            <td>Глобальный поиск</td>
+                            <td><span class="status-badge status-ok">OK</span></td>
+                            <td>Работает через Cmd+K на всех страницах.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="wireframes">
+            <h2>3. Схемы верстки (Wireframes)</h2>
+
+            <div class="card">
+                <h3 style="font-size: 0.9rem; margin-bottom: 20px;">Social Feed (Desktop Grid)</h3>
+                <div class="wireframe-grid">
+                    <div class="wire-box" style="grid-row: span 3;">SIDEBAR (80px)</div>
+                    <div class="wire-box">CREATE POST AREA</div>
+                    <div class="wire-box" style="grid-row: span 3;">RIGHT PANEL (Residents, Stats)</div>
+                    <div class="wire-box" style="height: 200px;">MAIN FEED (Scrollable)</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 0.9rem; margin-bottom: 20px;">User Workspace (Tabs Layout)</h3>
+                <div class="mermaid">
+                    graph TB
+                    subgraph "Top Navigation"
+                    Title[H1: WORKSTATION]
+                    Badge[MODE_BADGE]
+                    end
+                    subgraph "Content Area (Active Tab)"
+                    direction LR
+                    LeftCol["Form / Main Data (1fr)"]
+                    RightCol["Preview / Widgets (300px)"]
+                    end
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="footer">
+        A-LAB.TECH // INTERNAL ARCHITECTURE AUDIT 2026
+    </footer>
+
+</body>
+
+</html>
