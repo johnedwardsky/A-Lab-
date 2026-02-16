@@ -21,6 +21,18 @@
     white-space: nowrap;
 }
 
+.sidebar .logo img {
+    height: 45px;
+    width: auto;
+    transition: 0.3s ease;
+    filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+}
+
+.sidebar .logo:hover img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 12px rgba(255, 42, 42, 0.5));
+}
+
 .sidebar:hover {
     width: 220px;
 }
@@ -149,8 +161,15 @@
 }
 
 .logo-bottom img {
-    width: 30px;
+    width: 42px;
     height: auto;
+    transition: 0.3s ease;
+    filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+}
+
+.logo-bottom:hover img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 12px rgba(255, 42, 42, 0.5));
 }
 
 /* More Menu Popup */
@@ -290,4 +309,14 @@ body.light-theme .more-item {
 
 body.light-theme .more-item:hover {
     background: rgba(0, 0, 0, 0.03);
+}
+/* Light Theme Logo fixes */
+body.light-theme .sidebar .logo img,
+body.light-theme .logo-bottom img {
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.1));
+}
+
+body.light-theme .sidebar .logo:hover img,
+body.light-theme .logo-bottom:hover img {
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
 }
