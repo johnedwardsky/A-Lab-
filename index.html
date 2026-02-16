@@ -44,26 +44,25 @@
         }
 
         /* --- CUSTOM CURSOR --- */
+        /* --- CUSTOM CURSOR --- */
         .cursor {
             position: fixed;
             width: 20px;
             height: 20px;
-            border: 1px solid var(--accent);
+            background: #fff;
             border-radius: 50%;
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 20000;
-            transition: width 0.15s, height 0.15s, background 0.15s, border-color 0.15s;
-            mix-blend-mode: normal;
+            transition: width 0.2s, height 0.2s;
+            mix-blend-mode: difference;
             will-change: left, top, width, height;
         }
 
         .cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background: var(--accent);
-            opacity: 0.8;
-            box-shadow: 0 0 20px var(--accent);
+            width: 80px;
+            height: 80px;
+            mix-blend-mode: difference;
         }
 
         /* Noise Background Effect */
