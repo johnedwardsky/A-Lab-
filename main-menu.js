@@ -388,22 +388,22 @@ const MainMenu = (() => {
                     display: none;
                 }
                 .menu-links-section {
-                    padding: 30px;
+                    padding: 40px 40px 40px 60px; /* Extra left padding for indices */
                     border: none;
-                    text-align: center;
-                    align-items: center;
+                    text-align: left;
+                    align-items: flex-start;
                 }
                 .menu-nav-list {
-                    align-items: center;
+                    align-items: flex-start;
                     width: 100%;
                 }
                 .nav-link {
-                    font-size: 2rem;
-                    width: auto;
-                    margin: 0 auto;
+                    font-size: 1.8rem;
+                    width: fit-content;
+                    margin: 0;
                 }
                 .nav-link::before {
-                    display: none;
+                    display: block; /* Show red indices */
                 }
                 .menu-header-mobile {
                     position: relative;
