@@ -78,35 +78,50 @@ const MainMenu = (() => {
         container.id = 'alab-main-menu';
         container.innerHTML = `
             <nav class="menu-overlay ${isOpen ? 'open' : ''}">
-                <div class="menu-overlay-inner">
-                    <button class="menu-close hover-trigger" onclick="MainMenu.toggle()">✕</button>
-                    
-                    <div class="menu-profile-section" style="margin-bottom: 40px;">
-                        <a href="login.html" class="cabinet-btn hover-trigger">
-                            <i>👤</i> ${lang === 'en' ? 'CABINET' : 'ЛИЧНЫЙ КАБИНЕТ'}
-                        </a>
-                    </div>
+                <div class="menu-container">
+                    <div class="menu-links-section">
+                        <div class="menu-header-mobile">
+                            <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB" style="height: 35px; width: auto;"></a>
+                            <button class="menu-close hover-trigger" onclick="MainMenu.toggle()">/// ЗАКРЫТЬ</button>
+                        </div>
+                        
+                        <div class="menu-top-controls">
+                             <a href="${userLoggedIn ? 'resident-workspace-ru.html' : 'login.html'}" class="cabinet-btn hover-trigger">
+                                <i>👤</i> ${userLoggedIn ? (lang === 'en' ? 'DASHBOARD' : 'КАБИНЕТ') : (lang === 'en' ? 'LOGIN' : 'ВХОД')}
+                            </a>
+                        </div>
 
-                    <ul class="menu-list">
-                        ${menuItems.map(item => `
-                            <li>
+                        <div class="menu-nav-list">
+                            ${menuItems.map((item, index) => `
                                 <a href="${item.url}" 
-                                   class="menu-link hover-trigger ${item.url === currentPage ? 'active' : ''}"
+                                   class="nav-link hover-trigger ${item.url === currentPage ? 'active' : ''}"
+                                   data-index="${String(index + 1).padStart(2, '0')}"
+                                   data-target="item-${index}"
                                    target="${item.target || '_self'}">
                                     ${getLabel(item)}
                                 </a>
-                            </li>
-                        `).join('')}
-                    </ul>
-                    <div class="menu-lang-toggle">
-                        <button class="lang-btn hover-trigger ${lang === 'ru' ? 'active' : ''}" 
-                                data-lang-toggle="ru"
-                                onclick="MainMenu.switchLang('ru')">RU</button>
-                        <span class="lang-divider">/</span>
-                        <button class="lang-btn hover-trigger ${lang === 'en' ? 'active' : ''}"
-                                data-lang-toggle="en" 
-                                onclick="MainMenu.switchLang('en')">EN</button>
+                            `).join('')}
+                        </div>
+
+                        <div class="menu-lang-toggle">
+                            <button class="lang-btn hover-trigger ${lang === 'ru' ? 'active' : ''}" onclick="MainMenu.switchLang('ru')">RU</button>
+                            <span class="lang-divider">|</span>
+                            <button class="lang-btn hover-trigger ${lang === 'en' ? 'active' : ''}" onclick="MainMenu.switchLang('en')">EN</button>
+                        </div>
                     </div>
+
+                    <aside class="menu-preview-section">
+                        <div class="preview-box active" id="default-preview">
+                            <h2>CORE_SYST</h2>
+                            <p>${lang === 'en' ? 'Central interface for managing all laboratory units.' : 'Центральный интерфейс управления всеми подразделениями лаборатории.'}</p>
+                        </div>
+                        ${menuItems.map((item, index) => `
+                            <div class="preview-box" id="preview-item-${index}">
+                                <h2>${item.code || 'SYS_MODULE'}</h2>
+                                <p>${lang === 'en' ? (item.desc_en || item.label_en) : (item.desc_ru || item.label_ru)}</p>
+                            </div>
+                        `).join('')}
+                    </aside>
                 </div>
             </nav>
         `;
@@ -147,189 +162,235 @@ const MainMenu = (() => {
         const style = document.createElement('style');
         style.id = 'alab-menu-styles';
         style.textContent = `
-            #alab-main-menu {
-                position: fixed;
-                top: 0;
-                right: 0;
-                z-index: 1000;
-            }
-
+            /* --- MENU LAYOUT --- */
             .menu-overlay {
                 position: fixed;
                 top: 0;
-                right: -100%;
+                left: 0;
                 width: 100%;
                 height: 100vh;
-                background: rgba(0, 0, 0, 0.95);
-                backdrop-filter: blur(40px);
-                -webkit-backdrop-filter: blur(40px);
-                transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-                z-index: 1001;
+                background: #030407;
+                z-index: 9999;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.4s ease;
                 display: flex;
-                align-items: center;
-                justify-content: center;
             }
 
             .menu-overlay.open {
-                right: 0;
+                opacity: 1;
+                pointer-events: auto;
             }
 
-            .menu-overlay-inner {
-                text-align: center;
-                max-width: 600px;
-                width: 90%;
+            .menu-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                width: 100%;
+                height: 100%;
+            }
+
+            /* --- LEFT COLUMN (LINKS) --- */
+            .menu-links-section {
+                padding: 60px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+                position: relative;
+                overflow-y: auto;
+            }
+
+            .menu-header-mobile {
+                position: absolute;
+                top: 40px;
+                left: 40px;
+                right: 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .menu-close {
-                position: absolute;
-                top: 30px;
-                right: 30px;
-                background: none;
-                border: 1px solid rgba(255,255,255,0.1);
-                color: white;
-                font-size: 1.5rem;
-                width: 44px;
-                height: 44px;
-                border-radius: 12px;
+                font-family: 'JetBrains Mono', monospace;
+                color: #FF2A2A;
+                background: transparent;
+                border: 1px solid #FF2A2A;
+                padding: 8px 20px;
+                border-radius: 50px;
                 cursor: pointer;
+                font-size: 0.8rem;
                 transition: 0.3s;
+            }
+            
+            .menu-close:hover {
+                background: #FF2A2A;
+                color: white;
+            }
+
+            .menu-top-controls {
+                margin-bottom: 40px;
+                margin-top: 80px;
+            }
+
+            .menu-nav-list {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: auto;
+            }
+
+            .nav-link {
+                font-family: 'Inter', sans-serif;
+                font-size: clamp(1.8rem, 3vw, 3rem);
+                font-weight: 800;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.2);
+                text-decoration: none;
+                line-height: 1.1;
+                transition: 0.4s;
+                position: relative;
+                width: fit-content;
+            }
+
+            .nav-link::before {
+                content: attr(data-index);
+                position: absolute;
+                left: -40px;
+                top: 5px;
+                font-size: 0.8rem;
+                font-family: 'JetBrains Mono', monospace;
+                color: #FF2A2A;
+                opacity: 0;
+                transition: 0.3s;
+            }
+
+            .nav-link:hover, .nav-link.active {
+                color: white;
+                padding-left: 10px;
+            }
+
+            .nav-link:hover::before, .nav-link.active::before {
+                opacity: 1;
+                left: -35px;
+            }
+
+            /* --- RIGHT COLUMN (PREVIEW) --- */
+            .menu-preview-section {
+                background: linear-gradient(135deg, #111 0%, #050505 100%);
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                padding: 60px;
+                position: relative;
+                overflow: hidden;
             }
 
-            .menu-close:hover {
-                border-color: var(--accent, #FF2A2A);
-                color: var(--accent, #FF2A2A);
+            .menu-preview-section::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: url('https://grainy-gradients.vercel.app/noise.svg');
+                opacity: 0.05;
+                pointer-events: none;
             }
 
-            .menu-list {
-                list-style: none;
-                padding: 0;
-                margin: 0;
+            .preview-box {
+                max-width: 400px;
+                display: none;
+                animation: fadeIn 0.4s ease-out;
+                z-index: 2;
+                text-align: left;
             }
 
-            .menu-list li {
-                margin-bottom: 5px;
+            .preview-box.active {
+                display: block;
             }
 
-            .menu-link {
-                display: inline-block;
-                color: rgba(255, 255, 255, 0.6);
-                text-decoration: none;
-                font-family: var(--font-main, 'Inter', sans-serif);
-                font-size: 2rem;
-                font-weight: 300;
-                padding: 8px 20px;
-                border-radius: 10px;
-                transition: 0.3s;
-                letter-spacing: 1px;
+            .preview-box h2 {
+                font-family: 'JetBrains Mono', monospace;
+                color: #00E5FF;
+                font-size: 1.5rem;
+                margin-bottom: 20px;
             }
 
-            .menu-link:hover {
+            .preview-box p {
+                font-family: 'Inter', sans-serif;
+                font-size: 1.1rem;
+                line-height: 1.6;
+                color: #aaa;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            /* --- CONTROLS --- */
+            .cabinet-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 25px;
+                background: rgba(255, 42, 42, 0.1);
+                border: 1px solid #FF2A2A;
                 color: white;
-                background: rgba(0, 229, 255, 0.05);
+                text-decoration: none;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.8rem;
+                border-radius: 4px;
+                transition: 0.3s;
             }
 
-            .menu-link.active {
-                color: var(--tech-blue, #00E5FF);
-                font-weight: 600;
+            .cabinet-btn:hover {
+                background: #FF2A2A;
+                box-shadow: 0 0 20px rgba(255, 42, 42, 0.4);
             }
 
             .menu-lang-toggle {
-                margin-top: 50px;
+                margin-top: 40px;
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
+                gap: 15px;
+                font-family: 'JetBrains Mono', monospace;
+                color: rgba(255,255,255,0.4);
             }
 
             .lang-btn {
                 background: none;
-                border: 1px solid rgba(255,255,255,0.1);
-                color: rgba(255,255,255,0.4);
-                font-family: var(--font-code, 'JetBrains Mono', monospace);
-                font-size: 0.85rem;
-                font-weight: 700;
-                padding: 8px 16px;
-                border-radius: 6px;
+                border: none;
+                color: inherit;
                 cursor: pointer;
-                transition: 0.3s;
-                letter-spacing: 2px;
-            }
-
-            .lang-btn:hover {
-                border-color: var(--tech-blue, #00E5FF);
-                color: white;
+                font-size: 1rem;
+                padding: 0;
             }
 
             .lang-btn.active {
-                background: var(--tech-blue, #00E5FF);
-                color: #000;
-                border-color: var(--tech-blue, #00E5FF);
-            }
-
-            .cabinet-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 15px;
-                padding: 15px 40px;
-                background: rgba(255, 42, 42, 0.1);
-                border: 1px solid var(--accent, #FF2A2A);
                 color: white;
-                text-decoration: none;
-                font-family: var(--font-code, 'JetBrains Mono', monospace);
-                font-weight: 700;
-                font-size: 0.9rem;
-                letter-spacing: 2px;
-                border-radius: 4px;
-                transition: 0.3s;
-                margin-bottom: 20px;
+                text-decoration: underline;
+                text-decoration-color: #00E5FF;
             }
 
-            .cabinet-btn:hover {
-                background: var(--accent, #FF2A2A);
-                color: white;
-                box-shadow: 0 0 30px rgba(255, 42, 42, 0.3);
-            }
-
-            .cabinet-btn i {
-                font-style: normal;
-                font-size: 1.2rem;
-            }
-
-            .lang-divider {
-                color: rgba(255,255,255,0.2);
-                font-size: 1.2rem;
-            }
-
-            /* Light theme */
-            body.light-theme .menu-hamburger {
-                background: rgba(255, 255, 255, 0.9);
-                border-color: rgba(0, 0, 0, 0.08);
-            }
-
-            body.light-theme .menu-hamburger span {
-                background: #1d1d1f;
-            }
-
-            /* Mobile */
-            @media (max-width: 768px) {
-                .menu-hamburger {
-                    top: 15px;
-                    right: 15px;
-                    width: 40px;
-                    height: 40px;
+            /* --- MOBILE --- */
+            @media (max-width: 1024px) {
+                .menu-container {
+                    grid-template-columns: 1fr;
                 }
-
-                .menu-link {
-                    font-size: 1.3rem;
-                    padding: 6px 15px;
+                .menu-preview-section {
+                    display: none;
                 }
-
-                .menu-close {
-                    top: 15px;
-                    right: 15px;
+                .menu-links-section {
+                    padding: 30px;
+                    border: none;
+                }
+                .nav-link {
+                    font-size: 2rem;
+                }
+                .menu-header-mobile {
+                    position: relative;
+                    top: 0; left: 0; right: 0;
+                    margin-bottom: 40px;
+                }
+                .menu-top-controls {
+                    margin-top: 0;
                 }
             }
         `;
@@ -337,19 +398,57 @@ const MainMenu = (() => {
     }
 
     /**
+     * Initialize keys and events
+     */
+    function attachEvents() {
+        const links = document.querySelectorAll('.nav-link');
+        const previews = document.querySelectorAll('.preview-box');
+
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                const targetId = 'preview-' + link.getAttribute('data-target');
+                const target = document.getElementById(targetId);
+
+                if (target) {
+                    previews.forEach(p => p.classList.remove('active'));
+                    target.classList.add('active');
+                }
+            });
+        });
+    }
+
+    /**
      * Initialize
      */
     async function init() {
         await loadItems();
-        render();
-
-        // Re-render on lang change
-        window.addEventListener('alab:lang-changed', () => {
-            render();
-        });
+        // Pre-inject styles so they are ready
+        injectStyles();
     }
 
-    // Auto-run
+    // Re-assign toggle function
+    toggle = function () {
+        if (!isOpen) {
+            render();
+            // Small delay to allow DOM to paint before adding open class for transition
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    const overlay = document.querySelector('.menu-overlay');
+                    if (overlay) overlay.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                    isOpen = true;
+                    attachEvents();
+                });
+            });
+        } else {
+            const overlay = document.querySelector('.menu-overlay');
+            if (overlay) overlay.classList.remove('open');
+            document.body.style.overflow = '';
+            isOpen = false;
+        }
+    }
+
+    // Auto-run init
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
