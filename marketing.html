@@ -57,7 +57,8 @@
         }
 
         /* --- HEADER (Standardized) --- */
-        header { pointer-events: none; 
+        header {
+            pointer-events: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -378,7 +379,7 @@
         }
 
         .lab-overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -387,7 +388,39 @@
             pointer-events: none;
         }
 
-        @media (max-width: 1024px) { .logo { top: 20px; left: 20px; position: fixed !important; } .logo img { height: 35px; }
+        .system-badge {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            font-family: var(--font-code);
+            color: var(--accent);
+            font-size: 0.7rem;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 12px;
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            pointer-events: none;
+        }
+
+        @media (max-width: 1024px) {
+            .system-badge {
+                bottom: 20px;
+                left: 20px;
+                font-size: 0.6rem;
+            }
+
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
             .lab-grid {
                 grid-template-columns: 1fr;
             }
@@ -487,8 +520,7 @@
                 <div class="lab-image-container">
                     <img src="value_modeling_lab.png" alt="Value Modeling Lab" class="lab-image">
                     <div class="lab-overlay"></div>
-                    <div
-                        style="position: fixed; top: 20px; right: 20px; font-family: var(--font-code); color: var(--accent); font-size: 0.7rem; background: rgba(0,0,0,0.6); padding: 5px 12px; border: 1px solid var(--accent); border-radius: 4px;">
+                    <div class="system-badge">
                         CORE_RESEARCH_NODE: V.01
                     </div>
                 </div>
