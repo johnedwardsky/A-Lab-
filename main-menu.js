@@ -8,14 +8,55 @@
 
 const MainMenu = (() => {
     const fallbackItems = [
-        { label_ru: 'Главная', label_en: 'Home', url: 'index.html' },
-        { label_ru: 'О компании', label_en: 'About', url: 'about.html' },
-        { label_ru: 'R&D Lab', label_en: 'R&D Lab', url: 'rd.html' },
-        { label_ru: 'Тех консалтинг', label_en: 'Tech Consulting', url: 'consulting.html' },
-        { label_ru: 'Digital & AI', label_en: 'Digital & AI', url: 'digital.html' },
-        { label_ru: 'Дизайн', label_en: 'Design', url: 'design.html' },
-        { label_ru: 'Маркетинг', label_en: 'Marketing', url: 'marketing.html' },
-        { label_ru: 'Резиденты', label_en: 'Residents', url: 'residents.html' },
+        {
+            label_ru: 'Главная', label_en: 'Home', url: 'index.html',
+            code: 'CORE_HUB',
+            desc_ru: 'Точка входа в экосистему A-LAB. Будущее технологий начинается здесь.',
+            desc_en: 'Entry point to the A-LAB ecosystem. The future of technology starts here.'
+        },
+        {
+            label_ru: 'О компании', label_en: 'About', url: 'about.html',
+            code: 'VISION_CORE',
+            desc_ru: 'Кто мы и почему мы меняем правила игры. Наша миссия и визионеры.',
+            desc_en: 'Who we are and why we change the rules. Our mission and visionaries.'
+        },
+        {
+            label_ru: 'R&D Lab', label_en: 'R&D Lab', url: 'rd.html',
+            code: 'RND_LAB',
+            desc_ru: 'Секретные разработки, прототипы будущего и глубокие исследования.',
+            desc_en: 'Secret developments, prototypes of the future, and deep research.'
+        },
+        {
+            label_ru: 'Тех консалтинг', label_en: 'Tech Consulting', url: 'consulting.html',
+            code: 'TECH_CONSULT',
+            desc_ru: 'Масштабируем ваш бизнес через внедрение передовых архитектурных решений.',
+            desc_en: 'Scaling your business through the implementation of advanced architectural solutions.'
+        },
+        {
+            label_ru: 'Digital & AI', label_en: 'Digital & AI', url: 'digital.html',
+            code: 'DIGITAL_AI',
+            desc_ru: 'Нейросети, автоматизация и цифровые двойники для лидерства на рынке.',
+            desc_en: 'Neural networks, automation, and digital twins for market leadership.'
+        },
+        {
+            label_ru: 'Дизайн', label_en: 'Design', url: 'design.html',
+            code: 'DESIGN_NODE',
+            desc_ru: 'Эстетика высоких технологий и интерфейсы, опережающие время.',
+            desc_en: 'High-tech aesthetics and interfaces ahead of their time.'
+        },
+        {
+            label_ru: 'Маркетинг', label_en: 'Marketing', url: 'marketing.html',
+            code: 'GROWTH_ENGINE',
+            desc_ru: 'Стратегии роста, основанные на данных и психологии потребления.',
+            desc_en: 'Growth strategies based on data and consumer psychology.'
+        },
+        {
+            label_ru: 'Резиденты', label_en: 'Residents', url: 'residents.html',
+            code: 'RESIDENT_GRID',
+            desc_ru: 'Закрытое сообщество инноваторов. Скоро будет открыто для резидентов A-LAB.',
+            desc_en: 'A closed community of innovators. Opening soon for A-LAB residents.',
+            is_upcoming: true
+        },
     ];
 
     let menuItems = [];
@@ -115,7 +156,12 @@ const MainMenu = (() => {
                         ${menuItems.map((item, index) => `
                             <div class="preview-box" id="preview-item-${index}">
                                 <h2>${item.code || 'SYS_MODULE'}</h2>
-                                <p>${lang === 'en' ? (item.desc_en || item.label_en) : (item.desc_ru || item.label_ru)}</p>
+                                <p>${lang === 'en' ? (item.desc_en || item.label_en || item.label_ru) : (item.desc_ru || item.desc_en || item.label_ru)}</p>
+                                ${item.is_upcoming ? `
+                                    <div class="upcoming-badge">
+                                        ${lang === 'en' ? 'IN DEVELOPMENT' : 'В РАЗРАБОТКЕ'}
+                                    </div>
+                                ` : ''}
                             </div>
                         `).join('')}
                     </aside>
@@ -355,6 +401,26 @@ const MainMenu = (() => {
             @keyframes fadeIn {
                 from { opacity: 0; transform: translateY(10px); }
                 to { opacity: 1; transform: translateY(0); }
+            }
+
+            .upcoming-badge {
+                display: inline-block;
+                margin-top: 20px;
+                padding: 6px 12px;
+                border: 1px solid #FF2A2A;
+                color: #FF2A2A;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                border-radius: 4px;
+                background: rgba(255, 42, 42, 0.1);
+                animation: pulseBadge 2s infinite;
+            }
+
+            @keyframes pulseBadge {
+                0% { opacity: 0.6; }
+                50% { opacity: 1; }
+                100% { opacity: 0.6; }
             }
 
             /* --- CONTROLS --- */
