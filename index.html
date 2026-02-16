@@ -97,22 +97,25 @@
 
         .logo {
             pointer-events: auto;
-            /* Logo is clickable */
+            position: fixed;
+            /* Logo stays */
+            top: 40px;
+            left: 40px;
+            z-index: 1000;
             display: flex;
             align-items: center;
         }
 
         .menu-btn {
             pointer-events: auto;
-            position: fixed;
-            /* Sticks to screen */
-            top: 40px;
-            right: 40px;
+            /* Button inside absolute header, so it scrolls with page */
+            position: relative;
             z-index: 1000;
 
             text-decoration: none;
             color: white;
             background: rgba(255, 255, 255, 0.05);
+            /* Default transparent-ish */
             border: 1px solid var(--border);
             padding: 8px 20px;
             border-radius: 50px;
@@ -124,9 +127,13 @@
         }
 
         .menu-btn:hover {
-            background: var(--accent);
+            background: transparent;
+            /* No fill */
             border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(255, 42, 42, 0.4);
+            /* Red border */
+            color: var(--accent);
+            /* Red text */
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.2);
             transform: translateY(-2px);
         }
 
