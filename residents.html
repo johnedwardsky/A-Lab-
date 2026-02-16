@@ -144,7 +144,8 @@
         }
 
         /* --- HEADER (Standardized) --- */
-        header { pointer-events: none; 
+        header {
+            pointer-events: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -259,7 +260,17 @@
             }
         }
 
-        @media (max-width: 1024px) { .logo { top: 20px; left: 20px; position: fixed !important; } .logo img { height: 35px; }
+        @media (max-width: 1024px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
             .residents-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -1072,6 +1083,14 @@
                 btn.innerText = 'ОТПРАВИТЬ ЗАЯВКУ';
             }
         }
+
+        // Auto-open quiz if url param ?join=true is present
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('join')) {
+                openQuiz();
+            }
+        });
     </script>
     <!-- A-LAB Integration -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -33,7 +33,7 @@ const ResidentNav = {
         sidebar.className = 'sidebar';
         sidebar.innerHTML = `
             <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
-            <button class="join-btn-sidebar hover-trigger" onclick="openQuiz()">
+            <button class="join-btn-sidebar hover-trigger" onclick="ResidentNav.handleJoinClick()">
                 <i>+</i> <span>ВСТУПИТЬ</span>
             </button>
             <nav style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
@@ -93,7 +93,8 @@ const ResidentNav = {
         moreMenu.innerHTML = `
             ${moreItemsHTML}
             <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
-            <button class="more-item join-btn hover-trigger" onclick="openQuiz()"><i>+</i> <span>ВСТУПИТЬ</span></button>
+            <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
+            <button class="more-item join-btn hover-trigger" onclick="ResidentNav.handleJoinClick()"><i>+</i> <span>ВСТУПИТЬ</span></button>
             <button class="more-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" onclick="ResidentNav.handleSettingsClick()">
                 <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? 'Настройки' : 'Войти'}</span>
             </button>
@@ -180,6 +181,15 @@ const ResidentNav = {
             window.location.href = 'resident-admin-ru.html';
         } else {
             window.location.href = 'login.html';
+            window.location.href = 'login.html';
+        }
+    },
+
+    handleJoinClick() {
+        if (typeof openQuiz === 'function') {
+            openQuiz();
+        } else {
+            window.location.href = 'residents.html?join=true';
         }
     }
 };
