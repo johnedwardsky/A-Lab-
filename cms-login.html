@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-LAB.CORE | AUTH_PORTAL</title>
+    <title>A-LAB.CORE | ADMIN_PORTAL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -170,7 +170,7 @@
     <div class="auth-container">
         <div class="auth-logo">
             <img src="A-lab-logo.svg" alt="A-LAB">
-            <h2>ACCESS_PROTOCOL</h2>
+            <h2>ADMIN_ACCESS_PROTOCOL</h2>
         </div>
 
         <div id="errorMsg" class="error-msg"></div>
@@ -217,9 +217,18 @@
                 errorMsg.style.display = 'block';
             } else {
                 const db = window.ALabCore.db;
-                // Redirect ALL users to resident workspace by default
-                // Use cms-login.html for direct admin access
-                window.location.href = 'resident-workspace-ru.html';
+                // Check if admin
+                const { data: profile } = await db
+                    .from('residents')
+                    .select('is_admin')
+                    .eq('user_id', data.user.id)
+                    .single();
+
+                if (profile && profile.is_admin) {
+                    window.location.href = 'cms-admin.html';
+                } else {
+                    window.location.href = 'resident-workspace-ru.html';
+                }
             }
         });
     </script>
