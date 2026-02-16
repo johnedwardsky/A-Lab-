@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | РАБОЧАЯ СТАНЦИЯ РЕЗИДЕНТА</title>
+    <link rel="stylesheet" href="resident-nav.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --panel: #0d111a;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* --- CURSOR --- */
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--tech-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--tech-blue);
+            opacity: 0.5;
+        }
+
+        /* Shared styles used */
+
+        /* --- CONTENT --- */
+        .main-container {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+        }
+
+        .header-top {
+            grid-column: span 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-top h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header-top .mode-badge {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--tech-blue);
+            border: 1px solid var(--tech-blue);
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .tab-content.no-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 1100px) {
+            .tab-content.active {
+                grid-template-columns: 1fr;
+            }
+
+            .right-panel {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 20px;
+                padding-bottom: 80px;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .action-bar {
+                left: 20px;
+                right: 20px;
+                bottom: 80px;
+            }
+
+            .btn-save {
+                width: 100%;
+            }
+        }
+
+        /* --- THEME TOGGLE (ADMIN) --- */
+        .admin-theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            z-index: 101;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --panel: #fcfcfd;
+            --text: #1d1d1f;
+            --border: rgba(0, 0, 0, 0.08);
+            --tech-blue: #008fa4;
+        }
+
+        body.light-theme .preview-mini-inner {
+            background: #f5f5f7 !important;
+        }
+
+        body.light-theme .preview-mini img {
+            filter: none !important;
+        }
+
+        body.light-theme .side-icon {
+            color: #666;
+        }
+
+        body.light-theme .side-icon:hover,
+        body.light-theme .side-icon.active {
+            background: rgba(0, 143, 164, 0.05);
+            color: var(--tech-blue);
+        }
+
+        body.light-theme .section-card,
+        body.light-theme .preview-mini,
+        body.light-theme .pulse-manager,
+        body.light-theme .stat-box {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.05);
+            color: #1d1d1f;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        body.light-theme .form-input,
+        body.light-theme .form-textarea {
+            background: #fff !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .form-label {
+            color: #666;
+        }
+
+        body.light-theme .section-title {
+            color: #888;
+        }
+
+        body.light-theme div[style*="background: rgba(0, 229, 255, 0.05)"] {
+            background: #f0faff !important;
+            border-color: #008fa4 !important;
+        }
+
+        body.light-theme h1,
+        body.light-theme p {
+            color: #1d1d1f;
+        }
+
+        /* Light Theme Overrides for New Classes */
+        body.light-theme .stat-box-inner {
+            background: #fff !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .chat-bubble-user {
+            background: #f0f0f0 !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .chat-bubble-rd {
+            background: #f0faff !important;
+            border-color: #008fa4 !important;
+        }
+
+        body.light-theme .feed-item-box {
+            background: #fff !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .chart-container-box {
+            background: #fff !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.light-theme .notif-item-box {
+            background: #fff !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* --- EDITOR SECTIONS --- */
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '>';
+            color: var(--tech-blue);
+        }
+
+        /* --- FORMS --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-input:hover,
+        .form-textarea:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--tech-blue);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .form-textarea {
+            height: 120px;
+            resize: none;
+        }
+
+        .status-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .status-btn {
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: #888;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            text-align: center;
+            text-align: center;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: none;
+        }
+
+        .status-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-btn.active.open {
+            border-color: #00FF41;
+            color: #00FF41;
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .status-btn.active.busy {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(255, 42, 42, 0.05);
+        }
+
+        .status-btn.active.away {
+            border-color: #FFB800;
+            color: #FFB800;
+            background: rgba(255, 184, 0, 0.05);
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .preview-mini {
+            background: #000;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .pulse-manager {
+            background: #050505;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-pulse {
+            width: 100%;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: var(--font-code);
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-top: 15px;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: none;
+        }
+
+        .btn-pulse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .action-bar {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: black;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.2);
+            transition: 0.3s;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.03;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise"></div>
+    <div class="cursor"></div>
+
+    <header style="position: fixed; top: 30px; right: 40px; z-index: 1001; display: flex; gap: 15px;">
+        <div class="notif-bell hover-trigger" onclick="switchTab('notifications')"
+            style="position: relative; background: var(--surface); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: none;">
+            <i>🔔</i>
+            <span
+                style="position: absolute; top: 0; right: 0; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; border: 2px solid var(--bg);"></span>
+        </div>
+        <button class="admin-theme-toggle hover-trigger" onclick="toggleTheme()" id="themeBtn">☽</button>
+    </header>
+
+    <!-- Navigation is injected by nav-manager.js -->
+
+    <div class="main-container">
+        <div class="header-top">
+            <div>
+                <h1 id="workstationTitle">Личный Кабинет Резидента</h1>
+                <p style="color: #888; font-size: 0.8rem; font-family: var(--font-code);">STATUS: AUTHENTICATED //
+                    ACCESS: RESIDENT</p>
+            </div>
+            <div class="mode-badge" id="modeBadge">РЕЖИМ_УПРАВЛЕНИЯ_ПРОФИЛЕМ</div>
+        </div>
+
+        <!-- PROFILE TAB -->
+        <div class="tab-content active" id="profile-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Аватар</div>
+                    <div style="display: flex; align-items: center; gap: 30px;">
+                        <div class="avatar-upload-box"
+                            style="width: 120px; height: 120px; border-radius: 50%; border: 2px dashed var(--border); overflow: hidden; position: relative;">
+                            <img src="maya_neural.png" id="avatarPreview"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <button class="status-btn hover-trigger" id="avatarUploadBtn"
+                            onclick="document.getElementById('avatarFileInput').click()">Загрузить файл</button>
+                        <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp"
+                            style="display:none;">
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Основная Информация</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Имя</label>
+                            <input type="text" class="form-input" id="profileName" value="Maya Neural">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Роль</label>
+                            <input type="text" class="form-input" id="profileRole" value="AI Инженер">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">О себе</label>
+                        <textarea class="form-textarea" id="profileBio"></textarea>
+                    </div>
+                </section>
+                <section class="section-card">
+                    <div class="section-title">Социальные Связи</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Telegram</label>
+                            <input type="text" class="form-input" id="profileTelegram" value="@maya_n">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">GitHub</label>
+                            <input type="text" class="form-input" id="profileGithub" value="github.com/maya">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Behance</label>
+                            <input type="text" class="form-input" id="profileBehance" value="behance.net/maya">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Свой сайт</label>
+                            <input type="text" class="form-input" id="profileWebsite" placeholder="https://...">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Технологический Стек & Навыки</div>
+                    <div class="form-group">
+                        <label class="form-label">Ваши теги (через запятую)</label>
+                        <input type="text" class="form-input" id="profileSkills"
+                            value="AI_ART, NEURAL_NETS, UI_DESIGN, R&D">
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Shared Intelligence (Prompt Core)</div>
+                    <div class="form-group">
+                        <label class="form-label">Ваш текущий мастер-промпт</label>
+                        <textarea class="form-textarea"
+                            placeholder="Act as a minimalist UI architect...">"Act as a minimalist UI architect..."</textarea>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Достижения & Знаки Отличия</div>
+                    <div style="display: flex; gap: 15px;">
+                        <div
+                            style="width: 50px; height: 50px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; background: rgba(255, 42, 42, 0.05);">
+                            🛠️</div>
+                        <div
+                            style="width: 50px; height: 50px; border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; background: rgba(255, 42, 42, 0.05);">
+                            💎</div>
+                        <div
+                            style="width: 50px; height: 50px; border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; opacity: 0.3;">
+                            🔒</div>
+                    </div>
+                    <p style="font-size: 0.6rem; color: #555; margin-top: 10px;">Знаки отличия выдаются администрацией
+                        лаборатории за вклад в R&D.</p>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Статус</div>
+                    <div class="status-selector">
+                        <button class="status-btn open active hover-trigger">ОТКРЫТ</button>
+                        <button class="status-btn busy hover-trigger">ЗАНЯТ</button>
+                        <button class="status-btn away hover-trigger">ОТСУТСТВУЮ</button>
+                    </div>
+                </section>
+                <section class="preview-mini">
+                    <div
+                        style="font-family: var(--font-code); font-size: 0.6rem; color: #888; margin-bottom: 10px; text-align: center;">
+                        КАРТОЧКА_В_СЕТИ</div>
+                    <div class="preview-mini-inner"
+                        style="border: 1px solid var(--border); border-radius: 10px; overflow: hidden; position: relative;">
+                        <img src="maya_neural.png" style="width:100%; filter: grayscale(1);">
+                        <div style="padding: 10px; background: #0b0d14;" class="preview-mini-inner">
+                            <div style="font-weight: 800; font-size: 0.8rem;">Maya Neural</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS TAB -->
+        <div class="tab-content" id="notifications-tab">
+            <div class="left-col" style="grid-column: span 2;">
+                <section class="section-card">
+                    <div class="section-title">Центр Уведомлений</div>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Notif Item -->
+                        <div class="notif-item-box"
+                            style="display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(0,229,255,0.03); border: 1px solid var(--border); border-radius: 15px;">
+                            <div style="font-size: 1.5rem;">🤝</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 800; font-size: 0.9rem;">Новый запрос на рекомендацию</div>
+                                <div style="font-size: 0.8rem; color: #888;">Пользователь <b>Dmitry_AI</b> указал вас
+                                    как рекомендателя.</div>
+                            </div>
+                            <button class="status-btn active open hover-trigger" onclick="switchTab('network')"
+                                style="padding: 10px 20px;">ПЕРЕЙТИ</button>
+                        </div>
+                        <!-- R&D Notif Item -->
+                        <div class="chat-bubble-rd"
+                            style="display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--tech-blue); border-radius: 15px;">
+                            <div style="font-size: 1.5rem;">🧠</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 800; font-size: 0.9rem; color: var(--tech-blue);">Ответ от R&D
+                                    Лаборатории</div>
+                                <div style="font-size: 0.8rem; color: #888;">Ваш запрос #RD-8842-X был обработан.
+                                    Проверьте детали в R&D Хабе.</div>
+                            </div>
+                            <button class="status-btn active open hover-trigger" onclick="switchTab('rd')"
+                                style="padding: 10px 20px; background: var(--tech-blue); color: black; border: none;">ОТКРЫТЬ</button>
+                        </div>
+
+                        <!-- Notif Item -->
+                        <div class="notif-item-box"
+                            style="display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 15px;">
+                            <div style="font-size: 1.5rem;">💬</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 800; font-size: 0.9rem;">Новое сообщение в терминале</div>
+                                <div style="font-size: 0.8rem; color: #888;"><b>Alex_River</b>: "Майя, посмотри новый
+                                    промпт в библиотеке."</div>
+                            </div>
+                            <span style="font-size: 0.7rem; color: #555;">15 МИН НАЗАД</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- ANALYTICS TAB -->
+        <div class="tab-content" id="analytics-tab">
+            <div class="left-col" style="grid-column: span 2;">
+                <section class="section-card">
+                    <div class="section-title">Персональная Аналитика Профиля</div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;">
+                        <div class="stat-box stat-box-inner"
+                            style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div
+                                style="font-family: var(--font-code); font-size: 0.6rem; color: #555; margin-bottom: 10px;">
+                                ПРОСМОТРЫ ПРОФИЛЯ</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--tech-blue);"
+                                id="statProfileViews">---</div>
+                            <div style="font-size: 0.6rem; color: #00FF41;">+12% за неделю</div>
+                        </div>
+                        <div class="stat-box"
+                            style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div
+                                style="font-family: var(--font-code); font-size: 0.6rem; color: #555; margin-bottom: 10px;">
+                                ОХВАТ ПОСТОВ</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: white;" id="statPostReach">---</div>
+                            <div style="font-size: 0.6rem; color: #00FF41;">+5% за неделю</div>
+                        </div>
+                        <div class="stat-box"
+                            style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div
+                                style="font-family: var(--font-code); font-size: 0.6rem; color: #555; margin-bottom: 10px;">
+                                ВЗАИМОДЕЙСТВИЯ</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);"
+                                id="statInteractions">---</div>
+                            <div style="font-size: 0.6rem; color: #888;">стабильно</div>
+                        </div>
+                        <div class="stat-box"
+                            style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div
+                                style="font-family: var(--font-code); font-size: 0.6rem; color: #555; margin-bottom: 10px;">
+                                CREDIBILITY SCORE</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #00FF41;" id="statCredibilityScore">
+                                98</div>
+                            <div style="font-size: 0.6rem; color: #888;">TOP 5%</div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">График Активности (За месяц)</div>
+                    <div class="chart-container-box"
+                        style="height: 150px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 15px; display: flex; align-items: flex-end; padding: 20px; gap: 5px;">
+                        <!-- Simple bar chart simulation -->
+                        <div style="flex: 1; background: var(--tech-blue); height: 30%; opacity: 0.3;"></div>
+                        <div style="flex: 1; background: var(--tech-blue); height: 45%; opacity: 0.4;"></div>
+                        <div style="flex: 1; background: var(--tech-blue); height: 60%; opacity: 0.5;"></div>
+                        <div style="flex: 1; background: var(--tech-blue); height: 80%; opacity: 0.8;"></div>
+                        <div
+                            style="flex: 1; background: var(--tech-blue); height: 100%; box-shadow: 0 0 10px var(--tech-blue);">
+                        </div>
+                        <div style="flex: 1; background: var(--tech-blue); height: 75%; opacity: 0.7;"></div>
+                        <div style="flex: 1; background: var(--tech-blue); height: 50%; opacity: 0.5;"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- FEED TAB -->
+        <div class="tab-content" id="feed-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Ваша Активность</div>
+                    <div class="feed-item-box"
+                        style="background: rgba(0,0,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.9rem;">Обновление: Добавлена новая работа в портфолио.</p>
+                        <div style="margin-top: 10px; display: flex; gap: 10px;">
+                            <button class="status-btn hover-trigger" style="padding: 5px 10px;">Правка</button>
+                        </div>
+                    </div>
+                </section>
+                <section class="section-card">
+                    <div class="section-title">Новый Пост</div>
+                    <textarea class="form-textarea" placeholder="Что нового?"></textarea>
+                    <button class="btn-pulse hover-trigger">Опубликовать</button>
+                </section>
+            </div>
+        </div>
+
+        <!-- MESSAGES TAB -->
+        <div class="tab-content no-sidebar" id="messages-tab" style="padding: 0;">
+            <div style="height: calc(100vh - 120px); display: flex;">
+                <div class="chat-sidebar"
+                    style="width: 300px; border-right: 1px solid var(--border); display: flex; flex-direction: column;">
+                    <div style="padding: 20px; border-bottom: 1px solid var(--border);">
+                        <input type="text" class="form-input" placeholder="Поиск контактов...">
+                    </div>
+                    <div id="chatList" style="flex-grow: 1; overflow-y: auto;">
+                        <div style="padding: 20px; text-align: center; color: #555; font-size: 0.8rem;">Загрузка
+                            чатов...</div>
+                    </div>
+                </div>
+                <div class="message-window" style="flex-grow: 1; display: flex; flex-direction: column;">
+                    <div id="activeChatHeader"
+                        style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+                        <div style="font-weight: 700;">Выберите чат для начала общения</div>
+                    </div>
+                    <div id="messageHistory"
+                        style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Messages go here -->
+                    </div>
+                    <div style="padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
+                        <input type="text" class="form-input" id="messageInput" placeholder="Введите сообщение...">
+                        <button class="btn-pulse hover-trigger" style="width: auto; padding: 0 20px;">ОТПРАВИТЬ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Remaining tabs: Portfolio, RD, Security, Network, Settings... (Simplified) -->
+        <div class="tab-content" id="portfolio-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Слоты Галереи</div>
+                    <div id="portfolioGallery" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <!-- Content populated by PortfolioManager -->
+                        <div style="border: 2px dashed var(--border); border-radius: 15px; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                            class="hover-trigger" onclick="document.querySelector('#portfolioFileInput').click()">
+                            <span style="font-size: 2rem; color: #333;">+</span>
+                        </div>
+                    </div>
+                    <input type="file" id="portfolioFileInput" accept="image/*" style="display:none;">
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Настройки Видимости</div>
+                    <div class="form-group">
+                        <label class="form-label">Режим Портфолио</label>
+                        <select class="form-input" id="portfolioVisibility"
+                            style="background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: white;">
+                            <option value="public">ПУБЛИЧНЫЙ</option>
+                            <option value="residents_only">ТОЛЬКО ДЛЯ РЕЗИДЕНТОВ</option>
+                            <option value="private">ПРИВАТНЫЙ</option>
+                        </select>
+                    </div>
+                    <p style="font-size: 0.7rem; color: #666; margin-top: 10px;">
+                        Публичные работы могут быть отображены на главной странице A-LAB.
+                    </p>
+                </section>
+            </div>
+        </div>
+
+        <div class="tab-content" id="rd-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Связь с Лабораторией // R&D Request</div>
+                    <textarea class="form-textarea" placeholder="Ваша идея для R&D или системный запрос..."></textarea>
+                    <button class="btn-pulse hover-trigger" style="margin-top: 15px;">Отправить запрос</button>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">История Сообщений R&D</div>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Message Item (Resident) -->
+                        <div class="chat-bubble-user"
+                            style="align-self: flex-end; max-width: 80%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 15px; border-radius: 15px 15px 0 15px;">
+                            <p style="font-size: 0.85rem;">Запрос на обновление промпт-ядра для интеграции с Midjourney
+                                V6.</p>
+                            <div
+                                style="font-size: 0.6rem; color: #555; margin-top: 8px; font-family: var(--font-code);">
+                                14:20 // ОТПРАВЛЕНО</div>
+                        </div>
+
+                        <!-- Message Item (R&D) -->
+                        <div class="chat-bubble-rd"
+                            style="align-self: flex-start; max-width: 80%; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--tech-blue); padding: 15px; border-radius: 15px 15px 15px 0; position: relative;">
+                            <div
+                                style="position: absolute; top: -10px; left: 10px; background: var(--tech-blue); color: black; font-family: var(--font-code); font-size: 0.5rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; letter-spacing: 1px;">
+                                R&D // CORE_LAB</div>
+                            <p style="font-size: 0.85rem; color: var(--text);">Запрос принят. Обновление Core_V2.4 будет
+                                развернуто в течение 24 часов. Ожидайте уведомления в терминале.</p>
+                            <div
+                                style="font-size: 0.6rem; color: var(--tech-blue); margin-top: 8px; font-family: var(--font-code);">
+                                15:45 // RECEIVED</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Статус R&D Запросов</div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                        <div
+                            style="width: 8px; height: 8px; background: #00FF41; border-radius: 50%; box-shadow: 0 0 10px #00FF41;">
+                        </div>
+                        <div style="font-size: 0.75rem; color: #888;">Активных тикетов: 1</div>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #555; font-family: var(--font-code);">ID_TIKET: #RD-8842-X
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="tab-content no-sidebar" id="security-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Учетные Данные</div>
+                    <div class="form-group">
+                        <label class="form-label">Текущий Пароль</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Новый Пароль</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <button class="status-btn hover-trigger"
+                        style="border-color: var(--tech-blue); color: var(--tech-blue);">Обновить Пароль</button>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Двухфакторная Аутентификация</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.8rem;">Status: <span
+                                style="color: var(--accent);">DISABLED</span></span>
+                        <button class="status-btn hover-trigger">Включить 2FA</button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Активные Сессии</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div
+                            style="padding: 10px; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--tech-blue); border-radius: 8px;">
+                            <div style="font-size: 0.8rem; font-weight: 700;">Chrome / MacOS</div>
+                            <div style="font-size: 0.6rem; color: var(--tech-blue);">CURRENT SESSION</div>
+                            <div style="font-size: 0.6rem; color: #555;">IP: 192.168.1.1</div>
+                        </div>
+                        <div
+                            style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px;">
+                            <div style="font-size: 0.8rem;">Mobile App / iOS</div>
+                            <div style="font-size: 0.6rem; color: #555;">Last seen: 2 hours ago</div>
+                        </div>
+                    </div>
+                    <button class="status-btn hover-trigger"
+                        style="margin-top: 15px; width: 100%; color: var(--accent); border-color: var(--accent);">Завершить
+                        все остальные</button>
+                </section>
+            </div>
+        </div>
+
+        <div class="tab-content" id="network-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Моя Сеть</div>
+                    <div class="form-group">
+                        <label class="form-label">Ваш ID для рекомендаций</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-input" value="ID.MAYA_N" readonly
+                                style="letter-spacing: 1px; font-weight: 700;">
+                            <button class="status-btn hover-trigger"
+                                onclick="navigator.clipboard.writeText('ID.MAYA_N')">COPY</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Сообщество Резидентов</div>
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="networkSearch"
+                            placeholder="Поиск по имени или роли...">
+                    </div>
+                    <div id="communityContainer"
+                        style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                        <!-- Content populated by CommunityManager -->
+                        <div style="text-align: center; padding: 20px; color: #555; font-size: 0.8rem;">ЗАГРУЗКА
+                            СПИСКА...</div>
+                    </div>
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Статистика Сети</div>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div class="stat-mini">
+                            <div style="font-size: 0.6rem; color: #555;">ВСЕГО РЕЗИДЕНТОВ</div>
+                            <div style="font-size: 1.2rem; font-weight: 700;" id="statTotalResidents">---</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div style="font-size: 0.6rem; color: #555;">СЕЙЧАС В СЕТИ</div>
+                            <div style="font-size: 1.2rem; font-weight: 700; color: #00FF41;" id="statOnlineResidents">
+                                ---</div>
+                        </div>
+                    </div>
+                    <button class="btn-pulse hover-trigger" style="margin-top: 20px; width: 100%;"
+                        onclick="switchTab('feed')">ОТКРЫТЬ ЛЕНТУ</button>
+                </section>
+            </div>
+
+            <section class="section-card">
+                <div class="section-title">Инвайты</div>
+                <p style="font-size: 0.7rem; color: #888;">У вас доступно <b>2</b> инвайта для приглашения новых
+                    участников.</p>
+                <button class="status-btn hover-trigger" style="width: 100%; margin-top: 10px;">Сгенерировать
+                    код</button>
+            </section>
+        </div>
+
+        <div class="tab-content" id="settings-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title" data-i18n="sidebar.settings">Общие Настройки</div>
+                    <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Язык / Language</label>
+                            <select class="form-input" id="settingLang"
+                                onchange="if(typeof setLanguage==='function') setLanguage(this.value)">
+                                <option value="ru">РУССКИЙ</option>
+                                <option value="en">ENGLISH</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Тема / Theme</label>
+                            <select class="form-input" id="settingsTheme"
+                                onchange="document.body.classList.toggle('light-theme', this.value==='light'); localStorage.setItem('theme', this.value);">
+                                <option value="dark">ТЁМНАЯ</option>
+                                <option value="light">СВЕТЛАЯ</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <div class="section-title">Приватность</div>
+                    <div class="form-group">
+                        <label class="form-label">Видимость профиля</label>
+                        <select class="form-input" id="settingVisibility">
+                            <option value="public">Виден всем резидентам</option>
+                            <option value="contacts">Только контактам</option>
+                            <option value="hidden">Скрытый</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 0.8rem;">Показывать статус "В сети"</span>
+                            <input type="checkbox" id="settingOnlineStatus" checked>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Уведомления</div>
+                    <div class="form-group">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="font-size: 0.8rem;">Email-оповещения</span>
+                            <input type="checkbox" id="settingEmailNotifs" checked>
+                        </div>
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="font-size: 0.8rem;">Push-уведомления</span>
+                            <input type="checkbox" id="settingPushNotifs" checked>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 0.8rem;">Еженедельный дайджест</span>
+                            <input type="checkbox" id="settingWeeklyDigest">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-card" style="border-color: var(--accent);">
+                    <div class="section-title" style="color: var(--accent);">Danger Zone</div>
+                    <button class="status-btn hover-trigger"
+                        style="width: 100%; border-color: var(--accent); color: var(--accent);">Деактивировать
+                        аккаунт</button>
+                </section>
+            </div>
+        </div>
+
+        <!-- ASTRA TOKENS TAB -->
+        <div class="tab-content" id="astra-tab">
+            <!-- Dynamically populated by astra-manager.js -->
+        </div>
+
+        <!-- SHARED PROJECTS TAB -->
+        <div class="tab-content" id="projects-tab">
+            <!-- Dynamically populated by shared-projects-manager.js -->
+        </div>
+
+        <div class="action-bar" style="grid-column: span 2;">
+            <button class="btn-save hover-trigger" id="saveProfileBtn">Сохранить // Sync</button>
+        </div>
+    </div>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            // Deactivate all icons
+            document.querySelectorAll('.side-icon').forEach(i => i.classList.remove('active'));
+
+            // Show target tab
+            const target = document.getElementById(tabId + '-tab');
+            if (target) {
+                target.classList.add('active');
+
+                // Activate side icon
+                const icon = document.querySelector(`.side-icon[onclick="switchTab('${tabId}')"]`);
+                if (icon) icon.classList.add('active');
+
+                // Update Header Title
+                const titles = {
+                    'profile': 'Профиль', 'feed': 'Активность', 'portfolio': 'Портфолио',
+                    'rd': 'R&D', 'security': 'Безопасность', 'network': 'Сообщество',
+                    'settings': 'Настройки', 'notifications': 'Уведомления', 'analytics': 'Личная Аналитика',
+                    'astra': 'Astra Tokens', 'projects': 'Совместные Проекты'
+                };
+                const titleEl = document.getElementById('workstationTitle');
+                if (titleEl) titleEl.innerText = titles[tabId] || tabId;
+
+                // Notify modules
+                window.dispatchEvent(new CustomEvent('alab:tab-changed', { detail: { tab: tabId } }));
+            }
+        }
+
+        // Theme Toggling
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('light-theme');
+            const btn = document.getElementById('themeBtn');
+            btn.innerText = body.classList.contains('light-theme') ? '☀' : '☽';
+            if (body.classList.contains('light-theme')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Apply saved theme
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('themeBtn').innerText = '☀';
+        }
+
+        // Hover Effects (Cursor)
+        function bindHover() {
+            document.querySelectorAll('.hover-trigger').forEach(el => {
+                if (!el.dataset.hoverBound) {
+                    el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                    el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                    el.dataset.hoverBound = 'true';
+                }
+            });
+        }
+
+        // Observe DOM for new elements
+        const observer = new MutationObserver(() => bindHover());
+        observer.observe(document.body, { childList: true, subtree: true });
+        bindHover();
+
+        // Messenger Workspace UI Logic
+        document.addEventListener('alab:chats-loaded', (e) => {
+            const chatList = document.querySelector('#messages-tab #chatList');
+            if (!chatList) return;
+            const chats = e.detail;
+
+            if (chats.length === 0) {
+                chatList.innerHTML = '<div style="padding: 20px; text-align: center; color: #555; font-size: 0.8rem;">Активных чатов пока нет</div>';
+                return;
+            }
+
+            chatList.innerHTML = chats.map(chat => `
+                <div class="chat-item hover-trigger ${window.MessageManager.currentRecipientId === chat.id ? 'active' : ''}" 
+                     style="padding: 15px; border-bottom: 1px solid var(--border); transition: 0.3s; cursor: pointer;"
+                     onclick="selectWorkspaceChat('${chat.id}', '${chat.full_name}', '${chat.avatar_url || 'maya_neural.png'}')">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <img src="${chat.avatar_url || 'maya_neural.png'}" style="width: 35px; height: 35px; border-radius: 50%;">
+                        <div style="overflow: hidden;">
+                            <div style="font-weight: 700; font-size: 0.85rem; white-space: nowrap; text-overflow: ellipsis;">${chat.full_name}</div>
+                            <div style="font-size: 0.65rem; color: #555;">Нажмите для связи</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            if (typeof bindHover === 'function') bindHover();
+        });
+
+        document.addEventListener('alab:messages-loaded', (e) => renderWorkspaceMessages(e.detail));
+        document.addEventListener('alab:messages-updated', (e) => renderWorkspaceMessages(e.detail));
+
+        function selectWorkspaceChat(id, name, avatar) {
+            const header = document.querySelector('#messages-tab #activeChatHeader');
+            header.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="${avatar}" style="width: 30px; height: 30px; border-radius: 50%;">
+                    <div style="font-weight: 700;">${name}</div>
+                </div>
+            `;
+
+            document.querySelectorAll('#messages-tab .chat-item').forEach(item => item.classList.remove('active'));
+            // Finding the element is complex with innerHTML, better mark by ID if we regenerate it
+            window.MessageManager.loadMessages(id);
+        }
+
+        function renderWorkspaceMessages(messages) {
+            const history = document.querySelector('#messages-tab #messageHistory');
+            const currentUserId = window.ALabAuth.residentId;
+
+            if (messages.length === 0) {
+                history.innerHTML = '<div style="text-align: center; padding: 50px; color: #555; font-size: 0.85rem;">Нет сообщений.</div>';
+                return;
+            }
+
+            history.innerHTML = messages.map(msg => `
+                <div style="align-self: ${msg.sender_id === currentUserId ? 'flex-end' : 'flex-start'}; 
+                            max-width: 80%; 
+                            background: ${msg.sender_id === currentUserId ? 'rgba(255,255,255,0.03)' : 'rgba(0, 229, 255, 0.05)'}; 
+                            border: 1px solid ${msg.sender_id === currentUserId ? 'var(--border)' : 'var(--tech-blue)'}; 
+                            padding: 12px; 
+                            border-radius: 12px;
+                            position: relative;">
+                    <p style="font-size: 0.85rem;">${msg.content}</p>
+                    <div style="font-size: 0.55rem; color: #555; margin-top: 5px; text-align: right;">
+                        ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                </div>
+            `).join('');
+
+            history.scrollTop = history.scrollHeight;
+        }
+
+        async function sendWorkspaceMessage() {
+            const input = document.querySelector('#messages-tab #messageInput');
+            const recipientId = window.MessageManager.currentRecipientId;
+            if (!recipientId || !input.value.trim()) return;
+
+            const content = input.value.trim();
+            input.value = "";
+            await window.MessageManager.sendMessage(recipientId, content);
+        }
+
+        document.querySelector('#messages-tab #messageInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendWorkspaceMessage();
+        });
+        document.querySelector('#messages-tab button.btn-pulse')?.addEventListener('click', sendWorkspaceMessage);
+
+        // Initialize Managers (Handled at the end of the file)
+    </script>
+
+    <!-- A-LAB Backend Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="i18n.js"></script>
+    <script src="toast.js"></script>
+    <script src="auth-guard.js"></script>
+    <script src="resident-profile-manager.js"></script>
+    <script src="feed-manager.js"></script>
+    <script src="portfolio-manager.js"></script>
+    <script src="analytics-manager.js"></script>
+    <script src="community-manager.js"></script>
+    <script src="astra-manager.js"></script>
+    <script src="shared-projects-manager.js"></script>
+    <script src="message-manager.js"></script>
+    <script src="nda-manager.js"></script>
+
+    <script>
+        // Final Initialization: Call this after all manager scripts are loaded
+        function initManagers() {
+            const auth = window.ALabAuth;
+            if (!auth) {
+                console.warn('[WORKSPACE] ALabAuth not found, waiting for auth-ready event...');
+                return;
+            }
+
+            const profileId = auth.profile ? auth.profile.id : (auth.mockMode ? 'mock-resident-id' : null);
+
+            if (profileId) {
+                console.log('[WORKSPACE] Initializing managers with profile ID:', profileId);
+                if (typeof AstraManager !== 'undefined') AstraManager.init(profileId);
+                if (typeof ProjectsManager !== 'undefined') ProjectsManager.init(profileId);
+                if (typeof AnalyticsManager !== 'undefined') AnalyticsManager.init();
+                if (typeof CommunityManager !== 'undefined') CommunityManager.init();
+                if (typeof MessageManager !== 'undefined') MessageManager.init(profileId);
+                if (typeof NDAManager !== 'undefined') NDAManager.refreshDocs();
+            }
+        }
+
+        // Listen for auth-ready event
+        document.addEventListener('alab:auth-ready', () => {
+            console.log('[WORKSPACE] Auth ready event received');
+            initManagers();
+        });
+
+        // Also try on DOMContentLoaded and check if auth is already there
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[WORKSPACE] DOM loaded');
+            if (window.ALabAuth) {
+                console.log('[WORKSPACE] Auth already exists, initializing...');
+                initManagers();
+            } else {
+                // Short timeout as fallback
+                setTimeout(() => {
+                    if (window.ALabAuth) initManagers();
+                }, 500);
+            }
+        });
+    </script>
+    <script>
+        // Configure Navigation for Workspace page
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.ResidentNav) {
+                ResidentNav.config.moreItems = [
+                    { text: 'Профиль', icon: '👤', onclick: "switchTab('profile'); toggleMoreMenu()" },
+                    { text: 'Сообщения', icon: '💬', onclick: "switchTab('messages'); toggleMoreMenu()" },
+                    { text: 'Уведомления', icon: '🔔', onclick: "switchTab('notifications'); toggleMoreMenu()" },
+                    { text: 'Портфолио', icon: '🖼️', onclick: "switchTab('portfolio'); toggleMoreMenu()" },
+                    { text: 'Astra', icon: '✦', onclick: "switchTab('astra'); toggleMoreMenu()" },
+                    { text: 'R&D Lab', icon: '🧠', onclick: "switchTab('rd'); toggleMoreMenu()" },
+                    { text: 'Проекты', icon: '📋', onclick: "switchTab('projects'); toggleMoreMenu()" },
+                    { text: 'Резиденты', icon: '👥', onclick: "window.location.href='residents.html'" }
+                ];
+                ResidentNav.config.showLogout = true;
+                ResidentNav.render();
+            }
+        });
+    </script>
+    <script src="nav-manager.js"></script>
+</body>
+
+</html>

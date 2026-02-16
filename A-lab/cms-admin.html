@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | CMS ADMIN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --panel: #0d111a;
+            --text: #ffffff;
+            --text-secondary: #b8b8b8;
+            --text-dim: #666;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --green: #00FF41;
+            --yellow: #FFB800;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --panel: #fcfcfd;
+            --text: #1d1d1f;
+            --text-secondary: #4a4a4a;
+            --text-dim: #999;
+            --border: rgba(0, 0, 0, 0.08);
+            --tech-blue: #008fa4;
+        }
+
+        body.light-theme .sidebar {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .side-icon {
+            color: #555;
+        }
+
+        body.light-theme .side-icon:hover,
+        body.light-theme .side-icon.active {
+            background: rgba(0, 0, 0, 0.03);
+            color: #1d1d1f;
+        }
+
+        body.light-theme .side-icon.active {
+            color: var(--accent);
+        }
+
+        body.light-theme .stat-card {
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        body.light-theme .data-table th {
+            background: #f5f5f7;
+            color: #666;
+        }
+
+        body.light-theme .data-table td {
+            border-color: rgba(0, 0, 0, 0.05);
+            color: #1d1d1f;
+        }
+
+        body.light-theme .cms-card {
+            background: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        body.light-theme .form-input,
+        body.light-theme .form-select {
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .noise {
+            opacity: 0.02;
+            filter: invert(1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.04;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 20000;
+            transition: width 0.15s, height 0.15s, background 0.15s, opacity 0.15s;
+            will-change: transform;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 80px;
+            background: rgba(0, 0, 0, 0.95);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 30px 17px;
+            gap: 8px;
+            flex-shrink: 0;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .sidebar:hover {
+            width: 220px;
+        }
+
+        .logo {
+            padding-left: 5px;
+            margin-bottom: 15px;
+        }
+
+        .logo img {
+            width: 35px;
+            height: auto;
+        }
+
+        .side-icon {
+            width: 100%;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: 0.3s;
+            padding: 0 12px;
+            font-size: 0.85rem;
+        }
+
+        .side-icon i {
+            font-style: normal;
+            font-size: 1.1rem;
+            min-width: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .side-icon span {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: 0.3s;
+            font-weight: 600;
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+        }
+
+        .sidebar:hover .side-icon span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .side-icon:hover,
+        .side-icon.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .side-icon.active {
+            color: var(--accent);
+            background: rgba(255, 42, 42, 0.1);
+        }
+
+        .sidebar-divider {
+            width: calc(100% - 10px);
+            height: 1px;
+            background: var(--border);
+            margin: 8px 5px;
+        }
+
+        /* --- MAIN --- */
+        .main-content {
+            margin-left: 80px;
+            padding: 40px 50px;
+            width: 100%;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header-top h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header-top .subtitle {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-theme {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .btn-theme:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- TABS --- */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- DASHBOARD STATS --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: var(--font-code);
+            background: linear-gradient(135deg, var(--tech-blue), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 6px;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+        }
+
+        /* --- DATA TABLE --- */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .data-table th {
+            background: rgba(0, 229, 255, 0.03);
+            text-align: left;
+            padding: 14px 20px;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .data-table tr {
+            transition: background 0.2s;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(0, 229, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+
+        .badge-new {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--tech-blue);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+        }
+
+        .badge-contacted {
+            background: rgba(255, 184, 0, 0.1);
+            color: var(--yellow);
+            border: 1px solid rgba(255, 184, 0, 0.3);
+        }
+
+        .badge-closed {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .badge-active {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .badge-marketing {
+            background: rgba(255, 42, 42, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+
+        .badge-design {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--tech-blue);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+        }
+
+        .badge-rd {
+            background: rgba(255, 184, 0, 0.1);
+            color: var(--yellow);
+            border: 1px solid rgba(255, 184, 0, 0.3);
+        }
+
+        .badge-visible {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--green);
+        }
+
+        .badge-hidden {
+            background: rgba(255, 42, 42, 0.1);
+            color: var(--accent);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-dot.online {
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+        }
+
+        .status-dot.busy {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .status-dot.away {
+            background: var(--yellow);
+            box-shadow: 0 0 8px var(--yellow);
+        }
+
+        /* --- CMS CARDS (for Page Blocks / Menu) --- */
+        .cms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .cms-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .cms-card:hover {
+            border-color: rgba(0, 229, 255, 0.2);
+        }
+
+        .cms-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .cms-card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .cms-card-meta {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+
+        /* --- FORMS --- */
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--tech-blue);
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: none;
+            transition: 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 42, 42, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid rgba(255, 42, 42, 0.3);
+            color: var(--accent);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 42, 42, 0.1);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.65rem;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            transition: 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .action-btn:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        /* --- SECTION --- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            cursor: none;
+            transition: 0.3s;
+        }
+
+        .filter-pill.active,
+        .filter-pill:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            max-width: 560px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-box h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* --- SEARCH BAR --- */
+        .search-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--tech-blue);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* --- LOG LEVELS --- */
+        .badge-info {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--tech-blue);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+        }
+
+        .badge-warn {
+            background: rgba(255, 184, 0, 0.1);
+            color: var(--yellow);
+            border: 1px solid rgba(255, 184, 0, 0.3);
+        }
+
+        .badge-error {
+            background: rgba(255, 42, 42, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(255, 42, 42, 0.3);
+        }
+
+        /* --- ASTRA TOKEN CARD --- */
+        .astra-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .astra-card:hover {
+            border-color: rgba(255, 184, 0, 0.3);
+        }
+
+        .astra-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .astra-role {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .astra-balance {
+            font-family: var(--font-code);
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--yellow), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-theme .modal-box {
+            background: #fff;
+        }
+
+        body.light-theme .search-bar input {
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .astra-card {
+            background: #fff;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                padding-top: 70px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise"></div>
+    <div class="cursor"></div>
+
+    <aside class="sidebar">
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+
+        <a href="#" class="side-icon active hover-trigger" onclick="switchTab('dashboard')"><i>📊</i>
+            <span>Dashboard</span></a>
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('leads')"><i>📋</i>
+            <span>Лиды</span></a>
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('projects')"><i>🗂️</i>
+            <span>Проекты</span></a>
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('residents')"><i>👥</i>
+            <span>Резиденты</span></a>
+
+        <div class="sidebar-divider"></div>
+
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('blocks')"><i>📄</i>
+            <span>Контент</span></a>
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('menu')"><i>🔗</i>
+            <span>Меню</span></a>
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('nda')"><i>🔒</i>
+            <span>NDA</span></a>
+
+        <div class="sidebar-divider"></div>
+
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('astra')"><i>💎</i>
+            <span>Astra</span></a>
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('apps')"><i>📝</i>
+            <span>Заявки</span></a>
+        <a href="#" class="side-icon hover-trigger" onclick="switchTab('logs')"><i>📜</i>
+            <span>Логи</span></a>
+
+        <div style="margin-top: auto; width: 100%;">
+            <a href="index.html" class="side-icon hover-trigger" style="color: var(--accent);"><i>🔌</i>
+                <span>На сайт</span></a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="header-top">
+            <div>
+                <h1 id="pageTitle">CMS Dashboard</h1>
+                <div class="subtitle">A-LAB.TECH // CONTENT MANAGEMENT SYSTEM</div>
+            </div>
+            <div class="header-actions">
+                <div class="search-bar" style="width:280px; margin-bottom:0;">
+                    <input type="text" id="globalSearch" placeholder="🔍 Поиск по данным..."
+                        oninput="globalSearchHandler(this.value)">
+                </div>
+                <button class="btn-theme hover-trigger" onclick="toggleTheme()" id="themeBtn">☽</button>
+            </div>
+        </div>
+
+        <!-- ═══════════ DASHBOARD TAB ═══════════ -->
+        <div class="tab-content active" id="tab-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-value" id="statLeads">—</div>
+                    <div class="stat-label">Лиды (всего)</div>
+                </div>
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">📨</div>
+                    <div class="stat-value" id="statNewLeads">—</div>
+                    <div class="stat-label">Новые лиды</div>
+                </div>
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" id="statResidents">—</div>
+                    <div class="stat-label">Резиденты</div>
+                </div>
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">🗂️</div>
+                    <div class="stat-value" id="statProjects">—</div>
+                    <div class="stat-label">Проекты</div>
+                </div>
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">🔒</div>
+                    <div class="stat-value" id="statNDA">—</div>
+                    <div class="stat-label">NDA подписано</div>
+                </div>
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">🔗</div>
+                    <div class="stat-value" id="statMenu">—</div>
+                    <div class="stat-label">Пункты меню</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">// ПОСЛЕДНИЕ ЛИДЫ</div>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Контакт</th>
+                            <th>Источник</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentLeadsBody">
+                        <tr>
+                            <td colspan="5" style="text-align:center; color: var(--text-dim);">
+                                Подключите Supabase для загрузки данных</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ LEADS TAB ═══════════ -->
+        <div class="tab-content" id="tab-leads">
+            <div class="section-header">
+                <div class="filter-pills">
+                    <button class="filter-pill active hover-trigger" onclick="filterLeads('all')">ВСЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLeads('new')">НОВЫЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLeads('contacted')">В РАБОТЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLeads('closed')">ЗАКРЫТО</button>
+                </div>
+                <button class="btn btn-secondary btn-sm hover-trigger" onclick="exportCSV('leads')">⬇ CSV</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchLeads" placeholder="Поиск по лидам..."
+                    oninput="searchTable('leadsBody', this.value)">
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Контакт</th>
+                            <th>Источник</th>
+                            <th>Сообщение</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsBody">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <p>Нет лидов. Данные появятся после подключения Supabase.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ PROJECTS TAB ═══════════ -->
+        <div class="tab-content" id="tab-projects">
+            <div class="section-header">
+                <div class="filter-pills">
+                    <button class="filter-pill active hover-trigger">ВСЕ</button>
+                    <button class="filter-pill hover-trigger">MARKETING</button>
+                    <button class="filter-pill hover-trigger">DESIGN</button>
+                    <button class="filter-pill hover-trigger">R&D</button>
+                </div>
+                <button class="btn btn-primary btn-sm hover-trigger" onclick="openProjectForm()">+ НОВЫЙ ПРОЕКТ</button>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Категория</th>
+                            <th>Результат</th>
+                            <th>Язык</th>
+                            <th>Порядок</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsBody">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <div class="empty-icon">🗂️</div>
+                                <p>Нет проектов.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ RESIDENTS TAB ═══════════ -->
+        <div class="tab-content" id="tab-residents">
+            <div class="section-header">
+                <div class="section-title">// РЕЗИДЕНТЫ ПЛАТФОРМЫ</div>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Статус</th>
+                            <th>Имя</th>
+                            <th>Роль</th>
+                            <th>Навыки</th>
+                            <th>Админ</th>
+                            <th>Регистрация</th>
+                        </tr>
+                    </thead>
+                    <tbody id="residentsBody">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <div class="empty-icon">👥</div>
+                                <p>Нет резидентов.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ PAGE BLOCKS TAB ═══════════ -->
+        <div class="tab-content" id="tab-blocks">
+            <div class="section-header">
+                <div class="filter-pills">
+                    <button class="filter-pill active hover-trigger">ВСЕ СТРАНИЦЫ</button>
+                    <button class="filter-pill hover-trigger">index</button>
+                    <button class="filter-pill hover-trigger">about</button>
+                    <button class="filter-pill hover-trigger">consulting</button>
+                    <button class="filter-pill hover-trigger">design</button>
+                    <button class="filter-pill hover-trigger">digital</button>
+                </div>
+                <button class="btn btn-primary btn-sm hover-trigger" onclick="openBlockForm()">+ НОВЫЙ БЛОК</button>
+            </div>
+            <div class="cms-grid" id="blocksGrid">
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <div class="empty-icon">📄</div>
+                    <p>Нет контентных блоков. Добавьте первый блок для начала.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ MENU TAB ═══════════ -->
+        <div class="tab-content" id="tab-menu">
+            <div class="section-header">
+                <div class="section-title">// УПРАВЛЕНИЕ МЕНЮ</div>
+                <button class="btn btn-primary btn-sm hover-trigger" onclick="openMenuForm()">+ ПУНКТ МЕНЮ</button>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Порядок</th>
+                            <th>RU</th>
+                            <th>EN</th>
+                            <th>URL</th>
+                            <th>Видимость</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="menuBody">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <div class="empty-icon">🔗</div>
+                                <p>Нет пунктов меню.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ NDA TAB ═══════════ -->
+        <div class="tab-content" id="tab-nda">
+            <div class="section-header">
+                <div class="section-title">// ПОДПИСАННЫЕ NDA</div>
+                <button class="btn btn-secondary btn-sm hover-trigger" onclick="exportCSV('nda')">⬇ CSV</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchNDA" placeholder="Поиск NDA..."
+                    oninput="searchTable('ndaBody', this.value)">
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Email</th>
+                            <th>Компания</th>
+                            <th>Дата подписания</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ndaBody">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <div class="empty-icon">🔒</div>
+                                <p>Нет подписанных NDA.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ ASTRA TAB ═══════════ -->
+        <div class="tab-content" id="tab-astra">
+            <div class="section-header">
+                <div class="section-title">// ASTRA TOKEN BALANCES</div>
+                <button class="btn btn-primary btn-sm hover-trigger" onclick="openGrantForm()">💎 GRANT TOKENS</button>
+            </div>
+            <div class="stats-grid" style="margin-bottom:30px;">
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">💎</div>
+                    <div class="stat-value" id="statTotalAstra">—</div>
+                    <div class="stat-label">Всего выдано</div>
+                </div>
+                <div class="stat-card hover-trigger">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value" id="statTotalTx">—</div>
+                    <div class="stat-label">Транзакций</div>
+                </div>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchAstra" placeholder="Поиск резидента..." oninput="searchAstra(this.value)">
+            </div>
+            <div class="cms-grid" id="astraGrid">
+                <div class="empty-state" style="grid-column:1/-1;">
+                    <div class="empty-icon">💎</div>
+                    <p>Нет данных о балансах.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ APPLICATIONS TAB ═══════════ -->
+        <div class="tab-content" id="tab-apps">
+            <div class="section-header">
+                <div class="filter-pills">
+                    <button class="filter-pill active hover-trigger" onclick="filterApps('all')">ВСЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterApps('pending')">НОВЫЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterApps('approved')">ОДОБРЕНО</button>
+                    <button class="filter-pill hover-trigger" onclick="filterApps('rejected')">ОТКЛОНЕНО</button>
+                </div>
+                <button class="btn btn-secondary btn-sm hover-trigger" onclick="exportCSV('apps')">⬇ CSV</button>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Email</th>
+                            <th>Сильная сторона</th>
+                            <th>Опыт</th>
+                            <th>Статус</th>
+                            <th>Дата</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appsBody">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-icon">📝</div>
+                                <p>Нет заявок.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ SYSTEM LOGS TAB ═══════════ -->
+        <div class="tab-content" id="tab-logs">
+            <div class="section-header">
+                <div class="filter-pills">
+                    <button class="filter-pill active hover-trigger" onclick="filterLogs('all')">ВСЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLogs('info')">INFO</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLogs('warn')">WARN</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLogs('error')">ERROR</button>
+                </div>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchLogs" placeholder="Поиск по логам..."
+                    oninput="searchTable('logsBody', this.value)">
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Уровень</th>
+                            <th>Действие</th>
+                            <th>Пользователь</th>
+                            <th>Детали</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsBody">
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <div class="empty-icon">📜</div>
+                                <p>Нет логов.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════ MODAL OVERLAY ═══════════ -->
+    <div class="modal-overlay" id="cmsModal" onclick="if(event.target===this)closeModal()">
+        <div class="modal-box" id="modalContent"></div>
+    </div>
+
+    <script>
+        // ═══════════ CURSOR ═══════════
+        const cursor = document.querySelector('.cursor');
+        let mx = 0, my = 0;
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+        function uc() { cursor.style.transform = `translate3d(${mx - 7.5}px, ${my - 7.5}px, 0)`; requestAnimationFrame(uc); }
+        uc();
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // ═══════════ THEME ═══════════
+        function toggleTheme() {
+            const b = document.body, btn = document.getElementById('themeBtn');
+            b.classList.toggle('light-theme');
+            if (b.classList.contains('light-theme')) { btn.innerText = '☀'; localStorage.setItem('theme', 'light'); }
+            else { btn.innerText = '☽'; localStorage.setItem('theme', 'dark'); }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('themeBtn').innerText = '☀';
+        }
+
+        // ═══════════ TAB SWITCHING ═══════════
+        const tabTitles = {
+            dashboard: 'CMS Dashboard',
+            leads: 'Управление лидами',
+            projects: 'Проекты',
+            residents: 'Резиденты',
+            blocks: 'Контент страниц',
+            menu: 'Навигация',
+            nda: 'NDA Документы',
+            astra: 'Astra Tokens',
+            apps: 'Заявки на вступление',
+            logs: 'Системные логи'
+        };
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.side-icon').forEach(i => i.classList.remove('active'));
+            const tab = document.getElementById('tab-' + name);
+            if (tab) tab.classList.add('active');
+            const icons = document.querySelectorAll('.side-icon');
+            icons.forEach(i => {
+                if (i.getAttribute('onclick') && i.getAttribute('onclick').includes(name)) {
+                    i.classList.add('active');
+                }
+            });
+            document.getElementById('pageTitle').textContent = tabTitles[name] || 'CMS Admin';
+            loadTabData(name);
+        }
+
+        // ═══════════ DATA LOADING ═══════════
+        async function loadTabData(tab) {
+            if (typeof window.supabase === 'undefined' && window.ALabCore?.db) {
+                window.supabase = window.ALabCore.db;
+            }
+            if (!window.supabase) return;
+            const sb = window.supabase;
+            try {
+                switch (tab) {
+                    case 'dashboard': await loadDashboard(sb); break;
+                    case 'leads': await loadLeads(sb); break;
+                    case 'projects': await loadProjects(sb); break;
+                    case 'residents': await loadResidents(sb); break;
+                    case 'blocks': await loadBlocks(sb); break;
+                    case 'menu': await loadMenu(sb); break;
+                    case 'nda': await loadNDA(sb); break;
+                    case 'astra': await loadAstra(sb); break;
+                    case 'apps': await loadApps(sb); break;
+                    case 'logs': await loadLogs(sb); break;
+                }
+            } catch (e) { console.error('CMS load error:', e); }
+        }
+
+        async function loadDashboard(sb) {
+            const [leads, residents, projects, nda, menu] = await Promise.all([
+                sb.from('leads').select('*', { count: 'exact', head: true }),
+                sb.from('residents').select('*', { count: 'exact', head: true }),
+                sb.from('projects').select('*', { count: 'exact', head: true }),
+                sb.from('nda_agreements').select('*', { count: 'exact', head: true }),
+                sb.from('menu_items').select('*', { count: 'exact', head: true }),
+            ]);
+            const newLeads = await sb.from('leads').select('*', { count: 'exact', head: true }).eq('status', 'new');
+
+            document.getElementById('statLeads').textContent = leads.count || 0;
+            document.getElementById('statNewLeads').textContent = newLeads.count || 0;
+            document.getElementById('statResidents').textContent = residents.count || 0;
+            document.getElementById('statProjects').textContent = projects.count || 0;
+            document.getElementById('statNDA').textContent = nda.count || 0;
+            document.getElementById('statMenu').textContent = menu.count || 0;
+
+            // Recent leads
+            const { data: recent } = await sb.from('leads').select('*').order('created_at', { ascending: false }).limit(5);
+            if (recent && recent.length) {
+                document.getElementById('recentLeadsBody').innerHTML = recent.map(l => `
+                    <tr>
+                        <td style="color:var(--text); font-weight:600;">${l.name}</td>
+                        <td>${l.contact}</td>
+                        <td>${l.source || '—'}</td>
+                        <td><span class="badge badge-${l.status}">${l.status.toUpperCase()}</span></td>
+                        <td style="font-family:var(--font-code); font-size:0.75rem;">${new Date(l.created_at).toLocaleDateString('ru')}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        async function loadLeads(sb) {
+            const { data } = await sb.from('leads').select('*').order('created_at', { ascending: false });
+            if (!data || !data.length) return;
+            document.getElementById('leadsBody').innerHTML = data.map(l => `
+                <tr>
+                    <td style="color:var(--text); font-weight:600;">${l.name}</td>
+                    <td>${l.contact}</td>
+                    <td>${l.source || '—'}</td>
+                    <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${l.message || '—'}</td>
+                    <td>
+                        <select class="form-select" style="width:auto; padding:4px 8px; font-size:0.7rem;"
+                            onchange="updateLeadStatus('${l.id}', this.value)">
+                            <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
+                            <option value="contacted" ${l.status === 'contacted' ? 'selected' : ''}>CONTACTED</option>
+                            <option value="closed" ${l.status === 'closed' ? 'selected' : ''}>CLOSED</option>
+                        </select>
+                    </td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(l.created_at).toLocaleDateString('ru')}</td>
+                    <td>
+                        <button class="action-btn hover-trigger" onclick="deleteLead('${l.id}')" title="Удалить">🗑</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadProjects(sb) {
+            const { data } = await sb.from('projects').select('*').order('order_index');
+            if (!data || !data.length) return;
+            document.getElementById('projectsBody').innerHTML = data.map(p => `
+                <tr>
+                    <td style="color:var(--text); font-weight:600;">${p.title}</td>
+                    <td><span class="badge badge-${p.category}">${p.category.toUpperCase()}</span></td>
+                    <td>${p.result_value || '—'} ${p.result_label || ''}</td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${(p.lang || 'ru').toUpperCase()}</td>
+                    <td style="font-family:var(--font-code);">${p.order_index}</td>
+                    <td>
+                        <button class="action-btn hover-trigger" title="Редактировать">✏️</button>
+                        <button class="action-btn hover-trigger" onclick="deleteProject('${p.id}')" title="Удалить">🗑</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadResidents(sb) {
+            const { data } = await sb.from('residents').select('*').order('created_at');
+            if (!data || !data.length) return;
+            document.getElementById('residentsBody').innerHTML = data.map(r => `
+                <tr>
+                    <td><span class="status-dot ${r.status || 'online'}"></span></td>
+                    <td style="color:var(--text); font-weight:600;">${r.full_name}</td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${r.role || '—'}</td>
+                    <td>${(r.skills || []).map(s => `<span class="badge badge-design" style="margin:2px;">${s}</span>`).join('') || '—'}</td>
+                    <td>${r.is_admin ? '<span class="badge badge-active">ADMIN</span>' : '—'}</td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(r.created_at).toLocaleDateString('ru')}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadBlocks(sb) {
+            const { data } = await sb.from('page_blocks').select('*').order('page_slug').order('order_index');
+            if (!data || !data.length) return;
+            document.getElementById('blocksGrid').innerHTML = data.map(b => `
+                <div class="cms-card hover-trigger">
+                    <div class="cms-card-header">
+                        <span class="cms-card-title">${b.page_slug} / ${b.block_type}</span>
+                        <span class="badge ${b.is_visible ? 'badge-visible' : 'badge-hidden'}">${b.is_visible ? 'VISIBLE' : 'HIDDEN'}</span>
+                    </div>
+                    <div class="cms-card-meta">ORDER: ${b.order_index} • ${new Date(b.updated_at).toLocaleDateString('ru')}</div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-secondary btn-sm hover-trigger">✏️ EDIT</button>
+                        <button class="btn btn-secondary btn-sm hover-trigger" onclick="toggleBlockVisibility('${b.id}', ${!b.is_visible})">
+                            ${b.is_visible ? '👁 HIDE' : '👁 SHOW'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadMenu(sb) {
+            const { data } = await sb.from('menu_items').select('*').order('order_index');
+            if (!data || !data.length) return;
+            document.getElementById('menuBody').innerHTML = data.map(m => `
+                <tr>
+                    <td style="font-family:var(--font-code); font-weight:700;">${m.order_index}</td>
+                    <td style="color:var(--text); font-weight:600;">${m.label_ru}</td>
+                    <td>${m.label_en || '—'}</td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${m.url}</td>
+                    <td><span class="badge ${m.is_visible ? 'badge-visible' : 'badge-hidden'}">${m.is_visible ? 'ON' : 'OFF'}</span></td>
+                    <td>
+                        <button class="action-btn hover-trigger" title="Редактировать">✏️</button>
+                        <button class="action-btn hover-trigger" onclick="toggleMenuVisibility('${m.id}', ${!m.is_visible})">
+                            ${m.is_visible ? '👁' : '👁‍🗨'}
+                        </button>
+                        <button class="action-btn hover-trigger" onclick="deleteMenuItem('${m.id}')" title="Удалить">🗑</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadNDA(sb) {
+            const { data } = await sb.from('nda_agreements').select('*').order('signed_at', { ascending: false });
+            if (!data || !data.length) return;
+            document.getElementById('ndaBody').innerHTML = data.map(n => `
+                <tr>
+                    <td style="color:var(--text); font-weight:600;">${n.full_name}</td>
+                    <td>${n.user_email}</td>
+                    <td>${n.company || '—'}</td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(n.signed_at).toLocaleDateString('ru')}</td>
+                    <td><span class="badge ${n.revoked ? 'badge-closed' : 'badge-active'}">${n.revoked ? 'REVOKED' : 'ACTIVE'}</span></td>
+                    <td>
+                        <button class="action-btn hover-trigger" onclick="toggleNDA('${n.id}', ${!n.revoked})" title="${n.revoked ? 'Восстановить' : 'Отозвать'}">
+                            ${n.revoked ? '✅' : '❌'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ═══════════ NEW TAB LOADERS ═══════════
+        async function loadAstra(sb) {
+            const { data: balances } = await sb.from('astra_balances').select('*, residents(full_name, role)').order('balance', { ascending: false });
+            const tx = await sb.from('astra_transactions').select('*', { count: 'exact', head: true });
+            let total = 0;
+            if (balances && balances.length) {
+                total = balances.reduce((s, b) => s + (b.balance || 0), 0);
+                document.getElementById('astraGrid').innerHTML = balances.map(b => `
+                    <div class="astra-card hover-trigger">
+                        <div>
+                            <div class="astra-name">${b.residents?.full_name || 'ID: ' + b.resident_id}</div>
+                            <div class="astra-role">${b.residents?.role || '—'}</div>
+                        </div>
+                        <div class="astra-balance">${b.balance} ✦</div>
+                    </div>
+                `).join('');
+            }
+            document.getElementById('statTotalAstra').textContent = total;
+            document.getElementById('statTotalTx').textContent = tx.count || 0;
+        }
+
+        async function loadApps(sb) {
+            const { data } = await sb.from('leads').select('*').eq('source', 'quiz').order('created_at', { ascending: false });
+            if (!data || !data.length) return;
+            document.getElementById('appsBody').innerHTML = data.map(a => `
+                <tr data-status="${a.status}">
+                    <td style="color:var(--text); font-weight:600;">${a.name}</td>
+                    <td>${a.contact}</td>
+                    <td>${a.message || '—'}</td>
+                    <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${a.source_detail || '—'}</td>
+                    <td><span class="badge badge-${a.status === 'new' ? 'new' : a.status === 'contacted' ? 'contacted' : 'closed'}">${(a.status || 'pending').toUpperCase()}</span></td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(a.created_at).toLocaleDateString('ru')}</td>
+                    <td>
+                        <button class="action-btn hover-trigger" onclick="updateLeadStatus('${a.id}','contacted')" title="Одобрить">✅</button>
+                        <button class="action-btn hover-trigger" onclick="updateLeadStatus('${a.id}','closed')" title="Отклонить">❌</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadLogs(sb) {
+            const { data } = await sb.from('system_logs').select('*').order('created_at', { ascending: false }).limit(100);
+            if (!data || !data.length) return;
+            document.getElementById('logsBody').innerHTML = data.map(l => `
+                <tr data-level="${l.level || 'info'}">
+                    <td><span class="badge badge-${l.level || 'info'}">${(l.level || 'INFO').toUpperCase()}</span></td>
+                    <td style="color:var(--text); font-weight:600;">${l.action || '—'}</td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${l.user_id || 'system'}</td>
+                    <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${JSON.stringify(l.details || {}).substring(0, 80)}</td>
+                    <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(l.created_at).toLocaleString('ru')}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ═══════════ MUTATIONS ═══════════
+        async function updateLeadStatus(id, status) {
+            if (typeof window.supabase === 'undefined') return;
+            await window.supabase.from('leads').update({ status }).eq('id', id);
+            loadLeads(window.supabase);
+            loadApps(window.supabase);
+        }
+
+        async function deleteLead(id) {
+            if (!confirm('Удалить этот лид?')) return;
+            if (typeof window.supabase === 'undefined') return;
+            await window.supabase.from('leads').delete().eq('id', id);
+            loadLeads(window.supabase);
+        }
+
+        async function deleteProject(id) {
+            if (!confirm('Удалить проект?')) return;
+            if (typeof window.supabase === 'undefined') return;
+            await window.supabase.from('projects').delete().eq('id', id);
+            loadProjects(window.supabase);
+        }
+
+        async function toggleBlockVisibility(id, visible) {
+            if (typeof window.supabase === 'undefined') return;
+            await window.supabase.from('page_blocks').update({ is_visible: visible }).eq('id', id);
+            loadBlocks(window.supabase);
+        }
+
+        async function toggleMenuVisibility(id, visible) {
+            if (typeof window.supabase === 'undefined') return;
+            await window.supabase.from('menu_items').update({ is_visible: visible }).eq('id', id);
+            loadMenu(window.supabase);
+        }
+
+        async function deleteMenuItem(id) {
+            if (!confirm('Удалить пункт меню?')) return;
+            if (typeof window.supabase === 'undefined') return;
+            await window.supabase.from('menu_items').delete().eq('id', id);
+            loadMenu(window.supabase);
+        }
+
+        async function toggleNDA(id, revoked) {
+            if (typeof window.supabase === 'undefined') return;
+            await window.supabase.from('nda_agreements').update({ revoked }).eq('id', id);
+            loadNDA(window.supabase);
+        }
+
+        // ═══════════ MODAL SYSTEM ═══════════
+        function openModal(html) {
+            document.getElementById('modalContent').innerHTML = html;
+            document.getElementById('cmsModal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('cmsModal').classList.remove('active');
+        }
+
+        function openProjectForm(existing) {
+            const p = existing || {};
+            openModal(`
+                <h2>${p.id ? 'Редактировать' : 'Новый'} проект</h2>
+                <div class="form-group"><label class="form-label">Название</label>
+                    <input class="form-input" id="pTitle" value="${p.title || ''}"></div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Категория</label>
+                        <select class="form-select" id="pCategory">
+                            <option value="marketing" ${p.category === 'marketing' ? 'selected' : ''}>Marketing</option>
+                            <option value="design" ${p.category === 'design' ? 'selected' : ''}>Design</option>
+                            <option value="rd" ${p.category === 'rd' ? 'selected' : ''}>R&D</option>
+                        </select></div>
+                    <div class="form-group"><label class="form-label">Язык</label>
+                        <select class="form-select" id="pLang">
+                            <option value="ru" ${(p.lang || 'ru') === 'ru' ? 'selected' : ''}>RU</option>
+                            <option value="en" ${p.lang === 'en' ? 'selected' : ''}>EN</option>
+                        </select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Результат (число)</label>
+                        <input class="form-input" id="pResultVal" value="${p.result_value || ''}"></div>
+                    <div class="form-group"><label class="form-label">Результат (метка)</label>
+                        <input class="form-input" id="pResultLabel" value="${p.result_label || ''}"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Описание</label>
+                    <textarea class="form-textarea form-input" id="pDesc">${p.description || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">Порядок</label>
+                    <input class="form-input" id="pOrder" type="number" value="${p.order_index || 0}"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                    <button class="btn btn-primary hover-trigger" onclick="saveProject('${p.id || ''}')">СОХРАНИТЬ</button>
+                </div>
+            `);
+        }
+
+        async function saveProject(id) {
+            if (typeof window.supabase === 'undefined') return;
+            const data = {
+                title: document.getElementById('pTitle').value,
+                category: document.getElementById('pCategory').value,
+                lang: document.getElementById('pLang').value,
+                result_value: document.getElementById('pResultVal').value,
+                result_label: document.getElementById('pResultLabel').value,
+                description: document.getElementById('pDesc').value,
+                order_index: parseInt(document.getElementById('pOrder').value) || 0
+            };
+            try {
+                if (id) {
+                    const { error } = await window.supabase.from('projects').update(data).eq('id', id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await window.supabase.from('projects').insert(data);
+                    if (error) throw error;
+                }
+                closeModal();
+                loadProjects(window.supabase);
+            } catch (err) {
+                alert('Ошибка сохранения: ' + err.message);
+                console.error(err);
+            }
+        }
+
+        function openBlockForm(existing) {
+            const b = existing || {};
+            openModal(`
+                <h2>${b.id ? 'Редактировать' : 'Новый'} блок</h2>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Страница (slug)</label>
+                        <input class="form-input" id="bSlug" value="${b.page_slug || ''}"></div>
+                    <div class="form-group"><label class="form-label">Тип блока</label>
+                        <input class="form-input" id="bType" value="${b.block_type || ''}"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Контент (JSON)</label>
+                    <textarea class="form-textarea form-input" id="bContent" style="min-height:120px;">${JSON.stringify(b.content || {}, null, 2)}</textarea></div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Порядок</label>
+                        <input class="form-input" id="bOrder" type="number" value="${b.order_index || 0}"></div>
+                    <div class="form-group"><label class="form-label">Видимость</label>
+                        <select class="form-select" id="bVisible">
+                            <option value="true" ${b.is_visible !== false ? 'selected' : ''}>Видимый</option>
+                            <option value="false" ${b.is_visible === false ? 'selected' : ''}>Скрытый</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                    <button class="btn btn-primary hover-trigger" onclick="saveBlock('${b.id || ''}')">СОХРАНИТЬ</button>
+                </div>
+            `);
+        }
+
+        async function saveBlock(id) {
+            if (typeof window.supabase === 'undefined') return;
+            let content;
+            try { content = JSON.parse(document.getElementById('bContent').value); } catch { content = {}; }
+            const data = {
+                page_slug: document.getElementById('bSlug').value,
+                block_type: document.getElementById('bType').value,
+                content,
+                order_index: parseInt(document.getElementById('bOrder').value) || 0,
+                is_visible: document.getElementById('bVisible').value === 'true'
+            };
+            if (id) await window.supabase.from('page_blocks').update(data).eq('id', id);
+            else await window.supabase.from('page_blocks').insert(data);
+            closeModal();
+            loadBlocks(window.supabase);
+        }
+
+        function openMenuForm(existing) {
+            const m = existing || {};
+            openModal(`
+                <h2>${m.id ? 'Редактировать' : 'Новый'} пункт меню</h2>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Название (RU)</label>
+                        <input class="form-input" id="mRu" value="${m.label_ru || ''}"></div>
+                    <div class="form-group"><label class="form-label">Название (EN)</label>
+                        <input class="form-input" id="mEn" value="${m.label_en || ''}"></div>
+                </div>
+                <div class="form-group"><label class="form-label">URL</label>
+                    <input class="form-input" id="mUrl" value="${m.url || ''}"></div>
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Порядок</label>
+                        <input class="form-input" id="mOrder" type="number" value="${m.order_index || 0}"></div>
+                    <div class="form-group"><label class="form-label">Видимость</label>
+                        <select class="form-select" id="mVis">
+                            <option value="true" ${m.is_visible !== false ? 'selected' : ''}>Видим</option>
+                            <option value="false" ${m.is_visible === false ? 'selected' : ''}>Скрыт</option>
+                        </select></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                    <button class="btn btn-primary hover-trigger" onclick="saveMenu('${m.id || ''}')">СОХРАНИТЬ</button>
+                </div>
+            `);
+        }
+
+        async function saveMenu(id) {
+            if (typeof window.supabase === 'undefined') return;
+            const data = {
+                label_ru: document.getElementById('mRu').value,
+                label_en: document.getElementById('mEn').value,
+                url: document.getElementById('mUrl').value,
+                order_index: parseInt(document.getElementById('mOrder').value) || 0,
+                is_visible: document.getElementById('mVis').value === 'true'
+            };
+            if (id) await window.supabase.from('menu_items').update(data).eq('id', id);
+            else await window.supabase.from('menu_items').insert(data);
+            closeModal();
+            loadMenu(window.supabase);
+        }
+
+        function openGrantForm() {
+            openModal(`
+                <h2>💎 Выдать Astra Tokens</h2>
+                <div class="form-group"><label class="form-label">Resident ID</label>
+                    <input class="form-input" id="gResidentId" placeholder="UUID резидента"></div>
+                <div class="form-group"><label class="form-label">Количество</label>
+                    <input class="form-input" id="gAmount" type="number" value="100"></div>
+                <div class="form-group"><label class="form-label">Причина</label>
+                    <input class="form-input" id="gReason" placeholder="admin_grant"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                    <button class="btn btn-primary hover-trigger" onclick="grantTokens()">ВЫДАТЬ</button>
+                </div>
+            `);
+        }
+
+        async function grantTokens() {
+            if (typeof window.supabase === 'undefined') return;
+            const rid = document.getElementById('gResidentId').value;
+            const amount = parseInt(document.getElementById('gAmount').value) || 0;
+            const reason = document.getElementById('gReason').value || 'admin_grant';
+            if (!rid || !amount) return alert('Заполните все поля');
+            // Upsert balance
+            const { data: existing } = await window.supabase.from('astra_balances').select('balance').eq('resident_id', rid).single();
+            if (existing) {
+                await window.supabase.from('astra_balances').update({ balance: existing.balance + amount }).eq('resident_id', rid);
+            } else {
+                await window.supabase.from('astra_balances').insert({ resident_id: rid, balance: amount });
+            }
+            // Log transaction
+            await window.supabase.from('astra_transactions').insert({
+                resident_id: rid, amount, type: 'credit', reason
+            });
+            closeModal();
+            loadAstra(window.supabase);
+        }
+
+        // ═══════════ CSV EXPORT ═══════════
+        function exportCSV(type) {
+            const tables = { leads: 'leadsBody', nda: 'ndaBody', apps: 'appsBody' };
+            const tbody = document.getElementById(tables[type]);
+            if (!tbody) return;
+            const rows = tbody.querySelectorAll('tr');
+            if (!rows.length) return alert('Нет данных для экспорта');
+            let csv = '';
+            // Get headers from sibling thead
+            const thead = tbody.closest('table').querySelector('thead tr');
+            if (thead) csv += Array.from(thead.cells).map(c => '"' + c.textContent.trim() + '"').join(',') + '\n';
+            rows.forEach(r => {
+                csv += Array.from(r.cells).map(c => '"' + c.textContent.trim().replace(/"/g, '""') + '"').join(',') + '\n';
+            });
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `alab_${type}_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+        }
+
+        // ═══════════ SEARCH & FILTER ═══════════
+        function searchTable(tbodyId, query) {
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+            const q = query.toLowerCase();
+            tbody.querySelectorAll('tr').forEach(r => {
+                r.style.display = !q || r.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+
+        function searchAstra(query) {
+            const grid = document.getElementById('astraGrid');
+            if (!grid) return;
+            const q = query.toLowerCase();
+            grid.querySelectorAll('.astra-card').forEach(c => {
+                c.style.display = !q || c.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+
+        function globalSearchHandler(query) {
+            // Search in active tab's table
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) return;
+            const tbody = activeTab.querySelector('tbody');
+            if (tbody) searchTable(tbody.id, query);
+            else {
+                const grid = activeTab.querySelector('.cms-grid');
+                if (grid) {
+                    const q = query.toLowerCase();
+                    grid.querySelectorAll('.cms-card, .astra-card').forEach(c => {
+                        c.style.display = !q || c.textContent.toLowerCase().includes(q) ? '' : 'none';
+                    });
+                }
+            }
+        }
+
+        function filterLeads(status) {
+            updateFilterPills(event);
+            const tbody = document.getElementById('leadsBody');
+            if (!tbody) return;
+            tbody.querySelectorAll('tr').forEach(r => {
+                if (status === 'all') r.style.display = '';
+                else {
+                    const sel = r.querySelector('select');
+                    r.style.display = sel && sel.value === status ? '' : 'none';
+                }
+            });
+        }
+
+        function filterApps(status) {
+            updateFilterPills(event);
+            const tbody = document.getElementById('appsBody');
+            if (!tbody) return;
+            tbody.querySelectorAll('tr').forEach(r => {
+                if (status === 'all') r.style.display = '';
+                else r.style.display = (r.dataset.status || '') === status ? '' : 'none';
+            });
+        }
+
+        function filterLogs(level) {
+            updateFilterPills(event);
+            const tbody = document.getElementById('logsBody');
+            if (!tbody) return;
+            tbody.querySelectorAll('tr').forEach(r => {
+                if (level === 'all') r.style.display = '';
+                else r.style.display = (r.dataset.level || '') === level ? '' : 'none';
+            });
+        }
+
+        function updateFilterPills(e) {
+            if (!e || !e.target) return;
+            const pills = e.target.closest('.filter-pills');
+            if (pills) pills.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            e.target.classList.add('active');
+        }
+
+        // ═══════════ INIT ═══════════
+        document.addEventListener('DOMContentLoaded', () => {
+            // Trigger Supabase through ALabCore if needed
+            if (window.ALabCore && window.ALabCore.db) {
+                loadTabData('dashboard');
+            } else {
+                // Check if already defined by CDN
+                if (typeof window.supabase !== 'undefined') loadTabData('dashboard');
+            }
+        });
+    </script>
+
+    <!-- A-LAB Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="i18n.js"></script>
+</body>
+
+</html>

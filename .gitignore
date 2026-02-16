@@ -1,0 +1,25 @@
+# Media
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.flv
+*.m4v
+
+# Large archives
+*.zip
+*.tar
+*.gz
+*.rar
+
+# Folders to ignore
+node_modules/
+spirograph-pro/
+release/
+backups/
+amuse-web/
+project-zero-countdown/
+
+# OS files
+.DS_Store
+Thumbs.db

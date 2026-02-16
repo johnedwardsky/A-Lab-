@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | СООБЩЕНИЯ</title>
+    <link rel="stylesheet" href="resident-nav.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .sidebar {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .nav-item {
+            color: #555;
+        }
+
+        body.light-theme .nav-item:hover,
+        body.light-theme .nav-item.active {
+            background: rgba(0, 0, 0, 0.03);
+            color: #1d1d1f;
+        }
+
+        body.light-theme .chat-sidebar {
+            background: #fcfcfd;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .chat-item:hover,
+        body.light-theme .chat-item.active {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-theme .message-window {
+            background: #fff;
+        }
+
+        body.light-theme .msg-bubble.received {
+            background: #f0f0f2;
+            color: #1d1d1f;
+        }
+
+        body.light-theme .msg-input-area {
+            background: #fcfcfd;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .msg-input {
+            background: #fff;
+            color: #1d1d1f;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .window-header {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .search-chat {
+            background: #fff;
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme h1,
+        body.light-theme h2,
+        body.light-theme h3,
+        body.light-theme p,
+        body.light-theme .user-name,
+        body.light-theme .chat-name,
+        body.light-theme .last-msg,
+        body.light-theme .chat-time {
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .theme-toggle {
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+
+        /* --- CURSOR --- */
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        /* Shared nav styles are used */
+
+
+
+        /* --- MESSAGES LAYOUT --- */
+        .messages-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .chat-sidebar {
+            width: 350px;
+            background: rgba(11, 13, 20, 0.5);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(20px);
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-chat {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .chat-list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: 0.2s;
+            text-decoration: none;
+        }
+
+        .chat-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .chat-item.active {
+            background: rgba(0, 229, 255, 0.05);
+            border-left: 3px solid var(--tech-blue);
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #222;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-info {
+            flex-grow: 1;
+        }
+
+        .chat-header-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .chat-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: white;
+        }
+
+        .chat-time {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #999;
+        }
+
+        .last-msg {
+            font-size: 0.8rem;
+            color: #aaa;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        /* --- ACTIVE CHAT --- */
+        .message-window {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: #030407;
+            position: relative;
+        }
+
+        .window-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(3, 4, 7, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .active-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #444;
+            border-radius: 50%;
+        }
+
+        .status-dot.online {
+            background: #00FF1A;
+            box-shadow: 0 0 10px rgba(0, 255, 26, 0.5);
+        }
+
+        .msg-history {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .msg-bubble {
+            max-width: 60%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .msg-bubble.received {
+            background: rgba(255, 255, 255, 0.05);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-bubble.sent {
+            background: var(--accent);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-time {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            opacity: 0.5;
+            margin-top: 5px;
+            display: block;
+            text-align: right;
+        }
+
+        .msg-input-area {
+            padding: 25px 30px;
+            background: rgba(11, 13, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .msg-input {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-chat::placeholder,
+        .msg-input::placeholder {
+            color: #888;
+        }
+
+        .msg-input:focus {
+            border-color: var(--tech-blue);
+        }
+
+        .send-btn {
+            background: var(--tech-blue);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        }
+
+        @media (max-width: 900px) {
+            .chat-sidebar {
+                width: 80px;
+            }
+
+            .chat-info,
+            .sidebar-header h2 {
+                display: none;
+            }
+
+            .chat-item {
+                justify-content: center;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .messages-container {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+
+    <!-- Navigation is injected by nav-manager.js -->
+
+    <div class="messages-container">
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <h2 style="font-size: 1.2rem; margin-bottom: 15px;">Messages</h2>
+                <input type="text" class="search-chat" placeholder="Поиск контактов...">
+            </div>
+            <div class="chat-list" id="chatList">
+                <div style="padding: 20px; text-align: center; color: #555; font-size: 0.8rem;">Загрузка списка
+                    контактов...</div>
+            </div>
+        </div>
+
+        <div class="message-window">
+            <header class="window-header">
+                <div class="active-user">
+                    <div class="chat-avatar" style="width: 40px; height: 40px;">
+                        <img src="alex_river.png">
+                    </div>
+                    <div>
+                        <div class="chat-name">Alex River</div>
+                        <div style="display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: #555;">
+                            <div class="status-dot online"></div> ONLINE
+                        </div>
+                    </div>
+                </div>
+                <div style="font-family: var(--font-code); font-size: 0.7rem; color: var(--tech-blue);">
+                    ENCRYPTED_CHANNEL: [AES-256]
+                </div>
+            </header>
+
+            <div class="msg-history" id="msgHistory">
+                <div style="text-align: center; padding: 50px; color: #555; font-size: 0.85rem;">Выберите чат для начала
+                    общения</div>
+            </div>
+
+            <div class="msg-input-area">
+                <button class="hover-trigger"
+                    style="background:transparent; border:none; color:#555; font-size:1.2rem;">📎</button>
+                <input type="text" class="msg-input" placeholder="Напишите сообщение..." id="chatInput">
+                <button class="send-btn hover-trigger" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth-guard.js"></script>
+    <script src="message-manager.js"></script>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        function bindHover() {
+            document.querySelectorAll('.hover-trigger').forEach(t => {
+                if (t.dataset.hoverBound) return;
+                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                t.dataset.hoverBound = "true";
+            });
+        }
+        bindHover();
+
+        // Messenger UI Logic
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const recipientId = window.MessageManager.currentRecipientId;
+
+            if (!recipientId) {
+                alert("Выберите получателя");
+                return;
+            }
+
+            if (input.value.trim() !== "") {
+                const content = input.value.trim();
+                input.value = ""; // Clear immediately for snappiness
+                await window.MessageManager.sendMessage(recipientId, content);
+            }
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Event Listeners for MessageManager
+        document.addEventListener('alab:chats-loaded', (e) => {
+            const chatList = document.getElementById('chatList');
+            const chats = e.detail;
+
+            if (chats.length === 0) {
+                chatList.innerHTML = '<div style="padding: 20px; text-align: center; color: #555; font-size: 0.8rem;">Активных чатов пока нет</div>';
+                return;
+            }
+
+            chatList.innerHTML = chats.map(chat => `
+                <a href="#" class="chat-item hover-trigger ${window.MessageManager.currentRecipientId === chat.id ? 'active' : ''}" 
+                   onclick="selectChat('${chat.id}', '${chat.full_name}', '${chat.avatar_url || 'maya_neural.png'}')">
+                    <div class="chat-avatar">
+                        <img src="${chat.avatar_url || 'maya_neural.png'}">
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-header-meta">
+                            <div class="chat-name">${chat.full_name}</div>
+                            <div class="chat-time">...</div>
+                        </div>
+                        <div class="last-msg">Нажмите, чтобы открыть переписку</div>
+                    </div>
+                </a>
+            `).join('');
+            bindHover();
+        });
+
+        document.addEventListener('alab:messages-loaded', (e) => renderMessages(e.detail));
+        document.addEventListener('alab:messages-updated', (e) => renderMessages(e.detail));
+
+        function selectChat(id, name, avatar) {
+            // Update Header
+            document.querySelector('.active-user .chat-name').innerText = name;
+            document.querySelector('.active-user img').src = avatar;
+
+            // Mark active in sidebar
+            document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+            const activeItem = Array.from(document.querySelectorAll('.chat-item')).find(item => item.onclick.toString().includes(id));
+            if (activeItem) activeItem.classList.add('active');
+
+            // Load messages
+            window.MessageManager.loadMessages(id);
+        }
+
+        function renderMessages(messages) {
+            const history = document.getElementById('msgHistory');
+            const currentUserId = window.ALabAuth.residentId;
+
+            if (messages.length === 0) {
+                history.innerHTML = '<div style="text-align: center; padding: 50px; color: #555; font-size: 0.85rem;">Нет сообщений. Начните общение первым!</div>';
+                return;
+            }
+
+            history.innerHTML = messages.map(msg => `
+                <div class="msg-bubble ${msg.sender_id === currentUserId ? 'sent' : 'received'}">
+                    ${msg.content}
+                    <span class="msg-time">${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+            `).join('');
+
+            history.scrollTop = history.scrollHeight;
+        }
+
+        // Theme handled by nav-manager.js
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+        }
+
+        // Auth Init
+        document.addEventListener('alab:auth-ready', (e) => {
+            const auth = e.detail;
+            if (auth.residentId) {
+                window.MessageManager.init(auth.residentId);
+            }
+        });
+
+        // If auth is already ready
+        if (window.ALabAuth && window.ALabAuth.residentId) {
+            window.MessageManager.init(window.ALabAuth.residentId);
+        }
+
+    </script>
+    <script src="nav-manager.js"></script>
+</body>
+
+</html>

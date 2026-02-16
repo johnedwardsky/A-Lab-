@@ -1,0 +1,293 @@
+/* --- SHARED RESIDENT NAVIGATION STYLES [MENU2] --- */
+
+/* Sidebar (Desktop) */
+.sidebar {
+    width: 80px;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    border-right: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 30px 17px;
+    gap: 30px;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar:hover {
+    width: 220px;
+}
+
+.sidebar .nav-item {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #999;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: 0.3s;
+    padding: 0 12px;
+    cursor: pointer;
+}
+
+.sidebar .nav-item i {
+    font-style: normal;
+    font-size: 1.2rem;
+    min-width: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar .nav-item span {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: 0.3s;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.sidebar:hover .nav-item span {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.sidebar .nav-item:hover,
+.sidebar .nav-item.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar .nav-item.active {
+    color: var(--accent, #FF2A2A);
+    background: rgba(255, 42, 42, 0.1);
+}
+
+.join-btn-sidebar {
+    background: var(--accent, #FF2A2A);
+    color: black;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: var(--font-code, monospace);
+    font-weight: 800;
+    font-size: 0.7rem;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.join-btn-sidebar span {
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.sidebar:hover .join-btn-sidebar span {
+    opacity: 1;
+}
+
+/* Bottom Nav (Mobile Only) */
+.bottom-nav {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    min-width: 330px;
+    background: rgba(11, 13, 20, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 35px;
+    padding: 12px 25px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    z-index: 10000;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.nav-item-bottom {
+    color: #888;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-code, monospace);
+    font-size: 0.65rem;
+    transition: 0.3s;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+.nav-item-bottom i {
+    font-style: normal;
+    font-size: 1.5rem;
+}
+
+.nav-item-bottom:hover,
+.nav-item-bottom.active {
+    color: var(--accent, #FF2A2A);
+    transform: translateY(-3px);
+}
+
+.nav-item-bottom.active {
+    color: var(--accent, #FF2A2A);
+}
+
+.logo-bottom img {
+    width: 30px;
+    height: auto;
+}
+
+/* More Menu Popup */
+.more-menu-popup {
+    position: fixed;
+    bottom: 95px;
+    right: 50%;
+    transform: translateX(50%);
+    background: rgba(11, 13, 20, 0.98);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    padding: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10001;
+    min-width: 220px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8);
+}
+
+.more-menu-popup.active {
+    display: flex;
+    animation: slideUp 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(50%, 30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(50%, 0);
+    }
+}
+
+.more-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 18px;
+    border-radius: 14px;
+    transition: 0.3s;
+    font-family: var(--font-main, sans-serif);
+    font-size: 0.95rem;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+}
+
+.more-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--tech-blue, #00E5FF);
+}
+
+.more-item.join-btn {
+    background: var(--accent, #FF2A2A);
+    color: black;
+    font-weight: 800;
+}
+
+.more-item.active {
+    color: var(--accent, #FF2A2A);
+    background: rgba(255, 42, 42, 0.05);
+}
+
+/* Layout adjustments */
+.has-resident-nav .hero,
+.has-resident-nav .main-container,
+.has-resident-nav .messages-container,
+.has-resident-nav .feed-container,
+.has-resident-nav .projects-grid,
+.has-resident-nav .residents-grid {
+    margin-left: 80px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none !important;
+    }
+
+    .bottom-nav {
+        display: flex !important;
+    }
+
+    body.has-resident-nav {
+        padding-bottom: 100px !important;
+    }
+
+    .has-resident-nav .hero,
+    .has-resident-nav .main-container,
+    .has-resident-nav .messages-container,
+    .has-resident-nav .feed-container,
+    .has-resident-nav .projects-grid,
+    .has-resident-nav .residents-grid,
+    .has-resident-nav .main-content {
+        margin-left: 0 !important;
+        margin-bottom: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* Light Theme support */
+body.light-theme .sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .sidebar .nav-item {
+    color: #666;
+}
+
+body.light-theme .sidebar .nav-item:hover {
+    color: #000;
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.light-theme .bottom-nav {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .more-menu-popup {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .more-item {
+    color: #333;
+}
+
+body.light-theme .more-item:hover {
+    background: rgba(0, 0, 0, 0.03);
+}

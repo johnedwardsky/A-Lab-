@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | RESIDENTS COMMUNITY</title>
+    <link rel="stylesheet" href="resident-nav.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script>
+        (function () {
+            const savedLang = localStorage.getItem('alab_lang') || 'ru';
+            document.documentElement.lang = savedLang;
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --text-secondary: #b8b8b8;
+            --text-tertiary: #888888;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --text-secondary: #4a4a4a;
+            --text-tertiary: #6a6a6a;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .noise-overlay {
+            opacity: 0.03;
+            filter: invert(1);
+        }
+
+        body.light-theme .logo img {
+            filter: none;
+        }
+
+        body.light-theme .resident-card {
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .menu-btn,
+        body.light-theme .theme-toggle {
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme h1,
+        body.light-theme h2,
+        body.light-theme h3,
+        body.light-theme .resident-info h4,
+        body.light-theme .resident-info p,
+        body.light-theme .stat-label,
+        body.light-theme .stat-value {
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .quiz-modal {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        body.light-theme .quiz-content {
+            background: #fff;
+            color: #1d1d1f;
+        }
+
+        body.light-theme .close-quiz {
+            color: #ccc;
+        }
+
+        body.light-theme .quiz-opt {
+            background: rgba(0, 0, 0, 0.02);
+            color: #1d1d1f;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 20000;
+            transition: width 0.15s ease-out, height 0.15s ease-out, background 0.15s ease-out, opacity 0.15s ease-out;
+            mix-blend-mode: normal;
+            will-change: transform;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            opacity: 0.8;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 900;
+            opacity: 0.07;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        /* Shared styles from resident-nav.css are used */
+        /* --- LAYOUT --- */
+        .hero {
+            padding: 120px 40px 60px;
+            margin-left: 80px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            line-height: 0.85;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .residents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            margin-left: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex;
+            }
+
+            .hero,
+            .residents-grid {
+                margin-left: 0;
+            }
+
+            .residents-grid {
+                margin-bottom: 100px;
+            }
+        }
+
+        .resident-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 0;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            color: white;
+            text-decoration: none;
+            display: block;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardAppear 0.6s ease forwards;
+        }
+
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .resident-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .resident-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .resident-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .resident-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .resident-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .resident-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        .resident-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 42, 42, 0.1));
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 0;
+        }
+
+        .resident-card:hover::before {
+            opacity: 1;
+        }
+
+        .resident-card:hover {
+            border-color: var(--tech-blue);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 229, 255, 0.2);
+        }
+
+        .resident-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .resident-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(1) brightness(0.7);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .resident-card:hover .resident-image img {
+            filter: grayscale(0) brightness(1);
+            transform: scale(1.1);
+        }
+
+        .resident-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00FF41;
+            box-shadow: 0 0 15px #00FF41;
+            z-index: 2;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(1.2);
+            }
+        }
+
+        .resident-status.busy {
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .resident-status.away {
+            background: #FFB800;
+            box-shadow: 0 0 15px #FFB800;
+        }
+
+        .resident-info {
+            padding: 15px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .resident-role {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .resident-card:hover .resident-role {
+            color: var(--accent);
+        }
+
+        .resident-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .resident-bio {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .resident-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .skill-tag {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 4px;
+            color: var(--tech-blue);
+            transition: all 0.3s;
+        }
+
+        .resident-card:hover .skill-tag {
+            background: rgba(0, 229, 255, 0.2);
+            border-color: var(--tech-blue);
+            transform: translateY(-2px);
+        }
+
+        .resident-links {
+            display: flex;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .social-link {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: var(--tech-blue);
+            border-color: var(--tech-blue);
+            transform: translateY(-3px) rotate(5deg);
+        }
+
+        /* Quiz Modal */
+        .quiz-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 4, 7, 0.98);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .quiz-modal.active {
+            display: flex;
+        }
+
+        .quiz-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 60px;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+        }
+
+        .close-quiz {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 2.5rem;
+            color: var(--text-tertiary);
+            cursor: pointer;
+        }
+
+        .quiz-step {
+            display: none;
+        }
+
+        .quiz-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quiz-progress {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.7rem;
+            margin-bottom: 20px;
+        }
+
+        .quiz-q {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+        }
+
+        .quiz-opt {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: var(--font-code);
+        }
+
+        .quiz-opt:hover {
+            border-color: var(--accent);
+            background: rgba(255, 42, 42, 0.05);
+        }
+
+        .quiz-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #333;
+            padding: 20px;
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            outline: none;
+        }
+
+
+        .quiz-input::placeholder {
+            color: #888;
+        }
+
+        .btn-quiz-next {
+            background: var(--accent);
+            color: black;
+            font-weight: 800;
+            padding: 20px 40px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-quiz-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 42, 42, 0.3);
+        }
+
+        .btn-quiz-back {
+            background: transparent;
+            color: var(--text);
+            font-weight: 600;
+            padding: 20px 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .btn-quiz-back:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            transform: translateX(-5px);
+        }
+
+        footer {
+            padding: 60px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+        }
+
+        @media (max-width: 768px) {
+            .residents-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-content {
+                padding: 30px;
+            }
+
+            .quiz-q {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <div class="cursor"></div>
+    <!-- Navigation is injected by nav-manager.js -->
+
+    <section class="hero">
+        <h1><span data-i18n="page_residents.hero_title_line1">Наши</span> <br> <span style="color: var(--accent);"
+                data-i18n="page_residents.hero_title_line2">Резиденты</span></h1>
+        <p style="color: var(--text-secondary); max-width: 600px;" data-i18n="page_residents.hero_desc">Закрытое
+            сообщество креативных лидеров и цифровых
+            архитекторов
+            будущего.</p>
+    </section>
+
+    <div class="residents-grid">
+        <!-- Ivan Lakshinsky -->
+        <a href="profile.html?id=ivan-lakshinsky" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="ivan_tech.png" alt="Ivan Lakshinsky">
+                <div class="resident-status"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.ivan_role">CEO & CHIEF ADMIN</div>
+                <h3 class="resident-name" data-i18n="page_residents.ivan_name">Иван Лакшинский</h3>
+                <p class="resident-bio" data-i18n="page_residents.ivan_bio">Основатель лаборатории. Архитектор цифровых
+                    реальностей. Создаю системы, которые
+                    живут собственной жизнью.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">SYSTEM ARCH</span>
+                    <span class="skill-tag">AI STRATEGY</span>
+                    <span class="skill-tag">LEADERSHIP</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">🌐</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Alexey Pak -->
+        <a href="profile.html?id=alexey-pak" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="alexey_tech.png" alt="Alexey Pak">
+                <div class="resident-status"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.alexey_role">STRATEGIC DIRECTOR</div>
+                <h3 class="resident-name" data-i18n="page_residents.alexey_name">Алексей Пак</h3>
+                <p class="resident-bio" data-i18n="page_residents.alexey_bio">Стратегическое развитие и масштабирование.
+                    Строю мосты между технологиями A-Lab
+                    и глобальным рынком.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">GLOBAL BIZDEV</span>
+                    <span class="skill-tag">STRATEGY</span>
+                    <span class="skill-tag">SCALABILITY</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">🌐</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+        <!-- Alex River -->
+        <a href="profile.html?id=alex-river" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="alex_river.png" alt="Alex River">
+                <div class="resident-status"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.alex_role">LEAD DESIGNER</div>
+                <h3 class="resident-name" data-i18n="page_residents.alex_name">Alex River</h3>
+                <p class="resident-bio" data-i18n="page_residents.alex_bio">Специализируется на иммерсивных интерфейсах
+                    для Fintech. 8+ лет опыта в создании
+                    продуктов.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">UI/UX</span>
+                    <span class="skill-tag">FIGMA</span>
+                    <span class="skill-tag">PROTOTYPING</span>
+                    <span class="skill-tag">FINTECH</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">🔗</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Maya Neural -->
+        <a href="profile.html?id=maya-neural" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="maya_neural.png" alt="Maya Neural">
+                <div class="resident-status busy"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.maya_role">AI ARTIST</div>
+                <h3 class="resident-name" data-i18n="page_residents.maya_name">Maya Neural</h3>
+                <p class="resident-bio" data-i18n="page_residents.maya_bio">Генеративное искусство и машинное обучение.
+                    Создает уникальные визуальные миры с
+                    помощью AI.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">MIDJOURNEY</span>
+                    <span class="skill-tag">STABLE DIFFUSION</span>
+                    <span class="skill-tag">PYTHON</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">🎨</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Viktor Code -->
+        <a href="profile.html?id=viktor-code" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="viktor_code.png" alt="Viktor Code">
+                <div class="resident-status"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.viktor_role">FULL-STACK DEV</div>
+                <h3 class="resident-name" data-i18n="page_residents.viktor_name">Viktor Code</h3>
+                <p class="resident-bio" data-i18n="page_residents.viktor_bio">Архитектор высоконагруженных систем.
+                    Специализация на Node.js, React и облачных
+                    решениях.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">REACT</span>
+                    <span class="skill-tag">NODE.JS</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">DOCKER</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">💻</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Sophia Brand -->
+        <a href="profile.html?id=sophia-brand" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="sophia_brand.png" alt="Sophia Brand">
+                <div class="resident-status away"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.sophia_role">BRAND STRATEGIST</div>
+                <h3 class="resident-name" data-i18n="page_residents.sophia_name">Sophia Brand</h3>
+                <p class="resident-bio" data-i18n="page_residents.sophia_bio">Создает идентичность брендов будущего.
+                    Работала с Fortune 500 компаниями и
+                    стартапами.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">BRANDING</span>
+                    <span class="skill-tag">STRATEGY</span>
+                    <span class="skill-tag">MARKETING</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">🎯</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Max Neural -->
+        <a href="profile.html?id=max-neural" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="max_neural.png" alt="Max Neural">
+                <div class="resident-status"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.max_role">ML ENGINEER</div>
+                <h3 class="resident-name" data-i18n="page_residents.max_name">Max Neural</h3>
+                <p class="resident-bio" data-i18n="page_residents.max_bio">Разработчик нейронных сетей и AI-решений.
+                    Специализируется на NLP и компьютерном
+                    зрении.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">PYTORCH</span>
+                    <span class="skill-tag">TENSORFLOW</span>
+                    <span class="skill-tag">NLP</span>
+                    <span class="skill-tag">CV</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">🤖</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Elena Motion -->
+        <a href="profile.html?id=elena-motion" class="resident-card hover-trigger">
+            <div class="resident-image">
+                <img src="elena_motion.png" alt="Elena Motion">
+                <div class="resident-status"></div>
+            </div>
+            <div class="resident-info">
+                <div class="resident-role" data-i18n="page_residents.elena_role">MOTION DESIGNER</div>
+                <h3 class="resident-name" data-i18n="page_residents.elena_name">Elena Motion</h3>
+                <p class="resident-bio" data-i18n="page_residents.elena_bio">Создает захватывающие анимации и
+                    motion-графику для digital-проектов и рекламных
+                    кампаний.</p>
+                <div class="resident-skills">
+                    <span class="skill-tag">AFTER EFFECTS</span>
+                    <span class="skill-tag">CINEMA 4D</span>
+                    <span class="skill-tag">3D</span>
+                </div>
+                <div class="resident-links">
+                    <div class="social-link">🎬</div>
+                    <div class="social-link">💼</div>
+                    <div class="social-link">📱</div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="quiz-modal" id="quizModal">
+        <div class="quiz-content">
+            <span class="close-quiz" onclick="closeQuiz()">&times;</span>
+            <div id="quizForm">
+                <div class="quiz-step active" id="step1">
+                    <div class="quiz-progress">ШАГ 1 // 4</div>
+                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step1_title">В чем ваша сила?</h2>
+                    <div class="quiz-opt" onclick="selectStrength('DESIGN & BRANDING')">DESIGN & BRANDING</div>
+                    <div class="quiz-opt" onclick="selectStrength('DEVELOPMENT & AI')">DEVELOPMENT & AI</div>
+                    <div class="quiz-opt" onclick="selectStrength('STRATEGY & PRODUCT')">STRATEGY & PRODUCT</div>
+                    <div class="quiz-opt" onclick="selectStrength('CREATIVE LEADER')">CREATIVE LEADER</div>
+                    <div class="quiz-opt" onclick="toggleCustomStrength()" data-i18n="page_residents.quiz_other">ДРУГОЕ
+                        (УКАЗАТЬ СВОЕ)</div>
+
+                    <div id="customStrengthField" style="display:none; margin-top:20px;">
+                        <input type="text" class="quiz-input" placeholder="Укажите вашу специализацию..."
+                            id="customStrengthInput" style="margin-bottom:15px;">
+                        <button class="btn-quiz-next" onclick="submitCustomStrength()"
+                            data-i18n="page_residents.quiz_next">ДАЛЕЕ</button>
+                    </div>
+                </div>
+                <div class="quiz-step" id="step2">
+                    <div class="quiz-progress">ШАГ 2 // 4</div>
+                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step2_title">Ваш опыт в годах?</h2>
+                    <div class="quiz-opt" onclick="selectExp('1-3 ГОДА')">1-3 ГОДА</div>
+                    <div class="quiz-opt" onclick="selectExp('3-7 ЛЕТ')">3-7 ЛЕТ</div>
+                    <div class="quiz-opt" onclick="selectExp('7+ ЛЕТ')">7+ ЛЕТ</div>
+                    <button class="btn-quiz-back" onclick="prevStep(1)" data-i18n="page_residents.quiz_back">←
+                        НАЗАД</button>
+                </div>
+                <div class="quiz-step" id="step3">
+                    <div class="quiz-progress">ШАГ 3 // 5</div>
+                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step3_title">Расскажите о себе</h2>
+                    <textarea class="quiz-input" id="regBio" placeholder="Ваша мотивация..."></textarea>
+                    <div style="display:flex; gap:15px; margin-top:20px;">
+                        <button class="btn-quiz-back" onclick="prevStep(2)">← НАЗАД</button>
+                        <button class="btn-quiz-next" onclick="nextStep('recommender')" style="flex:1;">ДАЛЕЕ</button>
+                    </div>
+                </div>
+                <div class="quiz-step" id="step-recommender">
+                    <div class="quiz-progress">ШАГ 4 // 5</div>
+                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step4_title">Рекомендация (ID)</h2>
+                    <p style="font-size: 0.7rem; color: #666; margin-bottom: 15px; font-family: var(--font-code);"
+                        data-i18n="page_residents.quiz_step4_desc">Для
+                        вступления необходим ID действующего резидента.</p>
+                    <input type="text" class="quiz-input" placeholder="ID.XXXXXX" id="recommenderId">
+                    <div style="display:flex; gap:15px; margin-top:20px;">
+                        <button class="btn-quiz-back" onclick="prevStep(3)">← НАЗАД</button>
+                        <button class="btn-quiz-next" onclick="nextStep(4)" style="flex:1;">ДАЛЕЕ</button>
+                    </div>
+                </div>
+                <div class="quiz-step" id="step4">
+                    <div class="quiz-progress">ШАГ 5 // 5</div>
+                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step5_title">Ваше имя и Telegram?</h2>
+                    <input type="text" class="quiz-input" placeholder="Имя Фамилия" id="regFullName"
+                        style="margin-bottom:10px;">
+                    <input type="text" class="quiz-input" placeholder="@username" id="regTg">
+                    <div style="display:flex; gap:15px; margin-top:20px;">
+                        <button class="btn-quiz-back" onclick="prevStep('recommender')">← НАЗАД</button>
+                        <button class="btn-quiz-next" id="submitAppBtn" onclick="finishQuiz()" style="flex:1;"
+                            data-i18n="page_residents.quiz_submit">ОТПРАВИТЬ ЗАЯВКУ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>© 2025 A-LAB.TECH // RESIDENTS</div>
+        <div>INSTAGRAM // TELEGRAM // DISCORD</div>
+    </footer>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursor.style.transform = `translate3d(${mouseX - 10}px, ${mouseY - 10}px, 0)`;
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+        function openQuiz() { document.getElementById('quizModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeQuiz() {
+            document.getElementById('quizModal').classList.remove('active');
+            document.body.style.overflow = '';
+            // Reset to step 1
+            document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step1').classList.add('active');
+            // Hide custom field
+            document.getElementById('customStrengthField').style.display = 'none';
+        }
+
+        function nextStep(step) {
+            document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+            const target = typeof step === 'string' ? 'step-' + step : 'step' + step;
+            document.getElementById(target).classList.add('active');
+        }
+
+        function prevStep(step) {
+            document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+            const target = typeof step === 'string' ? 'step-' + step : 'step' + step;
+            document.getElementById(target).classList.add('active');
+        }
+
+        function selectStrength(strength) {
+            window.selectedStrength = strength;
+            nextStep(2);
+        }
+
+        function toggleCustomStrength() {
+            const field = document.getElementById('customStrengthField');
+            field.style.display = field.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function submitCustomStrength() {
+            const customValue = document.getElementById('customStrengthInput').value.trim();
+            if (!customValue) return alert('Пожалуйста, укажите вашу специализацию');
+            window.selectedStrength = customValue;
+            nextStep(2);
+        }
+
+        function selectExp(exp) {
+            window.selectedExp = exp;
+            nextStep(3);
+        }
+
+        async function finishQuiz() {
+            const fullName = document.getElementById('regFullName').value.trim();
+            const tg = document.getElementById('regTg').value.trim();
+            const bio = document.getElementById('regBio').value.trim();
+            const recommender = document.getElementById('recommenderId').value.trim();
+            const btn = document.getElementById('submitAppBtn');
+
+            if (!fullName) return alert('Пожалуйста, введите ваше имя');
+            if (!tg) return alert('Введите Telegram');
+            if (!recommender) return alert('Введите ID резидента');
+
+            btn.disabled = true;
+            btn.innerText = 'ОТПРАВКА...';
+
+            try {
+                const db = window.ALabCore?.db;
+                if (!db) throw new Error('Database not connected');
+
+                const { error } = await db
+                    .from('resident_applications')
+                    .insert({
+                        full_name: fullName,
+                        telegram: tg,
+                        strength: window.selectedStrength || 'N/A',
+                        experience: window.selectedExp || 'N/A',
+                        bio: bio,
+                        recommender_id: recommender
+                    });
+
+                if (error) throw error;
+
+                const successMsg = `ЗАЯВКА ПРИНЯТА: Мы свяжемся с вами в Telegram после проверки данных администратором.`;
+                alert(successMsg);
+                closeQuiz();
+
+            } catch (err) {
+                console.error('[QUIZ] Submit error:', err);
+                alert('Ошибка при отправке: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'ОТПРАВИТЬ ЗАЯВКУ';
+            }
+        }
+    </script>
+    <!-- A-LAB Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="i18n.js"></script>
+    <script src="nda-manager.js"></script>
+    <script src="nav-manager.js"></script>
+    <script src="residents-manager-v2.js"></script>
+</body>
+
+</html>

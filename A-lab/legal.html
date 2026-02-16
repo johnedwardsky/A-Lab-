@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.LEGAL | DOCUMENTATION HUB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --text-secondary: #aaaaaa;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--text);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+            mix-blend-mode: exclusion;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--text);
+            mix-blend-mode: difference;
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 100px 40px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 60px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .back-btn {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .back-btn:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        /* --- SIDEBAR NAV --- */
+        .doc-nav {
+            position: sticky;
+            top: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .doc-link {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 10px;
+            border-left: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .doc-link:hover,
+        .doc-link.active {
+            color: var(--tech-blue);
+            border-left-color: var(--tech-blue);
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.05), transparent);
+        }
+
+        /* --- CONTENT --- */
+        .legal-content h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+        }
+
+        .doc-section {
+            margin-bottom: 80px;
+            padding-bottom: 50px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doc-section h2 {
+            font-family: var(--font-code);
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .doc-section h2::before {
+            content: '§';
+            color: var(--accent);
+        }
+
+        .doc-section h3 {
+            font-size: 1.1rem;
+            color: white;
+            margin: 30px 0 15px;
+        }
+
+        p,
+        li {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            color: var(--text);
+            text-decoration: none;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        .footer {
+            margin-top: 50px;
+            font-size: 0.7rem;
+            font-family: var(--font-code);
+            color: #555;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab_logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="back-btn hover-trigger">HOME</a>
+    </header>
+
+    <div class="container">
+
+        <aside class="doc-nav">
+            <div style="font-weight: 800; margin-bottom: 20px; color: white;">LEGAL HUB</div>
+            <a href="#privacy" class="doc-link hover-trigger">Политика Конфиденциальности</a>
+            <a href="#terms" class="doc-link hover-trigger">Пользовательское Соглашение</a>
+            <a href="#nda" class="doc-link hover-trigger">NDA (Соглашение о Неразглашении)</a>
+            <a href="#dao-rules" class="doc-link hover-trigger">Правила DAO & Web3</a>
+            <a href="#ip" class="doc-link hover-trigger">Интеллектуальная Собственность</a>
+        </aside>
+
+        <main class="legal-content">
+            <!-- CLASSIFIED CLASSIFICATION BANNER -->
+            <div
+                style="border: 1px solid var(--accent); background: rgba(255, 42, 42, 0.05); color: var(--accent); padding: 10px 15px; font-family: var(--font-code); font-size: 0.7rem; margin-bottom: 30px; display: inline-block;">
+                ⚠️ INTERNAL DOCUMENTATION // PUBLIC PREVIEW ENABLED FOR RECRUITMENT PURPOSES
+            </div>
+
+            <h1>Правовая Информация</h1>
+
+            <!-- PRIVACY -->
+            <section id="privacy" class="doc-section">
+                <h2>Политика Конфиденциальности</h2>
+                <div style="font-family: var(--font-code); font-size: 0.7rem; color: #666; margin-bottom: 20px;">LAST
+                    UPDATED: 15.02.2026 // VERSION 2.1</div>
+
+                <h3>1. Сбор Данных</h3>
+                <p>A-LAB.TECH собирает данные, необходимые для функционирования платформы и взаимодействия резидентов,
+                    включая: персональные данные, профессиональное портфолио, данные о транзакциях токенов Astra и
+                    цифровые следы взаимодействия с интерфейсом.</p>
+
+                <h3>2. Использование Данных</h3>
+                <p>Мы используем данные для:
+                <ul>
+                    <li>Обеспечения безопасности аккаунтов резидентов.</li>
+                    <li>Анализа эффективности R&D проектов.</li>
+                    <li>Расчета коэффициентов участия (Engagement Rate) для токеномики.</li>
+                </ul>
+                </p>
+
+                <h3>3. Ответственность за цифровые активы</h3>
+                <p>A-LAB не хранит приватные ключи пользователей. Резиндент несет единоличную ответственность за
+                    безопасность своего кошелька (MetaMask и др.) и сохранность токенов Astra в On-chain. Потеря доступа
+                    к кошельку означает безвозвратную потерю активов.</p>
+
+                <a href="#" class="download-btn hover-trigger">↓ DOWNLOAD FULL PDF</a>
+            </section>
+
+            <!-- TERMS -->
+            <section id="terms" class="doc-section">
+                <h2>Устав Резидента (Charter)</h2>
+
+                <h3>1. Статус Резидента</h3>
+                <p>Резидент A-LAB — это авторизованный участник DAO, прошедший верификацию. Статус дает право на доступ
+                    к ресурсам, R&D проектам и финансовой экосистеме Astra.</p>
+
+                <h3>2. Экономика Участия (Astra Tokens)</h3>
+                <div
+                    style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <ul style="margin: 0; list-style: none;">
+                        <li style="margin-bottom: 10px;">
+                            <strong style="color: var(--tech-blue);">2.1 Приветственный Бонус:</strong>
+                            Каждый новый резидент при регистрации получает стартовый пакет в размере <strong>150
+                                ASTRA</strong> (эквивалент ~$225). Это доля в общем успехе Лаборатории.
+                        </li>
+                        <li style="margin-bottom: 10px;">
+                            <strong style="color: var(--accent);">2.2 Период Вестинга (Vesting Period):</strong>
+                            Возможность вывода (Claim) токенов ASTRA в On-chain открывается через <strong>6
+                                месяцев</strong> активности. Обмен на фиат или листинг — через <strong>1 год</strong>.
+                        </li>
+                        <li style="margin-bottom: 0;">
+                            <strong style="color: #00FF41;">2.3 Стратегия Роста:</strong>
+                            Ценность сообщества определяется совокупным интеллектуальным капиталом. Любые действия,
+                            направленные на девальвацию или искусственное манипулирование курсом Astra, ведут к
+                            немедленному бану.
+                        </li>
+                    </ul>
+                </div>
+
+                <h3>3. Механика Голосования (DAO Voting)</h3>
+                <p>Голоса в DAO распределяются пропорционально количеству токенов Astra на кошельке резидента.
+                    Минимальный порог для создания предложения (Proposal) — 1000 Astra.</p>
+
+                <h3>3. Обязанности Сторон</h3>
+                <p>Платформа обязуется обеспечивать прозрачность начисления токенов и рост их стоимости через реальные
+                    промышленные контракты. Резидент обязуется вносить интеллектуальный вклад в развитие экосистемы.</p>
+
+                <a href="#" class="download-btn hover-trigger">↓ DOWNLOAD FULL CHARTER (PDF)</a>
+            </section>
+
+            <!-- NDA -->
+            <section id="nda" class="doc-section">
+                <h2>NDA (Соглашение о Неразглашении)</h2>
+
+                <p>Работа в A-LAB подразумевает доступ к конфиденциальным разработкам в сферах Automotive, Aerospace и
+                    Robotics.</p>
+
+                <h3>Ключевые Положения:</h3>
+                <ul>
+                    <li>Запрещено публиковать материалы проектов, находящихся в статусе "TOP SECRET", без письменного
+                        разрешения.</li>
+                    <li>Все наработки (код, чертежи, промпты), созданные в рамках оплачиваемых контрактов, являются
+                        собственностью Лаборатории.</li>
+                    <li>Разглашение технических деталей третьим лицам влечет за собой юридическую ответственность и
+                        исключение из DAO.</li>
+                </ul>
+
+                <a href="#" class="download-btn hover-trigger">↓ DOWNLOAD NDA TEMPLATE</a>
+            </section>
+
+            <!-- DAO RULES -->
+            <section id="dao-rules" class="doc-section">
+                <h2>Правила DAO & Web3 Integrity</h2>
+                <div
+                    style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 25px; border-radius: 12px;">
+                    <h3 style="margin-top: 0;">1. Анти-фрод и Безопасность</h3>
+                    <p>Любые попытки проведения атак типа Sybil (множественные аккаунты для захвата власти в
+                        голосовании) или использование уязвимостей смарт-контрактов для несанкционированного получения
+                        токенов Astra караются пожизненным исключением из DAO с аннулированием всех активов.</p>
+
+                    <h3>2. Этика Коллаборации</h3>
+                    <p>Резиденты обязаны уважать интеллектуальный вклад друг друга. Плагиат кода или концепций внутри
+                        Лаборатории является основанием для арбитража DAO.</p>
+
+                    <h3>3. Разрешение Конфликтов</h3>
+                    <p>Все споры, возникающие в рамках совместных проектов, решаются через комитет Арбитража DAO.
+                        Решение комитета является окончательным и записывается в историю репутации резидента.</p>
+                </div>
+            </section>
+
+            <!-- IP RIGHTS -->
+            <section id="ip" class="doc-section">
+                <h2>Интеллектуальная Собственность</h2>
+
+                <h3>1. Токенизация IP</h3>
+                <p>A-LAB признает вклад каждого резидента. Права на интеллектуальную собственность (IP) могут быть
+                    частично токенизированы и выражены в токенах Astra.</p>
+
+                <h3>2. Отчуждение и Роялти</h3>
+                <p>При коммерческой реализации продукта, резиденты, чьи идеи были использованы, имеют право на получение
+                    роялти (в фиате или токенах), согласно смарт-контракту проекта.</p>
+
+                <h3>3. NFT Достижения</h3>
+                <p>Выпущенные NFT-бейджи являются неделимым подтверждением квалификации и вклада резидента.
+                    Покупка-продажа бейджей запрещена правилами экосистемы, если иное не предусмотрено правилами
+                    конкретного бейджа.</p>
+            </section>
+            </section>
+
+            <div class="footer">
+                © 2026 A-LAB.TECH LEGAL DEPARTMENT. ALL RIGHTS RESERVED.
+            </div>
+
+        </main>
+
+    </div>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('.hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // Simple scroll spy logic for active link highlighting
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.doc-section');
+            const links = document.querySelectorAll('.doc-link');
+
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

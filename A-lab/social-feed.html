@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.CORE | СОЦИАЛЬНАЯ СЕТЬ</title>
+    <link rel="stylesheet" href="resident-nav.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        body.light-theme {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .logo img {
+            filter: none;
+        }
+
+        body.light-theme .sidebar {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .nav-item {
+            color: #555;
+        }
+
+        body.light-theme .nav-item:hover,
+        body.light-theme .nav-item.active {
+            background: rgba(0, 0, 0, 0.03);
+            color: #1d1d1f;
+        }
+
+        body.light-theme .post-card {
+            background: #fff;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-theme .right-panel {
+            background: #fcfcfd;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .event-card,
+        body.light-theme .resident-item {
+            background: #fff;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme h1,
+        body.light-theme h2,
+        body.light-theme h3,
+        body.light-theme p,
+        body.light-theme .post-content,
+        body.light-theme .user-name,
+        body.light-theme .comm-link,
+        body.light-theme .action-btn,
+        body.light-theme .add-friend {
+            color: #1d1d1f !important;
+        }
+
+        body.light-theme .theme-toggle {
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            margin-bottom: 10px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Cursor */
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--tech-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hovered {
+            width: 30px;
+            height: 30px;
+            background: var(--tech-blue);
+            opacity: 0.5;
+        }
+
+        /* Main Content */
+        .feed-container {
+            flex-grow: 1;
+            padding: 40px;
+            max-width: 800px;
+            margin-right: auto;
+        }
+
+        /* Mobile Header - Hidden by default */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1100;
+            padding: 0 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .feed-scroll {
+            padding: 40px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .feed-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Post Card */
+        .post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .user-block {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #222;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info .name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .user-info .role {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--tech-blue);
+            text-transform: uppercase;
+        }
+
+        .post-time {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        .post-content {
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .post-image {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .post-footer {
+            display: flex;
+            gap: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 20px;
+        }
+
+        .action-btn {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: #888;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .action-btn:hover {
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .action-btn.voted {
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.1);
+            font-weight: 800;
+        }
+
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .tag-item {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .tag-item:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .theme-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .theme-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .theme-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--border);
+        }
+
+        .theme-link span.count {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        /* Right Panel: People & Links */
+        .right-panel {
+            background: #050505;
+            border-left: 1px solid var(--border);
+            padding: 40px 30px;
+            overflow-y: auto;
+        }
+
+        .section-header {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #444;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .resident-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .resident-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .add-friend {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: white;
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .add-friend:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        /* --- COMMENTS SECTION --- */
+        .comments-container {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .comments-container.active {
+            display: flex;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #222;
+        }
+
+        .comment-content {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            flex-grow: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .comment-name {
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .comment-time {
+            font-size: 0.6rem;
+            color: #999;
+            font-family: var(--font-code);
+        }
+
+        .comment-input-wrapper {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .comment-input {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .comment-input::placeholder {
+            color: #888;
+        }
+
+        .comment-input:focus {
+            border-color: var(--tech-blue);
+        }
+
+        .comment-send-btn {
+            background: var(--tech-blue);
+            border: none;
+            color: black;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .comment-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        /* --- RESPONSIVENESS --- */
+        @media (max-width: 1024px) {
+            .feed-container {
+                grid-template-columns: 1fr;
+            }
+
+            .right-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100% !important;
+                height: 60px;
+                bottom: 0;
+                top: auto;
+                flex-direction: row;
+                padding: 0 10px;
+                justify-content: space-around;
+                border-right: none;
+                border-top: 1px solid var(--border);
+                background: rgba(0, 0, 0, 0.95);
+            }
+
+            .sidebar:hover {
+                width: 100% !important;
+            }
+
+            .sidebar .nav-item span {
+                display: none;
+            }
+
+            .sidebar .logo {
+                display: none;
+            }
+
+            .feed-container {
+                margin-left: 0;
+                margin-top: 60px;
+            }
+
+            .feed-scroll {
+                padding: 20px;
+                padding-bottom: 80px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+        }
+
+        /* --- SHARE MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .share-modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 400px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .share-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .share-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .share-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-family: var(--font-code);
+        }
+
+        .share-icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .share-item:hover .share-icon-circle {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .copy-link-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .link-text {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: #555;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        /* --- PREMIUM CREATE POST --- */
+        .create-post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 50px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .create-post-card:focus-within {
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .theme-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .theme-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .theme-chip {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: #777;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .theme-chip:hover {
+            border-color: var(--tech-blue);
+            color: white;
+        }
+
+        .theme-chip.active {
+            background: var(--tech-blue);
+            border-color: var(--tech-blue);
+            color: black;
+            font-weight: 800;
+        }
+
+        .post-input-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .post-textarea-premium {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            padding: 10px 0;
+            min-height: 80px;
+        }
+
+        .post-textarea-premium::placeholder {
+            color: #444;
+        }
+
+        .post-actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .icon-btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0, 229, 255, 0.05);
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            transform: translateY(-2px);
+        }
+
+        .btn-publish-premium {
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-family: var(--font-code);
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .btn-publish-premium:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+        }
+
+        /* --- LIGHT THEME PREMIUM --- */
+        body.light-theme .create-post-card {
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .post-textarea-premium {
+            color: #1d1d1f;
+        }
+
+        body.light-theme .post-textarea-premium::placeholder {
+            color: #ccc;
+        }
+
+        body.light-theme .theme-chip {
+            background: #f5f5f7;
+            color: #777;
+        }
+
+        body.light-theme .theme-chip.active {
+            background: var(--tech-blue);
+            color: black;
+        }
+
+        body.light-theme .icon-btn {
+            background: #f5f5f7;
+        }
+
+        .comment-content {
+            background: #f0f0f2;
+            color: #1d1d1f;
+        }
+
+        body.light-theme .comment-input {
+            background: #fff;
+            color: #1d1d1f;
+        }
+
+        body.light-theme .share-modal {
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .share-icon-circle {
+            background: #f5f5f7;
+        }
+
+        body.light-theme .copy-link-box {
+            background: #fcfcfd;
+        }
+
+        body.light-theme .link-text {
+            color: #888;
+        }
+
+        body.light-theme .comments-container {
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .comms-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .comm-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: white;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.9rem;
+        }
+
+        .comm-link:last-child {
+            border-bottom: none;
+        }
+
+        .comm-link span.platform {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        @media (max-width: 1024px) {
+            .feed-container {
+                display: flex;
+                flex-direction: column;
+                margin-left: 80px;
+                height: 100vh;
+            }
+
+            .feed-scroll {
+                flex: 1;
+                width: 100%;
+            }
+
+            .right-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                background: var(--bg);
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: flex;
+            }
+
+            .sidebar {
+                width: 100% !important;
+                height: 65px;
+                bottom: 0;
+                top: auto;
+                left: 0;
+                flex-direction: row;
+                padding: 0 10px;
+                gap: 0;
+                border-right: none;
+                border-top: 1px solid var(--border);
+                justify-content: space-around;
+                align-items: center;
+                border-radius: 0;
+            }
+
+            .sidebar .logo {
+                display: none;
+            }
+
+            .sidebar .nav-group {
+                flex-direction: row;
+                height: 100%;
+                justify-content: space-around;
+                align-items: center;
+                gap: 0;
+            }
+
+            .sidebar .nav-item {
+                flex-direction: column;
+                height: auto;
+                padding: 10px 0;
+                gap: 4px;
+                justify-content: center;
+                width: auto;
+                background: none !important;
+            }
+
+            .sidebar .nav-item i {
+                font-size: 1.4rem;
+            }
+
+            .sidebar .nav-item span {
+                opacity: 1;
+                transform: none;
+                font-size: 0.65rem;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+            }
+
+            .sidebar div[style*="margin-top: auto"] {
+                display: none !important;
+                /* Hide theme toggle and settings in bottom bar on mobile */
+            }
+
+            /* Show settings as a nav item in bottom bar instead */
+            .mobile-only-nav {
+                display: flex !important;
+            }
+
+            .feed-container {
+                margin-left: 0;
+                padding-top: 60px;
+                padding-bottom: 65px;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .feed-scroll {
+                flex: none;
+                padding: 20px;
+                overflow-y: visible;
+            }
+
+            .right-panel {
+                padding: 30px 20px;
+                background: var(--surface);
+                margin-bottom: 20px;
+                /* Space for bottom nav */
+            }
+
+            .create-post-card {
+                padding: 15px;
+                border-radius: 16px;
+                margin-bottom: 30px;
+            }
+
+            .post-input-container {
+                gap: 12px;
+            }
+
+            .post-textarea-premium {
+                font-size: 1rem;
+            }
+
+            .imagePreview {
+                margin-left: 0 !important;
+            }
+
+            .post-actions-bar {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .btn-publish-premium {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <a href="index.html" class="logo"><img src="A-lab_logo.svg" alt="A-LAB" style="width: 30px;"></a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button class="theme-toggle" id="themeBtn">☽</button>
+            <a href="resident-admin-ru.html" style="text-decoration: none; font-size: 1.2rem;">⚙️</a>
+        </div>
+    </header>
+
+    <!-- Navigation is injected by nav-manager.js -->
+
+    <main class="feed-container">
+        <div class="feed-scroll">
+            <div style="margin-bottom: 40px;">
+                <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: -1px;">NEWS_PULSE</h1>
+                <div style="font-family: var(--font-code); color: #444; font-size: 0.7rem; margin-bottom: 30px;">ОБЩАЯ
+                    ЛЕНТА СООБЩЕСТВА</div>
+
+                <!-- Premium Create Post Form -->
+                <div class="create-post-card hover-trigger" id="createPostForm">
+                    <div class="theme-chips" id="themeChips">
+                        <div class="theme-chip hover-trigger" data-theme="Development">Development</div>
+                        <div class="theme-chip hover-trigger" data-theme="Neural Art">Neural Art</div>
+                        <div class="theme-chip hover-trigger" data-theme="Cyber Security">Cyber Security</div>
+                        <div class="theme-chip hover-trigger" data-theme="R&D Updates">R&D Updates</div>
+                        <div class="theme-chip hover-trigger" data-theme="Community">Community</div>
+                    </div>
+
+                    <div class="post-input-container">
+                        <div class="avatar" style="width: 45px; height: 45px; border: 2px solid var(--tech-blue);"><img
+                                src="maya_neural.png"></div>
+                        <textarea class="post-textarea-premium" id="postContent"
+                            placeholder="Что нового в вашей лаборатории сегодня?"></textarea>
+                    </div>
+
+                    <!-- Image Preview Area (Hidden by default) -->
+                    <div id="imagePreview" style="display: none; margin: 20px 0 0 65px; position: relative;">
+                        <div style="position: relative; display: inline-block;">
+                            <img src=""
+                                style="max-width: 100%; max-height: 300px; border-radius: 16px; border: 1px solid var(--border);">
+                            <button onclick="removePreview()"
+                                style="position: absolute; top: -10px; right: -10px; background: var(--accent); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid var(--surface);">×</button>
+                        </div>
+                    </div>
+
+                    <div class="post-actions-bar">
+                        <div class="icon-btn-group">
+                            <input type="file" id="imageInput" style="display: none;" accept="image/*"
+                                onchange="handleImageSelect(this)">
+                            <button class="icon-btn hover-trigger" title="Attach Media"
+                                onclick="document.getElementById('imageInput').click()">🖼️</button>
+                            <button class="icon-btn hover-trigger" title="Add Intelligence Link"
+                                onclick="addLinkToPost()">🔗</button>
+                            <button class="icon-btn hover-trigger" title="Add Poll"
+                                onclick="alert('Module starting...')">📊</button>
+                        </div>
+                        <button class="btn-publish-premium hover-trigger" onclick="publishPost()">Опубликовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Community Feed -->
+            <div id="feedContainer" class="feed-scroll-inner">
+                <div
+                    style="text-align: center; padding: 40px; color: #555; font-family: var(--font-code); font-size: 0.8rem;">
+                    INITIALIZING_DATA_STREAM...
+                </div>
+            </div>
+        </div>
+
+        <!-- Share Modal Overlay -->
+        <div class="modal-overlay" id="shareModal">
+            <div class="share-modal">
+                <div class="share-header">
+                    <h3 style="font-family: var(--font-code); font-size: 0.9rem;">SHARE_POST</h3>
+                    <button onclick="closeShareModal()"
+                        style="background:transparent; border:none; color:#555; cursor:pointer; font-family:var(--font-code);">[X]</button>
+                </div>
+                <div class="share-grid">
+                    <a href="https://t.me/share/url?url=https://a-lab.tech/post/matrix&text=Check out this project from A-LAB!"
+                        target="_blank" class="share-item hover-trigger">
+                        <div class="share-icon-circle">✈️</div>
+                        <span>Telegram</span>
+                    </a>
+                    <a href="https://wa.me/?text=Check out this project from A-LAB! https://a-lab.tech/post/matrix"
+                        target="_blank" class="share-item hover-trigger">
+                        <div class="share-icon-circle">💬</div>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?url=https://a-lab.tech/post/matrix&text=Check out this project from A-LAB!"
+                        target="_blank" class="share-item hover-trigger">
+                        <div class="share-icon-circle">✖️</div>
+                        <span>Twitter</span>
+                    </a>
+                    <a href="messages.html" class="share-item hover-trigger" onclick="shareToDM(event)">
+                        <div class="share-icon-circle">📥</div>
+                        <span>DM</span>
+                    </a>
+                </div>
+                <div class="copy-link-box">
+                    <span class="link-text" id="shareUrl">https://a-lab.tech/post/matrix-core-v1</span>
+                    <button class="status-btn hover-trigger" onclick="copyLink()" id="copyBtn"
+                        style="padding: 5px 10px;">COPY</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast"
+            style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--tech-blue); color: black; padding: 10px 25px; border-radius: 50px; font-family: var(--font-code); font-size: 0.8rem; font-weight: 800; z-index: 10000; display: none; box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3);">
+            LINK_COPIED_TO_CLIPBOARD
+        </div>
+        </div>
+
+        <aside class="right-panel">
+            <div class="section-header">В СЕТИ // ONLINE</div>
+
+            <div class="resident-item">
+                <div class="resident-meta">
+                    <div class="avatar" style="width:35px; height:35px;"><img src="viktor_code.png"></div>
+                    <div style="font-size: 0.85rem; font-weight: 600;">Ivan_Fix</div>
+                </div>
+                <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
+            </div>
+
+            <div class="resident-item">
+                <div class="resident-meta">
+                    <div class="avatar" style="width:35px; height:35px;"><img src="max_neural.png"></div>
+                    <div style="font-size: 0.85rem; font-weight: 600;">Neo_D</div>
+                </div>
+                <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
+            </div>
+
+            <div class="comms-box">
+                <div class="section-header">ТЕМЫ // THEMES</div>
+                <div class="theme-list">
+                    <a href="#" class="theme-link hover-trigger">
+                        <span>Development</span>
+                        <span class="count">24</span>
+                    </a>
+                    <a href="#" class="theme-link hover-trigger">
+                        <span>Neural Art</span>
+                        <span class="count">18</span>
+                    </a>
+                    <a href="#" class="theme-link hover-trigger">
+                        <span>Cyber Security</span>
+                        <span class="count">7</span>
+                    </a>
+                    <a href="#" class="theme-link hover-trigger">
+                        <span>R&D Updates</span>
+                        <span class="count">12</span>
+                    </a>
+                </div>
+
+                <div class="section-header">ТЕГИ // TAGS</div>
+                <div class="tag-cloud">
+                    <a href="#" class="tag-item hover-trigger">#AI</a>
+                    <a href="#" class="tag-item hover-trigger">#Web3</a>
+                    <a href="#" class="tag-item hover-trigger">#Cyberpunk</a>
+                    <a href="#" class="tag-item hover-trigger">#Neural</a>
+                    <a href="#" class="tag-item hover-trigger">#Code</a>
+                    <a href="#" class="tag-item hover-trigger">#UX</a>
+                    <a href="#" class="tag-item hover-trigger">#Matrix</a>
+                    <a href="#" class="tag-item hover-trigger">#Supabase</a>
+                </div>
+
+                <div class="section-header">СВЯЗЬ // CHANNELS</div>
+                <a href="#" class="comm-link hover-trigger">
+                    <div>Discord Server</div>
+                    <span class="platform">JOIN</span>
+                </a>
+                <a href="#" class="comm-link hover-trigger">
+                    <div>Telegram Group</div>
+                    <span class="platform">JOIN</span>
+                </a>
+                <a href="#" class="comm-link hover-trigger">
+                    <div>System Support</div>
+                    <span class="platform">OPEN</span>
+                </a>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursorX = mouseX;
+            cursorY = mouseY;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+        document.querySelectorAll('.add-friend').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.innerText = "ЗАПРОС ОТПРАВЛЕН";
+                btn.style.borderColor = "var(--tech-blue)";
+                btn.style.color = "var(--tech-blue)";
+            });
+        });
+        // --- VOTE LOGIC ---
+        function votePost(btn) {
+            const countSpan = btn.querySelector('.vote-count');
+            let currentCount = parseInt(countSpan.innerText);
+
+            if (btn.classList.contains('voted')) {
+                btn.classList.remove('voted');
+                countSpan.innerText = currentCount - 1;
+            } else {
+                btn.classList.add('voted');
+                countSpan.innerText = currentCount + 1;
+                // Subtle pulse effect
+                btn.style.transform = 'scale(1.2)';
+                setTimeout(() => btn.style.transform = 'scale(1)', 200);
+            }
+        }
+
+        // --- PREMIUM POST CREATION LOGIC ---
+        let selectedTheme = null;
+        const chips = document.querySelectorAll('.theme-chip');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                selectedTheme = chip.dataset.theme;
+            });
+        });
+
+        const textarea = document.getElementById('postContent');
+        textarea.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        function handleImageSelect(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.querySelector('img').src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removePreview() {
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('imageInput').value = '';
+        }
+
+        function addLinkToPost() {
+            const url = prompt("Введите URL intelligence-материала:");
+            if (url) {
+                textarea.value += (textarea.value ? "\n" : "") + url;
+                textarea.dispatchEvent(new Event('input'));
+            }
+        }
+
+        function publishPost() {
+            const content = textarea.value;
+
+            if (!selectedTheme) {
+                alert("ERR: Пожалуйста, выберите ТЕМУ публикации.");
+                return;
+            }
+            if (!content.trim()) {
+                alert("ERR: Контент отсутствует. Введите сообщение.");
+                return;
+            }
+
+            alert(`SUCCESS: Публикация в ${selectedTheme} завершена.`);
+
+            // Reset
+            textarea.value = '';
+            textarea.style.height = 'auto';
+            chips.forEach(c => c.classList.remove('active'));
+            selectedTheme = null;
+            removePreview();
+        }
+
+        // Theme handled by nav-manager.js
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+        }
+
+        // --- COMMENTS TOGGLE ---
+        function toggleComments(btn) {
+            const card = btn.closest('.post-card');
+            const container = card.querySelector('.comments-container');
+            container.classList.toggle('active');
+        }
+
+        // --- SHARE MODAL ---
+        const shareModal = document.getElementById('shareModal');
+        function openShareModal() {
+            shareModal.classList.add('active');
+        }
+        function closeShareModal() {
+            shareModal.classList.remove('active');
+        }
+
+        function copyLink() {
+            const url = document.getElementById('shareUrl').innerText;
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const toast = document.getElementById('toast');
+                btn.innerText = 'COPIED!';
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    btn.innerText = 'COPY';
+                    toast.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        function shareToDM(e) {
+            e.preventDefault();
+            const url = document.getElementById('shareUrl').innerText;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Ссылка скопирована! Переходим в мессенджер для выбора получателя.');
+                window.location.href = 'messages.html';
+            });
+        }
+
+        // Close modal on overlay click
+        shareModal.addEventListener('click', (e) => {
+            if (e.target === shareModal) closeShareModal();
+        });
+
+        // Init Theme
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+            document.getElementById('themeBtn').innerText = '☀';
+        }
+
+    </script>
+    <!-- A-LAB Web3 & Social Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="web3-manager.js"></script>
+    <script src="feed-manager.js"></script>
+    <script src="dao-manager.js"></script>
+    <script src="search-manager.js"></script>
+    <script src="i18n.js"></script>
+    <script src="nav-manager.js"></script>
+</body>
+
+</html>
