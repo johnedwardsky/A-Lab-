@@ -167,7 +167,8 @@
             align-items: center;
         }
 
-        .logo {
+        /* Scope header logo to not affect sidebar */
+        header .logo {
             pointer-events: auto;
             position: fixed;
             top: 40px;
@@ -178,14 +179,14 @@
             text-decoration: none;
         }
 
-        .logo img {
+        header .logo img {
             height: 50px;
             width: auto;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
         }
 
-        .logo:hover img {
+        header .logo:hover img {
             transform: scale(1.1);
         }
 
@@ -652,7 +653,7 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <!-- Logo is provided by ResidentNav sidebar on this page -->
         <div class="header-controls">
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
                 МЕНЮ</button>
