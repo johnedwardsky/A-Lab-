@@ -1,0 +1,11 @@
+node_modules
+spirograph-pro
+backups
+amuse-web
+project-zero-countdown
+release
+*.zip
+*.rar
+*.pdf
+.git
+.github

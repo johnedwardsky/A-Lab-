@@ -70,7 +70,7 @@
             padding: 100px 20px;
         }
 
-        header {
+        header { pointer-events: none; 
             position: fixed;
             top: 0;
             width: 100%;
@@ -112,7 +112,7 @@
         }
 
         /* --- CONTENT STYLES --- */
-        .wp-header {
+        .wp-header { pointer-events: none; 
             margin-bottom: 100px;
             text-align: center;
         }
@@ -231,7 +231,7 @@
         }
 
         .chart-segment {
-            position: absolute;
+            position: fixed;
             top: -20px;
             left: -20px;
             width: 100%;
@@ -251,7 +251,7 @@
 
         .roadmap-item::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 9px;
             width: 2px;
@@ -413,7 +413,7 @@
                     <div class="chart-segment" style="transform: rotate(252deg); border-top-color: #555);"></div>
                     <!-- 20% Team -->
                 </div>
-                <div style="position: absolute; text-align: center; font-family: var(--font-code); font-size: 0.8rem;">
+                <div style="position: fixed; text-align: center; font-family: var(--font-code); font-size: 0.8rem;">
                     <div>40% RESIDENTS</div>
                     <div style="color: var(--accent);">30% TREASURY</div>
                 </div>
