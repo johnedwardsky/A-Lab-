@@ -231,26 +231,75 @@
         }
 
         /* --- HEADER --- */
+        /* --- HEADER (Standardized) --- */
         header {
-            position: fixed;
+            position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
-            padding: 30px 40px;
+            padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             z-index: 100;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            backdrop-filter: none;
+            border-bottom: none;
         }
 
-        .project-id {
+        .header-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+            z-index: 1000;
+            align-items: center;
+        }
+
+        .logo {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 35px;
+            width: auto;
+        }
+
+        .menu-btn,
+        .back-btn {
+            pointer-events: auto;
+            position: relative;
+
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
             font-family: var(--font-code);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 5px 10px;
             font-size: 0.8rem;
-            background: rgba(255, 42, 42, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn:hover,
+        .back-btn:hover {
+            background: transparent;
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.2);
+            transform: translateY(-2px);
         }
 
         .container {
@@ -598,9 +647,12 @@
     <div class="cursor"></div>
 
     <header>
-        <div class="project-id animate-in">PROJECT: M01 // INTERNAL BRIEF</div>
-        <div class="animate-in delay-1" style="font-family: var(--font-code); font-size: 0.8rem; color: #555;">R&D
-            DIVISION</div>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <div class="header-controls">
+            <a href="rd.html" class="back-btn hover-trigger">/// НАЗАД В LAB</a>
+            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+                МЕНЮ</button>
+        </div>
     </header>
 
     <main class="container">
@@ -905,6 +957,8 @@
             });
         }
     </script>
+    <script src="nda-manager.js"></script>
+    <script src="main-menu.js"></script>
 </body>
 
 </html>
