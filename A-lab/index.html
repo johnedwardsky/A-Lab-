@@ -80,20 +80,54 @@
         }
 
         /* --- HEADER --- */
+        /* --- HEADER --- */
         header {
             position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
             padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             z-index: 100;
+            pointer-events: none;
+            /* Logo shouldn't block, but allow clicks on children */
         }
 
         .logo {
+            pointer-events: auto;
+            /* Logo is clickable */
             display: flex;
             align-items: center;
+        }
+
+        .menu-btn {
+            pointer-events: auto;
+            position: fixed;
+            /* Sticks to screen */
+            top: 40px;
+            right: 40px;
+            z-index: 1000;
+
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.4);
+            transform: translateY(-2px);
         }
 
         .logo img {
@@ -587,8 +621,7 @@
 
     <header>
         <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
-        <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn"
-            style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; cursor: pointer; font-family: var(--font-code); font-size: 0.8rem;">
+        <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">
             /// МЕНЮ
         </button>
     </header>

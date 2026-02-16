@@ -80,18 +80,9 @@ const MainMenu = (() => {
             <nav class="menu-overlay ${isOpen ? 'open' : ''}">
                 <div class="menu-container">
                     <div class="menu-links-section">
-                        <div class="menu-header-mobile">
-                            <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB" style="height: 35px; width: auto;"></a>
-                            <button class="menu-close hover-trigger" onclick="MainMenu.toggle()">/// ЗАКРЫТЬ</button>
-                        </div>
+                        <button class="menu-close hover-trigger" onclick="MainMenu.toggle()">✕</button>
                         
-                        <div class="menu-top-controls">
-                             <a href="${userLoggedIn ? 'resident-workspace-ru.html' : 'login.html'}" class="cabinet-btn hover-trigger">
-                                <i>👤</i> ${userLoggedIn ? (lang === 'en' ? 'DASHBOARD' : 'КАБИНЕТ') : (lang === 'en' ? 'LOGIN' : 'ВХОД')}
-                            </a>
-                        </div>
-
-                        <div class="menu-nav-list">
+                        <div class="menu-nav-list" style="margin-top: auto; margin-bottom: auto;">
                             ${menuItems.map((item, index) => `
                                 <a href="${item.url}" 
                                    class="nav-link hover-trigger ${item.url === currentPage ? 'active' : ''}"
@@ -103,10 +94,16 @@ const MainMenu = (() => {
                             `).join('')}
                         </div>
 
-                        <div class="menu-lang-toggle">
-                            <button class="lang-btn hover-trigger ${lang === 'ru' ? 'active' : ''}" onclick="MainMenu.switchLang('ru')">RU</button>
-                            <span class="lang-divider">|</span>
-                            <button class="lang-btn hover-trigger ${lang === 'en' ? 'active' : ''}" onclick="MainMenu.switchLang('en')">EN</button>
+                        <div class="menu-bottom-controls">
+                            <div class="menu-lang-toggle">
+                                <button class="lang-btn hover-trigger ${lang === 'ru' ? 'active' : ''}" onclick="MainMenu.switchLang('ru')">RU</button>
+                                <span class="lang-divider">|</span>
+                                <button class="lang-btn hover-trigger ${lang === 'en' ? 'active' : ''}" onclick="MainMenu.switchLang('en')">EN</button>
+                            </div>
+                            
+                            <a href="${userLoggedIn ? 'resident-workspace-ru.html' : 'login.html'}" class="auth-text-btn hover-trigger">
+                                ${userLoggedIn ? (lang === 'en' ? 'DASHBOARD' : 'КАБИНЕТ') : (lang === 'en' ? 'LOGIN' : 'ВХОД')}
+                            </a>
                         </div>
                     </div>
 
@@ -200,36 +197,52 @@ const MainMenu = (() => {
                 overflow-y: auto;
             }
 
-            .menu-header-mobile {
+            .menu-close {
                 position: absolute;
                 top: 40px;
-                left: 40px;
                 right: 40px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .menu-close {
-                font-family: 'JetBrains Mono', monospace;
-                color: #FF2A2A;
+                font-family: 'Inter', sans-serif;
+                color: #FFFFFF;
                 background: transparent;
-                border: 1px solid #FF2A2A;
-                padding: 8px 20px;
-                border-radius: 50px;
+                border: 1px solid rgba(255,255,255,0.2);
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
                 cursor: pointer;
-                font-size: 0.8rem;
+                font-size: 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 transition: 0.3s;
+                z-index: 10;
             }
             
             .menu-close:hover {
                 background: #FF2A2A;
+                border-color: #FF2A2A;
                 color: white;
             }
 
-            .menu-top-controls {
-                margin-bottom: 40px;
-                margin-top: 80px;
+            .menu-bottom-controls {
+                margin-top: 40px;
+                display: flex;
+                gap: 30px;
+                align-items: center;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.9rem;
+            }
+
+            .auth-text-btn {
+                color: white;
+                text-decoration: none;
+                font-weight: 700;
+                transition: 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .auth-text-btn:hover {
+                color: #FF2A2A;
             }
 
             .menu-nav-list {
@@ -326,31 +339,9 @@ const MainMenu = (() => {
             }
 
             /* --- CONTROLS --- */
-            .cabinet-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                padding: 10px 25px;
-                background: rgba(255, 42, 42, 0.1);
-                border: 1px solid #FF2A2A;
-                color: white;
-                text-decoration: none;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.8rem;
-                border-radius: 4px;
-                transition: 0.3s;
-            }
-
-            .cabinet-btn:hover {
-                background: #FF2A2A;
-                box-shadow: 0 0 20px rgba(255, 42, 42, 0.4);
-            }
-
             .menu-lang-toggle {
-                margin-top: 40px;
                 display: flex;
                 gap: 15px;
-                font-family: 'JetBrains Mono', monospace;
                 color: rgba(255,255,255,0.4);
             }
 

@@ -59,12 +59,45 @@
         header {
             position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
             padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             z-index: 100;
+            pointer-events: none;
+        }
+
+        .logo {
+            pointer-events: auto;
+        }
+
+        .menu-btn {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            z-index: 1000;
+
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.4);
+            transform: translateY(-2px);
         }
 
         .logo {
