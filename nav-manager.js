@@ -7,10 +7,16 @@
 
 const ResidentNav = {
     init() {
+        this.checkAuth();
         this.render();
         this.bindEvents();
         this.applyTheme();
         document.body.classList.add('has-resident-nav');
+    },
+
+    checkAuth() {
+        const token = localStorage.getItem('sb-yirszunrxtunvzpxwvqz-auth-token') || localStorage.getItem('alab_resident_id');
+        this.userLoggedIn = !!token;
     },
 
     render() {
@@ -41,7 +47,7 @@ const ResidentNav = {
                     <i id="sidebarThemeIcon">☽</i> <span>Фон</span>
                 </button>
                 <button class="nav-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" style="background:none; border:none; width:100%;" onclick="ResidentNav.handleSettingsClick()">
-                    <i>⚙️</i> <span>Настройки</span>
+                    <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? 'Настройки' : 'Войти'}</span>
                 </button>
             </div>
         `;
@@ -88,7 +94,9 @@ const ResidentNav = {
             ${moreItemsHTML}
             <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
             <button class="more-item join-btn hover-trigger" onclick="openQuiz()"><i>+</i> <span>ВСТУПИТЬ</span></button>
-            <button class="more-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" onclick="ResidentNav.handleSettingsClick()"><i>⚙️</i> <span>Настройки</span></button>
+            <button class="more-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" onclick="ResidentNav.handleSettingsClick()">
+                <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? 'Настройки' : 'Войти'}</span>
+            </button>
             ${this.config && this.config.showLogout ? `
                 <button class="more-item hover-trigger" style="color: var(--accent);" onclick="ResidentNav.logout()"><i>🔌</i> <span>Выход</span></button>
             ` : ''}
@@ -167,13 +175,11 @@ const ResidentNav = {
     },
 
     async handleSettingsClick() {
-        const isRegistered = localStorage.getItem('alab_resident_id') || localStorage.getItem('sb-yirszunrxtunvzpxwvqz-auth-token');
-        if (isRegistered) {
+        this.checkAuth();
+        if (this.userLoggedIn) {
             window.location.href = 'resident-admin-ru.html';
         } else {
-            alert('Сначала необходимо вступить в сообщество.');
-            if (typeof openQuiz === 'function') openQuiz();
-            else window.location.href = 'residents.html?join=true';
+            window.location.href = 'login.html';
         }
     }
 };
