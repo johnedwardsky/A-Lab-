@@ -884,22 +884,12 @@
 
         // Только для десктопа включаем курсор
         if (!isMobile) {
-            let mouseX = 0, mouseY = 0;
-            let cursorX = 0, cursorY = 0;
-
             document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
             });
 
-            function updateCursor() {
-                cursorX = mouseX;
-                cursorY = mouseY;
-                cursor.style.left = cursorX + 'px';
-                cursor.style.top = cursorY + 'px';
-                requestAnimationFrame(updateCursor);
-            }
-            updateCursor();
+            // Removed requestAnimationFrame loop for instant response
 
             triggers.forEach(trigger => {
                 trigger.addEventListener('mouseenter', () => {
