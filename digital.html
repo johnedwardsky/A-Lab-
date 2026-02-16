@@ -268,7 +268,7 @@
             transform: scale(1.05);
         }
 
-        .case-info {
+        .case-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -278,6 +278,22 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s;
+        }
+
+        .case-card:hover .case-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .case-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 5px;
         }
 
         .case-tag {
@@ -404,7 +420,7 @@
             </div>
         </div>
         <h2 class="section-title" data-i18n="page_digital.projects_title">Digital Проекты</h2>
-        <div class="cases-grid" id="casesContainer" data-category="marketing">
+        <div class="cases-grid" id="casesContainer" data-category="digital">
             <div
                 style="grid-column: 1/-1; text-align: center; padding: 50px; color: #555; font-family: var(--font-code);">
                 [ INITIALIZING DIGITAL PROJECTS... ]</div>

@@ -137,6 +137,88 @@ const ALabCases = {
             image_url: "rd_project_matrix.png",
             link_text: "Запросить доступ",
             is_locked: true
+        },
+        // --- DIGITAL CATEGORY (RU) ---
+        {
+            id: 201,
+            title: "Lumina AI Support",
+            result_value: "85%",
+            result_label: "Automation",
+            description: "Интеграция LLM-ассистента в поддержку крупного маркетплейса. 85% ответов без участия человека.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case_cyberpunk.png"
+        },
+        {
+            id: 202,
+            title: "Supply Chain Predictor",
+            result_value: "-22%",
+            result_label: "Lead Time",
+            description: "Нейросетевая модель прогнозирования спроса и оптимизации складских запасов.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case_agri.png"
+        },
+        {
+            id: 203,
+            title: "Defi Vault Shield",
+            result_value: "SECURE",
+            result_label: "10+ AUDITS",
+            description: "Разработка смарт-контрактов для DeFi-протокола с автоматизированным управлением рисками.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case_fintech.png"
+        },
+        {
+            id: 204,
+            title: "VisionScan Pro",
+            result_value: "0.1s",
+            result_label: "Latency",
+            description: "Высокопроизводительный SDK для распознавания лиц и биометрической аутентификации.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case_eco.png"
+        },
+        // --- DIGITAL CATEGORY (EN) ---
+        {
+            id: 205,
+            title: "Lumina AI Support",
+            result_value: "85%",
+            result_label: "Automation",
+            description: "LLM assistant integration for a major marketplace. 85% of queries managed without humans.",
+            category: "digital",
+            lang: "en",
+            image_url: "case_cyberpunk.png"
+        },
+        {
+            id: 206,
+            title: "Supply Chain Predictor",
+            result_value: "-22%",
+            result_label: "Lead Time",
+            description: "Neural network model for demand forecasting and inventory optimization.",
+            category: "digital",
+            lang: "en",
+            image_url: "case_agri.png"
+        },
+        {
+            id: 207,
+            title: "Defi Vault Shield",
+            result_value: "SECURE",
+            result_label: "10+ AUDITS",
+            description: "Smart contract development for a DeFi protocol with automated risk management.",
+            category: "digital",
+            lang: "en",
+            image_url: "case_fintech.png"
+        },
+        {
+            id: 208,
+            title: "VisionScan Pro",
+            result_value: "0.1s",
+            result_label: "Latency",
+            description: "High-performance SDK for facial recognition and biometric authentication.",
+            category: "digital",
+            lang: "en",
+            image_url: "case_eco.png"
         }
     ],
 
@@ -219,7 +301,7 @@ const ALabCases = {
                 }
             };
 
-            if (catLower === 'design') {
+            if (catLower === 'design' || catLower === 'digital') {
                 let imgPath = item.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop';
                 if (imgPath && !imgPath.startsWith('http') && !imgPath.startsWith('/')) {
                     imgPath = './' + imgPath;
