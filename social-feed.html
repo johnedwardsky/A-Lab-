@@ -146,8 +146,21 @@
         .feed-container {
             flex-grow: 1;
             padding: 40px;
-            max-width: 800px;
-            margin-right: auto;
+            margin-left: 80px;
+            /* Clearance for fixed sidebar */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            /* Main page should not scroll, only feed-scroll */
+            height: 100vh;
+        }
+
+        .feed-scroll {
+            flex: 1;
+            padding: 0 40px 40px 0;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
         }
 
         /* Mobile Header - Hidden by default */
@@ -174,7 +187,12 @@
         }
 
         .feed-scroll::-webkit-scrollbar {
-            display: none;
+            width: 4px;
+        }
+
+        .feed-scroll::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
         }
 
         /* Post Card */
@@ -340,10 +358,13 @@
 
         /* Right Panel: People & Links */
         .right-panel {
+            width: 350px;
             background: #050505;
             border-left: 1px solid var(--border);
             padding: 40px 30px;
             overflow-y: auto;
+            height: 100vh;
+            flex-shrink: 0;
         }
 
         .section-header {
@@ -1113,75 +1134,75 @@
             LINK_COPIED_TO_CLIPBOARD
         </div>
         </div>
-
-        <aside class="right-panel">
-            <div class="section-header">В СЕТИ // ONLINE</div>
-
-            <div class="resident-item">
-                <div class="resident-meta">
-                    <div class="avatar" style="width:35px; height:35px;"><img src="viktor_code.png"></div>
-                    <div style="font-size: 0.85rem; font-weight: 600;">Ivan_Fix</div>
-                </div>
-                <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
-            </div>
-
-            <div class="resident-item">
-                <div class="resident-meta">
-                    <div class="avatar" style="width:35px; height:35px;"><img src="max_neural.png"></div>
-                    <div style="font-size: 0.85rem; font-weight: 600;">Neo_D</div>
-                </div>
-                <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
-            </div>
-
-            <div class="comms-box">
-                <div class="section-header">ТЕМЫ // THEMES</div>
-                <div class="theme-list">
-                    <a href="#" class="theme-link hover-trigger">
-                        <span>Development</span>
-                        <span class="count">24</span>
-                    </a>
-                    <a href="#" class="theme-link hover-trigger">
-                        <span>Neural Art</span>
-                        <span class="count">18</span>
-                    </a>
-                    <a href="#" class="theme-link hover-trigger">
-                        <span>Cyber Security</span>
-                        <span class="count">7</span>
-                    </a>
-                    <a href="#" class="theme-link hover-trigger">
-                        <span>R&D Updates</span>
-                        <span class="count">12</span>
-                    </a>
-                </div>
-
-                <div class="section-header">ТЕГИ // TAGS</div>
-                <div class="tag-cloud">
-                    <a href="#" class="tag-item hover-trigger">#AI</a>
-                    <a href="#" class="tag-item hover-trigger">#Web3</a>
-                    <a href="#" class="tag-item hover-trigger">#Cyberpunk</a>
-                    <a href="#" class="tag-item hover-trigger">#Neural</a>
-                    <a href="#" class="tag-item hover-trigger">#Code</a>
-                    <a href="#" class="tag-item hover-trigger">#UX</a>
-                    <a href="#" class="tag-item hover-trigger">#Matrix</a>
-                    <a href="#" class="tag-item hover-trigger">#Supabase</a>
-                </div>
-
-                <div class="section-header">СВЯЗЬ // CHANNELS</div>
-                <a href="#" class="comm-link hover-trigger">
-                    <div>Discord Server</div>
-                    <span class="platform">JOIN</span>
-                </a>
-                <a href="#" class="comm-link hover-trigger">
-                    <div>Telegram Group</div>
-                    <span class="platform">JOIN</span>
-                </a>
-                <a href="#" class="comm-link hover-trigger">
-                    <div>System Support</div>
-                    <span class="platform">OPEN</span>
-                </a>
-            </div>
-        </aside>
     </main>
+
+    <aside class="right-panel">
+        <div class="section-header">В СЕТИ // ONLINE</div>
+
+        <div class="resident-item">
+            <div class="resident-meta">
+                <div class="avatar" style="width:35px; height:35px;"><img src="viktor_code.png"></div>
+                <div style="font-size: 0.85rem; font-weight: 600;">Ivan_Fix</div>
+            </div>
+            <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
+        </div>
+
+        <div class="resident-item">
+            <div class="resident-meta">
+                <div class="avatar" style="width:35px; height:35px;"><img src="max_neural.png"></div>
+                <div style="font-size: 0.85rem; font-weight: 600;">Neo_D</div>
+            </div>
+            <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
+        </div>
+
+        <div class="comms-box">
+            <div class="section-header">ТЕМЫ // THEMES</div>
+            <div class="theme-list">
+                <a href="#" class="theme-link hover-trigger">
+                    <span>Development</span>
+                    <span class="count">24</span>
+                </a>
+                <a href="#" class="theme-link hover-trigger">
+                    <span>Neural Art</span>
+                    <span class="count">18</span>
+                </a>
+                <a href="#" class="theme-link hover-trigger">
+                    <span>Cyber Security</span>
+                    <span class="count">7</span>
+                </a>
+                <a href="#" class="theme-link hover-trigger">
+                    <span>R&D Updates</span>
+                    <span class="count">12</span>
+                </a>
+            </div>
+
+            <div class="section-header">ТЕГИ // TAGS</div>
+            <div class="tag-cloud">
+                <a href="#" class="tag-item hover-trigger">#AI</a>
+                <a href="#" class="tag-item hover-trigger">#Web3</a>
+                <a href="#" class="tag-item hover-trigger">#Cyberpunk</a>
+                <a href="#" class="tag-item hover-trigger">#Neural</a>
+                <a href="#" class="tag-item hover-trigger">#Code</a>
+                <a href="#" class="tag-item hover-trigger">#UX</a>
+                <a href="#" class="tag-item hover-trigger">#Matrix</a>
+                <a href="#" class="tag-item hover-trigger">#Supabase</a>
+            </div>
+
+            <div class="section-header">СВЯЗЬ // CHANNELS</div>
+            <a href="#" class="comm-link hover-trigger">
+                <div>Discord Server</div>
+                <span class="platform">JOIN</span>
+            </a>
+            <a href="#" class="comm-link hover-trigger">
+                <div>Telegram Group</div>
+                <span class="platform">JOIN</span>
+            </a>
+            <a href="#" class="comm-link hover-trigger">
+                <div>System Support</div>
+                <span class="platform">OPEN</span>
+            </a>
+        </div>
+    </aside>
 
     <script>
         const cursor = document.querySelector('.cursor');
