@@ -56,9 +56,19 @@
             background: rgba(0, 229, 255, 0.2);
         }
 
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
         /* --- HEADER (Standardized) --- */
-        header { pointer-events: none; 
-            position: fixed;
+        header {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -77,7 +87,7 @@
             display: flex;
             gap: 15px;
             pointer-events: auto;
-            z-index: 1100;
+            z-index: 1000;
             align-items: center;
         }
 
@@ -86,7 +96,7 @@
             position: fixed;
             top: 40px;
             left: 40px;
-            z-index: 1100;
+            z-index: 1000;
             display: flex;
             align-items: center;
             text-decoration: none;
@@ -199,7 +209,7 @@
         }
 
         .visual-overlay {
-            position: fixed;
+            position: absolute;
             top: 40px;
             left: 40px;
             font-family: var(--font-code);
@@ -220,7 +230,7 @@
             margin-bottom: 100px;
         }
 
-        @media (max-width: 1024px) { .logo { top: 20px; left: 20px; position: fixed !important; } .logo img { height: 35px; }
+        @media (max-width: 1024px) {
             .tech-grid {
                 grid-template-columns: 1fr 1fr;
             }
@@ -307,7 +317,7 @@
 
         /* --- DYNAMIC WATER SIMULATION --- */
         #dolphin-canvas {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -317,7 +327,7 @@
 
         .sim-viewport::after {
             content: '';
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -474,7 +484,7 @@
                 <iframe src="https://kinescope.io/embed/mMbxrQyEvYtags2D1admk1"
                     allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write;"
                     frameborder="0" allowfullscreen
-                    style="position: fixed; width: 100%; height: 100%; top: 0; left: 0;">
+                    style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;">
                 </iframe>
             </div>
             <div class="sim-details">
