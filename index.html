@@ -109,24 +109,22 @@
 
         .menu-btn {
             pointer-events: auto;
-            /* Button inside absolute header, so it scrolls with page */
-            position: relative;
-            margin-left: auto;
-            /* Push to right */
-            z-index: 1000;
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            z-index: 1100;
 
             text-decoration: none;
             color: white;
             background: rgba(255, 255, 255, 0.05);
-            /* Default transparent-ish */
             border: 1px solid var(--border);
-            padding: 8px 20px;
+            padding: 12px 30px;
             border-radius: 50px;
             cursor: pointer;
             font-family: var(--font-code);
-            font-size: 0.8rem;
+            font-size: 1rem;
             transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
         }
 
         .menu-btn:hover {
@@ -558,8 +556,12 @@
             }
 
             .menu-btn {
-                font-size: 0.7rem;
-                padding: 6px 14px;
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                font-size: 0.8rem;
+                padding: 10px 20px;
+                z-index: 1100;
             }
 
             /* Hero */

@@ -87,17 +87,25 @@
         header {
             position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
             padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             z-index: 100;
+            pointer-events: none;
         }
 
         .logo {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1100;
             display: flex;
             align-items: center;
+            text-decoration: none;
         }
 
         .logo img {
@@ -117,19 +125,28 @@
         }
 
         .menu-btn {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            z-index: 1100;
+
             font-family: var(--font-code);
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 1rem;
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.05);
-            padding: 8px 20px;
+            padding: 12px 30px;
             border-radius: 50px;
             transition: 0.3s;
+            backdrop-filter: blur(10px);
         }
 
         .menu-btn:hover {
             border-color: var(--accent);
             color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.2);
+            transform: translateY(-2px);
         }
 
         /* --- HERO SECTION --- */
@@ -487,11 +504,18 @@
 
             .logo {
                 font-size: 1.2rem;
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
             }
 
             .menu-btn {
-                font-size: 0.7rem;
-                padding: 6px 14px;
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                font-size: 0.8rem;
+                padding: 10px 20px;
+                z-index: 1100;
             }
 
             /* Hero */
