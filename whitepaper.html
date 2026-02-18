@@ -63,6 +63,16 @@
             mix-blend-mode: normal;
         }
 
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
         /* --- LAYOUT --- */
         .container {
             max-width: 900px;
@@ -70,7 +80,8 @@
             padding: 100px 20px;
         }
 
-        header { pointer-events: none; 
+        header {
+            pointer-events: none;
             position: fixed;
             top: 0;
             width: 100%;
@@ -78,9 +89,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
+            z-index: 1000;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(3, 4, 7, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .logo img {
+                height: 25px;
+            }
+
+            .back-btn {
+                padding: 6px 15px;
+                font-size: 0.7rem;
+            }
         }
 
         .logo {
@@ -112,7 +139,8 @@
         }
 
         /* --- CONTENT STYLES --- */
-        .wp-header { pointer-events: none; 
+        .wp-header {
+            pointer-events: none;
             margin-bottom: 100px;
             text-align: center;
         }
@@ -231,7 +259,7 @@
         }
 
         .chart-segment {
-            position: fixed;
+            position: absolute;
             top: -20px;
             left: -20px;
             width: 100%;
@@ -251,7 +279,7 @@
 
         .roadmap-item::before {
             content: '';
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 9px;
             width: 2px;
@@ -407,13 +435,13 @@
                 <!-- CSS Chart visualization -->
                 <div class="chart-ring">
                     <div class="chart-segment" style="transform: rotate(0deg); border-top-color: var(--tech-blue);">
-                    </div> <!-- 40% Residents -->
+                    </div>
                     <div class="chart-segment" style="transform: rotate(144deg); border-top-color: var(--accent);">
-                    </div> <!-- 30% Treasury -->
-                    <div class="chart-segment" style="transform: rotate(252deg); border-top-color: #555);"></div>
-                    <!-- 20% Team -->
+                    </div>
+                    <div class="chart-segment" style="transform: rotate(252deg); border-top-color: #555;"></div>
                 </div>
-                <div style="position: fixed; text-align: center; font-family: var(--font-code); font-size: 0.8rem;">
+                <div
+                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-family: var(--font-code); font-size: 0.8rem;">
                     <div>40% RESIDENTS</div>
                     <div style="color: var(--accent);">30% TREASURY</div>
                 </div>

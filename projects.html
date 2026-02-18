@@ -140,6 +140,16 @@
             opacity: 0.5;
         }
 
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
         /* Shared styles are used */
 
         /* --- CONTENT --- */
@@ -156,7 +166,7 @@
         }
 
         .title-group h1 {
-            font-size: 3rem;
+            font-size: clamp(1.5rem, 8vw, 3.5rem);
             font-weight: 800;
             letter-spacing: -2px;
             text-transform: uppercase;
@@ -174,6 +184,7 @@
         .filter-group {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .filter-btn {
@@ -197,7 +208,7 @@
         /* --- PROJECT GRID --- */
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 100%, 400px), 1fr));
             gap: 30px;
         }
 

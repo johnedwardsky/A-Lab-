@@ -50,10 +50,20 @@
         }
 
         .cursor.hovered {
-            width: 50px;
-            height: 50px;
+            width: 80px;
+            height: 80px;
             background: var(--accent);
             opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
         }
 
         /* --- BACKGROUND ELEMENTS --- */
@@ -147,8 +157,36 @@
             filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
         }
 
-        .logo:hover img {
-            transform: scale(1.1);
+        @media (max-width: 768px) {
+            header {
+                padding: 20px;
+                background: rgba(3, 4, 7, 0.8);
+                backdrop-filter: blur(10px);
+            }
+
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 30px;
+            }
+
+            .header-controls {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                gap: 10px;
+                z-index: 1200;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 10px 15px;
+                font-size: 0.75rem;
+            }
         }
 
         .logo span {
@@ -189,6 +227,12 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 150px 40px 100px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 120px 20px 60px;
+            }
         }
 
         .hero-section {
@@ -356,7 +400,7 @@
 
         .lead-section::before {
             content: '';
-            position: fixed;
+            position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
@@ -372,7 +416,7 @@
         }
 
         .form-info h2 {
-            font-size: 3rem;
+            font-size: clamp(2.2rem, 8vw, 3rem);
             font-weight: 800;
             line-height: 1;
             margin-bottom: 20px;
@@ -455,16 +499,6 @@
         }
 
         @media (max-width: 1024px) {
-            .logo {
-                top: 20px;
-                left: 20px;
-                position: fixed !important;
-            }
-
-            .logo img {
-                height: 35px;
-            }
-
             .trends-grid {
                 grid-template-columns: 1fr;
             }
@@ -476,7 +510,18 @@
             .lead-section {
                 grid-template-columns: 1fr;
                 gap: 50px;
-                padding: 40px;
+                padding: 40px 20px;
+            }
+
+            .trend-card {
+                padding: 30px;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 20px;
+                padding: 40px 20px;
+                text-align: left;
             }
         }
     </style>

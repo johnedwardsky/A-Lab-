@@ -187,26 +187,14 @@
             opacity: 0.5;
         }
 
-        /* Cursor */
-        .cursor {
-            position: fixed;
-            width: 15px;
-            height: 15px;
-            border: 1px solid var(--tech-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: left, top;
-        }
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
 
-        .cursor.hovered {
-            width: 30px;
-            height: 30px;
-            background: var(--tech-blue);
-            opacity: 0.5;
+            * {
+                cursor: auto !important;
+            }
         }
 
         /* Main Content */

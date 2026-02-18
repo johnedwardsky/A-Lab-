@@ -57,6 +57,16 @@
             height: 80px;
         }
 
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
         /* --- HEADER --- */
         header {
             position: fixed;
@@ -119,10 +129,41 @@
             color: var(--accent);
         }
 
+        @media (max-width: 768px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
+            .header-controls {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                gap: 10px;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 10px 15px;
+                font-size: 0.75rem;
+            }
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 150px 40px 100px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 120px 20px 60px;
+            }
         }
 
         .hero-section {
@@ -226,7 +267,7 @@
         }
 
         .form-info h2 {
-            font-size: 3rem;
+            font-size: clamp(2.2rem, 8vw, 3rem);
             font-weight: 800;
             margin-bottom: 20px;
             line-height: 1;
@@ -299,17 +340,8 @@
         @media (max-width: 1024px) {
             .form-section {
                 grid-template-columns: 1fr;
-                padding: 40px;
-            }
-
-            .logo {
-                top: 20px;
-                left: 20px;
-                position: fixed !important;
-            }
-
-            .logo img {
-                height: 35px;
+                padding: 40px 20px;
+                gap: 40px;
             }
         }
 

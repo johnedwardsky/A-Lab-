@@ -129,13 +129,31 @@
 
         .menu-btn:hover {
             background: transparent;
-            /* No fill */
             border-color: var(--accent);
-            /* Red border */
             color: var(--accent);
-            /* Red text */
             box-shadow: 0 0 15px rgba(255, 42, 42, 0.2);
             transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
+            .menu-btn {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                font-size: 0.75rem;
+                z-index: 1100;
+            }
         }
 
         .logo img {
@@ -532,67 +550,42 @@
         }
 
         @media (max-width: 768px) {
-
-            /* Disable Cursor */
             .cursor {
                 display: none !important;
             }
 
-            * {
-                cursor: auto !important;
-            }
-
-            /* Header & Layout */
             header {
-                padding: 20px;
+                padding: 15px 20px;
                 background: rgba(3, 4, 7, 0.8);
+                backdrop-filter: blur(10px);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1000;
             }
 
-            .logo {
-                font-size: 1.2rem;
-                top: 20px;
-                left: 20px;
-                position: fixed !important;
+            .logo img {
+                height: 25px;
             }
 
             .menu-btn {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                font-size: 0.8rem;
-                padding: 10px 20px;
-                z-index: 1100;
+                padding: 8px 15px;
+                font-size: 0.7rem;
             }
 
-            /* Hero */
             .hero {
                 padding: 0 20px;
-                height: 100dvh;
-                min-height: 500px;
-                justify-content: center;
-                align-items: flex-start;
             }
 
             .hero h1 {
-                font-size: 11vw;
-                line-height: 0.9;
-                margin-top: 10px;
+                font-size: clamp(1.5rem, 10vw, 3.5rem);
+                line-height: 1;
             }
 
-            .hero-meta {
-                flex-direction: column;
-                gap: 10px;
-                margin-top: 30px;
-                font-size: 0.75rem;
-            }
-
-            /* Marquee */
-            .marquee-item {
-                font-size: 1rem;
-                padding: 0 15px;
-            }
-
-            /* Bento Grid Mobile */
             .bento-section {
                 padding: 40px 20px;
             }
@@ -603,7 +596,6 @@
                 gap: 15px;
             }
 
-            /* Reset Card Grid logic */
             .card,
             .card-lg,
             .card-xl,
@@ -611,42 +603,18 @@
                 width: 100%;
                 grid-column: auto;
                 grid-row: auto;
-                min-height: auto;
                 padding: 25px;
+                min-height: auto;
             }
 
-            .card h3 {
-                font-size: 1.5rem;
-            }
-
-            /* Order: Put XL (Terminal) first */
             .card-xl {
-                min-height: 500px;
-                /* Increased height for mobile */
+                min-height: 450px;
                 order: -1;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
             }
 
-            .card-xl .tech-visual {
-                align-items: center;
-                padding: 60px 25px;
-                opacity: 0.5;
-                mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            }
-
-            .code-block {
-                font-size: 0.7rem;
-                width: 100%;
-                line-height: 1.5;
-            }
-
-            /* Footer */
             footer {
-                padding: 40px 20px;
                 flex-direction: column;
+                padding: 40px 20px;
                 gap: 20px;
                 text-align: left;
             }

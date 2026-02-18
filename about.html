@@ -56,6 +56,16 @@
             opacity: 0.8;
         }
 
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
         /* --- HEADER (Standardized from RD) --- */
         header {
             position: fixed;
@@ -99,26 +109,51 @@
         }
 
         @media (max-width: 768px) {
+            header {
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, 0.85);
+                backdrop-filter: blur(15px);
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                z-index: 1200;
+                pointer-events: auto;
+                border-bottom: 1px solid var(--border);
+            }
+
             .logo {
-                top: 20px;
-                left: 20px;
-                position: fixed !important;
+                position: static !important;
+                display: flex;
+                align-items: center;
             }
 
             .logo img {
-                height: 35px;
+                height: 24px;
             }
-        }
 
-        .logo:hover img {
-            transform: scale(1.1);
+            .header-controls {
+                position: static;
+                display: flex;
+                gap: 8px;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 0.6rem;
+                white-space: nowrap;
+                letter-spacing: 0.5px;
+            }
         }
 
         .menu-btn,
         .back-btn {
             pointer-events: auto;
             position: relative;
-
             text-decoration: none;
             color: white;
             background: rgba(255, 255, 255, 0.05);
@@ -159,6 +194,12 @@
             margin: 0 auto;
         }
 
+        @media (max-width: 768px) {
+            .about-hero {
+                padding: 120px 20px 60px;
+            }
+        }
+
         .hero-tag {
             font-family: var(--font-code);
             color: var(--tech-blue);
@@ -176,12 +217,20 @@
             background: var(--border);
         }
 
+        @media (max-width: 480px) {
+            .hero-tag {
+                font-size: 0.75rem;
+            }
+        }
+
         h1 {
-            font-size: clamp(3rem, 10vw, 6rem);
+            font-size: clamp(1.5rem, 8.5vw, 5.5rem);
             font-weight: 800;
             text-transform: uppercase;
-            line-height: 0.9;
-            margin-bottom: 40px;
+            line-height: 1;
+            margin-bottom: 25px;
+            word-break: break-all;
+            hyphens: auto;
         }
 
         .team-grid {
@@ -195,7 +244,7 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 30px;
-            padding: 40px;
+            padding: clamp(20px, 5vw, 40px);
             position: relative;
             overflow: hidden;
             transition: 0.4s;
@@ -228,8 +277,15 @@
             transform: scale(1.05);
         }
 
+        @media (max-width: 768px) {
+            .member-portrait img {
+                filter: grayscale(0.5);
+                /* Less grayscale for mobile since no hover */
+            }
+        }
+
         .member-info h2 {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             font-weight: 800;
             margin-bottom: 10px;
         }
@@ -269,10 +325,10 @@
         }
 
         .company-mission {
-            margin-top: 150px;
-            padding: 100px;
+            margin-top: clamp(80px, 15vw, 150px);
+            padding: clamp(20px, 8vw, 100px);
             background: #000;
-            border-radius: 40px;
+            border-radius: clamp(20px, 5vw, 40px);
             border: 1px solid var(--border);
             position: relative;
         }
@@ -285,7 +341,7 @@
         }
 
         .mission-text {
-            font-size: 2.5rem;
+            font-size: clamp(1.4rem, 5vw, 2.5rem);
             font-weight: 400;
             line-height: 1.2;
             color: #fff;
@@ -306,17 +362,54 @@
             color: #444;
         }
 
+        @media (max-width: 768px) {
+            footer {
+                flex-direction: column;
+                gap: 20px;
+                padding: 40px 20px;
+                text-align: left;
+            }
+        }
+
         @media (max-width: 1024px) {
             .team-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .member-card {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .member-portrait {
+                height: 200px;
+                aspect-ratio: auto;
+                margin-bottom: 20px;
+            }
+
+            .member-info h2 {
+                font-size: 1.5rem;
+            }
+
+            .member-bio {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+
+            .btn-connect {
+                padding: 12px 20px;
+                width: 100%;
+                text-align: center;
             }
 
             .company-mission {
-                padding: 40px;
+                padding: 30px 20px;
+                margin-top: 60px;
             }
 
             .mission-text {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
         }
     </style>

@@ -56,6 +56,16 @@
             mix-blend-mode: difference;
         }
 
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
         /* --- HEADER (Standardized) --- */
         header {
             pointer-events: none;
@@ -99,8 +109,36 @@
             filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
         }
 
-        .logo:hover img {
-            transform: scale(1.1);
+        @media (max-width: 768px) {
+            header {
+                padding: 20px;
+                background: rgba(3, 4, 7, 0.8);
+                backdrop-filter: blur(10px);
+            }
+
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 30px;
+            }
+
+            .header-controls {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                gap: 10px;
+                z-index: 1200;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 10px 15px;
+                font-size: 0.75rem;
+            }
         }
 
         .logo span {
@@ -143,6 +181,12 @@
             padding: 150px 40px 100px;
         }
 
+        @media (max-width: 768px) {
+            .container {
+                padding: 120px 20px 60px;
+            }
+        }
+
         .hero {
             margin-bottom: 150px;
         }
@@ -176,7 +220,7 @@
         }
 
         .stat-box .num {
-            font-size: 4rem;
+            font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 800;
             color: var(--accent);
             font-family: var(--font-code);
@@ -205,7 +249,7 @@
         }
 
         .tech-info h2 {
-            font-size: 3rem;
+            font-size: clamp(2.2rem, 8vw, 3rem);
             font-weight: 800;
             margin-bottom: 30px;
         }
@@ -364,7 +408,7 @@
         }
 
         .lab-content h2 {
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
             font-weight: 800;
             text-transform: uppercase;
             margin-bottom: 30px;
@@ -437,9 +481,9 @@
         }
 
         .system-badge {
-            position: fixed;
-            bottom: 40px;
-            left: 40px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
             font-family: var(--font-code);
             color: var(--accent);
             font-size: 0.7rem;
@@ -447,26 +491,33 @@
             padding: 5px 12px;
             border: 1px solid var(--accent);
             border-radius: 4px;
-            z-index: 1000;
+            z-index: 10;
             backdrop-filter: blur(5px);
             pointer-events: none;
         }
 
         @media (max-width: 1024px) {
-            .system-badge {
-                bottom: 20px;
-                left: 20px;
-                font-size: 0.6rem;
+            .trends-stats {
+                grid-template-columns: 1fr;
+                gap: 30px;
             }
 
-            .logo {
-                top: 20px;
-                left: 20px;
-                position: fixed !important;
+            .tech-section {
+                grid-template-columns: 1fr;
+                gap: 40px;
             }
 
-            .logo img {
-                height: 35px;
+            .cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .form-section {
+                padding: 40px 20px;
             }
 
             .lab-grid {
@@ -544,7 +595,7 @@
                 style="background: #000; height: 400px; border-radius: 30px; border: 1px solid var(--border); position: relative; overflow: hidden;">
                 <canvas id="neuralViz"></canvas>
                 <div
-                    style="position: fixed; bottom: 20px; right: 20px; font-family: var(--font-code); color: var(--tech-blue); font-size: 0.6rem; opacity: 0.5;">
+                    style="position: absolute; bottom: 20px; right: 20px; font-family: var(--font-code); color: var(--tech-blue); font-size: 0.6rem; opacity: 0.5;">
                     [ ML_CORE_ACTIVE: 0.998 ]
                 </div>
             </div>

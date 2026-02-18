@@ -61,6 +61,16 @@
             mix-blend-mode: difference;
         }
 
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
         /* --- LAYOUT --- */
         .container {
             max-width: 1000px;
@@ -71,9 +81,19 @@
             gap: 60px;
         }
 
-        header { pointer-events: none; 
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 80px 20px;
+                gap: 40px;
+            }
+        }
+
+        header {
+            pointer-events: none;
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
             padding: 30px 40px;
             display: flex;
@@ -82,6 +102,22 @@
             z-index: 100;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(3, 4, 7, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .logo img {
+                height: 25px;
+            }
+
+            .back-btn {
+                padding: 6px 15px;
+                font-size: 0.7rem;
+            }
         }
 
         .logo {
@@ -115,10 +151,25 @@
         /* --- SIDEBAR NAV --- */
         .doc-nav {
             position: sticky;
-            top: 150px;
+            top: 120px;
             display: flex;
             flex-direction: column;
             gap: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .doc-nav {
+                position: static;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .doc-link {
+                border-left: none;
+                border-bottom: 1px solid var(--border);
+                padding: 5px 0;
+            }
         }
 
         .doc-link {
@@ -140,7 +191,7 @@
 
         /* --- CONTENT --- */
         .legal-content h1 {
-            font-size: 3rem;
+            font-size: clamp(1.5rem, 8vw, 3rem);
             font-weight: 800;
             margin-bottom: 50px;
             text-transform: uppercase;
