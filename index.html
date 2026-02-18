@@ -44,19 +44,21 @@
         }
 
         /* --- CUSTOM CURSOR --- */
-        /* --- CUSTOM CURSOR --- */
         .cursor {
             position: fixed;
+            top: 0;
+            left: 0;
             width: 20px;
             height: 20px;
             background: #fff;
             border-radius: 50%;
             pointer-events: none;
-            transform: translate(-50%, -50%);
             z-index: 20000;
-            transition: width 0.2s, height 0.2s;
             mix-blend-mode: difference;
-            will-change: left, top, width, height;
+            /* Use translate3d for hardware acceleration */
+            transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+            transition: width 0.2s ease-out, height 0.2s ease-out;
+            will-change: transform, width, height;
         }
 
         .cursor.hovered {
@@ -885,8 +887,8 @@
         // Только для десктопа включаем курсор
         if (!isMobile) {
             document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
+                // Update via transform for 60fps performance
+                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
             });
 
             // Removed requestAnimationFrame loop for instant response
