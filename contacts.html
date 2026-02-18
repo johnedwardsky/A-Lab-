@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | CONTACTS_NODE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 20000;
+            mix-blend-mode: difference;
+            transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+            transition: width 0.2s ease-out, height 0.2s ease-out;
+            will-change: transform, width, height;
+        }
+
+        .cursor.hovered {
+            width: 80px;
+            height: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .header-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .logo {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1100;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            transition: 0.4s;
+            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
+        }
+
+        .menu-btn,
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-btn:hover,
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 150px 40px 100px;
+        }
+
+        .hero-section {
+            margin-bottom: 80px;
+        }
+
+        .hero-tag {
+            font-family: var(--font-code);
+            color: var(--accent);
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 40px;
+        }
+
+        /* --- CONTACT GRID --- */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 100px;
+        }
+
+        .contact-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--tech-blue), transparent);
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .contact-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .contact-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-label {
+            font-family: var(--font-code);
+            color: #555;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .card-value:hover {
+            color: var(--tech-blue);
+        }
+
+        .card-desc {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* --- FORM SECTION --- */
+        .form-section {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 80px;
+            background: var(--surface);
+            padding: 80px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .form-info h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+
+        .form-info p {
+            color: #888;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: #000;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--tech-blue);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+        }
+
+        textarea {
+            height: 120px;
+            resize: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--tech-blue);
+            color: black;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .form-section {
+                grid-template-columns: 1fr;
+                padding: 40px;
+            }
+
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <div class="noise-overlay"></div>
+
+    <header>
+        <a href="index.html" class="logo hover-trigger">
+            <img src="A-lab-logo.svg" alt="A-LAB">
+        </a>
+        <div class="header-controls">
+            <a href="index.html" class="back-btn hover-trigger">/// НАЗАД</a>
+            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()">/// МЕНЮ</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero-section">
+            <div class="hero-tag" data-i18n="page_contacts.hero_tag">// COMMUNICATION_HUB</div>
+            <h1 data-i18n="page_contacts.title">Свяжитесь <br> с лабораторией.</h1>
+        </section>
+
+        <div class="contact-grid">
+            <div class="contact-card hover-trigger">
+                <span class="card-label">EMAIL_NODE</span>
+                <a href="mailto:hello@a-lab.tech" class="card-value">hello@a-lab.tech</a>
+                <p class="card-desc">По вопросам сотрудничества, прессы и общим запросам. Время ответа: < 24ч.</p>
+            </div>
+
+            <div class="contact-card hover-trigger">
+                <span class="card-label">TELEGRAM_DIRECT</span>
+                <a href="https://t.me/alab_tech" target="_blank" class="card-value">@alab_tech</a>
+                <p class="card-desc">Прямой канал связи для оперативного обсуждения проектов и идей.</p>
+            </div>
+
+            <div class="contact-card hover-trigger">
+                <span class="card-label">BASE_COORDINATES</span>
+                <span class="card-value">Digital Nomad Mode</span>
+                <p class="card-desc">Мы работаем распределенно. Основные R&D узлы: Москва / Dubai / Remote.</p>
+            </div>
+        </div>
+
+        <section class="form-section">
+            <div class="form-info">
+                <h2 data-i18n-html="page_contacts.form_title">Инициируйте <br> контакт.</h2>
+                <p data-i18n="page_contacts.form_subtitle">// ВАШ ЗАПРОС БУДЕТ ОБРАБОТАН <br> СИСТЕМОЙ В ПРИОРИТЕТНОМ
+                    ПОРЯДКЕ.</p>
+            </div>
+            <div class="form-container">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label data-i18n="page_contacts.form_name">Фамилия Имя</label>
+                        <input type="text" id="contactName" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="page_contacts.form_contact">Telegram / Email</label>
+                        <input type="text" id="contactLink" placeholder="@username or email" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="page_contacts.form_subject">Тема запроса</label>
+                        <select id="contactSubject">
+                            <option>Новый проект</option>
+                            <option>Стать резидентом</option>
+                            <option>R&D сотрудничество</option>
+                            <option>Консалтинг</option>
+                            <option>Другое</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="page_contacts.form_msg">Сообщение</label>
+                        <textarea id="contactMsg"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit hover-trigger"
+                        data-i18n="page_contacts.form_submit">Отправить запрос</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="main-menu.js"></script>
+    <script src="i18n.js"></script>
+
+    <script>
+        // --- CURSOR LOGIC ---
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+        });
+
+        const initHoverTriggers = () => {
+            document.querySelectorAll('.hover-trigger').forEach(t => {
+                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        };
+        initHoverTriggers();
+
+        // --- FORM LOGIC ---
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const data = {
+                name: document.getElementById('contactName').value,
+                contact: document.getElementById('contactLink').value,
+                subject: document.getElementById('contactSubject').value,
+                message: document.getElementById('contactMsg').value,
+                source: 'contacts_page'
+            };
+
+            btn.innerText = 'SENDING...';
+            btn.disabled = true;
+
+            try {
+                const { success, error } = await window.ALabCore.submitLead({
+                    name: data.name,
+                    contact: data.contact,
+                    message: `[Subject: ${data.subject}] ${data.message}`,
+                    source: 'contacts',
+                    source_detail: 'Contacts Page Form'
+                });
+
+                if (success) {
+                    alert('Запрос успешно отправлен в систему A-LAB. Мы свяжемся с вами в ближайшее время.');
+                    e.target.reset();
+                } else {
+                    throw error;
+                }
+            } catch (err) {
+                alert('Ошибка при отправке: ' + (err.message || 'Повторите позже'));
+            } finally {
+                btn.innerText = 'Отправить запрос';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

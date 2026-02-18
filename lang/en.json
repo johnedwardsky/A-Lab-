@@ -11,6 +11,7 @@
         "digital": "Digital & AI",
         "design": "Design",
         "marketing": "Marketing",
+        "contacts": "Contacts",
         "residents": "Residents",
         "language": "RU",
         "back": "/// BACK",
@@ -413,5 +414,16 @@
         "prj1_desc": "Developing a data management system core using graph databases and neural connections for visualization.",
         "prj2_desc": "Experimental interface that adapts to user behavior in real time.",
         "prj3_desc": "R&D prototype of an electronic platform for autonomous EVs with HMI integration."
+    },
+    "page_contacts": {
+        "hero_tag": "// COMMUNICATION_HUB",
+        "title": "Connect <br> with the laboratory.",
+        "form_title": "Initiate <br> contact.",
+        "form_subtitle": "// YOUR REQUEST WILL BE PROCESSED <br> BY THE SYSTEM IN PRIORITY ORDER.",
+        "form_name": "Full Name",
+        "form_contact": "Telegram / Email",
+        "form_subject": "Subject",
+        "form_msg": "Message",
+        "form_submit": "Send Request"
     }
 }

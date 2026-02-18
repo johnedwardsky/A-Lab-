@@ -51,6 +51,12 @@ const MainMenu = (() => {
             desc_en: 'Growth strategies based on data and consumer psychology.'
         },
         {
+            label_ru: 'Контакты', label_en: 'Contacts', url: 'contacts.html',
+            code: 'CONTACT_NODE',
+            desc_ru: 'Свяжитесь с нами напрямую. Обсуждение проектов и партнерство.',
+            desc_en: 'Contact us directly. Project discussion and partnership.'
+        },
+        {
             label_ru: 'Резиденты', label_en: 'Residents', url: 'residents.html',
             code: 'RESIDENT_GRID',
             desc_ru: 'Закрытое сообщество инноваторов. Скоро будет открыто для резидентов A-LAB.',
@@ -214,37 +220,15 @@ const MainMenu = (() => {
                 height: 100vh;
                 background: #030407;
                 z-index: 9999;
-                transform: translateX(-100%);
+                opacity: 0;
                 pointer-events: none;
-                transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+                transition: opacity 0.4s ease;
                 display: flex;
             }
 
             .menu-overlay.open {
-                transform: translateX(0);
+                opacity: 1;
                 pointer-events: auto;
-            }
-
-            /* --- BODY SHIFT EFFECT (Desktop) --- */
-            @media (min-width: 1025px) {
-                body {
-                    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
-                }
-                body.menu-open-active main,
-                body.menu-open-active header:not(.menu-overlay header),
-                body.menu-open-active footer,
-                body.menu-open-active .container {
-                    transform: translateX(400px);
-                    filter: blur(5px) grayscale(0.2);
-                    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), filter 0.8s ease;
-                }
-                
-                header:not(.menu-overlay header), 
-                main, 
-                footer, 
-                .container {
-                    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), filter 0.8s ease;
-                }
             }
 
             .menu-container {
@@ -544,7 +528,6 @@ const MainMenu = (() => {
                 requestAnimationFrame(() => {
                     const overlay = document.querySelector('.menu-overlay');
                     if (overlay) overlay.classList.add('open');
-                    document.body.classList.add('menu-open-active');
                     document.body.style.overflow = 'hidden';
                     isOpen = true;
                     attachEvents();
@@ -553,7 +536,6 @@ const MainMenu = (() => {
         } else {
             const overlay = document.querySelector('.menu-overlay');
             if (overlay) overlay.classList.remove('open');
-            document.body.classList.remove('menu-open-active');
             document.body.style.overflow = '';
             isOpen = false;
         }
