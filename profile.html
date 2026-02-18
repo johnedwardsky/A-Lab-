@@ -120,7 +120,8 @@
             color: var(--accent);
         }
 
-        header { pointer-events: none; 
+        header {
+            pointer-events: none;
             display: flex;
             align-items: center;
         }
@@ -175,7 +176,8 @@
         }
 
         /* --- HEADER --- */
-        header { pointer-events: none; 
+        header {
+            pointer-events: none;
             position: fixed;
             top: 0;
             width: 100%;
@@ -575,7 +577,8 @@
             margin-bottom: 100px;
         }
 
-        .terminal-header { pointer-events: none; 
+        .terminal-header {
+            pointer-events: none;
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid #111;
@@ -626,7 +629,17 @@
             color: #555;
         }
 
-        @media (max-width: 1024px) { .logo { top: 20px; left: 20px; position: fixed !important; } .logo img { height: 35px; }
+        @media (max-width: 1024px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
             .profile-container {
                 grid-template-columns: 1fr;
             }
@@ -723,7 +736,17 @@
         }
 
         /* --- RESPONSIVENESS --- */
-        @media (max-width: 1024px) { .logo { top: 20px; left: 20px; position: fixed !important; } .logo img { height: 35px; }
+        @media (max-width: 1024px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                position: fixed !important;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
             .profile-container {
                 grid-template-columns: 1fr;
                 gap: 40px;
@@ -740,7 +763,8 @@
         }
 
         @media (max-width: 768px) {
-            header { pointer-events: none; 
+            header {
+                pointer-events: none;
                 padding: 20px;
             }
 
@@ -956,8 +980,6 @@
 
     <footer>
         <div>© 2025 ARTIFACT LAB // PROFILE</div>
-        <div>INSTAGRAM</div>
-        <div>TELEGRAM</div>
         <div>A-LAB.TECH</div>
     </footer>
 
