@@ -636,11 +636,9 @@
             }
 
             .header-controls {
-                position: fixed;
-                top: 12px;
-                right: 15px;
+                position: static;
+                display: flex;
                 gap: 8px;
-                z-index: 1200;
             }
 
             .menu-btn,
@@ -649,6 +647,15 @@
                 font-size: 0.6rem !important;
                 white-space: nowrap;
                 letter-spacing: 0.5px;
+            }
+
+            h1 {
+                font-size: clamp(1.5rem, 10vw, 3rem) !important;
+                line-height: 1.1;
+            }
+
+            .section-title {
+                font-size: 1.3rem !important;
             }
         }
 
