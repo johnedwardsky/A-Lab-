@@ -118,8 +118,10 @@
         }
 
         .logo img {
-            height: 35px;
+            height: 50px;
             width: auto;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
         }
 
         .back-btn {
@@ -802,6 +804,50 @@
             margin-bottom: 40px;
         }
 
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-label {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #666;
+            letter-spacing: 1px;
+        }
+
+        .form-input,
+        .form-textarea {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 15px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--tech-blue);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+        }
+
+        .submit-btn {
+            background: transparent;
+            border: 1px solid var(--tech-blue);
+            color: var(--tech-blue);
+            padding: 15px 40px;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            width: auto;
+        }
+
         .submit-btn:hover {
             background: var(--tech-blue);
             color: black;
@@ -814,7 +860,8 @@
             }
 
             .contact-card h2 {
-                font-size: 1.8rem !important;
+                font-size: 1.5rem !important;
+                line-height: 1.2;
             }
 
             .contact-section {
@@ -823,7 +870,51 @@
 
             .form-grid {
                 grid-template-columns: 1fr 1fr;
-                gap: 15px;
+                gap: 10px;
+            }
+
+            .form-input,
+            .form-textarea {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .vr-container {
+                display: flex;
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .vr-hud-view {
+                order: -1;
+                height: auto;
+                aspect-ratio: 16/9;
+                max-height: 40vh;
+                margin-bottom: 20px;
+            }
+
+            .vr-info h2 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+                word-break: break-word;
+            }
+
+            .vr-info p {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+
+            .vr-feature {
+                margin-bottom: 15px;
+            }
+
+            .vr-feature-text p {
+                font-size: 0.8rem;
             }
         }
     </style>
