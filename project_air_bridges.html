@@ -59,58 +59,6 @@
             border-color: var(--accent);
         }
 
-        @media (max-width: 768px) {
-            .cursor {
-                display: none !important;
-            }
-
-            * {
-                cursor: auto !important;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                padding: 12px 15px;
-                background: rgba(3, 4, 7, 0.85);
-                backdrop-filter: blur(15px);
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                z-index: 1200;
-                pointer-events: auto;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .logo {
-                position: static !important;
-                display: flex;
-                align-items: center;
-            }
-
-            .logo img {
-                height: 24px;
-            }
-
-            .header-controls {
-                position: static;
-                display: flex;
-                gap: 8px;
-            }
-
-            .menu-btn,
-            .back-btn {
-                padding: 6px 12px;
-                font-size: 0.6rem;
-                white-space: nowrap;
-                letter-spacing: 0.5px;
-            }
-        }
-
         /* --- HEADER (Standardized) --- */
         header {
             position: fixed;
@@ -204,7 +152,7 @@
         }
 
         h1 {
-            font-size: clamp(2rem, 10vw, 6rem);
+            font-size: clamp(1.5rem, 8.5vw, 5.5rem);
             font-weight: 800;
             line-height: 1;
             text-transform: uppercase;
@@ -845,6 +793,10 @@
             margin-bottom: 40px;
         }
 
+        .grid-span-2 {
+            grid-column: span 2;
+        }
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -902,6 +854,54 @@
         }
 
         @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+
+            header {
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, 0.85);
+                backdrop-filter: blur(15px);
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                z-index: 1200;
+                pointer-events: auto;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .logo {
+                position: static !important;
+                display: flex;
+                align-items: center;
+            }
+
+            .logo img {
+                height: 24px !important;
+            }
+
+            .header-controls {
+                position: static;
+                display: flex;
+                gap: 8px;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 6px 12px !important;
+                font-size: 0.6rem !important;
+                white-space: nowrap;
+                letter-spacing: 0.5px;
+            }
+
             .contact-card {
                 padding: 30px 20px;
             }
@@ -918,6 +918,10 @@
             .form-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
+            }
+
+            .grid-span-2 {
+                grid-column: span 1;
             }
 
             .form-input,
@@ -1270,7 +1274,7 @@
                             <label class="form-label">CONTACT_EMAIL</label>
                             <input type="email" class="form-input" placeholder="corp@example.com" required>
                         </div>
-                        <div class="form-group" style="grid-column: span 2;">
+                        <div class="form-group grid-span-2">
                             <label class="form-label">СООБЩЕНИЕ // PAYLOAD</label>
                             <textarea class="form-textarea" placeholder="Опишите ваш интерес к проекту..."
                                 style="height: 120px;" required></textarea>
