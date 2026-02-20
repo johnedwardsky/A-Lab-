@@ -1,5 +1,9 @@
 # Whitepaper: Generative Adaptive Operating System (Рабочее название: Chameleon OS)
 
+**Author & Inventor:** Ivan Lakshinnsky  
+**Concept Origin:** A-LAB.TECH R&D Division  
+**Date:** February 2026  
+
 ## 1. Аннотация (Abstract)
 В эпоху стремительного развития аппаратных технологий парадигма взаимодействия пользователя и операционной системы (ОС) остается архаичной. Современные ОС (iOS, Android, Windows) предлагают статичный, универсальный "один размер для всех" (One-Size-Fits-All) пользовательский интерфейс (UI). Этот подход игнорирует индивидуальные когнитивные, физиологические и возрастные особенности миллиардов людей. 
 
@@ -111,5 +115,5 @@ Monetization through hardware partnerships.
 *Документ подготовлен для фиксации авторского замысла и технологической архитектуры.*
 
 **Proof-of-Existence (PoE) Hash:**
-`SHA-256: 5c593a7bca849b514047ae6fa8dd947f5a692d9166f16ec82c053957f5683518`
+`SHA-256: d25c6f1b7953333478cd518636fbfdb6763fcc6cc2f20975284f1972412fd145`
 *Timestamp: 2026-02-20*
