@@ -79,6 +79,7 @@
             align-items: flex-start;
             z-index: 100;
             pointer-events: none;
+            backdrop-filter: none;
         }
 
         .header-controls {
@@ -86,6 +87,8 @@
             display: flex;
             gap: 15px;
             pointer-events: auto;
+            z-index: 1100;
+            align-items: center;
         }
 
         .logo {
@@ -94,13 +97,15 @@
             top: 40px;
             left: 40px;
             z-index: 1100;
+            display: flex;
+            align-items: center;
             text-decoration: none;
         }
 
         .logo img {
             height: 50px;
             width: auto;
-            transition: 0.4s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
         }
 
@@ -130,27 +135,44 @@
         }
 
         @media (max-width: 768px) {
+            header {
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, 0.85);
+                backdrop-filter: blur(15px);
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                z-index: 1200;
+                pointer-events: auto;
+                border-bottom: 1px solid var(--border);
+            }
+
             .logo {
-                top: 20px;
-                left: 20px;
-                position: fixed !important;
+                position: static !important;
+                display: flex;
+                align-items: center;
             }
 
             .logo img {
-                height: 35px;
+                height: 24px;
             }
 
             .header-controls {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                gap: 10px;
+                position: static;
+                display: flex;
+                gap: 8px;
             }
 
             .menu-btn,
             .back-btn {
-                padding: 10px 15px;
-                font-size: 0.75rem;
+                padding: 6px 12px !important;
+                font-size: 0.6rem !important;
+                white-space: nowrap;
+                letter-spacing: 0.5px;
             }
         }
 
@@ -163,6 +185,16 @@
         @media (max-width: 768px) {
             .container {
                 padding: 120px 20px 60px;
+            }
+
+            h1 {
+                font-size: clamp(2rem, 10vw, 3.5rem);
+                line-height: 1.1;
+                word-break: break-word;
+            }
+
+            .hero-tag {
+                font-size: 0.75rem;
             }
         }
 
