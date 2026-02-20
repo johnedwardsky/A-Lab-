@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chameleon OS | A-LAB.TECH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #030407;
+            --surface: #0a0c14;
+            --text: #ffffff;
+            --green: #00ff88;
+            --cyan: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.04);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at 50% 40%, rgba(0, 255, 136, 0.08), transparent 60%);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .hero-sub {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: rgba(255, 255, 255, 0.55);
+            max-width: 640px;
+            margin: 1.5rem auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        .btn-main {
+            display: inline-block;
+            padding: 14px 36px;
+            border-radius: 100px;
+            background: #fff;
+            color: #000;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        /* ==================== FEATURES ==================== */
+        .features {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feat-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: transform .3s, border-color .3s;
+        }
+
+        .feat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .feat-card h3 {
+            color: var(--green);
+            font-size: 1.15rem;
+            margin-bottom: .75rem;
+        }
+
+        .feat-card p {
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6;
+            font-size: .9rem;
+        }
+
+        /* ==================== DEMO SECTION ==================== */
+        .demo-section {
+            padding: 100px 2rem 120px;
+            background: linear-gradient(180deg, var(--bg) 0%, #060810 100%);
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .demo-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+        }
+
+        .demo-header p {
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: .75rem;
+            font-size: 1rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 240px 1fr 320px;
+            gap: 2.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        /* --- Left Nav --- */
+        .nav-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: .9rem;
+            font-family: inherit;
+            text-align: left;
+            transition: all .25s;
+        }
+
+        .nav-btn:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+            color: #fff;
+        }
+
+        .nav-btn.on {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.12), rgba(0, 255, 136, 0.04));
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .nav-btn .badge {
+            font-size: .7rem;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 8px;
+            border-radius: 6px;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        /* --- Phone --- */
+        .phone-wrap {
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone {
+            width: 320px;
+            height: 660px;
+            border-radius: 44px;
+            border: 10px solid #1c1e26;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            transition: border-color .5s;
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 28px;
+            background: #1c1e26;
+            border-radius: 0 0 18px 18px;
+            z-index: 20;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            padding: 40px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            transition: background .5s, color .5s;
+            overflow-y: auto;
+        }
+
+        /* --- Status bar --- */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: .65rem;
+            opacity: .5;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .screen-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        /* --- Widgets --- */
+        .widgets {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .w-card {
+            padding: 14px 16px;
+            border-radius: 14px;
+            transition: all .4s;
+        }
+
+        .w-label {
+            font-size: .65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            opacity: .7;
+            margin-bottom: 6px;
+        }
+
+        .w-value {
+            font-size: .85rem;
+            line-height: 1.5;
+        }
+
+        .sos-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* --- Dock --- */
+        .dock {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 16px;
+            flex-shrink: 0;
+        }
+
+        .dock-icon {
+            aspect-ratio: 1;
+            border-radius: 22%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .7rem;
+            font-weight: 600;
+            transition: all .4s;
+        }
+
+        /* ==================== PROFILE THEMES ==================== */
+        /* 7+ Kids */
+        .t-7 {
+            background: #FF9F1C;
+            color: #2D3142;
+        }
+
+        .t-7 .w-card {
+            background: rgba(255, 255, 255, .92);
+            color: #2D3142;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .08);
+        }
+
+        .t-7 .w-label {
+            color: #EF476F;
+        }
+
+        .t-7 .dock-icon {
+            background: rgba(255, 255, 255, .85);
+            color: #FF6B6B;
+            border-radius: 50%;
+        }
+
+        /* 20+ Digital */
+        .t-20 {
+            background: #08080a;
+            color: #00E5FF;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .t-20 .w-card {
+            background: #0d0d10;
+            border-left: 2px solid #00E5FF;
+            border-radius: 0;
+            color: #00E5FF;
+        }
+
+        .t-20 .w-label {
+            color: #7B61FF;
+        }
+
+        .t-20 .dock-icon {
+            background: #111;
+            color: #00E5FF;
+            border: 1px solid rgba(0, 229, 255, .2);
+            border-radius: 8px;
+        }
+
+        /* 35+ Minimal */
+        .t-35 {
+            background: #0C1024;
+            color: #E8ECF1;
+        }
+
+        .t-35 .w-card {
+            background: rgba(255, 255, 255, .04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 14px;
+            color: #C8D0DC;
+        }
+
+        .t-35 .w-label {
+            color: #6C7A96;
+        }
+
+        .t-35 .dock-icon {
+            background: rgba(255, 255, 255, .06);
+            color: #8899B0;
+            border-radius: 14px;
+        }
+
+        /* 45+ Manager */
+        .t-45 {
+            background: #F2F4F7;
+            color: #1A1D23;
+        }
+
+        .t-45 .w-card {
+            background: #FFF;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+            color: #2D3436;
+        }
+
+        .t-45 .w-label {
+            color: #0984E3;
+        }
+
+        .t-45 .dock-icon {
+            background: #E8EDF2;
+            color: #636E72;
+            border-radius: 14px;
+        }
+
+        /* 65+ Care */
+        .t-65 {
+            background: #000;
+            color: #FFF;
+        }
+
+        .t-65 .w-card {
+            background: #111;
+            border: 2px solid #222;
+            border-radius: 0;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .t-65 .w-label {
+            font-size: .8rem;
+            color: #00FF41;
+        }
+
+        .t-65 .w-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .t-65 .dock-icon {
+            background: #111;
+            color: #00FF41;
+            border: 2px solid #00FF41;
+            border-radius: 8px;
+            font-size: .8rem;
+        }
+
+        .t-65 .sos-btn {
+            background: #FF3B30;
+            color: #FFF;
+        }
+
+        /* --- Right Sidebar --- */
+        .ai-col {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .ai-col h3 {
+            font-size: .85rem;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-chip {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: .7rem;
+            font-weight: 600;
+            margin-bottom: .75rem;
+            margin-right: 4px;
+        }
+
+        .ai-chip.g {
+            background: rgba(0, 255, 136, .1);
+            color: var(--green);
+        }
+
+        .ai-chip.c {
+            background: rgba(0, 229, 255, .1);
+            color: var(--cyan);
+        }
+
+        .ai-text {
+            color: rgba(255, 255, 255, .6);
+            line-height: 1.7;
+            font-size: .85rem;
+        }
+
+        .ai-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, .05);
+            font-size: .78rem;
+            color: var(--green);
+        }
+
+        /* ==================== POE ==================== */
+        .poe {
+            padding: 5rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .poe h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .poe p {
+            color: rgba(255, 255, 255, .4);
+        }
+
+        .hash {
+            background: rgba(0, 0, 0, .4);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            color: var(--cyan);
+            word-break: break-all;
+            max-width: 700px;
+            margin: 1.5rem auto;
+            border: 1px solid var(--border);
+        }
+
+        footer {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, .15);
+            font-size: .8rem;
+            border-top: 1px solid rgba(255, 255, 255, .03);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1100px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .phone-wrap {
+                order: 1;
+            }
+
+            .nav-col {
+                order: 2;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .ai-col {
+                order: 3;
+            }
+        }
+    </style>
+</head>
+
+<body x-data="{
+    p: '35',
+    data: {
+        '7':  { name:'Chameleon Kids',    border:'#FF9F1C', theme:'t-7',
+                logic:'Приоритет: безопасность и геймификация. Скругления 24px, яркие цвета. Контент фильтруется локальным ИИ. Родительский контроль встроен в ядро.',
+                widgets:[
+                    { label:'Расписание',   icon:'📐', text:'Математика · 10:30' },
+                    { label:'Безопасность',  icon:'🛡️', text:'Среда защищена · Фильтр вкл.' },
+                    { label:'Задание дня',   icon:'⭐', text:'Учим планеты солнечной системы' }
+                ],
+                dock:['🎮','📖','🎨','🎵'] },
+
+        '20': { name:'Digital Native',    border:'#00E5FF', theme:'t-20',
+                logic:'Приоритет: скорость и данные. Моноширинный шрифт, неоновые акценты для OLED. Терминал и крипто-кошелёк в быстром доступе. Минимум отвлечений.',
+                widgets:[
+                    { label:'Source Feed',   icon:'₿', text:'BTC +2.4% · ETH $4,120' },
+                    { label:'System Log',    icon:'>', text:'ssh node@127.0.0.1 active' },
+                    { label:'Now Playing',   icon:'♫', text:'Phonk Beats · 320kbps' }
+                ],
+                dock:['IDE','Git','VPN','Msg'] },
+
+        '35': { name:'Minimal Mastery',   border:'#1c1e26', theme:'t-35',
+                logic:'Приоритет: фокус и эстетика. Glassmorphism снижает визуальный шум. Спокойная гамма. Уведомления агрегируются в единый поток.',
+                widgets:[
+                    { label:'Focus Mode',    icon:'🎯', text:'Deep Work · 2ч осталось' },
+                    { label:'Agenda',        icon:'📅', text:'Board Meeting · 14:00' },
+                    { label:'Smart Home',    icon:'🏠', text:'Свет приглушён · 22°C' }
+                ],
+                dock:['Mail','Cal','Notes','AI'] },
+
+        '45': { name:'Life Manager',      border:'#1c1e26', theme:'t-45',
+                logic:'Приоритет: информативность. Светлая тема для разного освещения. Тени разделяют блоки. Карта семьи и списки задач — на главном экране.',
+                widgets:[
+                    { label:'Family Watch',  icon:'📍', text:'Alex: Школа · Leo: Дома' },
+                    { label:'Задачи',        icon:'✅', text:'Ужин · Купить молоко · Стирка' },
+                    { label:'События',       icon:'🗓️', text:'Стоматолог · 16:30' }
+                ],
+                dock:['Дом','Карта','Банк','Чат'] },
+
+        '65': { name:'Care & Connect',    border:'#00FF41', theme:'t-65',
+                logic:'Приоритет: здоровье и читаемость. Контраст WCAG AAA. Кегль 24pt+. Мониторинг пульса через камеру. Анализ тембра голоса для выявления усталости.',
+                widgets:[
+                    { label:'Здоровье',      icon:'❤️', text:'Пульс: 72 уд/мин · Норма' },
+                    { label:'Лекарства',     icon:'💊', text:'Принять Витамин D · 14:00' },
+                    { label:'Экстренная',    icon:'🆘', text:'Вызов помощи' }
+                ],
+                dock:['Звонок','Фото','Погода','SOS'] }
+    }
+}">
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+        <div>
+            <h1>Chameleon OS</h1>
+            <p class="hero-sub">Генеративная адаптивная операционная система. Интерфейс, который подстраивается под вас
+                — а не наоборот.</p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <a href="#demo" class="btn-main">Попробовать Liquid UI ↓</a>
+                <a href="rd-os-whitepaper.html" class="btn-main"
+                    style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);">Читать Whitepaper
+                    →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FEATURES ==================== -->
+    <section class="features">
+        <div class="feat-card">
+            <h3>Age-Adaptive Engine</h3>
+            <p>От безопасной песочницы для 7-летнего до интерфейса с мониторингом здоровья для пожилых. ОС
+                трансформируется под физиологические потребности.</p>
+        </div>
+        <div class="feat-card">
+            <h3>Эффект Хамелеона</h3>
+            <p>Нравится стиль Apple, но хотите свободу? Chameleon OS эмулирует UI любой экосистемы через смарт-контракты
+                роялти.</p>
+        </div>
+        <div class="feat-card">
+            <h3>Smart Royalties</h3>
+            <p>Встроенный Web3-слой автоматически выплачивает микро-роялти правообладателям, когда их UI/UX паттерны
+                генерируются.</p>
+        </div>
+        <div class="feat-card">
+            <h3>Local-First AI</h3>
+            <p>Цифровой профиль не покидает устройство. Генерация и аналитика работают на локальном NPU-чипе.</p>
+        </div>
+    </section>
+
+    <!-- ==================== DEMO ==================== -->
+    <section id="demo" class="demo-section">
+        <div class="demo-header">
+            <h2>Liquid UI Demonstration</h2>
+            <p>Выберите возрастной профиль — и наблюдайте, как ОС перестраивает логику и дизайн</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- Left: Navigation -->
+            <div class="nav-col">
+                <template x-for="(d, key) in data" :key="key">
+                    <button class="nav-btn" :class="{ 'on': p === key }" @click="p = key">
+                        <span class="badge" x-text="d.name.split(' ')[0] === 'Chameleon' ? '7+' : key + '+'"></span>
+                        <span x-text="d.name"></span>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Center: Phone -->
+            <div class="phone-wrap">
+                <div class="phone" :style="{ borderColor: data[p].border }">
+                    <div class="screen" :class="data[p].theme">
+                        <div class="status-bar">
+                            <span x-text="new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})"></span>
+                            <span>5G · 98%</span>
+                        </div>
+
+                        <div class="screen-title" x-text="data[p].name"></div>
+
+                        <div class="widgets">
+                            <template x-for="w in data[p].widgets" :key="w.label">
+                                <div class="w-card">
+                                    <div class="w-label" x-text="w.label"></div>
+                                    <div class="w-value"><span x-text="w.icon"></span> <span x-text="w.text"></span>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template x-if="p === '65'">
+                                <button class="sos-btn">🆘 Вызов помощи</button>
+                            </template>
+                        </div>
+
+                        <div class="dock">
+                            <template x-for="icon in data[p].dock" :key="icon">
+                                <div class="dock-icon" x-text="icon"></div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: AI Logic -->
+            <div class="ai-col">
+                <h3><span>🧠</span> Generative Logic</h3>
+                <div>
+                    <span class="ai-chip g">Real-time</span>
+                    <span class="ai-chip c">NPU Active</span>
+                </div>
+                <p class="ai-text" x-text="data[p].logic"></p>
+                <div class="ai-footer">
+                    <strong>Decision Path:</strong> Cognitive friction reduction for <span x-text="p + '+'"></span>
+                    demographic.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== POE ==================== -->
+    <section class="poe">
+        <h2>Decentralized Intellectual Property</h2>
+        <p>Концепция Chameleon OS защищена через Proof-of-Existence в блокчейне.</p>
+        <div class="hash">SHA-256: 17eb50663760715112b83beb90883bfbfd40837bd4cdda7d6cd2a07bde97de4c</div>
+        <p style="font-size:.85rem;">Запись от 20 февраля 2026</p>
+    </section>
+
+    <footer>&copy; 2026 A-LAB.TECH · Future Systems Division</footer>
+</body>
+
+</html>

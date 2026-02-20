@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chameleon OS — Whitepaper | A-LAB.TECH</title>
+    <meta name="description"
+        content="Whitepaper Chameleon OS — генеративная адаптивная операционная система с AI-интерфейсом, Web3 экосистемой и смарт-роялти.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #030407;
+            --surface: #0a0c14;
+            --card: #0d0f18;
+            --text: #e8ecf1;
+            --muted: rgba(255, 255, 255, 0.45);
+            --green: #00ff88;
+            --cyan: #00E5FF;
+            --accent: #FF2A2A;
+            --border: rgba(255, 255, 255, 0.06);
+            --font: 'Inter', -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.7;
+        }
+
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ==================== HEADER ==================== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(3, 4, 7, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .top-bar .logo span {
+            color: var(--green);
+        }
+
+        .top-bar nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .top-bar nav a {
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: .8rem;
+            font-family: var(--mono);
+            transition: all .3s;
+        }
+
+        .top-bar nav a:hover {
+            border-color: var(--green);
+            color: var(--green);
+            text-decoration: none;
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            padding: 160px 40px 80px;
+            text-align: center;
+            background: radial-gradient(ellipse at 50% 30%, rgba(0, 255, 136, 0.06), transparent 60%);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            color: var(--green);
+            font-family: var(--mono);
+            font-size: .75rem;
+            margin-bottom: 2rem;
+            letter-spacing: .05em;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            letter-spacing: -.03em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 40%, var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            color: var(--muted);
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            max-width: 720px;
+            margin: 1.5rem auto 2.5rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: .9rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all .25s;
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.15);
+            text-decoration: none;
+            color: #000;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        /* ==================== TABLE OF CONTENTS ==================== */
+        .toc {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 40px;
+        }
+
+        .toc h2 {
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--green);
+            margin-bottom: 1.5rem;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 8px;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: .9rem;
+            transition: all .25s;
+        }
+
+        .toc-item:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        .toc-num {
+            font-family: var(--mono);
+            font-size: .7rem;
+            color: var(--green);
+            min-width: 24px;
+        }
+
+        /* ==================== ARTICLE ==================== */
+        .article {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 40px 6rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 80px;
+        }
+
+        .section-num {
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--green);
+            letter-spacing: .08em;
+            margin-bottom: .75rem;
+        }
+
+        .section h2 {
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .section p {
+            color: rgba(255, 255, 255, 0.65);
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+
+        .section strong {
+            color: var(--text);
+        }
+
+        .section h3 {
+            font-size: 1.1rem;
+            color: var(--cyan);
+            margin: 2rem 0 .75rem;
+        }
+
+        .section ul,
+        .section ol {
+            color: rgba(255, 255, 255, 0.6);
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section li {
+            margin-bottom: .5rem;
+            font-size: .92rem;
+        }
+
+        .section li strong {
+            color: var(--text);
+        }
+
+        /* Highlight blocks */
+        .callout {
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            font-size: .9rem;
+        }
+
+        .callout-green {
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 3px solid var(--green);
+        }
+
+        .callout-cyan {
+            background: rgba(0, 229, 255, 0.05);
+            border-left: 3px solid var(--cyan);
+        }
+
+        .callout-red {
+            background: rgba(255, 42, 42, 0.05);
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Roadmap */
+        .roadmap {
+            display: grid;
+            gap: 12px;
+            margin: 1.5rem 0;
+        }
+
+        .roadmap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+        }
+
+        .roadmap-phase {
+            font-family: var(--mono);
+            font-size: .7rem;
+            background: rgba(0, 255, 136, 0.08);
+            color: var(--green);
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .roadmap-item p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: .88rem;
+        }
+
+        .roadmap-item strong {
+            color: var(--text);
+        }
+
+        /* PoE block */
+        .poe-block {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .poe-block h3 {
+            color: var(--green);
+            margin-bottom: 1rem;
+        }
+
+        .hash-value {
+            font-family: var(--mono);
+            font-size: .8rem;
+            color: var(--cyan);
+            background: rgba(0, 0, 0, .4);
+            padding: 12px 16px;
+            border-radius: 8px;
+            word-break: break-all;
+            margin: 1rem auto;
+            max-width: 600px;
+            border: 1px solid var(--border);
+        }
+
+        .poe-block .poe-date {
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        /* ==================== DEMO CTA ==================== */
+        .demo-cta {
+            text-align: center;
+            padding: 5rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .demo-cta h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-cta p {
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        /* ==================== FOOTER ==================== */
+        footer {
+            padding: 3rem 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: .8rem;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 12px 16px;
+            }
+
+            .top-bar nav a {
+                font-size: .7rem;
+                padding: 5px 10px;
+            }
+
+            .hero,
+            .toc,
+            .article {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .hero {
+                padding-top: 120px;
+            }
+
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="top-bar">
+        <a href="index.html" class="logo">A-LAB<span>.</span>TECH</a>
+        <nav>
+            <a href="rd.html">/// R&D</a>
+            <a href="rd-os.html">/// DEMO</a>
+            <a href="index.html">/// НАЗАД</a>
+        </nav>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+        <div class="hero-badge">WHITEPAPER v1.0 · ФЕВРАЛЬ 2026</div>
+        <h1>Chameleon OS</h1>
+        <p class="hero-sub">Generative Adaptive Operating System — первая в мире ОС, где интерфейс адаптируется под
+            человека, а не наоборот.</p>
+        <div class="hero-actions">
+            <a href="rd-os.html#demo" class="btn btn-primary">Посмотреть Liquid UI Demo →</a>
+            <a href="#s1" class="btn btn-ghost">Читать Whitepaper ↓</a>
+        </div>
+    </section>
+
+    <!-- ==================== TABLE OF CONTENTS ==================== -->
+    <div class="toc">
+        <h2>Содержание</h2>
+        <div class="toc-grid">
+            <a href="#s1" class="toc-item"><span class="toc-num">01</span> Аннотация</a>
+            <a href="#s2" class="toc-item"><span class="toc-num">02</span> Введение</a>
+            <a href="#s3" class="toc-item"><span class="toc-num">03</span> Ядро адаптивного дизайна</a>
+            <a href="#s4" class="toc-item"><span class="toc-num">04</span> Безопасность и Sandboxing</a>
+            <a href="#s5" class="toc-item"><span class="toc-num">05</span> Web3 и Экосистема</a>
+            <a href="#s6" class="toc-item"><span class="toc-num">06</span> Бизнес-модель: Smart Royalties</a>
+            <a href="#s7" class="toc-item"><span class="toc-num">07</span> Decentralized IP</a>
+        </div>
+    </div>
+
+    <!-- ==================== ARTICLE ==================== -->
+    <div class="article">
+
+        <!-- Section 1 -->
+        <div id="s1" class="section">
+            <div class="section-num">SECTION 01</div>
+            <h2>Аннотация</h2>
+            <p>В эпоху стремительного развития аппаратных технологий парадигма взаимодействия пользователя и
+                операционной системы остается архаичной. Современные ОС — iOS, Android, Windows — предлагают статичный,
+                универсальный <strong>«один размер для всех»</strong> пользовательский интерфейс.</p>
+            <p>Этот подход игнорирует индивидуальные когнитивные, физиологические и возрастные особенности миллиардов
+                людей.</p>
+            <div class="callout callout-green">
+                <strong>Chameleon OS</strong> предлагает фундаментальный сдвиг концепции: переход от статичных
+                интерфейсов к динамическим, порождающим (Generative) средам. Интегрируя ИИ на уровне ядра системы,
+                Chameleon OS в реальном времени анализирует потребности пользователя и синтезирует уникальный интерфейс
+                — <strong>Liquid UI</strong>.
+            </div>
+            <p>От упрощенных, контрастных плиток для пожилых людей до сложных многооконных сред для профессионалов и
+                безопасных песочниц для детей — Chameleon OS делает устройство по-настоящему персональным.</p>
+        </div>
+
+        <!-- Section 2 -->
+        <div id="s2" class="section">
+            <div class="section-num">SECTION 02</div>
+            <h2>Введение</h2>
+            <p>Исторически развитие операционных систем было сфокусировано на унификации. Компании-разработчики
+                создавали строгие гайдлайны (Human Interface Guidelines, Material Design), чтобы снизить фрагментацию и
+                упростить разработку. Однако платой за эту унификацию стала <strong>потеря инклюзивности</strong>.</p>
+
+            <h3>Проблема рынка</h3>
+            <p>Сегодня смартфоны используются людьми всех возрастов: от 7 до 90 лет. Но интерфейс приложения мобильного
+                банка или мессенджера выглядит одинаково для зумера с идеальным зрением и для пенсионера с тремором рук
+                и возрастными изменениями восприятия контраста.</p>
+
+            <div class="callout callout-red">
+                Пользователь вынужден адаптироваться к устройству, постоянно изучая новые паттерны навигации, навязанные
+                корпорациями.
+            </div>
+
+            <h3>Решение Chameleon OS</h3>
+            <p>Мы предлагаем инвертировать этот процесс: <strong>интерфейс должен адаптироваться под человека</strong>.
+                Chameleon OS — это первая в мире операционная система, где слой GUI отделен от функциональной логики
+                приложений и генерируется локальной языковой/мультимодальной ИИ-моделью (On-device LLM/VLM).</p>
+            <p>Вместо того чтобы скачивать жестко закодированное приложение, пользователь получает адаптивный «каркас».
+                Ядро Chameleon OS формирует интерфейс, отталкиваясь от заданного возрастного диапазона, а затем ИИ
+                эволюционирует вместе с владельцем на протяжении месяцев и лет.</p>
+        </div>
+
+        <!-- Section 3 -->
+        <div id="s3" class="section">
+            <div class="section-num">SECTION 03</div>
+            <h2>Ядро адаптивного дизайна и Умный помощник</h2>
+            <p>Сердцем Chameleon OS является движок генерации интерфейсов, работающий в связке с умным ИИ-помощником.
+            </p>
+
+            <h3>1. Возрастная инициализация</h3>
+            <p>Настройка смартфона начинается с определения возрастного диапазона. Chameleon OS автоматически
+                закладывает функции и приложения, необходимые конкретно для этого возраста.</p>
+
+            <h3>2. Генерация интерфейса (Liquid UI)</h3>
+            <ul>
+                <li><strong>Детский профиль:</strong> Яркий, интуитивный интерфейс с фокусом на пользу и безопасность.
+                    Родители задают расписание ребенка, а ИИ-помощник ведёт его по дню.</li>
+                <li><strong>Профессиональный профиль:</strong> Удобная кастомизация и интеграция рабочих задач.
+                    Многооконность и глубокие настройки.</li>
+                <li><strong>Геронтологический профиль:</strong> Интерфейс с крупными, контрастными элементами.
+                    Мониторинг здоровья через камеру и микрофон устройства.</li>
+            </ul>
+
+            <h3>3. Долгосрочная рекомендательная база</h3>
+            <p>ИИ постоянно анализирует действия пользователя в течение недель, месяцев и лет. На основе этого анализа
+                помощник персонализированно рекомендует новые приложения или сценарии использования.</p>
+        </div>
+
+        <!-- Section 4 -->
+        <div id="s4" class="section">
+            <div class="section-num">SECTION 04</div>
+            <h2>Контроль среды и Безопасность</h2>
+            <p>В мире, где контент генерируется на лету, классические методы безопасности устаревают. Chameleon OS
+                внедряет концепцию <strong>Dynamic Sandboxing</strong> (Динамическая песочница).</p>
+
+            <h3>Глубокий детский режим (Age 7+)</h3>
+            <ul>
+                <li><strong>On-the-fly модерация:</strong> Весь входящий контент проходит через локальную нейросеть (без
+                    отправки в облако) для фильтрации неприемлемого контента.</li>
+                <li><strong>Адаптивное обучение:</strong> Обычные приложения перерисовываются движком, чтобы включать
+                    элементы микрообучения, соответствующие возрасту ребенка.</li>
+                <li><strong>Контроль аддикции:</strong> Вместо жесткой блокировки, цвета интерфейса становятся более
+                    блеклыми к вечеру, а архитектура UI перестраивается для снижения выбросов дофамина.</li>
+            </ul>
+
+            <div class="callout callout-cyan">
+                <strong>Конфиденциальность по умолчанию (Local-First AI):</strong> Chameleon OS построена на принципах
+                Edge AI — все вычисления происходят на NPU (Neural Processing Unit) смартфона. Данные профиля не
+                покидают устройство, формируя криптографически защищенный «цифровой слепок» (Digital Persona).
+            </div>
+        </div>
+
+        <!-- Section 5 -->
+        <div id="s5" class="section">
+            <div class="section-num">SECTION 05</div>
+            <h2>Web3, Open Code и Экосистема</h2>
+            <p>Chameleon OS разрушает монополию централизованных магазинов приложений, предлагая радикально новый подход
+                к дистрибуции и созданию софта.</p>
+
+            <h3>On-device Development</h3>
+            <p>Благодаря архитектуре Open Code и мощным встроенным LLM-ассистентам, разработка ПО больше не требует
+                настольных компьютеров. Chameleon OS позволяет писать, компилировать и тестировать приложения прямо на
+                устройстве.</p>
+
+            <h3>AI MVP Builder</h3>
+            <div class="callout callout-green">
+                Пользователю не нужно уметь программировать. Достаточно промпта: <em>«Создай трекер моих пробежек с
+                    картой и базой данных на 30 дней»</em>. Система синтезирует БД, подключит API, сгенерирует код и
+                отрисует интерфейс. Время от идеи до MVP — <strong>минуты</strong>, а не месяцы.
+            </div>
+
+            <h3>Децентрализованный P2P Store</h3>
+            <p>Каждое созданное приложение можно упаковать в смарт-контракт и опубликовать через IPFS/блокчейн.
+                Разработчики делятся программами напрямую (P2P), исключая цензуру корпораций и 30%-ные комиссии.</p>
+        </div>
+
+        <!-- Section 6 -->
+        <div id="s6" class="section">
+            <div class="section-num">SECTION 06</div>
+            <h2>Бизнес-модель: Smart Royalties</h2>
+            <p>Главная проблема любой новой ОС — отсутствие привычных приложений. Chameleon OS решает это через
+                <strong>«эффект хамелеона»</strong>: система умеет подражать UI/UX любых существующих приложений и ОС,
+                легально выплачивая авторам роялти.</p>
+
+            <h3>Эффект Хамелеона</h3>
+            <p>Ядро Chameleon OS анализирует и воссоздаёт визуальный стиль и логику навигации продуктов других компаний.
+                Пользователь запрашивает: <em>«Создай мне мессенджер, который выглядит как Telegram, но с дизайном в
+                    стиле тёмного iOS»</em> — и система генерирует это на лету.</p>
+
+            <h3>Автоматические Роялти</h3>
+            <p>В архитектуру вшиты смарт-контракты. Если генерируется интерфейс или функция, запатентованная другой
+                компанией, микротранзакция автоматически направляется правообладателю. Компании зарабатывают на том, что
+                их дизайнерские находки используются внутри экосистемы Chameleon OS.</p>
+
+            <h3>Дорожная карта</h3>
+            <div class="roadmap">
+                <div class="roadmap-item">
+                    <span class="roadmap-phase">ФАЗА 1</span>
+                    <div><strong>MVP-Launcher (Месяц 1-3).</strong>
+                        <p>Оболочка для Android-смартфонов, эмулирующая Adaptive UI Engine. Сбор первых метрик генерации
+                            UI.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <span class="roadmap-phase">ФАЗА 2</span>
+                    <div><strong>Dev-Ecosystem (Месяц 4-8).</strong>
+                        <p>Запуск Web3-площадки для обмена AI-сгенерированными мини-приложениями.</p>
+                    </div>
+                </div>
+                <div class="roadmap-item">
+                    <span class="roadmap-phase">ФАЗА 3</span>
+                    <div><strong>Chameleon OS Core (Год 1+).</strong>
+                        <p>Выпуск полноценной операционной системы на базе Chameleon OS Reference Device.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7 -->
+        <div id="s7" class="section">
+            <div class="section-num">SECTION 07</div>
+            <h2>Decentralized Intellectual Property (DeIP)</h2>
+            <p>Вместо того чтобы полагаться на медлительные патентные бюро, Chameleon OS использует инструменты Web3 для
+                фиксации авторских прав и монетизации идей.</p>
+
+            <h3>Proof-of-Existence (PoE)</h3>
+            <p>Этот документ и все ключевые фрагменты исходного кода хешируются (SHA-256) и записываются в неизменяемый
+                смарт-контракт в публичном блокчейне — неопровержимое доказательство первенства идеи.</p>
+
+            <h3>IP-NFT и Коллаборативная Экономика</h3>
+            <ul>
+                <li>Любой уникальный дизайн-шаблон или набор настроек алгоритмически проверяется на уникальность и
+                    упаковывается в <strong>IP-NFT</strong>.</li>
+                <li>Если корпорация захочет использовать профиль на своих девайсах, смарт-контракт автоматически
+                    разделит доходы между создателем и разработчиками ядра.</li>
+            </ul>
+
+            <div class="callout callout-green">
+                <strong>Chameleon OS</strong> — не просто операционная система. Это первая в мире
+                <strong>коллаборативная экономика интерфейсов</strong>.
+            </div>
+
+            <!-- PoE Block -->
+            <div class="poe-block">
+                <h3>🔐 Proof-of-Existence</h3>
+                <p style="color: var(--muted); font-size: .9rem;">Криптографический отпечаток документа зафиксирован в
+                    блокчейне</p>
+                <div class="hash-value">SHA-256: 17eb50663760715112b83beb90883bfbfd40837bd4cdda7d6cd2a07bde97de4c</div>
+                <div class="poe-date">Timestamp: 20 февраля 2026</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DEMO CTA ==================== -->
+    <section class="demo-cta">
+        <h2>Посмотреть в действии</h2>
+        <p>Попробуйте интерактивную демонстрацию Liquid UI — переключайтесь между возрастными профилями</p>
+        <a href="rd-os.html#demo" class="btn btn-primary">Открыть Liquid UI Demo →</a>
+    </section>
+
+    <footer>&copy; 2026 A-LAB.TECH · Future Systems Division</footer>
+</body>
+
+</html>
