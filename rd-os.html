@@ -538,6 +538,101 @@
         }
 
         /* ==================== RESPONSIVE ==================== */
+        /* --- ECOSYSTEM SECTION --- */
+        .ecosystem {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .eco-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .eco-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            padding: 40px;
+            transition: 0.3s;
+        }
+
+        .eco-card:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .eco-card h4 {
+            color: var(--cyan);
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .eco-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .eco-card p {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* --- PRO INDICATOR --- */
+        .pro-toggle {
+            position: absolute;
+            top: 20px;
+            right: -60px;
+            background: #000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .pro-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #111;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #555;
+            transition: all 0.3s;
+        }
+
+        .pro-btn.active {
+            border-color: #FFD700;
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .pro-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: 800;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
         @media (max-width: 1100px) {
             .demo-grid {
                 grid-template-columns: 1fr;
@@ -564,6 +659,7 @@
 
 <body x-data="{
     p: '35',
+    isPro: false,
     data: {
         '7':  { name:'Chameleon Kids',    border:'#FF9F1C', theme:'t-7',
                 logic:'Приоритет: безопасность и геймификация. Скругления 24px, яркие цвета. Контент фильтруется локальным ИИ. Родительский контроль встроен в ядро.',
@@ -671,26 +767,57 @@
             <!-- Center: Phone -->
             <div class="phone-wrap">
                 <div class="phone" :style="{ borderColor: data[p].border }">
+                    <!-- PRO TOGGLE SIMULATION -->
+                    <div class="pro-toggle">
+                        <button class="pro-btn" :class="{ 'active': isPro }" @click="isPro = !isPro"
+                            title="Переключить PRO режим">
+                            PRO
+                        </button>
+                    </div>
+
                     <div class="screen" :class="data[p].theme">
-                        <div class="status-bar">
-                            <span x-text="new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})"></span>
-                            <span>5G · 98%</span>
+                        <div class="notch"></div>
+
+                        <!-- Header -->
+                        <div class="p-4 flex justify-between items-center">
+                            <span class="text-xs font-bold opacity-50"
+                                x-text="new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></span>
+                            <div class="flex gap-1" x-show="isPro">
+                                <span class="pro-badge">PRO ACTIVE</span>
+                            </div>
+                            <div class="flex gap-1">
+                                <span>📶</span><span>🔋</span>
+                            </div>
                         </div>
 
-                        <div class="screen-title" x-text="data[p].name"></div>
+                        <div class="px-4 py-2">
+                            <h2 class="text-2xl font-black mb-1" x-text="data[p].name"></h2>
+                            <p class="text-[10px] leading-tight opacity-70 mb-4" x-text="data[p].logic"></p>
 
-                        <div class="widgets">
-                            <template x-for="w in data[p].widgets" :key="w.label">
-                                <div class="w-card">
-                                    <div class="w-label" x-text="w.label"></div>
-                                    <div class="w-value"><span x-text="w.icon"></span> <span x-text="w.text"></span>
+                            <div class="space-y-3">
+                                <template x-for="w in data[p].widgets">
+                                    <div class="widget">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span x-text="w.icon"></span>
+                                            <span class="text-[10px] font-bold uppercase tracking-wider opacity-60"
+                                                x-text="w.label"></span>
+                                        </div>
+                                        <div class="text-xs" x-text="w.text"></div>
                                     </div>
-                                </div>
-                            </template>
+                                </template>
 
-                            <template x-if="p === '65'">
-                                <button class="sos-btn">🆘 Вызов помощи</button>
-                            </template>
+                                <!-- PRO WIDGET -->
+                                <div class="widget" x-show="isPro" x-transition
+                                    style="border-color: #FFD700; background: rgba(255,215,0,0.05);">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span>💎</span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#FFD700]">Pro
+                                            Assistant & Economy</span>
+                                    </div>
+                                    <div class="text-[11px]">Смарт-роялти активно. Анализ доходности: +12% за 24ч.
+                                        Составлен план оптимизации налогов.</div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="dock">
@@ -705,16 +832,14 @@
             <!-- Right: AI Logic -->
             <div class="ai-col">
                 <h3><span>🧠</span> Generative Logic</h3>
-                <div>
-                    <span class="ai-chip g">Real-time</span>
-                    <span class="ai-chip c">NPU Active</span>
-                </div>
-                <p class="ai-text" x-text="data[p].logic"></p>
-                <div class="ai-footer">
-                    <strong>Decision Path:</strong> Cognitive friction reduction for <span x-text="p + '+'"></span>
-                    demographic.
-                </div>
+                <span class="ai-chip c">NPU Active</span>
             </div>
+            <p class="ai-text" x-text="data[p].logic"></p>
+            <div class="ai-footer">
+                <strong>Decision Path:</strong> Cognitive friction reduction for <span x-text="p + '+'"></span>
+                demographic.
+            </div>
+        </div>
         </div>
     </section>
 
@@ -724,6 +849,39 @@
         <p>Концепция Chameleon OS защищена через Proof-of-Existence в блокчейне.</p>
         <div class="hash">SHA-256: 17eb50663760715112b83beb90883bfbfd40837bd4cdda7d6cd2a07bde97de4c</div>
         <p style="font-size:.85rem;">Запись от 20 февраля 2026</p>
+    </section>
+
+    <!-- ==================== ECOSYSTEM & MONETIZATION ==================== -->
+    <section class="ecosystem">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h4
+                style="color:var(--cyan); font-family:var(--font-code); font-size:0.8rem; letter-spacing:3px; margin-bottom:15px;">
+                BUSINESS MODEL</h4>
+            <h2 style="font-size: 2.5rem; font-weight: 800;">Платформа и Экономика хаба</h2>
+            <p style="color:#888; max-width:600px; margin: 20px auto;">Chameleon OS — это не просто софт, а
+                децентрализованная среда, где каждый участник монетизирует свои таланты.</p>
+        </div>
+
+        <div class="eco-grid">
+            <div class="eco-card">
+                <h4>01. MARKEPLACE HUB</h4>
+                <h3>Комиссии с сервисов</h3>
+                <p>Мы берем от 2% до 5% с каждой транзакции внутри адаптивных приложений (заказ еды, такси, услуги). Мы
+                    — точка входа для миллионов пользователей.</p>
+            </div>
+            <div class="eco-card">
+                <h4>02. PRO ASSISTANTS</h4>
+                <h3>SaaS подписки</h3>
+                <p>Базовый ИИ бесплатен. Продвинутые ИИ-персоны (Юрист, Аналитик, Разработчик) и повышенная мощность
+                    вычислений доступны через Pro-аккаунт.</p>
+            </div>
+            <div class="eco-card">
+                <h4>03. HARDWARE ROYALTIES</h4>
+                <h3>Лицензирование</h3>
+                <p>Производители смартфонов и гаджетов платят за сертификацию "Chameleon-Ready", подтверждая
+                    адаптивность своего железа.</p>
+            </div>
+        </div>
     </section>
 
     <footer>&copy; 2026 A-LAB.TECH · Future Systems Division</footer>
