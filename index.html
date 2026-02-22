@@ -550,6 +550,10 @@
         }
 
         @media (max-width: 768px) {
+            * {
+                cursor: auto !important;
+            }
+
             .cursor {
                 display: none !important;
             }
@@ -860,22 +864,14 @@
         const triggers = document.querySelectorAll('.hover-trigger');
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-        // Только для десктопа включаем курсор
-        if (!isMobile) {
+        if (!isMobile && cursor) {
             document.addEventListener('mousemove', (e) => {
-                // Update via transform for 60fps performance
                 cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
             });
 
-            // Removed requestAnimationFrame loop for instant response
-
             triggers.forEach(trigger => {
-                trigger.addEventListener('mouseenter', () => {
-                    cursor.classList.add('hovered');
-                });
-                trigger.addEventListener('mouseleave', () => {
-                    cursor.classList.remove('hovered');
-                });
+                trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
             });
         }
 
@@ -889,8 +885,10 @@
     <!-- A-LAB Integration -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
+    <script src="i18n.js"></script>
     <script src="main-menu.js"></script>
     <script src="search-manager.js"></script>
+    <script src="feed-manager.js"></script>
     <script src="nda-manager.js"></script>
     <script>
         // Search manager and other core init
