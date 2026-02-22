@@ -946,6 +946,17 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- EVOLUTION / ЭВОЛЮЦИЯ -->
+        <div class="section-header">
+            <div class="section-title">
+                <span style="color: #9b59b6">// </span> <span>ЭВОЛЮЦИЯ</span>
+            </div>
+            <div class="section-badge" style="border-color: rgba(155, 89, 182, 0.3); color: #9b59b6;">EVOLUTION</div>
+        </div>
+
+        <div class="rd-grid">
             <!-- CHAMELEON OS -->
             <div class="rd-card hover-trigger" onclick="window.location.href='rd-os.html'" style="cursor: pointer;">
                 <div class="card-image" style="background: #030407;">
@@ -1014,49 +1025,107 @@
                     </div>
                 </div>
             </div>
-            <!-- EXPERIMENTAL / SOFTWARE R&D -->
-            <div class="section-header">
-                <div class="section-title">
-                    <span style="color:var(--tech-blue)">// </span> <span
-                        data-i18n="page_rd.section_experimental">ЦИФРОВЫЕ ЛАБОРАТОРНЫЕ МОДУЛИ</span>
+
+            <!-- ВТЕМНОТЕ -->
+            <div class="rd-card hover-trigger" onclick="window.location.href='project_vtemnote.html'"
+                style="cursor: pointer;">
+                <div class="card-image" style="background: #000;">
+                    <div class="scan-line" style="background: #9b59b6;"></div>
+                    <div class="data-grid"></div>
+                    <div class="status-indicator" style="background: #9b59b6;"></div>
+                    <div class="holo-effect"></div>
+
+                    <div
+                        style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: radial-gradient(ellipse at 50% 50%, rgba(155,89,182,0.08), transparent 70%);">
+                        <svg width="200" height="140" viewBox="0 0 200 140" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <!-- Eye shape -->
+                            <ellipse cx="100" cy="70" rx="50" ry="30" stroke="rgba(155,89,182,0.4)" stroke-width="1.5"
+                                fill="none" />
+                            <!-- Iris -->
+                            <circle cx="100" cy="70" r="15" stroke="rgba(155,89,182,0.6)" stroke-width="1"
+                                fill="rgba(155,89,182,0.05)" />
+                            <!-- Pupil -->
+                            <circle cx="100" cy="70" r="6" fill="rgba(155,89,182,0.3)" />
+                            <!-- Closing eyelid animation hint -->
+                            <path d="M50 70 Q75 45 100 40 Q125 45 150 70" stroke="rgba(255,255,255,0.15)"
+                                stroke-width="1.5" fill="none" stroke-dasharray="4 3" />
+                            <path d="M50 70 Q75 95 100 100 Q125 95 150 70" stroke="rgba(255,255,255,0.08)"
+                                stroke-width="1" fill="none" />
+                            <!-- Sensory waves -->
+                            <circle cx="100" cy="70" r="35" stroke="rgba(155,89,182,0.15)" stroke-width="0.5"
+                                fill="none" stroke-dasharray="2 4" />
+                            <circle cx="100" cy="70" r="45" stroke="rgba(155,89,182,0.08)" stroke-width="0.5"
+                                fill="none" stroke-dasharray="2 6" />
+                            <!-- Label -->
+                            <text x="100" y="128" text-anchor="middle" font-family="Inter" font-size="7"
+                                fill="rgba(255,255,255,0.2)" letter-spacing="3">SENSORY EVOLUTION</text>
+                        </svg>
+                    </div>
+
+                    <div class="loading-metric">SENSORY_MODE: ACTIVE</div>
                 </div>
-                <div class="section-badge">LAB_EXPERIMENTAL</div>
-            </div>
-
-            <div class="rd-grid" id="casesContainer" data-category="rd" style="margin-bottom: 100px;">
-                <!-- Content populated by cases-engine.js -->
-                <div
-                    style="grid-column: 1/-1; text-align: center; padding: 50px; color: #555; font-family: var(--font-code);">
-                    [ INITIALIZING R&D DATA STREAM... ]</div>
-            </div>
-
-        </div>
-
-        <script src="cases-engine.js?v=1.2"></script>
-
-        <!-- STEALTH MODE / NDA SECTION -->
-        <div class="stealth-section">
-            <div class="stealth-bg">
-                <div class="stealth-card"></div>
-                <div class="stealth-card"></div>
-                <div class="stealth-card"></div>
-            </div>
-
-            <div class="stealth-overlay">
-                <div class="lock-icon">🔒</div>
-                <h2 data-i18n="page_rd.stealth_title">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH СТАРТАПЫ</h2>
-                <p data-i18n="page_rd.stealth_desc">Доступ к информации о проектах в режиме "Stealth" предоставляется
-                    только
-                    аккредитованным партнерам после
-                    подписания NDA.</p>
-                <div style="font-family: var(--font-code); color: var(--accent); margin-bottom: 30px;">ACCESS LEVEL:
-                    RESTRICTED</div>
-
-                <button class="btn-action hover-trigger" onclick="openNdaModal()"
-                    data-i18n="page_rd.stealth_btn">ЗАПРОСИТЬ
-                    ДОСТУП & ПОДПИСАТЬ NDA</button>
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="meta-tag active"
+                            style="color: #9b59b6; background: rgba(155,89,182,0.1);">SENSORY</span>
+                        <span class="meta-tag">EVOLUTION</span>
+                    </div>
+                    <h3>ВТЕМНОТЕ</h3>
+                    <p>Развитие человеческого интеллекта через сенсорный опыт в тотальной темноте. Инклюзивный проект,
+                        соединяющий зрячих и незрячих людей.</p>
+                    <div class="tech-specs">
+                        <div class="spec-item">DARK EXPERIENCE</div>
+                        <div class="spec-item">EMPATHY TRAINING</div>
+                        <div class="spec-item">SENSORY DEV</div>
+                        <div class="spec-item">INCLUSION</div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- EXPERIMENTAL / SOFTWARE R&D -->
+        <div class="section-header">
+            <div class="section-title">
+                <span style="color:var(--tech-blue)">// </span> <span data-i18n="page_rd.section_experimental">ЦИФРОВЫЕ
+                    ЛАБОРАТОРНЫЕ МОДУЛИ</span>
+            </div>
+            <div class="section-badge">LAB_EXPERIMENTAL</div>
+        </div>
+
+        <div class="rd-grid" id="casesContainer" data-category="rd" style="margin-bottom: 100px;">
+            <!-- Content populated by cases-engine.js -->
+            <div
+                style="grid-column: 1/-1; text-align: center; padding: 50px; color: #555; font-family: var(--font-code);">
+                [ INITIALIZING R&D DATA STREAM... ]</div>
+        </div>
+
+    </div>
+
+    <script src="cases-engine.js?v=1.2"></script>
+
+    <!-- STEALTH MODE / NDA SECTION -->
+    <div class="stealth-section">
+        <div class="stealth-bg">
+            <div class="stealth-card"></div>
+            <div class="stealth-card"></div>
+            <div class="stealth-card"></div>
+        </div>
+
+        <div class="stealth-overlay">
+            <div class="lock-icon">🔒</div>
+            <h2 data-i18n="page_rd.stealth_title">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH СТАРТАПЫ</h2>
+            <p data-i18n="page_rd.stealth_desc">Доступ к информации о проектах в режиме "Stealth" предоставляется
+                только
+                аккредитованным партнерам после
+                подписания NDA.</p>
+            <div style="font-family: var(--font-code); color: var(--accent); margin-bottom: 30px;">ACCESS LEVEL:
+                RESTRICTED</div>
+
+            <button class="btn-action hover-trigger" onclick="openNdaModal()" data-i18n="page_rd.stealth_btn">ЗАПРОСИТЬ
+                ДОСТУП & ПОДПИСАТЬ NDA</button>
+        </div>
+    </div>
 
     </div>
 

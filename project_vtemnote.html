@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВТЕМНОТЕ — Сенсорная Эволюция | A-LAB.TECH</title>
+    <meta name="description"
+        content="Проект «Втемноте» — развитие человеческого интеллекта через сенсорный опыт в тотальной темноте. Инклюзия, эмпатия, эволюция восприятия.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --card: #0d0d10;
+            --text: #e8ecf1;
+            --muted: rgba(255, 255, 255, 0.45);
+            --purple: #9b59b6;
+            --purple-glow: rgba(155, 89, 182, 0.3);
+            --indigo: #6c5ce7;
+            --accent: #FF2A2A;
+            --border: rgba(255, 255, 255, 0.06);
+            --font: 'Inter', -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--purple);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ==================== AMBIENT BACKGROUND ==================== */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .ambient-orb:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: var(--purple);
+            top: -200px;
+            right: -200px;
+            animation-delay: 0s;
+        }
+
+        .ambient-orb:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: var(--indigo);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        .ambient-orb:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            background: #2d1b69;
+            top: 40%;
+            left: 50%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -20px) scale(1.05);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.95);
+            }
+        }
+
+        /* ==================== HEADER ==================== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: transparent;
+            backdrop-filter: none;
+            border-bottom: none;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .top-bar.scrolled {
+            padding: 12px 40px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .top-bar .logo img {
+            height: 50px;
+        }
+
+        .top-bar nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .top-bar nav a,
+        .top-bar nav button {
+            pointer-events: auto;
+            position: relative;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-bar nav a:hover,
+        .top-bar nav button:hover {
+            background: transparent;
+            border-color: var(--purple);
+            color: var(--purple);
+            box-shadow: 0 0 15px var(--purple-glow);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 160px 40px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-logo {
+            width: 320px;
+            max-width: 80vw;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 40px var(--purple-glow));
+            animation: logoReveal 1.5s ease-out;
+        }
+
+        @keyframes logoReveal {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: rgba(155, 89, 182, 0.08);
+            border: 1px solid rgba(155, 89, 182, 0.25);
+            color: var(--purple);
+            font-family: var(--mono);
+            font-size: .75rem;
+            margin-bottom: 2rem;
+            letter-spacing: .05em;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -.03em;
+            line-height: 1.05;
+            background: linear-gradient(135deg, #fff 30%, var(--purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-sub {
+            color: var(--muted);
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: .9rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all .3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--purple);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--purple-glow);
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--purple);
+            color: var(--purple);
+            text-decoration: none;
+        }
+
+        /* ==================== SECTIONS ==================== */
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 40px;
+            scroll-margin-top: 80px;
+        }
+
+        .section-num {
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--purple);
+            letter-spacing: .1em;
+            margin-bottom: .75rem;
+        }
+
+        .section h2 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .section p {
+            color: rgba(255, 255, 255, 0.65);
+            margin-bottom: 1.25rem;
+            font-size: .95rem;
+        }
+
+        .section strong {
+            color: var(--text);
+        }
+
+        .section h3 {
+            font-size: 1.1rem;
+            color: var(--purple);
+            margin: 2rem 0 .75rem;
+        }
+
+        .section ul,
+        .section ol {
+            color: rgba(255, 255, 255, 0.6);
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section li {
+            margin-bottom: .5rem;
+            font-size: .92rem;
+        }
+
+        .section li strong {
+            color: var(--text);
+        }
+
+        /* ==================== FEATURE CARDS ==================== */
+        .features-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all .3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--purple), transparent);
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(155, 89, 182, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: .5rem;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: .88rem;
+            line-height: 1.6;
+        }
+
+        /* ==================== PROGRAM CARDS ==================== */
+        .program-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 40px 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .program-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all .3s;
+        }
+
+        .program-card:hover {
+            border-color: rgba(155, 89, 182, 0.15);
+        }
+
+        .program-card h4 {
+            color: var(--purple);
+            font-size: .95rem;
+            margin-bottom: .5rem;
+        }
+
+        .program-card p {
+            color: var(--muted);
+            font-size: .85rem;
+            line-height: 1.5;
+        }
+
+        /* ==================== CALLOUTS ==================== */
+        .callout {
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            font-size: .9rem;
+        }
+
+        .callout-purple {
+            background: rgba(155, 89, 182, 0.06);
+            border-left: 3px solid var(--purple);
+        }
+
+        .callout-indigo {
+            background: rgba(108, 92, 231, 0.06);
+            border-left: 3px solid var(--indigo);
+        }
+
+        /* ==================== AUDIENCE ==================== */
+        .audience-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 1rem 0;
+        }
+
+        .audience-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: .8rem;
+            font-weight: 500;
+            background: rgba(155, 89, 182, 0.08);
+            border: 1px solid rgba(155, 89, 182, 0.15);
+            color: var(--purple);
+        }
+
+        /* ==================== PoE BLOCK ==================== */
+        .poe-block {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .poe-block h3 {
+            color: var(--purple);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .hash-value {
+            font-family: var(--mono);
+            font-size: .78rem;
+            color: var(--purple);
+            background: rgba(0, 0, 0, .5);
+            padding: 14px 18px;
+            border-radius: 10px;
+            word-break: break-all;
+            margin: 1rem auto;
+            max-width: 620px;
+            border: 1px solid var(--border);
+        }
+
+        .poe-date {
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .poe-authors {
+            color: var(--muted);
+            font-size: .85rem;
+            margin-bottom: .5rem;
+        }
+
+        /* ==================== CONTACT CTA ==================== */
+        .contact-cta {
+            text-align: center;
+            padding: 5rem 2rem;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-cta h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-cta p {
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ==================== FOOTER ==================== */
+        footer {
+            padding: 3rem 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: .8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 12px 15px;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(15px);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .top-bar .logo img {
+                height: 24px;
+            }
+
+            .top-bar nav a,
+            .top-bar nav button {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+
+            .hero {
+                padding: 120px 20px 60px;
+            }
+
+            .hero-logo {
+                width: 220px;
+            }
+
+            .section,
+            .features-grid,
+            .program-grid {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .features-grid,
+            .program-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script src="main-menu.js" defer></script>
+</head>
+
+<body>
+
+    <!-- AMBIENT BACKGROUND -->
+    <div class="ambient-bg">
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+    </div>
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="top-bar" id="topbar">
+        <a href="index.html" class="logo">
+            <img src="A-lab-logo.svg" alt="A-LAB.TECH">
+        </a>
+        <nav>
+            <a href="rd.html">/// R&D Lab</a>
+            <button onclick="MainMenu.toggle()">/// Меню</button>
+        </nav>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+        <img src="vtemnote_logo.jpg" alt="ВТЕМНОТЕ" class="hero-logo">
+        <div class="hero-badge">R&D · ПОДРАЗДЕЛЕНИЕ «ЭВОЛЮЦИЯ» · 2026</div>
+        <h1>Новый взгляд<br>на мир</h1>
+        <p class="hero-sub">Проект «Втемноте» — инновационная платформа для развития человеческого интеллекта через
+            сенсорный опыт в тотальной темноте. Мы не вызываем жалость — мы развиваем принятие и уважение к иному
+            восприятию жизни.</p>
+        <div class="hero-actions">
+            <a href="#mission" class="btn btn-primary">Узнать больше ↓</a>
+            <a href="#whitepaper" class="btn btn-ghost">Whitepaper</a>
+        </div>
+    </section>
+
+    <div class="content">
+
+        <!-- ==================== MISSION ==================== -->
+        <div id="mission" class="section">
+            <div class="section-num">SECTION 01 · МИССИЯ</div>
+            <h2>Что даёт проект?</h2>
+            <p>Проект «Втемноте» направлен на создание уникального опыта, который помогает зрячим людям открыть для себя
+                мир темноты, понять его особенности и установить доверие к незрячим людям.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">👁️‍🗨️</div>
+                <h3>Ощущение мира по-новому</h3>
+                <p>Участники учатся доверять своим ощущениям, принимать незрячих людей как равных и узнавать, как мир
+                    темноты обостряет другие чувства.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌑</div>
+                <h3>Преодоление страхов</h3>
+                <p>Страх темноты, часто связанный с детскими травмами, уходит, оставляя ощущение внутренней свободы и
+                    обновления.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Развитие эмпатии</h3>
+                <p>Зрячие и незрячие взаимодействуют на равных, что способствует развитию уважения, открытости и
+                    глубокого понимания мира других людей.</p>
+            </div>
+        </div>
+
+        <!-- ==================== PROGRAM ==================== -->
+        <div id="program" class="section">
+            <div class="section-num">SECTION 02 · ПРОГРАММА</div>
+            <h2>Программа проекта</h2>
+            <p>Многоформатная система мероприятий, которая раскрывает потенциал сенсорного восприятия через погружение в
+                полную темноту.</p>
+
+            <h3>🏛 Экспериментальные экскурсии</h3>
+            <p><strong>Пространство «В темноте»:</strong> Участники проходят маршрут в полной темноте, где их
+                сопровождают незрячие гиды, помогая ориентироваться и рассказывая истории.</p>
+            <p><strong>Интерактивные зоны:</strong> Станции с различными сенсорными задачами — опознавание предметов по
+                тактильным ощущениям, звукам, запахам.</p>
+        </div>
+
+        <div class="program-grid">
+            <div class="program-card">
+                <h4>«Слушать мир иначе»</h4>
+                <p>Уроки по развитию внимательного слушания и интерпретации звуков.</p>
+            </div>
+            <div class="program-card">
+                <h4>«Руки как глаза»</h4>
+                <p>Обучение чтению шрифтов для незрячих или созданию вещей на ощупь — лепка, аппликации.</p>
+            </div>
+            <div class="program-card">
+                <h4>Кулинария в темноте</h4>
+                <p>Мастер-классы под руководством незрячих участников.</p>
+            </div>
+            <div class="program-card">
+                <h4>Безоценочное общение</h4>
+                <p>Игры, где участники взаимодействуют, не зная о внешности друг друга.</p>
+            </div>
+            <div class="program-card">
+                <h4>Сенсорные квесты</h4>
+                <p>Задачи на поиск предметов с использованием слуха, осязания и обоняния.</p>
+            </div>
+            <div class="program-card">
+                <h4>Медитации в темноте</h4>
+                <p>Практики расслабления, направленные на избавление от страхов.</p>
+            </div>
+            <div class="program-card">
+                <h4>Спектакли в темноте</h4>
+                <p>Постановки, где зрители находятся в полной темноте.</p>
+            </div>
+            <div class="program-card">
+                <h4>Выставки на ощупь</h4>
+                <p>Экспозиции произведений искусства, созданные для тактильного восприятия.</p>
+            </div>
+        </div>
+
+        <!-- ==================== FORMATS ==================== -->
+        <div id="formats" class="section">
+            <div class="section-num">SECTION 03 · ФОРМАТЫ</div>
+            <h2>Форматы реализации</h2>
+
+            <h3>Партнёрство с организациями</h3>
+            <p>Привлечение союзов незрячих людей для обучения гидов и разработки программ. Сотрудничество с музеями,
+                театрами, культурными центрами.</p>
+
+            <h3>Мобильные программы</h3>
+            <p>Создание передвижных выставок и событий, которые могут работать в разных городах.</p>
+
+            <h3>Образовательные проекты</h3>
+            <p>Программы для школ и университетов, включающие лекции и практики для молодежи.</p>
+
+            <h3>Корпоративные тренинги</h3>
+            <p>Обучение сотрудников компаний эмпатии, внимательности и командной работе через взаимодействие в темноте.
+            </p>
+
+            <h3>Цифровые решения</h3>
+            <div class="callout callout-indigo">
+                <strong>Масштабирование через технологии:</strong> Разработка приложений и виртуальных экскурсий в
+                темноте позволяет достичь ещё большего охвата аудитории и сделать проект доступным в любой точке мира.
+            </div>
+        </div>
+
+        <!-- ==================== SOCIAL IMPACT ==================== -->
+        <div id="impact" class="section">
+            <div class="section-num">SECTION 04 · СОЦИАЛЬНАЯ ЗНАЧИМОСТЬ</div>
+            <h2>Социальная значимость</h2>
+            <p>Проект «Втемноте» продвигает идеи инклюзии и эмпатии, меняя общественные стереотипы о незрячих людях.</p>
+
+            <div class="callout callout-purple">
+                <strong>Ожидаемые результаты:</strong>
+                <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                    <li>Снижение уровня стигмы по отношению к незрячим людям</li>
+                    <li>Повышение уровня эмпатии и осознанности у участников</li>
+                    <li>Укрепление культурных и социальных связей между зрячими и незрячими</li>
+                    <li>Расширение представлений о взаимодействии с миром</li>
+                </ul>
+            </div>
+
+            <p>Люди начинают воспринимать незрячих как равноправных членов общества. Формируется новый подход к
+                взаимодействию с окружающим миром. Усиливается чувство сплоченности и взаимопонимания в сообществе.</p>
+        </div>
+
+        <!-- ==================== IMPLEMENTATION PLAN ==================== -->
+        <div id="plan" class="section">
+            <div class="section-num">SECTION 05 · ПЛАН РЕАЛИЗАЦИИ</div>
+            <h2>План реализации</h2>
+
+            <h3>Этап 1: Подготовка</h3>
+            <p>Поиск и привлечение незрячих людей в роли гидов и наставников. Установление партнёрств с организациями,
+                поддерживающими людей с ограниченным зрением. Выбор безопасных маршрутов и создание зон погружения.</p>
+
+            <h3>Этап 2: Разработка контента</h3>
+            <p>Инструктаж для гидов. Создание сценариев квестов — четкое расписание действий, ключевые точки маршрутов.
+                Подготовка информационных материалов о важности инклюзии и психологии страха темноты.</p>
+
+            <h3>Этап 3: Пилотный запуск</h3>
+            <p>Проведение мероприятий в небольших группах, сбор отзывов и доработка программы. Старт регулярных
+                мероприятий с разными форматами.</p>
+
+            <h3>Этап 4: Масштабирование</h3>
+            <p>Рекламная кампания с акцентом на уникальность опыта. Расширение географии проекта и добавление новых
+                форматов. Внедрение цифровых решений.</p>
+
+            <h3>Управление рисками</h3>
+            <ul>
+                <li><strong>Психологический дискомфорт:</strong> Подробный инструктаж и сопровождение участников</li>
+                <li><strong>Безопасность:</strong> Аварийное освещение и фонари на случай чрезвычайной ситуации</li>
+                <li><strong>Вовлечённость:</strong> Активная маркетинговая кампания с акцентом на уникальный опыт</li>
+            </ul>
+        </div>
+
+        <!-- ==================== TARGET AUDIENCE ==================== -->
+        <div id="audience" class="section">
+            <div class="section-num">SECTION 06 · ЦЕЛЕВАЯ АУДИТОРИЯ</div>
+            <h2>Для кого этот проект</h2>
+            <p>Участники получают уникальный опыт, который помогает стать более чуткими и открытыми, развить новые
+                навыки и начать воспринимать мир с новой точки зрения.</p>
+
+            <div class="audience-tags">
+                <span class="audience-tag">18–40 лет</span>
+                <span class="audience-tag">Личностный рост</span>
+                <span class="audience-tag">Инклюзия</span>
+                <span class="audience-tag">Необычные впечатления</span>
+                <span class="audience-tag">IT-специалисты</span>
+                <span class="audience-tag">Здоровое зрение</span>
+                <span class="audience-tag">Городские жители</span>
+                <span class="audience-tag">Активные в соцсетях</span>
+            </div>
+        </div>
+
+        <!-- ==================== WHITEPAPER / PoE ==================== -->
+        <div id="whitepaper" class="section">
+            <div class="section-num">SECTION 07 · PROOF-OF-EXISTENCE</div>
+            <h2>Защита интеллектуальной собственности</h2>
+            <p>Whitepaper проекта «Втемноте» криптографически хеширован (SHA-256) для фиксации авторских прав и
+                первенства идеи по принципу Proof-of-Existence (PoE).</p>
+
+            <div class="poe-block">
+                <h3>🔐 Proof-of-Existence</h3>
+                <p style="color: var(--muted); font-size: .9rem;">Криптографический отпечаток документа</p>
+                <p class="poe-authors">Inventors & Authors: <strong style="color: var(--text);">Ivan Lakshinsky, Sergey
+                        Kiselev</strong> · A-LAB.TECH R&D ·
+                    Подразделение «Эволюция»</p>
+                <div class="hash-value">SHA-256:
+                    3506241df7d545b4f41ed277d7e3ae3fe4916bb27685d8c15ff8286398611d36</div>
+                <div class="poe-date">Timestamp: 22 февраля 2026</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== CONTACT CTA ==================== -->
+    <section class="contact-cta">
+        <h2>Участвуйте в проекте</h2>
+        <p>Для записи на мероприятия или сотрудничества с проектом свяжитесь с нами</p>
+        <a href="contacts.html" class="btn btn-primary">Связаться с нами →</a>
+    </section>
+
+    <footer>&copy; 2026 A-LAB.TECH · R&D Division · Подразделение «Эволюция»</footer>
+
+    <script>
+        // Header scroll effect
+        const topbar = document.getElementById('topbar');
+        window.addEventListener('scroll', () => {
+            topbar.classList.toggle('scrolled', window.scrollY > 80);
+        });
+    </script>
+
+    <script src="i18n.js"></script>
+    <script src="main-menu.js"></script>
+</body>
+
+</html>
