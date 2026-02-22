@@ -44,14 +44,15 @@
             top: 0;
             left: 0;
             right: 0;
-            z-index: 100;
-            padding: 14px 28px;
+            z-index: 1000;
+            padding: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(3, 4, 7, .85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, .05);
+            background: transparent;
+            backdrop-filter: none;
+            border-bottom: none;
+            transition: all 0.3s ease;
         }
 
         .topbar-logo {
@@ -62,7 +63,7 @@
         }
 
         .topbar-logo img {
-            height: 30px;
+            height: 50px;
         }
 
         .topbar-links {
@@ -71,23 +72,51 @@
         }
 
         .toplink {
-            padding: 6px 14px;
-            border-radius: 50px;
+            pointer-events: auto;
+            position: relative;
             text-decoration: none;
-            background: rgba(255, 255, 255, .04);
-            border: 1px solid rgba(255, 255, 255, .08);
-            color: rgba(255, 255, 255, .55);
-            font-size: .78rem;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
             font-family: 'JetBrains Mono', monospace;
-            transition: color .2s, border-color .2s;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .toplink:hover {
-            color: var(--green);
+            background: transparent;
             border-color: var(--green);
+            color: var(--green);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+            transform: translateY(-2px);
         }
 
-        /* HERO */
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, .85);
+                backdrop-filter: blur(15px);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .topbar-logo img {
+                height: 24px;
+            }
+
+            .toplink {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+        }
+
         .hero {
             min-height: 100vh;
             display: flex;
@@ -698,6 +727,7 @@
             letter-spacing: .05em;
         }
     </style>
+    <script src="main-menu.js" defer></script>
 </head>
 
 <body>
@@ -708,8 +738,8 @@
             <img src="A-lab-logo.svg" alt="A-LAB.TECH">
         </a>
         <div class="topbar-links">
-            <a href="rd.html" class="toplink">/// R&amp;D</a>
-            <a href="rd-os-whitepaper.html" class="toplink">/// Whitepaper</a>
+            <a href="rd.html" class="toplink">/// Назад в Lab</a>
+            <button class="toplink" onclick="MainMenu.toggle()">/// Меню</button>
         </div>
     </div>
 

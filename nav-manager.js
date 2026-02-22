@@ -34,20 +34,20 @@ const ResidentNav = {
         sidebar.innerHTML = `
             <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
             <button class="join-btn-sidebar hover-trigger" onclick="ResidentNav.handleJoinClick()">
-                <i>+</i> <span>ВСТУПИТЬ</span>
+                <i>+</i> <span>${window.I18n?.t('nav.join') || 'ВСТУПИТЬ'}</span>
             </button>
             <nav style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                <a href="social-feed.html" class="nav-item hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}"><i>📡</i> <span>Лента</span></a>
-                <a href="residents.html" class="nav-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>Резиденты</span></a>
-                <a href="messages.html" class="nav-item hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}"><i>💬</i> <span>Messenger</span></a>
-                <a href="projects.html" class="nav-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>Проекты</span></a>
+                <a href="social-feed.html" class="nav-item hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}"><i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span></a>
+                <a href="residents.html" class="nav-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
+                <a href="messages.html" class="nav-item hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}"><i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span></a>
+                <a href="projects.html" class="nav-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
             </nav>
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%;">
                 <button class="nav-item hover-trigger" style="background:none; border:none; width:100%;" onclick="ResidentNav.toggleTheme()">
-                    <i id="sidebarThemeIcon">☽</i> <span>Фон</span>
+                    <i id="sidebarThemeIcon">☽</i> <span>${window.I18n?.t('nav.theme') || 'Фон'}</span>
                 </button>
                 <button class="nav-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" style="background:none; border:none; width:100%;" onclick="ResidentNav.handleSettingsClick()">
-                    <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? 'Настройки' : 'Войти'}</span>
+                    <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? (window.I18n?.t('sidebar.settings') || 'Настройки') : (window.I18n?.t('auth.login') || 'Войти')}</span>
                 </button>
             </div>
         `;
@@ -58,16 +58,16 @@ const ResidentNav = {
         bottomNav.innerHTML = `
             <a href="index.html" class="logo-bottom hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
             <a href="social-feed.html" class="nav-item-bottom hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}">
-                <i>📡</i> <span>Лента</span>
+                <i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span>
             </a>
             <a href="messages.html" class="nav-item-bottom hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}">
-                <i>💬</i> <span>Messenger</span>
+                <i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span>
             </a>
             <button class="nav-item-bottom hover-trigger" onclick="ResidentNav.toggleTheme()">
-                <i id="bottomThemeIcon">☽</i> <span>Фон</span>
+                <i id="bottomThemeIcon">☽</i> <span>${window.I18n?.t('nav.theme') || 'Фон'}</span>
             </button>
             <button class="nav-item-bottom hover-trigger" onclick="ResidentNav.toggleMoreMenu()">
-                <i>📂</i> <span>ЕЩЕ</span>
+                <i>📂</i> <span>${window.I18n?.t('nav.more') || 'ЕЩЕ'}</span>
             </button>
         `;
 
@@ -77,8 +77,8 @@ const ResidentNav = {
         moreMenu.id = 'moreMenuPopup';
 
         let moreItemsHTML = `
-            <a href="residents.html" class="more-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>Резиденты</span></a>
-            <a href="projects.html" class="more-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>Проекты</span></a>
+            <a href="residents.html" class="more-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
+            <a href="projects.html" class="more-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
         `;
 
         // If we have custom items (e.g. for Admin page), prepend or replace
@@ -94,12 +94,12 @@ const ResidentNav = {
             ${moreItemsHTML}
             <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
             <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
-            <button class="more-item join-btn hover-trigger" onclick="ResidentNav.handleJoinClick()"><i>+</i> <span>ВСТУПИТЬ</span></button>
+            <button class="more-item join-btn hover-trigger" onclick="ResidentNav.handleJoinClick()"><i>+</i> <span>${window.I18n?.t('nav.join') || 'ВСТУПИТЬ'}</span></button>
             <button class="more-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" onclick="ResidentNav.handleSettingsClick()">
-                <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? 'Настройки' : 'Войти'}</span>
+                <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? (window.I18n?.t('nav.settings') || 'Настройки') : (window.I18n?.t('nav.login') || 'Войти')}</span>
             </button>
             ${this.config && this.config.showLogout ? `
-                <button class="more-item hover-trigger" style="color: var(--accent);" onclick="ResidentNav.logout()"><i>🔌</i> <span>Выход</span></button>
+                <button class="more-item hover-trigger" style="color: var(--accent);" onclick="ResidentNav.logout()"><i>🔌</i> <span>${window.I18n?.t('nav.logout') || 'Выход'}</span></button>
             ` : ''}
         `;
 
@@ -177,10 +177,12 @@ const ResidentNav = {
 
     async handleSettingsClick() {
         this.checkAuth();
+        const lang = window.I18n?.getLang() || (document.documentElement.lang === 'en' ? 'en' : 'ru');
+        const adminPage = lang === 'en' ? 'resident-admin-en.html' : 'resident-admin-ru.html';
+
         if (this.userLoggedIn) {
-            window.location.href = 'resident-admin-ru.html';
+            window.location.href = adminPage;
         } else {
-            window.location.href = 'login.html';
             window.location.href = 'login.html';
         }
     },

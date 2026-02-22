@@ -188,8 +188,8 @@
             }
 
             h1 {
-                font-size: clamp(2rem, 10vw, 3.5rem);
-                line-height: 1.1;
+                font-size: clamp(1.8rem, 9vw, 3.5rem);
+                line-height: 1.05;
                 word-break: break-word;
             }
 
@@ -295,7 +295,13 @@
             padding: 80px;
             border-radius: 40px;
             border: 1px solid var(--border);
-            align-items: center;
+            align-items: flex-start;
+            margin-top: 100px;
+            margin-bottom: 150px;
+        }
+
+        .form-container {
+            max-width: 600px;
         }
 
         .form-info h2 {
@@ -409,7 +415,7 @@
     <main class="container">
         <section class="hero-section">
             <div class="hero-tag" data-i18n="page_contacts.hero_tag">// COMMUNICATION_HUB</div>
-            <h1 data-i18n="page_contacts.title">Свяжитесь <br> с лабораторией.</h1>
+            <h1 data-i18n-html="page_contacts.title">Свяжитесь <br> с лабораторией.</h1>
         </section>
 
         <div class="contact-grid">
@@ -435,8 +441,8 @@
         <section class="form-section">
             <div class="form-info">
                 <h2 data-i18n-html="page_contacts.form_title">Инициируйте <br> контакт.</h2>
-                <p data-i18n="page_contacts.form_subtitle">// ВАШ ЗАПРОС БУДЕТ ОБРАБОТАН <br> СИСТЕМОЙ В ПРИОРИТЕТНОМ
-                    ПОРЯДКЕ.</p>
+                <p data-i18n-html="page_contacts.form_subtitle">// ВАШ ЗАПРОС БУДЕТ ОБРАБОТАН <br> СИСТЕМОЙ В
+                    ПРИОРИТЕТНОМ ПОРЯДКЕ.</p>
             </div>
             <div class="form-container">
                 <form id="contactForm">

@@ -188,9 +188,10 @@
         </form>
 
         <div class="auth-footer">
-            У вас еще нет ID? <a href="register-resident.html">Пройти регистрацию</a><br><br>
+            <span data-i18n="auth.no_id">У вас еще нет ID?</span> <a href="register-resident.html"
+                data-i18n="auth.register">Пройти регистрацию</a><br><br>
             Unauthorized access is strictly prohibited.<br>
-            <a href="index.html">/// TERMINATE_SESSION</a>
+            <a href="index.html" data-i18n="auth.terminate">/// TERMINATE_SESSION</a>
         </div>
     </div>
 
@@ -216,10 +217,12 @@
                 errorMsg.innerText = error.message;
                 errorMsg.style.display = 'block';
             } else {
-                const db = window.ALabCore.db;
-                // Redirect ALL users to resident workspace by default
-                // Use cms-login.html for direct admin access
-                window.location.href = 'resident-workspace-ru.html';
+                const lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
+                const redirectPage = lang === 'en' ? 'resident-admin-en.html' : 'resident-admin-ru.html';
+                // Check if there's a redirect query param
+                const urlParams = new URLSearchParams(window.location.search);
+                const next = urlParams.get('redirect');
+                window.location.href = next ? decodeURIComponent(next) : redirectPage;
             }
         });
     </script>

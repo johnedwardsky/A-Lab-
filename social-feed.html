@@ -1091,15 +1091,17 @@
     <!-- Standard Header Controls -->
     <header class="standard-header">
         <div class="header-controls">
-            <a href="index.html" class="menu-btn hover-trigger">/// МЕНЮ</a>
+            <a href="index.html" class="menu-btn hover-trigger" data-i18n="menu.menu_btn">/// МЕНЮ</a>
         </div>
     </header>
 
     <main class="feed-container">
         <div class="feed-scroll">
             <div style="margin-bottom: 40px;">
-                <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: -1px;">NEWS_PULSE</h1>
-                <div style="font-family: var(--font-code); color: #444; font-size: 0.7rem; margin-bottom: 30px;">ОБЩАЯ
+                <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: -1px;" data-i18n="feed.title">NEWS_PULSE
+                </h1>
+                <div style="font-family: var(--font-code); color: #444; font-size: 0.7rem; margin-bottom: 30px;"
+                    data-i18n="sidebar.community">ОБЩАЯ
                     ЛЕНТА СООБЩЕСТВА</div>
 
                 <!-- Premium Create Post Form -->
@@ -1116,6 +1118,7 @@
                         <div class="avatar" style="width: 45px; height: 45px; border: 2px solid var(--tech-blue);"><img
                                 src="maya_neural.png"></div>
                         <textarea class="post-textarea-premium" id="postContent"
+                            data-i18n-placeholder="feed.placeholder"
                             placeholder="Что нового в вашей лаборатории сегодня?"></textarea>
                     </div>
 
@@ -1140,7 +1143,8 @@
                             <button class="icon-btn hover-trigger" title="Add Poll"
                                 onclick="alert('Module starting...')">📊</button>
                         </div>
-                        <button class="btn-publish-premium hover-trigger" onclick="publishPost()">Опубликовать</button>
+                        <button class="btn-publish-premium hover-trigger" onclick="publishPost()"
+                            data-i18n="feed.publish">Опубликовать</button>
                     </div>
                 </div>
             </div>
@@ -1193,7 +1197,7 @@
     </main>
 
     <aside class="right-panel">
-        <div class="section-header">В СЕТИ // ONLINE</div>
+        <div class="section-header" data-i18n="residents.online">В СЕТИ // ONLINE</div>
 
         <div class="resident-item">
             <div class="resident-meta">

@@ -37,6 +37,9 @@
         "theme_light": "Light Mode",
         "messages": "Messages"
     },
+    "residents": {
+        "online": "ONLINE // В СЕТИ"
+    },
     "auth": {
         "login": "Login",
         "register": "Register",
@@ -86,7 +89,8 @@
         "edit": "Edit",
         "delete": "Delete",
         "loading": "LOADING POSTS...",
-        "empty": "No posts yet"
+        "empty": "No posts yet",
+        "share_success": "Link copied to clipboard!"
     },
     "portfolio": {
         "title": "Portfolio",
@@ -125,7 +129,10 @@
         "your_share": "Your Share",
         "join": "Join Project",
         "contribute": "Contribute Astra",
-        "members": "Members"
+        "members": "Members",
+        "matrix_title": "Project: Matrix Core",
+        "neural_ui_title": "Neural Landing V2",
+        "ev_chassis_title": "Smart EV Chassis"
     },
     "nda": {
         "title": "NDA Verification",
@@ -251,10 +258,10 @@
         "realty_desc": "Lead processing automation (K8 Smart Agent), predictive pricing analysis, and marketing content generation for properties.",
         "ecommerce_title": "E-commerce",
         "ecommerce_desc": "Hyper-personalized storefronts, smart recommendation systems, and automated inventory management based on demand forecasting.",
-        "chart_title": "AI Adoption Growth Dynamics",
-        "chart_insight_desc": "Growth in corporate data volume over the past 18 months.",
-        "form_title": "Let's start the transformation.",
-        "form_subtitle": "// SUBMIT A REQUEST FOR INITIAL TECHNOLOGY AUDIT.",
+        "chart_title": "AI Adoption <br> Growth Dynamics",
+        "chart_insight_desc": "Growth in corporate <br> data volume over the <br> past 18 months.",
+        "form_title": "Let's start <br> the transformation.",
+        "form_subtitle": "// SUBMIT A REQUEST FOR <br> INITIAL TECHNOLOGY AUDIT.",
         "form_desc": "We'll analyze your current technology stack and identify points where neural network implementation will deliver maximum financial impact.",
         "form_name": "Your name",
         "form_company": "Company / Project",

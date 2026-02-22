@@ -1,0 +1,114 @@
+64-            background: rgba(255, 42, 42, 0.2);
+65-            border-color: var(--accent);
+66-        }
+67-
+68-        /* --- HEADER (Standardized) --- */
+69:        header {
+70-            pointer-events: none;
+71-            position: fixed;
+72-            top: 0;
+73-            left: 0;
+74-            width: 100%;
+--
+82-            /* Remove border if present */
+83-            backdrop-filter: none;
+84-            /* Remove blur if present */
+85-        }
+86-
+87:        .header-controls {
+88-            margin-left: auto;
+89-            display: flex;
+90-            gap: 15px;
+91-            pointer-events: auto;
+92-            z-index: 1100;
+--
+214-            bottom: -10px;
+215-            right: -6px;
+216-        }
+217-
+218-        /* --- SECTIONS --- */
+219:        .section-header {
+220-            pointer-events: none;
+221-            display: flex;
+222-            align-items: center;
+223-            justify-content: space-between;
+224-            margin: 100px 0 50px;
+--
+591-
+592-            * {
+593-                cursor: auto !important;
+594-            }
+595-
+596:            header {
+597-                padding: 12px 15px !important;
+598-                background: rgba(3, 4, 7, 0.9) !important;
+599-                backdrop-filter: blur(15px) !important;
+600-                position: fixed !important;
+601-                top: 0 !important;
+--
+623-            .logo img {
+624-                height: 24px !important;
+625-                width: auto !important;
+626-            }
+627-
+628:            .header-controls {
+629-                position: static !important;
+630-                display: flex !important;
+631-                gap: 8px !important;
+632-                margin: 0 !important;
+633-                z-index: 10001 !important;
+--
+689-
+690-<body>
+691-    <div class="cursor"></div>
+692-    <div class="lab-grid-overlay"></div>
+693-
+694:    <header>
+695-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+696:        <div class="header-controls">
+697-            <a href="index.html" class="back-btn hover-trigger">/// НАЗАД</a>
+698-            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+699-                МЕНЮ</button>
+700-        </div>
+701:    </header>
+702-
+703-    <div class="container">
+704-
+705-        <section class="hero">
+706-            <div style="font-family: var(--font-code); color: var(--accent); margin-bottom: 15px; letter-spacing: 2px;"
+--
+710-            <p data-i18n="page_rd.hero_desc">Центр передовых разработок. От ИИ и IT до промышленного инжиниринга,
+711-                авиастроения и робототехники.</p>
+712-        </section>
+713-
+714-        <!-- REAL SECTOR -->
+715:        <div class="section-header">
+716-            <div class="section-title">
+717-                <span style="color:var(--tech-blue)">// </span> <span
+718-                    data-i18n="page_rd.section_industrial">ИНДУСТРИАЛЬНЫЕ РЕШЕНИЯ</span>
+719-            </div>
+720-            <div class="section-badge">REAL SECTOR</div>
+--
+849-                </div>
+850-            </div>
+851-        </div>
+852-
+853-        <!-- INDUSTRIAL -->
+854:        <div class="section-header">
+855-            <div class="section-title">
+856-                <span style="color:var(--accent)">// </span> <span
+857-                    data-i18n="page_rd.section_manufacturing">ПРОМЫШЛЕННЫЙ ИНЖИНИРИНГ</span>
+858-            </div>
+859-            <div class="section-badge">MANUFACTURING</div>
+--
+941-                        <div class="spec-item">CYBERSEC</div>
+942-                    </div>
+943-                </div>
+944-            </div>
+945-            <!-- EXPERIMENTAL / SOFTWARE R&D -->
+946:            <div class="section-header">
+947-                <div class="section-title">
+948-                    <span style="color:var(--tech-blue)">// </span> <span
+949-                        data-i18n="page_rd.section_experimental">ЦИФРОВЫЕ ЛАБОРАТОРНЫЕ МОДУЛИ</span>
+950-                </div>
+951-                <div class="section-badge">LAB_EXPERIMENTAL</div>

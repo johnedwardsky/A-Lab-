@@ -1,0 +1,66 @@
+65-                cursor: auto !important;
+66-            }
+67-        }
+68-
+69-        /* --- HEADER (Standardized from RD) --- */
+70:        header {
+71-            position: fixed;
+72-            top: 0;
+73-            left: 0;
+74-            width: 100%;
+75-            padding: 40px;
+--
+79-            z-index: 100;
+80-            pointer-events: none;
+81-            backdrop-filter: none;
+82-        }
+83-
+84:        .header-controls {
+85-            margin-left: auto;
+86-            display: flex;
+87-            gap: 15px;
+88-            pointer-events: auto;
+89-            z-index: 1100;
+--
+107-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+108-            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+109-        }
+110-
+111-        @media (max-width: 768px) {
+112:            header {
+113-                padding: 12px 15px;
+114-                background: rgba(3, 4, 7, 0.85);
+115-                backdrop-filter: blur(15px);
+116-                position: fixed;
+117-                top: 0;
+--
+133-
+134-            .logo img {
+135-                height: 24px;
+136-            }
+137-
+138:            .header-controls {
+139-                position: static;
+140-                display: flex;
+141-                gap: 8px;
+142-            }
+143-
+--
+415-    </style>
+416-</head>
+417-
+418-<body>
+419-    <div class="cursor"></div>
+420:    <header>
+421-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+422:        <div class="header-controls">
+423-            <a href="index.html" class="back-btn hover-trigger">/// НАЗАД</a>
+424-            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+425-                МЕНЮ</button>
+426-        </div>
+427:    </header>
+428-
+429-    <main class="about-hero">
+430-        <div class="hero-tag" data-i18n="page_about.hero_tag">INSIDE THE CORE // FOUNDERS</div>
+431-        <h1><span data-i18n="page_about.hero_title_line1">Мы объединяем</span> <br> <span
+432-                data-i18n="page_about.hero_title_line2">интеллект и</span> <br> <span

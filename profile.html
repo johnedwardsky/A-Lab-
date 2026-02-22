@@ -1203,17 +1203,26 @@
 
                 if (error) throw error;
 
+                // Fetch portfolio items
+                const { data: portfolio, error: pError } = await db
+                    .from('portfolio_items')
+                    .select('*')
+                    .eq('resident_id', uuid)
+                    .order('created_at', { ascending: false });
+
+                if (pError) console.warn('[PROFILE] Portfolio load error:', pError);
+
                 // Map DB schema to UI data structure
                 return {
                     name: r.full_name,
                     role: r.role || 'RESIDENT',
                     img: r.avatar_url || 'maya_neural.png',
                     bio: r.bio || '',
-                    tokens: 300, // TODO: Fetch from astra_balances if needed
-                    stats: { projects: 0, exhibitions: 0, exp: 0 }, // Placeholder
+                    tokens: 300,
+                    stats: r.settings?.stats || { projects: 0, exhibitions: 0, exp: 0 },
                     skills: r.skills || [],
                     links: r.links || {},
-                    works: [] // Fetch from portfolio_items if needed
+                    works: portfolio || []
                 };
             } catch (e) {
                 console.error('[PROFILE] DB Fetch error:', e);
@@ -1301,13 +1310,15 @@
             if (portfolioGrid) {
                 portfolioGrid.innerHTML = '';
                 (data.works || []).forEach((work, index) => {
+                    const imgUrl = typeof work === 'string' ? work : work.image_url;
+                    const title = typeof work === 'string' ? `PROJECT ${index + 1}` : (work.title || `PROJECT ${index + 1}`);
                     const item = document.createElement('div');
                     item.className = 'portfolio-item hover-trigger';
                     item.innerHTML = `
-                        <img src="${work}" alt="Project ${index + 1}">
+                        <img src="${imgUrl}" alt="${title}">
                         <div class="portfolio-overlay">
-                            <div style="font-family: var(--font-code); font-size: 0.7rem; color: var(--tech-blue);">PROJECT ${index + 1}</div>
-                            <div style="font-weight: 800; font-size: 1.2rem;">Case Study Title</div>
+                            <div style="font-family: var(--font-code); font-size: 0.7rem; color: var(--tech-blue);">CASE STUDY</div>
+                            <div style="font-weight: 800; font-size: 1.2rem;">${title}</div>
                         </div>
                     `;
                     portfolioGrid.appendChild(item);

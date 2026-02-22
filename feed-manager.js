@@ -104,7 +104,7 @@
             if (this.posts.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #555; font-family: var(--font-code); font-size: 0.8rem;">
-                        НЕТ ПОСТОВ // ЛЕНТА ПУСТА
+                        ${window.I18n?.t('feed.empty') || 'НЕТ ПОСТОВ // ЛЕНТА ПУСТА'}
                     </div>`;
                 return;
             }
@@ -152,7 +152,7 @@
 
         async toggleLike(postId) {
             if (!this.residentId) {
-                ALABToast.info('Авторизуйтесь для взаимодействия');
+                ALABToast.info(window.I18n?.t('auth.register_prompt') || 'Авторизуйтесь для взаимодействия');
                 return;
             }
 
@@ -200,12 +200,12 @@
             container.innerHTML = '<div style="font-size: 0.7rem; color: #555; padding: 10px;">LOADING...</div>';
             // Logic for fetching comments from Supabase
             setTimeout(() => {
-                container.innerHTML = '<div style="font-size: 0.7rem; color: #555; padding: 10px;">COMMUNICATIONS_ESTABLISHED // Лента пуста</div>';
+                container.innerHTML = `<div style="font-size: 0.7rem; color: #555; padding: 10px;">COMMUNICATIONS_ESTABLISHED // ${window.I18n?.t('feed.empty') || 'Лента пуста'}</div>`;
             }, 500);
         },
 
         sharePost(postId) {
-            ALABToast.success('Ссылка на пост скопирована!');
+            ALABToast.success(window.I18n?.t('common.success') + ': ' + (window.I18n?.t('feed.share_success') || 'Ссылка на пост скопирована!'));
         },
 
         /**
@@ -218,7 +218,7 @@
             if (this.posts.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 30px; color: #555; font-family: var(--font-code); font-size: 0.8rem;">
-                        У ВАС ЕЩЁ НЕТ ПОСТОВ
+                        ${window.I18n?.t('feed.empty') || 'У ВАС ЕЩЁ НЕТ ПОСТОВ'}
                     </div>`;
                 return;
             }
@@ -228,8 +228,8 @@
                     <div style="font-size: 0.7rem; color: #555; margin-bottom: 5px;">${this._formatTime(post.created_at)}</div>
                     <p style="font-size: 0.9rem;" id="postContent-${post.id}">${this._escapeHtml(post.content)}</p>
                     <div style="margin-top: 10px; display: flex; gap: 10px;">
-                        <button class="status-btn hover-trigger" style="padding: 5px 10px;" onclick="FeedManager.startEdit('${post.id}')">Править</button>
-                        <button class="status-btn hover-trigger" style="padding: 5px 10px; border-color: var(--accent); color: var(--accent);" onclick="FeedManager.deletePost('${post.id}')">Удалить</button>
+                        <button class="status-btn hover-trigger" style="padding: 5px 10px;" onclick="FeedManager.startEdit('${post.id}')">${window.I18n?.t('feed.edit') || 'Править'}</button>
+                        <button class="status-btn hover-trigger" style="padding: 5px 10px; border-color: var(--accent); color: var(--accent);" onclick="FeedManager.deletePost('${post.id}')">${window.I18n?.t('feed.delete') || 'Удалить'}</button>
                     </div>
                 </div>
             `).join('');
@@ -244,7 +244,7 @@
 
             const content = textarea.value.trim();
             if (!content) {
-                ALabToast.info('Напишите что-нибудь для публикации');
+                ALabToast.info(window.I18n?.t('feed.placeholder') || 'Напишите что-нибудь для публикации');
                 return;
             }
 
@@ -257,7 +257,7 @@
             }
 
             const btn = document.querySelector('#publishPostBtn');
-            if (btn) { btn.disabled = true; btn.textContent = 'ПУБЛИКАЦИЯ...'; }
+            if (btn) { btn.disabled = true; btn.textContent = window.I18n?.t('common.loading') || 'ПУБЛИКАЦИЯ...'; }
 
             try {
                 const { error } = await db
@@ -270,7 +270,7 @@
                 if (error) throw error;
 
                 textarea.value = '';
-                ALabToast.success('Пост опубликован!');
+                ALabToast.success(window.I18n?.t('common.success') || 'Пост опубликован!');
                 await this.loadMyPosts();
                 window.ALabCore.log('post_create', 'New post published');
 
@@ -282,7 +282,7 @@
                 console.error('[FEED] Create error:', err);
                 ALabToast.error('Ошибка публикации: ' + (err.message || ''));
             } finally {
-                if (btn) { btn.disabled = false; btn.textContent = 'ОПУБЛИКОВАТЬ В ЛЕНТУ'; }
+                if (btn) { btn.disabled = false; btn.textContent = window.I18n?.t('feed.publish') || 'ОПУБЛИКОВАТЬ В ЛЕНТУ'; }
             }
         },
 
@@ -299,8 +299,8 @@
             contentEl.innerHTML = `
                 <textarea class="form-textarea" id="editTextarea-${postId}" style="height: 80px; margin-bottom: 10px;">${currentText}</textarea>
                 <div style="display: flex; gap: 10px;">
-                    <button class="btn-pulse hover-trigger" style="margin: 0; padding: 8px 15px; font-size: 0.7rem;" onclick="FeedManager.saveEdit('${postId}')">Сохранить</button>
-                    <button class="status-btn hover-trigger" style="padding: 8px 15px;" onclick="FeedManager.cancelEdit('${postId}', '${currentText.replace(/'/g, "\\'")}')">Отмена</button>
+                    <button class="btn-pulse hover-trigger" style="margin: 0; padding: 8px 15px; font-size: 0.7rem;" onclick="FeedManager.saveEdit('${postId}')">${window.I18n?.t('common.save') || 'Сохранить'}</button>
+                    <button class="status-btn hover-trigger" style="padding: 8px 15px;" onclick="FeedManager.cancelEdit('${postId}', '${currentText.replace(/'/g, "\\'")}')">${window.I18n?.t('common.cancel') || 'Отмена'}</button>
                 </div>
             `;
         },
@@ -314,7 +314,7 @@
 
             const content = textarea.value.trim();
             if (!content) {
-                ALabToast.info('Текст не может быть пустым');
+                ALabToast.info(window.I18n?.t('feed.placeholder') || 'Текст не может быть пустым');
                 return;
             }
 
@@ -333,7 +333,7 @@
                 if (error) throw error;
 
                 this.editingPostId = null;
-                ALabToast.success('Пост обновлен');
+                ALabToast.success(window.I18n?.t('common.success') || 'Пост обновлен');
                 await this.loadMyPosts();
 
             } catch (err) {
@@ -378,7 +378,7 @@
 
             } catch (err) {
                 console.error('[FEED] Delete error:', err);
-                ALabToast.error('Ошибка: ' + err.message);
+                ALabToast.error(window.I18n?.t('common.error') + ': ' + err.message);
             }
         },
 
@@ -397,7 +397,7 @@
                 pulseBtn.addEventListener('click', async () => {
                     const input = document.querySelector('#pulseInput');
                     if (!input || !input.value.trim()) {
-                        ALabToast.info('Введите сообщение для трансляции');
+                        ALabToast.info(window.I18n?.t('profile.pulse_placeholder') || 'Введите сообщение для трансляции');
                         return;
                     }
 
@@ -436,11 +436,12 @@
             const diffHours = Math.floor(diffMs / 3600000);
             const diffDays = Math.floor(diffMs / 86400000);
 
-            if (diffMins < 1) return 'ТОЛЬКО ЧТО';
-            if (diffMins < 60) return `${diffMins} МИН. НАЗАД`;
-            if (diffHours < 24) return `${diffHours} Ч. НАЗАД`;
-            if (diffDays < 7) return `${diffDays} Д. НАЗАД`;
-            return date.toLocaleDateString('ru-RU');
+            const lang = window.I18n?.getLang() || 'ru';
+            if (diffMins < 1) return lang === 'ru' ? 'ТОЛЬКО ЧТО' : 'JUST NOW';
+            if (diffMins < 60) return lang === 'ru' ? `${diffMins} МИН. НАЗАД` : `${diffMins} MINS AGO`;
+            if (diffHours < 24) return lang === 'ru' ? `${diffHours} Ч. НАЗАД` : `${diffHours} HOURS AGO`;
+            if (diffDays < 7) return lang === 'ru' ? `${diffDays} Д. НАЗАД` : `${diffDays} DAYS AGO`;
+            return date.toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US');
         },
 
         /**

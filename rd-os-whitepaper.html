@@ -61,28 +61,25 @@
             top: 0;
             left: 0;
             right: 0;
-            padding: 16px 40px;
+            padding: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(3, 4, 7, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
+            background: transparent;
+            backdrop-filter: none;
+            border-bottom: none;
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
 
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 800;
-            font-size: 1rem;
-            color: #fff;
             text-decoration: none;
         }
 
-        .top-bar .logo span {
-            color: var(--green);
+        .top-bar .logo img {
+            height: 50px;
         }
 
         .top-bar nav {
@@ -90,20 +87,34 @@
             gap: 8px;
         }
 
-        .top-bar nav a {
-            padding: 6px 16px;
+        .top-bar nav a,
+        .top-bar nav button {
+            pointer-events: auto;
+            position: relative;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 20px;
             border-radius: 50px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: .8rem;
+            cursor: pointer;
             font-family: var(--mono);
-            transition: all .3s;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .top-bar nav a:hover {
+        .top-bar nav a:hover,
+        .top-bar nav button:hover {
+            background: transparent;
             border-color: var(--green);
             color: var(--green);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+            transform: translateY(-2px);
             text-decoration: none;
         }
 
@@ -417,12 +428,20 @@
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
             .top-bar {
-                padding: 12px 16px;
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, 0.85);
+                backdrop-filter: blur(15px);
+                border-bottom: 1px solid var(--border);
             }
 
-            .top-bar nav a {
-                font-size: .7rem;
-                padding: 5px 10px;
+            .top-bar .logo img {
+                height: 24px;
+            }
+
+            .top-bar nav a,
+            .top-bar nav button {
+                font-size: 0.6rem;
+                padding: 6px 12px;
             }
 
             .hero,
@@ -441,17 +460,20 @@
             }
         }
     </style>
+    <script src="main-menu.js" defer></script>
 </head>
 
 <body>
 
     <!-- ==================== HEADER ==================== -->
     <div class="top-bar">
-        <a href="index.html" class="logo">A-LAB<span>.</span>TECH</a>
+        <a href="index.html" class="logo">
+            <img src="A-lab-logo.svg" alt="A-LAB.TECH" style="height:28px;">
+        </a>
         <nav>
-            <a href="rd.html">/// R&D</a>
-            <a href="rd-os.html">/// DEMO</a>
-            <a href="index.html">/// НАЗАД</a>
+            <a href="rd.html">/// Назад в Lab</a>
+            <a href="rd-os.html">/// Demo</a>
+            <button onclick="MainMenu.toggle()">/// Меню</button>
         </nav>
     </div>
 
@@ -725,6 +747,7 @@
     </section>
 
     <footer>&copy; 2026 A-LAB.TECH · Future Systems Division</footer>
+
 </body>
 
 </html>

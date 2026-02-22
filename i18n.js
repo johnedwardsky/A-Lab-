@@ -10,7 +10,7 @@
  */
 
 const I18n = (() => {
-    let currentLang = 'ru'; // Force RU by default
+    let currentLang = localStorage.getItem('alab_lang') || document.documentElement.lang || 'ru';
     let translations = { ru: {}, en: {} };
     let loaded = false;
 
@@ -40,7 +40,9 @@ const I18n = (() => {
         const scripts = document.querySelectorAll('script[src*="i18n.js"]');
         if (scripts.length > 0) {
             const src = scripts[0].getAttribute('src');
-            return src.replace('i18n.js', '');
+            const path = src.replace('i18n.js', '');
+            // If it's a relative path starting with ./ or ../, or an absolute path
+            return path;
         }
         return '';
     }
@@ -50,6 +52,7 @@ const I18n = (() => {
      * t('menu.home') → translations[lang].menu.home
      */
     function getNestedValue(obj, path) {
+        if (!obj || !path) return undefined;
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     }
 
@@ -116,11 +119,16 @@ const I18n = (() => {
     }
 
     /**
-     * Set language and re-render (DISABLED: users will use duplicate pages)
+     * Set language and re-render
      */
     async function setLanguage(lang) {
-        console.warn('[i18n] Dynamic switching is disabled. Use separate pages for different languages.');
-        return;
+        currentLang = lang;
+        localStorage.setItem('alab_lang', lang);
+        document.documentElement.lang = lang;
+        if (!loaded) await loadTranslations();
+        applyToDOM();
+        // Fire event
+        document.dispatchEvent(new CustomEvent('alab:lang-changed', { detail: { lang } }));
     }
 
     /**
@@ -135,7 +143,7 @@ const I18n = (() => {
      */
     async function init() {
         await loadTranslations();
-        // applyToDOM(); // Disabled dynamic translation
+        applyToDOM();
     }
 
     // Auto-run
@@ -146,7 +154,7 @@ const I18n = (() => {
     }
 
     // Immediate sync for language-dependent elements (prevent jump)
-    document.documentElement.lang = 'ru';
+    document.documentElement.lang = currentLang;
 
     // Public API
     return { t, setLanguage, getLang, applyToDOM, init };
