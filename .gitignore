@@ -25,3 +25,16 @@ project-zero-countdown/
 Thumbs.db
 .vercel
 .env*.local
+
+# Python utility scripts
+*.py
+__pycache__/
+*.pyc
+
+# NotebookLM MCP chrome profile
+.notebooklm-mcp/
+
+# Debug / context dump files
+*_context.txt
+*_hash.txt
+debug_page.html
