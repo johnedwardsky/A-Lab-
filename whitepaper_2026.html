@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB.TECH | 2026 / Прогноз: Двигатель Роста</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--tech-blue);
+            border-color: var(--tech-blue);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .logo {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+        }
+
+        .header-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+            z-index: 1100;
+        }
+
+        .menu-btn,
+        .back-btn {
+            pointer-events: auto;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .menu-btn:hover,
+        .back-btn:hover {
+            background: transparent;
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, 0.95);
+                backdrop-filter: blur(15px);
+                position: fixed;
+                display: flex;
+                align-items: center;
+                border-bottom: 1px solid var(--border);
+                pointer-events: auto;
+            }
+
+            .logo {
+                position: static !important;
+            }
+
+            .logo img {
+                height: 24px;
+            }
+
+            .header-controls {
+                position: static;
+                display: flex;
+                gap: 8px;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 6px 12px !important;
+                font-size: 0.6rem !important;
+            }
+        }
+
+        /* MAIN CONTENT */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 180px 40px 100px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 120px 20px 60px;
+            }
+        }
+
+        .article-tag {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: inline-block;
+            border: 1px solid var(--tech-blue);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            word-break: break-word;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .lead {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: #aaa;
+            margin-bottom: 80px;
+            line-height: 1.5;
+            max-width: 900px;
+        }
+
+        .section-block {
+            margin-bottom: 100px;
+            padding-bottom: 100px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .section-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -40px;
+            width: 4px;
+            height: 100px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .section-block::before {
+                left: -20px;
+            }
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        h2 span.step {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 1.2rem;
+            font-weight: 400;
+            border: 1px solid var(--tech-blue);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 25px;
+            max-width: 800px;
+        }
+
+        /* INFOGRAPHICS & TABLES */
+        .infobox {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .infobox::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.1) 0%, transparent 70%);
+            transform: translate(50%, -50%);
+        }
+
+        .infobox h3 {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-family: var(--font-code);
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            width: 25%;
+        }
+
+        td {
+            color: #aaa;
+        }
+
+        td strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+
+            table,
+            thead,
+            tbody,
+            th,
+            td,
+            tr {
+                display: block;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                border-bottom: 2px solid var(--border);
+                margin-bottom: 20px;
+            }
+
+            td {
+                border: none;
+                border-bottom: 1px solid #222;
+                position: relative;
+                padding-left: 40%;
+                min-height: 60px;
+            }
+
+            td:before {
+                position: absolute;
+                top: 20px;
+                left: 15px;
+                width: 35%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-family: var(--font-code);
+                color: var(--tech-blue);
+                font-size: 0.8rem;
+            }
+
+            /* Table 1 Data Labels */
+            .table-ai td:nth-of-type(1):before {
+                content: "Тип";
+            }
+
+            .table-ai td:nth-of-type(2):before {
+                content: "Описание";
+            }
+
+            /* Table 2 Data Labels */
+            .table-engine td:nth-of-type(1):before {
+                content: "Вызов 2026";
+            }
+
+            .table-engine td:nth-of-type(2):before {
+                content: "Решение";
+            }
+
+            .table-engine td:nth-of-type(3):before {
+                content: "Результат";
+            }
+        }
+
+        /* GRID CARDS */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            border-color: var(--accent);
+            background: rgba(255, 42, 42, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .data-card .number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 15px;
+            font-family: var(--font-code);
+        }
+
+        .data-card h4 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .data-card p {
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 0;
+        }
+
+        ul.checklist {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+
+        ul.checklist li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        ul.checklist li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--tech-blue);
+            font-family: var(--font-code);
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: linear-gradient(90deg, rgba(255, 42, 42, 0.1) 0%, transparent 100%);
+            border-left: 4px solid var(--accent);
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        footer {
+            padding: 60px 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <div class="header-controls">
+            <a href="index.html" class="back-btn hover-trigger">/// НАЗАД</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- HEADER SECTION -->
+        <span class="article-tag">Аналитический Отчет / 2026</span>
+        <h1>Двигатель Роста <span>2026</span></h1>
+        <p class="lead">Руководство по трем технологическим сдвигам, определяющим наше будущее: от адаптации к
+            корпоративному переосмыслению в условиях многоскоростной экономики.</p>
+
+        <!-- INTRO -->
+        <div class="section-block">
+            <h2><span class="step">00</span> Макроландшафт 2026 года</h2>
+            <p>Вступая в 2026 год, мировая экономика оставляет позади «бурную» эпоху 2025 года — года, который
+                характеризовался крайней степенью политической неопределенности и эскалацией торговой напряженности
+                между США и Китаем. Мы перешли к <strong>«Многоскоростной Экономике» (Multi-speed Economy)</strong>.</p>
+            <p>В этой среде рост описывается «K-образной динамикой». «Победителями» становятся те, кто связан с
+                быстрорастущими технологическими коридорами (США, Китай), в то время как «проигравшие»
+                (промышленно-ориентированные экономики Европы) продолжают «пробиваться» сквозь спад.</p>
+
+            <div class="highlight-box">
+                <p>Главный вызов 2026 года: Компании должны перейти от тактических мер (реактивного выживания) к
+                    стратегической адаптации (корпоративному переосмыслению). Успех требует выявления конкретных «очагов
+                    роста» в условиях геоэкономической фрагментации.</p>
+            </div>
+
+            <p>Новый ландшафт определяется тремя главными движущими силами, которые представляют собой
+                <strong>интеллект, мускулы и здоровье</strong> современного предприятия: Агентный ИИ, Долгосрочное
+                накопление энергии (LDES) и Онкология нового поколения.</p>
+        </div>
+
+        <!-- SHIFT 1: AGENTIC AI -->
+        <div class="section-block">
+            <h2><span class="step">01</span> Агентный ИИ: От инструмента к партнеру</h2>
+            <p>В прошлые годы ИИ был «вторым пилотом» — инструментом, требующим постоянных подсказок человека. В 2026
+                году произошел переход к <strong>Агентному ИИ (Agentic AI)</strong>. Это автономные системы, способные
+                интерпретировать сложные события, выполнять многоступенчатые рабочие процессы и проводить продвинутое
+                сценарное планирование без постоянного контроля.</p>
+
+            <div class="infobox">
+                <h3>// Эволюция интеграции ИИ</h3>
+                <table class="table-ai">
+                    <thead>
+                        <tr>
+                            <th>Параметр</th>
+                            <th>Традиционный ИИ (2024-25)</th>
+                            <th>Агентный ИИ (2026)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Режим работы</th>
+                            <td>Пилотирование и чат-боты (реактивный).</td>
+                            <td><strong>Масштабирование и принятие решений (автономный).</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Глубина стратегии</th>
+                            <td>Генерация простого контента.</td>
+                            <td><strong>Мониторинг трендов в реальном времени и анализ последствий.</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Интеграция</th>
+                            <td>Изолированные сценарии использования.</td>
+                            <td><strong>Встроенные агенты, оптимизирующие целые бизнес-цепочки.</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Роль человека</th>
+                            <td>Постоянный микро-промптинг.</td>
+                            <td><strong>Целеполагание высокого уровня и управление «человек в контуре».</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p><strong>Зачем это нужно?</strong> Агентный ИИ закрывает разрывы в производительности, автоматизируя
+                сложные циклы принятия решений. Он обеспечивает защитную устойчивость, непрерывно сканируя
+                геополитические потрясения, и позволяет проводить «Сценарное планирование», моделируя последствия до
+                того, как они отразятся на балансе.</p>
+        </div>
+
+        <!-- SHIFT 2: ENERGY STORAGE -->
+        <div class="section-block">
+            <h2><span class="step">02</span> Энергия (LDES): Новая магистраль сети</h2>
+            <p>Поскольку энергетические системы сталкиваются с растущей нагрузкой из-за потребностей ИИ, системы
+                долгосрочного накопления энергии (Long-Duration Energy Storage, LDES) превратились в фундаментальный
+                класс активов. Чтобы поддерживать надежность сетей, к 2040 году миру потребуется 1.5–2.5 тераватт (TW)
+                емкости хранилищ.</p>
+
+            <div class="cards-grid">
+                <div class="data-card hover-trigger">
+                    <div class="number">01</div>
+                    <h4>Механические</h4>
+                    <p>Гидроаккумулирующие установки (ГАЭС) или системы на сжатом воздухе (CAES) для масштабной
+                        стабилизации сети.</p>
+                </div>
+                <div class="data-card hover-trigger">
+                    <div class="number">02</div>
+                    <h4>Электрохимические</h4>
+                    <p>Передовые концепции батарей (железо-воздушные и проточные), рассчитанные на многодневный разряд.
+                    </p>
+                </div>
+                <div class="data-card hover-trigger">
+                    <div class="number">03</div>
+                    <h4>Тепловые / Химические</h4>
+                    <p>Удержание энергии в виде тепла (в солях) или конвертация излишков электричества в плотное
+                        топливо, например водород.</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 30px;">Стабильность сети — это обязательное условие. Инфраструктура LDES обеспечивает
+                «чистую резервную мощность», заменяя газовые турбины и поддерживая работоспособность дата-центров ИИ
+                даже при длительном штиле или плохой погоде.</p>
+        </div>
+
+        <!-- SHIFT 3: NEXT-GEN ONCOLOGY -->
+        <div class="section-block">
+            <h2><span class="step">03</span> Онкология: Революция Oral SERD</h2>
+            <p>«Двигатель роста» 2026 года охватывает и человеческий капитал. Происходит прорыв в лечении рака груди
+                благодаря исследовательской пероральной терапии (giredestrant). Это деградатор эстрогеновых рецепторов
+                нового поколения (SERD), меняющий стандарт лечения для пациентов с ER-положительным, HER2-отрицательным
+                раком груди.</p>
+
+            <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <div class="data-card hover-trigger" style="border-color: var(--accent);">
+                    <div class="number">-44%</div>
+                    <h4>Снижение риска (ITT)</h4>
+                    <p>Снижение риска прогрессирования заболевания в общей популяции (исследование evERA).</p>
+                </div>
+                <div class="data-card hover-trigger" style="border-color: var(--tech-blue);">
+                    <div class="number">-62%</div>
+                    <h4>Снижение риска (ESR1)</h4>
+                    <p>Специфическое снижение риска для популяции с мутацией ESR1.</p>
+                </div>
+                <div class="data-card hover-trigger" style="border-color: #fff;">
+                    <div class="number">9.99</div>
+                    <h4>Месяцев выживаемости (PFS)</h4>
+                    <p>Почти двукратное увеличение времени жизни без прогрессирования болезни в сравнении со стандартом
+                        (5.45 мес).</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 30px;">Переход к пероральным комбинированным методам лечения снимает логистическую
+                нагрузку от частых инъекций, повышая качество жизни. Медицинские открытия в 2026 году так же важны для
+                макроэкономики, как и цифровые алгоритмы.</p>
+        </div>
+
+        <!-- SYNTHESIS -->
+        <div class="section-block" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+            <h2><span class="step">04</span> Синтез: Преодоление барьеров</h2>
+            <p>Три инновации являются прямым решением макроэкономических вызовов геоэкономической фрагментации и
+                маржинального давления.</p>
+
+            <div class="infobox">
+                <h3>// Сводка двигателей роста</h3>
+                <table class="table-engine">
+                    <thead>
+                        <tr>
+                            <th>Вызов 2026</th>
+                            <th>Двигатель роста</th>
+                            <th>Решение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Разрывы производительности</th>
+                            <td>Агентный ИИ (Agentic AI)</td>
+                            <td>Автономное масштабирование и мониторинг торговых шоков в реальном времени. Закрывает
+                                "K-образный" разрыв.</td>
+                        </tr>
+                        <tr>
+                            <th>Гео-фрагментация</th>
+                            <td>Батареи LDES</td>
+                            <td>Создание энергетического суверенитета, снижение зависимости от волатильных рынков
+                                топлива.</td>
+                        </tr>
+                        <tr>
+                            <th>Затраты и качество жизни</th>
+                            <td>Онкология Next-Gen</td>
+                            <td>Снижение нагрузки на медицинскую инфраструктуру благодаря пероральным препаратам и
+                                преодоление резистентности.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box" style="background: rgba(0, 229, 255, 0.05); border-color: var(--tech-blue);">
+                <p>Мастерство в 2026 году — это не просто внедрение технологий. Это корпоративное переосмысление.
+                    Лидерам необходимо сценарное планирование, чтобы понять, как ИИ, энергия и здоровье меняют
+                    бизнес-модели в фрагментированном мире.</p>
+            </div>
+
+            <h3 style="margin-top: 50px; margin-bottom: 20px; font-size: 1.5rem;">Чек-лист для лидеров:</h3>
+            <ul class="checklist">
+                <li><strong>Агентный ИИ:</strong> Выйдите за рамки «разговоров» с ботами. Интегрируйте ИИ для сценарного
+                    планирования и навигации по торговой волатильности.</li>
+                <li><strong>Энергия LDES:</strong> Рассматривайте хранение энергии как фундаментальный класс активов для
+                    обеспечения энергоемкой ИИ-революции.</li>
+                <li><strong>Онкология Next-Gen:</strong> Учитывайте прорывы в здравоохранении как макро-фактор удержания
+                    человеческого капитала и продуктивности.</li>
+                <li><strong>Действие:</strong> Примените сценарное планирование. Если произойдет коррекция оценки
+                    сектора ИИ, как ваша энергетически устойчивая бизнес-стратегия защитит вашу маржу?</li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 A-LAB.TECH // FORECAST ANALYTICS DEPT.</p>
+    </footer>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('.hover-trigger, a, button').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+    </script>
+</body>
+
+</html>
