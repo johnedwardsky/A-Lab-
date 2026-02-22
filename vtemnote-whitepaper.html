@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whitepaper: Проект «Втемноте» | A-LAB.TECH R&D</title>
+    <meta name="description"
+        content="Полная концепция и инвестиционный меморандум проекта Втемноте: от сенсорной эволюции к глобальной антихрупкости.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0a0b10;
+            --card: #12131a;
+            --text: #e8ecf1;
+            --muted: rgba(255, 255, 255, 0.5);
+            --purple: #9b59b6;
+            --purple-glow: rgba(155, 89, 182, 0.2);
+            --accent: #6c5ce7;
+            --border: rgba(255, 255, 255, 0.08);
+            --font: 'Inter', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 15% 50%, rgba(155, 89, 182, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(108, 92, 231, 0.05), transparent 25%);
+        }
+
+        /* Nav */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(3, 4, 7, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        nav .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: white;
+        }
+
+        nav .brand img {
+            height: 32px;
+        }
+
+        nav .brand span {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: var(--muted);
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            border-color: var(--purple);
+            color: var(--purple);
+            background: rgba(155, 89, 182, 0.1);
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 120px auto 100px;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .doc-meta {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--purple);
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--muted);
+            font-weight: 300;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--purple), transparent);
+            margin: 3rem 0;
+            opacity: 0.5;
+        }
+
+        /* Content */
+        h2 {
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '/';
+            color: var(--purple);
+            font-family: var(--mono);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 2rem 0 1rem;
+            color: var(--purple);
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.05rem;
+        }
+
+        ul,
+        ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+        }
+
+        li strong {
+            color: #fff;
+        }
+
+        /* Custom Blocks */
+        .quote-block {
+            border-left: 3px solid var(--purple);
+            padding: 1.5rem 2rem;
+            background: rgba(155, 89, 182, 0.05);
+            margin: 2rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .quote-block p {
+            font-size: 1.15rem;
+            font-style: italic;
+            margin-bottom: 0;
+            color: #fff;
+        }
+
+        .highlight-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .highlight-box h4 {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+        td {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        td strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        /* Proof of Existence */
+        .poe-container {
+            margin-top: 5rem;
+            padding: 3rem;
+            background: rgba(155, 89, 182, 0.05);
+            border: 1px solid rgba(155, 89, 182, 0.2);
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .poe-container h3 {
+            margin-top: 0;
+            color: #fff;
+            display: block;
+        }
+
+        .poe-container h3::before {
+            display: none;
+        }
+
+        .poe-hash {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            color: var(--purple);
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .poe-meta {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-family: var(--mono);
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .container {
+                margin-top: 100px;
+                padding: 0 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .quote-block {
+                padding: 1.2rem 1.5rem;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="brand">
+            <img src="A-lab-logo.svg" alt="A-LAB.TECH">
+            <span>R&D / EVOLUTION</span>
+        </a>
+        <a href="project_vtemnote.html" class="back-btn">НАПРЯЖЕНИЕ ПРОЕКТА</a>
+    </nav>
+
+    <div class="container">
+        <header>
+            <div class="doc-meta">CONCEPTUAL WHITEPAPER / V.1.0</div>
+            <h1>Концепция проекта «Втемноте»:<br>Увидеть главное, выключив свет</h1>
+            <p class="subtitle">От социальной идеи до высокотехнологичной экосистемы впечатлений и PsyTech-аналитики.
+            </p>
+        </header>
+
+        <article>
+            <div class="quote-block">
+                <p>"Shifting focus from visual noise to internal truth. Переключая фокус с визуального шума на
+                    внутреннюю правду."</p>
+            </div>
+
+            <h2>1. Введение: Мир, где слишком много шума</h2>
+            <p>Современный мир перегружен. Мы живем в потоке бесконечных визуальных стимулов: экраны, реклама,
+                социальные сети — все они борются за наше внимание, создавая оглушительный шум. В этой гонке мы
+                разучились доверять своим чувствам, интуиции и, самое главное, друг другу. Мы привыкли оценивать по
+                внешности, забывая заглянуть вглубь.</p>
+            <p>Проект «Втемноте» — это не просто пространство, это целая экосистема для трансформации восприятия. Это
+                возможность нажать на паузу, выключить свет и отключиться от внешнего потока, чтобы наконец услышать
+                свой внутренний голос и по-настоящему увидеть людей рядом.</p>
+
+            <h2>2. Наша миссия: Изменить взгляд на мир</h2>
+            <p>Наша философия — это создание устойчивой экосистемы, которая меняет общество и помогает каждому участнику
+                открыть новые грани себя.</p>
+
+            <h3>Для общества: От жалости к восхищению</h3>
+            <p>Мы кардинально меняем стереотипное отношение к незрячим людям. В нашем проекте они — не объект опеки.
+                Здесь они — эксперты и мастера, обладающие уникальными навыками, которым они обучают зрячих. Мы строим
+                устойчивую бизнес-модель, которая обеспечивает им осмысленную профессиональную реализацию. Цель —
+                совершить фундаментальный сдвиг в общественном сознании: мы переходим от жалости к восхищению
+                компетенциями.</p>
+
+            <h3>Для участников: От страха к открытию</h3>
+            <p>Для каждого темнота становится инструментом самопознания. Наша миссия — помочь вам развить эмпатию,
+                восстановить доверие к окружающим и обострить интуицию. В безопасной среде темнота перестает быть врагом
+                и становится учителем.</p>
+
+            <div class="highlight-box">
+                <h4>Что вы откроете в себе:</h4>
+                <ul>
+                    <li><strong>Преодоление страхов:</strong> Лицом к лицу со страхом темноты, избавляясь от тревог и
+                        обретая чувство внутренней свободы.</li>
+                    <li><strong>Развитие эмпатии и доверия:</strong> Опыт зависимости от другого человека учит
+                        по-настоящему слушать и доверять.</li>
+                    <li><strong>Новое восприятие:</strong> Обостряются слух, осязание и обоняние. Мир "включается"
+                        заново.</li>
+                    <li><strong>Выявление скрытого лидерства:</strong> В темноте исчезают должности и бейджи, показывая,
+                        кто является настоящим лидером.</li>
+                </ul>
+            </div>
+
+            <h2>3. Модель «Двух крыльев»</h2>
+            <p>Чтобы обеспечить проекту финансовую независимость, не теряя социальной миссии, была разработана гибридная
+                бизнес-модель «Двух крыльев». Эта синергия обеспечивает и финансовую устойчивость, и сохранение души
+                проекта.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Критерий</th>
+                        <th>Коммерческое крыло (ООО)</th>
+                        <th>Социальное крыло (НКО/Фонд)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Цель</strong></td>
+                        <td>Финансовая независимость, устойчивость проекта, выплата конкурентных зарплат.</td>
+                        <td>Изменение общественного сознания, просвещение и масштабирование миссии.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ключевая ценность</strong></td>
+                        <td>Продажа уникального опыта, эмоций и навыков (Edutainment | PsyTech).</td>
+                        <td>Просвещение и инклюзия, создание ролевых моделей.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>4. Продюсерский центр талантов</h2>
+            <p>Мы не продаем темноту как аттракцион; мы продюсируем и монетизируем уникальные навыки конкретных незрячих
+                мастеров. Каждый продукт построен вокруг личного бренда специалиста:</p>
+            <ul>
+                <li><strong>Мастер-классы:</strong> Гончарная мастерская «Руки видят», музыкальный салон «Полночь».</li>
+                <li><strong>Корпоративные тренинги «Лидерство в темноте»:</strong> Флагманский продукт для
+                    топ-менеджмента для выявления лидерского потенциала и стрессоустойчивости команды.</li>
+                <li><strong>Гастрономические ужины:</strong> Сенсорное приключение, где вкусовые рецепторы обостряются
+                    до предела.</li>
+                <li><strong>Лаборатория цифровой доступности:</strong> IT-специалисты (Accessibility Testing) проверяют
+                    сайты и продукты бизнеса "вслепую".</li>
+            </ul>
+
+            <h2>5. Технологическая инновация: AI «Внутренний Голос»</h2>
+            <p>Проект совершил квантовый скачок, перейдя в нишу высокотехнологичных <strong>PsyTech-продуктов</strong>.
+                Была внедрена AI-система, которая анализирует коммуникацию участников в темноте и предоставляет
+                объективную психометрику.</p>
+
+            <p>Механика работы (PsyTech-диагностика / HR-рентген):</p>
+            <ol>
+                <li><strong>Калибровка:</strong> Голосовое превью через Telegram создает уникальный «голосовой
+                    отпечаток».</li>
+                <li><strong>Погружение:</strong> Во время сессии радиосистемы передают звук каждого участника на
+                    AI-анализ.</li>
+                <li><strong>Обработка:</strong> Нейросети (Speaker Diarization, STT, LLM GPT-4o) разбирают реплики,
+                    паттерны, интонацию, громкость.</li>
+                <li><strong>Инсайт:</strong> Участник получает отчет с мягким разбором его реакций, сильных сторон и зон
+                    роста. Для компаний это беспристрастный <strong>HR-Рентген</strong> команды.</li>
+            </ol>
+
+            <div class="quote-block">
+                <p>«...знаешь, что интересно? В начале пути ты молчала. Но именно ты на 20-й минуте тихо предложила
+                    верное решение. Твой супер-навык — интуиция и спокойствие. Твоя зона роста — громкость.» — Пример
+                    вывода AI-бота.</p>
+            </div>
+
+            <h2>6. VTEMNOTE: EXPEDITION (Премиум-сегмент)</h2>
+            <p>Экспедиции для ультра-премиального сегмента Luxury Adventure Travel — собственников бизнеса и
+                топ-менеджмента. Суть формата: использование <strong>склеральных Blackout-линз</strong>, полностью
+                блокирующих свет.</p>
+            <ul>
+                <li><strong>Уровень 1 (Тишина):</strong> Сенсорный ретрит на Куршской косе, детокс и медитация под
+                    3D-шум моря.</li>
+                <li><strong>Уровень 2 (Движение):</strong> Велопробеги на тандемах, гребля на байдарках с синхронизацией
+                    по звуку.</li>
+                <li><strong>Уровень 3 (Бездна):</strong> Скалолазание вслепую на Алтае и Rope Jumping.</li>
+            </ul>
+
+            <div class="divider"></div>
+
+            <h2>Заключение</h2>
+            <p>Из социальной инициативы выросла экосистема, объединяющая человеческие таланты, устойчивую бизнес-модель,
+                PsyTech-аналитику и экстремальный туризм. Проект доказал, что инклюзия — это не благотворительность, а
+                источник глубокой ценности и сильных коммерческих продуктов. Мы готовы расширять границы возможного.</p>
+
+            <div class="poe-container">
+                <h3>Proof-of-Existence</h3>
+                <p style="color: var(--muted); margin-bottom: 1.5rem;">Whitepaper проекта криптографически защищен
+                    SHA-256 хешированием</p>
+                <div class="poe-meta">
+                    <strong>Изобретатели и Авторы концепции:</strong> Сергей Киселев, Иван Лакшинский
+                </div>
+                <div class="poe-hash">
+                    HASH: 0a8d1cb79bd35efc1a5df324e19c264886e3a4bca43df97f8842767815dc7dcf
+                </div>
+                <div class="poe-meta" style="font-family: var(--mono); font-size: 0.8rem;">
+                    TIMESTAMP: 2026-02-22 | DIVISION: EVOLUTION | A-LAB.TECH R&D
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <footer>
+        &copy; 2026 A-LAB.TECH R&D DIVISION. ALL RIGHTS RESERVED. SECURE CONNECTION ESTABLISHED.
+    </footer>
+
+</body>
+
+</html>
