@@ -18,7 +18,11 @@ const NDAManager = (() => {
         // Registered residents auto-access ALL locked projects
         if (isAuthenticated) return true;
 
-        // Check if guest has signed NDA for this project
+        // Check for 7-day session cookie first
+        const hasSessionCookie = document.cookie.split('; ').some(row => row.startsWith('alab_nda_session='));
+        if (hasSessionCookie) return true;
+
+        // Check legacy localStorage fallback
         const signedEmail = localStorage.getItem('alab_nda_email');
         if (!signedEmail) return false;
 
@@ -187,6 +191,11 @@ const NDAManager = (() => {
         } catch (e) {
             console.warn('[NDA] Save to DB failed, continuing locally:', e);
         }
+
+        // Create a 7-day session cookie
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + 7);
+        document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
 
         // Save locally for future checks
         localStorage.setItem('alab_nda_email', email);
@@ -407,10 +416,15 @@ const NDAManager = (() => {
 
         // Simulate verification
         if (code.toUpperCase().includes('ALAB')) {
+            // Set 7-day session cookie
+            const expiry = new Date();
+            expiry.setDate(expiry.getDate() + 7);
+            document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
+
             localStorage.setItem('alab_nda_signed', 'true');
             localStorage.setItem('alab_nda_email', 'code_authorized@a-lab.tech');
 
-            if (typeof ALABToast !== 'undefined') ALABToast.success('Доступ активирован!');
+            if (typeof ALABToast !== 'undefined') ALABToast.success('Доступ активирован на 7 дней!');
             closeModal();
             if (redirectUrl) window.location.href = redirectUrl;
         } else {
