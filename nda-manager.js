@@ -66,60 +66,13 @@ const NDAManager = (() => {
         modal.id = 'nda-modal';
         modal.innerHTML = `
             <div class="nda-backdrop" onclick="NDAManager.closeModal()"></div>
-            <div class="nda-dialog">
-                <button class="nda-close hover-trigger" onclick="NDAManager.closeModal()">✕</button>
-                <div class="nda-header">
-                    <div style="font-size: 2rem; margin-bottom: 15px;">🔒</div>
-                    <h2 data-i18n="nda.title">NDA Верификация</h2>
-                    <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">
-                        Доступ к данному проекту R&D требует подписания соглашения о неразглашении.
-                    </p>
-                </div>
+            <div class="nda-dialog" style="padding: 40px; max-width: 500px; border-radius: 24px; position: relative;">
+                <button class="nda-close hover-trigger" onclick="NDAManager.closeModal()" style="top: 20px; right: 20px;">✕</button>
+                
+                <div id="nda-main-view">
+                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase;">NDA ACCESS REQUEST</h2>
+                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Подпишите электронное соглашение о неразглашении для доступа к закрытым материалам.</p>
 
-                <div class="nda-body">
-                    <div class="nda-text-block">
-                        <p>Подписывая данное соглашение, вы обязуетесь:</p>
-                        <ul>
-                            <li>Не раскрывать информацию о проектах R&D Lab третьим лицам</li>
-                            <li>Использовать полученную информацию исключительно для сотрудничества с A-LAB</li>
-                            <li>Не копировать и не распространять материалы без разрешения</li>
-                        </ul>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" data-i18n="nda.full_name">Полное имя</label>
-                        <input type="text" class="form-input" id="ndaFullName" placeholder="Иван Иванов" autocomplete="name">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" data-i18n="nda.email">Email</label>
-                        <input type="email" class="form-input" id="ndaEmail" placeholder="your@email.com" autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Телефон</label>
-                        <input type="tel" class="form-input" id="ndaPhone" placeholder="+7 (___) ___-__-__">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" data-i18n="nda.company">Компания (необязательно)</label>
-                        <input type="text" class="form-input" id="ndaCompany" placeholder="Компания" autocomplete="organization">
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
-                        <input type="checkbox" id="ndaAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
-                        <label for="ndaAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;" data-i18n="auth.nda_accept">
-                            Я принимаю условия NDA
-                        </label>
-                    </div>
-
-                    <button class="btn-pulse hover-trigger" id="ndaSubmitBtn" onclick="NDAManager.submit('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
-                        <span data-i18n="auth.nda_submit">Подписать и продолжить</span>
-                    </button>
-
-                    <div style="text-align: center; margin-top: 25px;">
-                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">Есть код доступа?</a>
-                    </div>
-                </div>
-
-                <div class="nda-body" id="nda-code-view" style="display: none;">
                     <div class="nda-text-block">
                         <p>Подписывая данное соглашение, вы обязуетесь:</p>
                         <ul>
@@ -131,22 +84,68 @@ const NDAManager = (() => {
 
                     <div class="form-group">
                         <label class="form-label">Полное имя</label>
-                        <input type="text" class="form-input" id="ndaCodeName" placeholder="Иван Иванов">
+                        <input type="text" class="form-input" id="ndaFullName" placeholder="Имя Фамилия">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="ndaEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Телефон</label>
+                        <input type="tel" class="form-input" id="ndaPhone" placeholder="+7 (___) ___-__-__">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Компания</label>
+                        <input type="text" class="form-input" id="ndaCompany" placeholder="Название компании">
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
+                        <input type="checkbox" id="ndaAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
+                        <label for="ndaAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;">
+                            Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать полученную информацию.
+                        </label>
+                    </div>
+
+                    <button class="btn-pulse hover-trigger" id="ndaSubmitBtn" onclick="NDAManager.submit('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
+                        <span>ПОДПИСАТЬ & ОТПРАВИТЬ</span>
+                    </button>
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">Есть код доступа?</a>
+                    </div>
+                </div>
+
+                <div id="nda-code-view" style="display: none;">
+                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase;">Ввод кода доступа</h2>
+                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Вставьте ваш код доступа.</p>
+
+                    <div class="nda-text-block">
+                        <p>Подписывая данное соглашение, вы обязуетесь:</p>
+                        <ul>
+                            <li>Не раскрывать информацию о проектах R&D Lab третьим лицам</li>
+                            <li>Использовать полученную информацию исключительно для сотрудничества с A-LAB</li>
+                            <li>Не копировать и не распространять материалы без разрешения</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Полное имя</label>
+                        <input type="text" class="form-input" id="ndaCodeName" placeholder="Имя Фамилия">
                     </div>
                     <div class="form-group">
                         <label class="form-label" style="color: var(--tech-blue);">Код доступа</label>
-                        <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="border-color: rgba(0,229,255,0.2);">
+                        <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="border-color: rgba(0,229,255,0.2); color: #00E5FF; letter-spacing: 2px;">
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
                         <input type="checkbox" id="ndaCodeAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
                         <label for="ndaCodeAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;">
-                            Я принимаю условия NDA
+                            Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать полученную информацию.
                         </label>
                     </div>
 
-                    <button class="btn-pulse hover-trigger" id="ndaCodeSubmitBtn" onclick="NDAManager.submitCode('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
-                        <span>Активировать доступ</span>
+                    <button class="btn-pulse hover-trigger" id="ndaCodeSubmitBtn" onclick="NDAManager.submitCode('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5; background: #00e5ff; color: #000;">
+                        <span>АКТИВИРОВАТЬ ДОСТУП</span>
                     </button>
 
                     <div style="text-align: center; margin-top: 25px;">
@@ -465,7 +464,7 @@ const NDAManager = (() => {
     }
 
     function toggleView(view) {
-        const main = document.body.querySelector('.nda-body'); // first
+        const main = document.getElementById('nda-main-view');
         const code = document.getElementById('nda-code-view');
         if (view === 'code') {
             if (main) main.style.display = 'none';
