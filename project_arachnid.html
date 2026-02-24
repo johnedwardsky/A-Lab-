@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-LAB.TECH | ПРОЕКТ DELPHINUS</title>
+    <title>A-LAB.TECH | ПРОЕКТ СПРУТ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -282,13 +282,18 @@
             position: relative;
             overflow: hidden;
             margin-bottom: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .concept-visual img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            filter: contrast(1.1) brightness(0.9);
+            object-fit: contain;
+            /* Using contain to show the full holographic blueprint */
+            filter: contrast(1.1) brightness(1.2);
+            /* Slightly increase brightness for the hologram */
             transition: transform 0.5s ease-out;
         }
 
@@ -503,103 +508,146 @@
 
     <div class="container">
         <section class="hero">
-            <span class="project-tag">PROJECT_ID: DELPHINUS_X1</span>
-            <h1>AQUA EXOSKELETON</h1>
+            <span class="project-tag">PROJECT_ID: SPRUT_HUB_X1</span>
+            <h1>ПРОЕКТ СПРУТ</h1>
             <div class="project-goal">
                 <h4>ЦЕЛЬ ПРОЕКТА // PROJECT_GOAL</h4>
-                <p>Создание экзоскелета для многократного увеличения физических возможностей человека в водной среде.
-                </p>
+                <p>Автономная система роботизированной очистки днищ крупнотоннажных судов прямо на ходу.</p>
             </div>
             <p class="hero-desc">
-                Легкий гидродинамический экзоскелет, интегрирующий биомиметические формы и систему реактивного напора
-                для достижения беспрецедентной мобильности под водой.
+                Малый робот с передовой технологией магнитных присосок. Совместно с центральным обтекаемым хабом, роботы
+                "Спрут" перемещаются по периметру судна и гидроструями сверхвысокого давления очищают ракушки и морские
+                наросты.
             </p>
         </section>
 
         <div class="concept-visual hover-trigger">
-            <img src="delphinus_minimal.png" alt="Delphinus Minimal Concept" id="hero-img">
+            <img src="arachnid_hub_hologram.png" alt="Sprut Schematic Hub" id="hero-img">
             <div class="visual-overlay">
-                > PROTO_VERSION: 2.0 <br>
-                > MODE: FREEDIVING_ASSIST <br>
-                > DEPTH: 45M <br>
-                > STATUS: ACTIVE
+                > PROTO_VERSION: 3.1 <br>
+                > MODE: HULL_CLEANING <br>
+                > HUB_SPEED: 5 M/S <br>
+                > STATUS: DEPLOYED
             </div>
         </div>
 
         <div class="tech-grid">
             <div class="tech-card hover-trigger">
-                <h3>Эффективность</h3>
-                <p>Революционное увеличение показателей: штатная скорость плавания оператора возрастает с базовых 2 км/ч
-                    до экстремальных 10–15 км/ч (в пиковом режиме до 30 км/ч).</p>
+                <h3>Гидродинамический Хаб</h3>
+                <p>Умный обтекаемый хаб крепится к носовой части судна, снижая сопротивление воды. Двигаясь к корме, он
+                    служит единым узлом подачи воды под напором для группы роботов.</p>
             </div>
             <div class="tech-card hover-trigger">
-                <h3>Области применения</h3>
-                <p>Универсальная платформа для профессионального спорта, глубоководной науки, спасательных операций и
-                    длительных исследовательских миссий.</p>
+                <h3>Магнитная сцепка</h3>
+                <p>Усовершенствованные электромагнитные манипуляторы "Спрут" надежно удерживают робота на корпусе даже в
+                    условиях сильного течения во время движения судна на крейсерской скорости.</p>
             </div>
             <div class="tech-card hover-trigger">
-                <h3>Биометрия и Гидродинамика</h3>
-                <p>Форма, повторяющая анатомию дельфина, в сочетании с активным килевым плавником D-Fin, обеспечивает
-                    идеальную аэродинамику и устойчивость в потоке.</p>
+                <h3>AI-Анализ износа (Premium)</h3>
+                <p>Базовые модели имеют дистанционное управление с камер. В премиальной линейке искусственный интеллект
+                    автоматически оценивает качество работ и высчитывает частоту необходимых очисток.</p>
             </div>
         </div>
 
         <div class="perf-bar">
             <div class="perf-item">
-                <span class="perf-val">30</span>
-                <span class="perf-label">КМ/Ч МАКС. СКОРОСТЬ</span>
+                <span class="perf-val">98%</span>
+                <span class="perf-label">УДАЛЕНИЕ БИОЛОГИЧЕСКОГО СЛОЯ</span>
             </div>
             <div class="perf-item">
-                <span class="perf-val">X-FIT</span>
-                <span class="perf-label">ТРЕБОВАНИЯ К ПОДГОТОВКЕ</span>
+                <span class="perf-val">+15%</span>
+                <span class="perf-label">ЭКОНОМИЯ ТОПЛИВА СУДНА</span>
             </div>
             <div class="perf-item">
-                <span class="perf-val">0.08</span>
-                <span class="perf-label">КОЭФФИЦИЕНТ СОПРОТИВЛЕНИЯ</span>
+                <span class="perf-val">40K</span>
+                <span class="perf-label">PSI НАПОР СТРУИ</span>
             </div>
             <div class="perf-item">
-                <span class="perf-val">100%</span>
-                <span class="perf-label">НЕЙРО-СИНХРОНИЗАЦИЯ</span>
+                <span class="perf-val">300М</span>
+                <span class="perf-label">МАКСИМАЛЬНАЯ ГЛУБИНА</span>
             </div>
         </div>
 
-        <div class="sim-container">
-            <div class="sim-viewport" id="sim-view" style="background: #000;">
-                <iframe src="https://kinescope.io/embed/mMbxrQyEvYtags2D1admk1"
-                    allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope; accelerometer; clipboard-write;"
-                    frameborder="0" allowfullscreen
-                    style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;">
-                </iframe>
+        <div class="sim-container" style="margin-bottom: 50px;">
+            <div class="sim-details" style="grid-column: span 2;">
+                <span class="project-tag">ECONOMIC_IMPACT</span>
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Очистка без простоев</h2>
+                <p style="color: #888; line-height: 1.6; max-width: 800px;">Главное преимущество системы Спрут —
+                    возможность проводить очистку судна прямо на ходу в открытом море. Это исключает дорогостоящие
+                    простои в сухом доке. Роботы управляются дистанционно, а встроенные камеры с подсветкой позволяют
+                    оператору или ИИ следить за качеством очистки в режиме реального времени. Стоимость разработки и
+                    конфигурации системы формируется индивидуально под каждого клиента.</p>
             </div>
-            <div class="sim-details">
-                <span class="project-tag">REQUIREMENT: LEVEL_ELITE</span>
-                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Физическая подготовка</h2>
-                <p style="color: #888; line-height: 1.6;">Использование экзоскелета Delphinus требует исключительной
-                    выносливости и координации. Скорость в 20-30 км/ч в толще воды создает колоссальные нагрузки на
-                    опорно-двигательный аппарат. Доступ только после сертификации A-LAB X-Fit.</p>
+        </div>
+
+        <!-- PHOTO IN ACTION -->
+        <div class="action-photo" style="margin-bottom: 100px;">
+            <div class="sim-viewport" style="background: transparent;">
+                <img src="sprut_in_action.png" alt="Спрут в работе на днище судна"
+                    style="width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--border);">
+            </div>
+            <div
+                style="font-family: var(--font-code); color: var(--accent); font-size: 0.8rem; text-align: right; margin-top: 10px;">
+                > DEPLOYMENT CAMERA FEED: SECTOR 4
             </div>
         </div>
 
         <section class="contact-section">
             <div class="contact-card hover-trigger">
-                <h2 style="font-size: 2rem; margin-bottom: 20px;">Запрос на тестирование // REQUEST_ACCESS</h2>
-                <p style="color: #888;">Проект находится в стадии закрытого тестирования в глубоководных полигонах.</p>
+                <h2 style="font-size: 2rem; margin-bottom: 20px;">Связь с инженерами // REQUEST_CUSTOM_BUILD</h2>
+                <p style="color: #888;">Вся подробная информация и стоимость разработки под каждого клиента
+                    индивидуальна.</p>
                 <form id="contact-form">
                     <div class="form-grid">
-                        <input type="text" class="form-input" placeholder="ИМЯ (ФИО)" required>
+                        <input type="text" class="form-input" placeholder="КОМПАНИЯ / ФИО" required>
                         <input type="email" class="form-input" placeholder="EMAIL" required>
-                        <textarea class="form-textarea" placeholder="УРОВЕНЬ ПОДГОТОВКИ И ОПЫТ ПОГРУЖЕНИЙ"
+                        <textarea class="form-textarea" placeholder="ДАННЫЕ О СУДНЕ (КЛАСС, ТОННАЖ)"
                             style="grid-column: span 2; height: 100px;" required></textarea>
                     </div>
-                    <button type="submit" class="submit-btn hover-trigger">ОТПРАВИТЬ ЗАЯВКУ</button>
+                    <button type="submit" class="submit-btn hover-trigger">ОТПРАВИТЬ ЗАЯВКУ НА РАСЧЕТ</button>
                 </form>
             </div>
         </section>
+
+        <!-- PoE BLOCK -->
+        <section class="poe-section" style="margin-bottom: 100px;">
+            <div class="poe-card hover-trigger"
+                style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--accent); padding: 40px; border-radius: 4px; position: relative; overflow: hidden;">
+                <div
+                    style="position: absolute; top:0; left:0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent);">
+                </div>
+                <h3
+                    style="font-family: var(--font-code); color: var(--accent); margin-bottom: 15px; font-size: 1.2rem;">
+                    PROOF OF EXISTENCE</h3>
+
+                <div
+                    style="font-family: var(--font-code); font-size: 0.85rem; color: #aaa; margin-bottom: 20px; word-break: break-all;">
+                    <span style="color: #fff;">SHA-256 HASH:</span><br>
+                    <span id="poe-hash"
+                        style="color: var(--accent);">27cafffbddcc65ee5ffdb95f2d0186c527f00662d512a865cc857e49755b412b</span>
+                </div>
+
+                <p
+                    style="font-family: var(--font-main); font-size: 0.9rem; color: #888; max-width: 600px; margin-bottom: 20px;">
+                    This cryptographic hash verifies the timestamp and original existence of the Sprut project concepts,
+                    mechanics, and design files on the blockchain and internal A-LAB records.
+                </p>
+
+                <div style="display: flex; gap: 15px;">
+                    <button class="menu-btn hover-trigger"
+                        onclick="alert('Verification protocol initiated. Matching hash against decentralized ledger...');"
+                        style="background: rgba(255,255,255,0.1);">VERIFY HASH</button>
+                    <a href="project_arachnid_hash.txt" target="_blank" class="menu-btn hover-trigger"
+                        style="background: rgba(255,255,255,0.1);">VIEW RAW FILE</a>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <footer>
-        <div>© 2026 ARTIFACT LAB // AQUATIC DIVISION</div>
-        <div>HYDRO-LINK SECURED // DATA ENCRYPTED</div>
+        <div>© 2026 ARTIFACT LAB // ROBOTICS DIVISION</div>
+        <div>HULL-CLEANING SECURED // DATA ENCRYPTED</div>
     </footer>
 
     <script>
@@ -615,14 +663,6 @@
             el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
         });
 
-        // CANVAS SIMULATION REMOVED (Replaced by Video)
-        const simView = document.getElementById('sim-view');
-        let width, height;
-        function resize() {
-            // Placeholder for layout management if needed
-        }
-        window.addEventListener('resize', resize);
-
         // FORM
         const form = document.getElementById('contact-form');
         form.addEventListener('submit', (e) => {
@@ -633,7 +673,7 @@
                 btn.innerText = 'REQUEST_SENT';
                 btn.style.borderColor = '#00FF41';
                 btn.style.color = '#00FF41';
-                alert('Заявка принята. Система оценит ваш уровень подготовки.');
+                alert('Заявка принята. Инженеры свяжутся с вами для расчета стоимости.');
                 form.reset();
             }, 1500);
         });
@@ -671,14 +711,14 @@
     <script>
         // Enforce NDA protection
         if (window.NDAManager) {
-            NDAManager.enforce('dolphin_exoskeleton');
+            NDAManager.enforce('sprut');
         }
 
         async function fundProject() {
             const amt = document.getElementById('fundAmount').value;
             if (!amt || amt <= 0) return;
             if (window.Web3Manager) {
-                await Web3Manager.sendFunding(amt, 'dolphin_exoskeleton');
+                await Web3Manager.sendFunding(amt, 'sprut');
             }
         }
     </script>
