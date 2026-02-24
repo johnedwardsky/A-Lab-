@@ -1140,7 +1140,14 @@
             <form id="ndaForm" onsubmit="handleNdaSubmit(event)">
                 <input type="text" id="nda-name" class="form-input" placeholder="Имя Фамилия" required>
                 <input type="email" id="nda-email" class="form-input" placeholder="Корпоративная почта" required>
+                <input type="tel" id="nda-phone" class="form-input" placeholder="Номер контактного телефона" required>
                 <input type="text" id="nda-company" class="form-input" placeholder="Название компании" required>
+
+                <div style="margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;">
+                    <input type="text" id="nda-access-code" class="form-input"
+                        placeholder="ЕСТЬ КОД ДОСТУПА? (ОПЦИОНАЛЬНО)"
+                        style="border-color: rgba(0, 229, 255, 0.2); text-align: center;">
+                </div>
 
                 <label class="checkbox-container">
                     <input type="checkbox" id="nda-agree" required>
@@ -1508,14 +1515,24 @@
             const btn = e.target.querySelector('button');
             const originalText = btn.innerText;
 
+            const name = document.getElementById('nda-name').value;
+            const email = document.getElementById('nda-email').value;
+            const phone = document.getElementById('nda-phone').value;
+            const company = document.getElementById('nda-company').value;
+            const accessCode = document.getElementById('nda-access-code').value.toUpperCase();
+
+            // PATH A: CODE
+            const validCodes = ['ALAB-SPRUT-77', 'ALAB-DEEP-24', 'ALAB-HULL-91', 'ALAB-ROBO-15', 'ALAB-AQUA-33', 'ALAB-TECH-50', 'ALAB-NODE-08', 'ALAB-CORE-12', 'ALAB-FLOW-66', 'ALAB-LINK-99'];
+            if (accessCode && validCodes.includes(accessCode)) {
+                grantSevenDayAccess('code_authorized@a-lab.tech');
+                return;
+            }
+
+            // PATH B: FORM
             // Loading State
             btn.innerText = 'ENCRYPTING & SENDING...';
             btn.classList.add('btn-loading');
             btn.disabled = true;
-
-            const name = document.getElementById('nda-name').value;
-            const email = document.getElementById('nda-email').value;
-            const company = document.getElementById('nda-company').value;
 
             try {
                 // Determine Supabase client
@@ -1530,6 +1547,7 @@
                     const { error } = await sb.from('nda_requests').insert({
                         full_name: name,
                         email: email,
+                        phone: phone,
                         company: company,
                         status: 'pending'
                     });
@@ -1539,8 +1557,7 @@
                     await new Promise(r => setTimeout(r, 1500));
                 }
 
-                closeNdaModal();
-                showToast();
+                grantSevenDayAccess(email);
                 e.target.reset();
 
             } catch (err) {
@@ -1551,6 +1568,18 @@
                 btn.classList.remove('btn-loading');
                 btn.disabled = false;
             }
+        }
+
+        function grantSevenDayAccess(email) {
+            const expiry = new Date();
+            expiry.setDate(expiry.getDate() + 7);
+            document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
+
+            localStorage.setItem('alab_nda_email', email);
+            localStorage.setItem('alab_nda_signed', 'true');
+
+            closeNdaModal();
+            showToast();
         }
 
         document.getElementById('ndaModal').addEventListener('click', (e) => {

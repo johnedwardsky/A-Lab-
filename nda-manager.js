@@ -8,6 +8,13 @@
  */
 
 const NDAManager = (() => {
+    // Authorized Access Codes
+    const VALID_CODES = [
+        'ALAB-SPRUT-77', 'ALAB-DEEP-24', 'ALAB-HULL-91', 'ALAB-ROBO-15',
+        'ALAB-AQUA-33', 'ALAB-TECH-50', 'ALAB-NODE-08', 'ALAB-CORE-12',
+        'ALAB-FLOW-66', 'ALAB-LINK-99'
+    ];
+
     /**
      * Check if user has access to a locked project
      * @param {string} projectId - ID of the R&D project
@@ -17,6 +24,10 @@ const NDAManager = (() => {
     async function checkAccess(projectId, isAuthenticated = false) {
         // Registered residents auto-access ALL locked projects
         if (isAuthenticated) return true;
+
+        // Check for 7-day session cookie
+        const hasSessionCookie = document.cookie.split('; ').some(row => row.startsWith('alab_nda_session='));
+        if (hasSessionCookie) return true;
 
         // Check if guest has signed NDA for this project
         const signedEmail = localStorage.getItem('alab_nda_email');
@@ -84,8 +95,19 @@ const NDAManager = (() => {
                         <input type="email" class="form-input" id="ndaEmail" placeholder="your@email.com" autocomplete="email">
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Телефон</label>
+                        <input type="tel" class="form-input" id="ndaPhone" placeholder="+7 (___) ___-__-__">
+                    </div>
+                    <div class="form-group">
                         <label class="form-label" data-i18n="nda.company">Компания (необязательно)</label>
                         <input type="text" class="form-input" id="ndaCompany" placeholder="Компания" autocomplete="organization">
+                    </div>
+
+                    <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                        <div class="form-group">
+                            <label class="form-label" style="color: var(--tech-blue);">ЕСТЬ КОД ДОСТУПА? (ОПЦИОНАЛЬНО)</label>
+                            <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="border-color: rgba(0,229,255,0.2);">
+                        </div>
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
@@ -120,22 +142,35 @@ const NDAManager = (() => {
     async function submit(projectId, redirectUrl) {
         const fullName = document.getElementById('ndaFullName')?.value?.trim();
         const email = document.getElementById('ndaEmail')?.value?.trim();
+        const phone = document.getElementById('ndaPhone')?.value?.trim();
         const company = document.getElementById('ndaCompany')?.value?.trim();
+        const accessCode = document.getElementById('ndaAccessCode')?.value?.trim()?.toUpperCase();
         const accepted = document.getElementById('ndaAcceptCheckbox')?.checked;
 
-        if (!fullName || !email) {
-            if (typeof ALABToast !== 'undefined') ALABToast.error('Заполните имя и email');
+        // Path A: Access Code
+        if (accessCode && VALID_CODES.includes(accessCode)) {
+            if (!fullName) {
+                alert('Пожалуйста, введите имя для авторизации по коду');
+                return;
+            }
+            grantSevenDayAccess('code_authorized@a-lab.tech', redirectUrl);
+            return;
+        }
+
+        // Path B: Regular NDA Request
+        if (!fullName || !email || !phone) {
+            alert('Пожалуйста, заполните Имя, Email и Телефон');
             return;
         }
 
         if (!accepted) {
-            if (typeof ALABToast !== 'undefined') ALABToast.error('Необходимо принять условия NDA');
+            alert('Необходимо принять условия NDA');
             return;
         }
 
         // Basic email validation
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            if (typeof ALABToast !== 'undefined') ALABToast.error('Укажите корректный email');
+            alert('Укажите корректный email');
             return;
         }
 
@@ -145,9 +180,10 @@ const NDAManager = (() => {
                 const { error } = await sb.from('nda_agreements').insert({
                     user_email: email,
                     full_name: fullName,
+                    phone: phone,
                     company: company || null,
                     project_id: projectId || null,
-                    ip_address: null // Could be fetched from API
+                    ip_address: null
                 });
 
                 if (error) throw error;
@@ -156,11 +192,23 @@ const NDAManager = (() => {
             console.warn('[NDA] Save to DB failed, continuing locally:', e);
         }
 
+        grantSevenDayAccess(email, redirectUrl);
+    }
+
+    /**
+     * Helper to set cookie and grant access
+     */
+    function grantSevenDayAccess(email, redirectUrl) {
+        // Create a 7-day session cookie
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + 7);
+        document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
+
         // Save locally for future checks
         localStorage.setItem('alab_nda_email', email);
         localStorage.setItem('alab_nda_signed', 'true');
 
-        if (typeof ALABToast !== 'undefined') ALABToast.success(typeof t === 'function' ? t('nda.access_granted') : 'Доступ предоставлен');
+        if (typeof ALABToast !== 'undefined') ALABToast.success('Доступ предоставлен на 7 дней');
 
         closeModal();
 
