@@ -159,6 +159,9 @@ const Web3Manager = (() => {
     return { init, connectWallet, getAccount, sendFunding };
 })();
 
+// Expose to window for global access
+window.Web3Manager = Web3Manager;
+
 // Auto-init
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => Web3Manager.init());

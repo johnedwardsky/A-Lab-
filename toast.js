@@ -145,4 +145,7 @@
         info: (msg, dur) => show(msg, 'info', dur),
         show
     };
+
+    // Alias for compatibility
+    window.ALABToast = window.ALabToast;
 })();

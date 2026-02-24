@@ -424,6 +424,9 @@ const FundingManager = (() => {
     return { init, open, close, setTab, setAmount, sendEth, copyAddress };
 })();
 
+// Expose to window
+window.FundingManager = FundingManager;
+
 // Auto-init
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => FundingManager.init());
