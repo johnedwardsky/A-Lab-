@@ -8,6 +8,30 @@
  */
 
 const NDAManager = (() => {
+    // Authorized Access Codes
+    const VALID_CODES = [
+        'ALAB-SPRUT-77',
+        'ALAB-DEEP-24',
+        'ALAB-HULL-91',
+        'ALAB-ROBO-15',
+        'ALAB-AQUA-33',
+        'ALAB-TECH-50',
+        'ALAB-NODE-08',
+        'ALAB-CORE-12',
+        'ALAB-FLOW-66',
+        'ALAB-LINK-99',
+        'ALAB2024DEV',
+        'ALAB2024TEST',
+        'ALAB2024PROD',
+        'ALAB2024QA',
+        'ALAB2024ALPHA',
+        'ALAB2024BETA',
+        'ALAB2024DEMO',
+        'ALAB2024VIP',
+        'ALAB2024GUEST',
+        'ALAB2024ADMIN'
+    ];
+
     /**
      * Check if user has access to a locked project
      * @param {string} projectId - ID of the R&D project
@@ -402,33 +426,35 @@ const NDAManager = (() => {
         document.head.appendChild(style);
     }
 
+
+
     /**
      * Submit access code
      */
     async function submitCode(projectId, redirectUrl) {
         const name = document.getElementById('ndaCodeName')?.value?.trim();
-        const code = document.getElementById('ndaAccessCode')?.value?.trim();
+        const code = document.getElementById('ndaAccessCode')?.value?.trim()?.toUpperCase();
 
         if (!name || !code) {
             alert('Введите имя и код');
             return;
         }
 
-        // Simulate verification
-        if (code.toUpperCase().includes('ALAB')) {
+        // Verify against the authorized list
+        if (VALID_CODES.includes(code)) {
             // Set 7-day session cookie
             const expiry = new Date();
             expiry.setDate(expiry.getDate() + 7);
             document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
 
             localStorage.setItem('alab_nda_signed', 'true');
-            localStorage.setItem('alab_nda_email', 'code_authorized@a-lab.tech');
+            localStorage.setItem('alab_nda_email', `authorized_${code.toLowerCase()}@a-lab.tech`);
 
-            if (typeof ALABToast !== 'undefined') ALABToast.success('Доступ активирован на 7 дней!');
+            if (typeof ALABToast !== 'undefined') ALABToast.success('Код принят! Доступ активирован на 7 дней.');
             closeModal();
             if (redirectUrl) window.location.href = redirectUrl;
         } else {
-            alert('Неверный код доступа');
+            alert('Неверный или недействительный код доступа');
         }
     }
 
