@@ -139,9 +139,48 @@ const I18n = (() => {
     }
 
     /**
+     * Detect user language based on Geo-IP and browser settings
+     */
+    async function detectLanguage() {
+        const saved = localStorage.getItem('alab_lang');
+        if (saved) return saved;
+
+        // 1. Primary check: Geo-IP (Targeting non-RF users)
+        try {
+            // Using a lightweight, free API for geo-detection
+            const response = await fetch('https://freeipapi.com/api/json', { signal: AbortSignal.timeout(2000) });
+            const data = await response.json();
+
+            if (data.countryCode && data.countryCode !== 'RU') {
+                console.log('[i18n] Non-RU Geo detected:', data.countryCode);
+                return 'en';
+            }
+        } catch (e) {
+            console.warn('[i18n] Geo-IP detection trace:', e.message);
+        }
+
+        // 2. Secondary check: Browser Language
+        const browserLang = navigator.language || navigator.userLanguage;
+        if (browserLang && !browserLang.startsWith('ru')) {
+            return 'en';
+        }
+
+        return 'ru'; // Default for RF or fallback
+    }
+
+    /**
      * Auto-init on DOM ready
      */
     async function init() {
+        // Detect if it's the first time
+        if (!localStorage.getItem('alab_lang')) {
+            const detected = await detectLanguage();
+            if (detected !== currentLang) {
+                await setLanguage(detected);
+                return;
+            }
+        }
+
         await loadTranslations();
         applyToDOM();
     }
