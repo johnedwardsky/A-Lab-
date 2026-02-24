@@ -679,27 +679,7 @@
         });
 
     </script>
-    <!-- Funding Section -->
-    <section class="contact-section">
-        <div class="contact-card hover-trigger"
-            style="background: linear-gradient(135deg, rgba(0,229,255,0.05), transparent); border-left: 4px solid var(--accent);">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap;">
-                <div>
-                    <h2 style="font-size: 2rem; margin-bottom: 10px;">ПОДДЕРЖАТЬ ИССЛЕДОВАНИЕ // FUND_RESEARCH</h2>
-                    <p style="color: #888; max-width: 600px;">Инвестиции в Delphinus X1 направляются на тестирование
-                        новых композитных материалов и нейро-интерфейсов.</p>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 15px; min-width: 250px;">
-                    <input type="number" id="fundAmount" class="form-input" placeholder="Amount (ETH)" step="0.05"
-                        value="0.1" style="height: 45px;">
-                    <button class="submit-btn hover-trigger" onclick="fundProject()" style="width: 100%;">SUPPORT WITH
-                        CRYPTO</button>
-                </div>
-            </div>
-        </div>
-    </section>
-    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
@@ -714,13 +694,7 @@
             NDAManager.enforce('sprut');
         }
 
-        async function fundProject() {
-            const amt = document.getElementById('fundAmount').value;
-            if (!amt || amt <= 0) return;
-            if (window.Web3Manager) {
-                await Web3Manager.sendFunding(amt, 'sprut');
-            }
-        }
+
     </script>
 </body>
 
