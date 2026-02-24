@@ -76,5 +76,26 @@ window.ALabCore = {
         } catch (err) {
             return { error: err.message };
         }
+    },
+
+    // Record a donation transaction
+    async recordDonation(projectId, amount, txHash, asset = 'ETH', comment = '') {
+        const db = getSupabase();
+        if (!db || !this.isConnected) return;
+
+        await this.log('donation', `Project ${projectId} funded with ${amount} ${asset}`, { txHash, projectId, amount, asset, comment });
+
+        try {
+            await db.from('donations').insert({
+                project_id: projectId,
+                amount: amount,
+                transaction_hash: txHash,
+                asset_type: asset,
+                comment: comment,
+                timestamp: new Date()
+            });
+        } catch (e) {
+            console.warn('[A-LAB] Could not save donation record to DB');
+        }
     }
 };

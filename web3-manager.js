@@ -114,13 +114,15 @@ const Web3Manager = (() => {
         document.dispatchEvent(event);
     }
 
+    const TREASURY = '0xf0BfE88fe0e0E7aaf8AEa24266EEe0344847b27C'; // Global A-LAB Treasury (ETH)
+
     async function sendFunding(amountEth, projectId) {
         if (!currentAccount || !isMetaMaskInstalled) {
             connectWallet();
             return;
         }
 
-        const recipient = '0x1234567890123456789012345678901234567890'; // A-LAB Treasury Plan
+        const recipient = TREASURY;
         const amountWei = (parseFloat(amountEth) * 1e18).toString(16);
 
         try {

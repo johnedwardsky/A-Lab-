@@ -1368,7 +1368,9 @@
                         </div>
                         <input type="number" id="fundAmount" class="form-input" placeholder="Custom Amount" step="0.01"
                             style="height: 40px; font-size: 0.8rem;">
-                        <button class="submit-btn hover-trigger" onclick="fundProject()">ОТПРАВИТЬ ETH</button>
+                        <button class="submit-btn hover-trigger"
+                            onclick="FundingManager.open('air_bridges', 'AIR BRIDGES')">ПОДДЕРЖАТЬ ПРОЕКТ //
+                            DONATE</button>
                     </div>
                 </div>
             </div>
@@ -1909,8 +1911,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
     <script src="nda-manager.js"></script>
+    <script src="i18n.js"></script>
     <script src="main-menu.js"></script>
     <script src="web3-manager.js"></script>
+    <script src="funding-manager.js"></script>
     <script src="toast.js"></script>
 
     <script>

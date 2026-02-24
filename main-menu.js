@@ -63,6 +63,13 @@ const MainMenu = (() => {
             desc_en: 'A closed community of innovators. Opening soon for A-LAB residents.',
             is_upcoming: true
         },
+        {
+            label_ru: 'Поддержать Лабораторию', label_en: 'Support A-LAB', url: '#',
+            code: 'FUNDING_NODE',
+            desc_ru: 'Внесите вклад в развитие открытых технологий и R&D проектов Artifact Lab.',
+            desc_en: 'Contribute to the development of open technologies and Artifact Lab R&D projects.',
+            onclick: 'FundingManager.open(\'ALAB\', \'ARTIFACT LAB\')'
+        }
     ];
 
     let menuItems = [];
@@ -135,6 +142,7 @@ const MainMenu = (() => {
                                    class="nav-link hover-trigger ${item.url === currentPage ? 'active' : ''}"
                                    data-index="${String(index + 1).padStart(2, '0')}"
                                    data-target="item-${index}"
+                                   ${item.onclick ? `onclick="event.preventDefault(); MainMenu.toggle(); ${item.onclick}"` : ''}
                                    target="${item.target || '_self'}">
                                     ${getLabel(item)}
                                 </a>

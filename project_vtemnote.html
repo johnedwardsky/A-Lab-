@@ -844,6 +844,24 @@
             </div>
         </div>
 
+        <!-- ==================== FUNDING ==================== -->
+        <div class="section" style="padding-bottom: 0;">
+            <div class="feature-card"
+                style="border-left: 4px solid var(--purple); background: rgba(155, 89, 182, 0.05);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap;">
+                    <div>
+                        <h2 style="font-size: 1.8rem; margin-bottom: 10px;">ПОДДЕРЖАТЬ ЭВОЛЮЦИЮ // FUNDING</h2>
+                        <p style="color: var(--muted); max-width: 600px; margin-bottom: 0;">Ваш вклад поможет нам
+                            сделать сенсорные программы доступнее. Все средства направляются на развитие инклюзивных
+                            проектов.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="FundingManager.open('vtemnote', 'V_TEMNOTE')"
+                        style="min-width: 200px;">ПОДДЕРЖАТЬ // DONATE</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ==================== WHITEPAPER / PoE ==================== -->
         <div id="whitepaper" class="section">
             <div class="section-num">SECTION 07 · PROOF-OF-EXISTENCE</div>
@@ -884,6 +902,9 @@
 
     <script src="i18n.js"></script>
     <script src="main-menu.js"></script>
+    <script src="web3-manager.js"></script>
+    <script src="funding-manager.js"></script>
+    <script src="toast.js"></script>
 </body>
 
 </html>

@@ -1102,9 +1102,51 @@
                 [ INITIALIZING R&D DATA STREAM... ]</div>
         </div>
 
+        <!-- R&D Support Form Core -->
+        <div
+            style="max-width: 900px; margin: 80px auto; padding: 40px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 30px; position: relative; overflow: hidden;">
+            <div
+                style="position: absolute; top:0; left:0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.5;">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                <div>
+                    <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 10px; color: white;"
+                        data-i18n="page_rd.funding_title">ПОДДЕРЖАТЬ R&D ЛАБОРАТОРИЮ</h2>
+                    <p style="color: #888; line-height: 1.6;" data-i18n="page_rd.funding_desc">
+                        Ваша поддержка ускоряет создание открытых технологий будущего. Вы можете внести вклад анонимно
+                        или оставить комментарий для команды Artifact Lab.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label
+                            style="display: block; font-family: var(--font-code); font-size: 0.7rem; color: #555; margin-bottom: 10px; text-transform: uppercase;">Комментарий
+                            / Пожелание (Опционально)</label>
+                        <textarea id="rd-funding-comment"
+                            placeholder="Напишите что-нибудь или оставьте пустым для анонимного доната..."
+                            style="width: 100%; height: 120px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 15px; color: white; padding: 20px; font-family: inherit; font-size: 0.9rem; resize: none; transition: 0.3s;"></textarea>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <button class="btn-action hover-trigger" style="flex: 1; margin: 0; padding: 20px;"
+                            onclick="const comment = document.getElementById('rd-funding-comment').value; FundingManager.open('RD_CORE', 'R&D LAB'); if(comment) setTimeout(() => { document.getElementById('fundingComment').value = comment; }, 100);">
+                            ОТПРАВИТЬ ПОДДЕРЖКУ (CRYPTO)
+                        </button>
+                    </div>
+
+                    <div
+                        style="font-family: var(--font-code); font-size: 0.6rem; color: #444; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+                        [ SECURE TRANSACTION VIA A-LAB DAO PROTOCOL ]
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <script src="cases-engine.js?v=1.2"></script>
+    <!-- Cases engine, etc. -->
 
     <!-- STEALTH MODE / NDA SECTION -->
     <div class="stealth-section">
@@ -1572,8 +1614,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
     <script src="i18n.js"></script>
-    <script src="nda-manager.js"></script>
     <script src="main-menu.js"></script>
+    <script src="nda-manager.js"></script>
+    <script src="web3-manager.js"></script>
+    <script src="funding-manager.js"></script>
+    <script src="toast.js"></script>
 </body>
 
 </html>
