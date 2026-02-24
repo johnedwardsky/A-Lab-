@@ -8,30 +8,6 @@
  */
 
 const NDAManager = (() => {
-    // Authorized Access Codes
-    const VALID_CODES = [
-        'ALAB-SPRUT-77',
-        'ALAB-DEEP-24',
-        'ALAB-HULL-91',
-        'ALAB-ROBO-15',
-        'ALAB-AQUA-33',
-        'ALAB-TECH-50',
-        'ALAB-NODE-08',
-        'ALAB-CORE-12',
-        'ALAB-FLOW-66',
-        'ALAB-LINK-99',
-        'ALAB2024DEV',
-        'ALAB2024TEST',
-        'ALAB2024PROD',
-        'ALAB2024QA',
-        'ALAB2024ALPHA',
-        'ALAB2024BETA',
-        'ALAB2024DEMO',
-        'ALAB2024VIP',
-        'ALAB2024GUEST',
-        'ALAB2024ADMIN'
-    ];
-
     /**
      * Check if user has access to a locked project
      * @param {string} projectId - ID of the R&D project
@@ -42,11 +18,7 @@ const NDAManager = (() => {
         // Registered residents auto-access ALL locked projects
         if (isAuthenticated) return true;
 
-        // Check for 7-day session cookie first
-        const hasSessionCookie = document.cookie.split('; ').some(row => row.startsWith('alab_nda_session='));
-        if (hasSessionCookie) return true;
-
-        // Check legacy localStorage fallback
+        // Check if guest has signed NDA for this project
         const signedEmail = localStorage.getItem('alab_nda_email');
         if (!signedEmail) return false;
 
@@ -83,78 +55,49 @@ const NDAManager = (() => {
         modal.id = 'nda-modal';
         modal.innerHTML = `
             <div class="nda-backdrop" onclick="NDAManager.closeModal()"></div>
-            <div class="nda-dialog" style="padding:0; overflow:hidden;">
-                <button class="nda-close hover-trigger" onclick="NDAManager.closeModal()" style="z-index: 10;">✕</button>
-                
-                <div id="nda-form-section" style="padding: 40px;">
-                    <div class="nda-header">
-                        <div style="font-size: 2.2rem; margin-bottom: 5px;">🔒</div>
-                        <h2 data-i18n="nda.title">NDA Верификация</h2>
-                        <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">
-                            Для доступа к проекту необходимо подтвердить личность.
-                        </p>
-                    </div>
-
-                    <div class="nda-body">
-                        <div class="form-group" style="margin-bottom: 12px;">
-                            <label class="form-label" style="font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Полное имя</label>
-                            <input type="text" class="form-input" id="ndaFullName" placeholder="Имя Фамилия" style="background: rgba(255,255,255,0.02); height: 45px;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 12px;">
-                            <label class="form-label" style="font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Email</label>
-                            <input type="email" class="form-input" id="ndaEmail" placeholder="email@corp.com" style="background: rgba(255,255,255,0.02); height: 45px;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 12px;">
-                            <label class="form-label" style="font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Телефон</label>
-                            <input type="tel" class="form-input" id="ndaPhone" placeholder="+7 (___) ___-__-__" style="background: rgba(255,255,255,0.02); height: 45px;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <label class="form-label" style="font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Компания</label>
-                            <input type="text" class="form-input" id="ndaCompany" placeholder="Организация" style="background: rgba(255,255,255,0.02); height: 45px;">
-                        </div>
-
-                        <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 25px;">
-                            <input type="checkbox" id="ndaAcceptCheckbox" style="width: 18px; height: 18px; margin-top: 2px;">
-                            <label for="ndaAcceptCheckbox" style="font-size: 0.75rem; color: #888; line-height: 1.4;">
-                                Я принимаю условия соглашения о неразглашении конфиденциальной информации.
-                            </label>
-                        </div>
-
-                        <button class="btn-pulse hover-trigger" id="ndaSubmitBtn" onclick="NDAManager.submit('${projectId}', '${redirectUrl}')" disabled 
-                            style="opacity: 0.5; width: 100%; height: 50px; background: white; color: black; border: none; font-weight: 700; letter-spacing: 1px;">
-                            ПОДПИСАТЬ СОГЛАШЕНИЕ
-                        </button>
-                        
-                        <div style="text-align: center; margin-top: 30px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px;">
-                            <a href="javascript:void(0)" onclick="NDAManager.toggleView('code')" style="color: #666; font-size: 0.7rem; text-decoration: none; font-family: 'JetBrains Mono';">ЕСТЬ КОД ДОСТУПА?</a>
-                        </div>
-                    </div>
+            <div class="nda-dialog">
+                <button class="nda-close hover-trigger" onclick="NDAManager.closeModal()">✕</button>
+                <div class="nda-header">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">🔒</div>
+                    <h2 data-i18n="nda.title">NDA Верификация</h2>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">
+                        Доступ к данному проекту R&D требует подписания соглашения о неразглашении.
+                    </p>
                 </div>
 
-                <div id="nda-code-section" style="display: none; padding: 40px;">
-                    <div class="nda-header">
-                        <div style="font-size: 2.2rem; margin-bottom: 5px;">🔑</div>
-                        <h2>ACCESS CODE</h2>
-                        <p style="color: #888; font-size: 0.85rem; margin-top: 8px;">Введите персональный код доступа.</p>
+                <div class="nda-body">
+                    <div class="nda-text-block">
+                        <p>Подписывая данное соглашение, вы обязуетесь:</p>
+                        <ul>
+                            <li>Не раскрывать информацию о проектах R&D Lab третьим лицам</li>
+                            <li>Использовать полученную информацию исключительно для сотрудничества с A-LAB</li>
+                            <li>Не копировать и не распространять материалы без разрешения</li>
+                        </ul>
                     </div>
-                    <div class="nda-body">
-                         <div class="form-group" style="margin-bottom: 12px;">
-                            <label class="form-label" style="font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Имя Фамилия</label>
-                            <input type="text" class="form-input" id="ndaCodeName" placeholder="Иван Иванов" style="background: rgba(255,255,255,0.02); height: 45px;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 25px;">
-                            <label class="form-label" style="font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">Код доступа</label>
-                            <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" 
-                                style="background: rgba(0, 229, 255, 0.02); height: 55px; border-color: #00E5FF; color: #00E5FF; text-align: center; font-size: 1.2rem; font-family: 'JetBrains Mono'; letter-spacing: 3px;">
-                        </div>
-                        <button class="btn-pulse hover-trigger" onclick="NDAManager.submitCode('${projectId}', '${redirectUrl}')" 
-                            style="width: 100%; height: 50px; background: #00E5FF; color: black; border: none; font-weight: 700; letter-spacing: 1px;">
-                            АКТИВИРОВАТЬ ДОСТУП
-                        </button>
-                        <div style="text-align: center; margin-top: 30px;">
-                            <a href="javascript:void(0)" onclick="NDAManager.toggleView('form')" style="color: #666; font-size: 0.7rem; text-decoration: none; font-family: 'JetBrains Mono';">ВЕРНУТЬСЯ К ЗАЯВКЕ</a>
-                        </div>
+
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="nda.full_name">Полное имя</label>
+                        <input type="text" class="form-input" id="ndaFullName" placeholder="Иван Иванов" autocomplete="name">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="nda.email">Email</label>
+                        <input type="email" class="form-input" id="ndaEmail" placeholder="your@email.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="nda.company">Компания (необязательно)</label>
+                        <input type="text" class="form-input" id="ndaCompany" placeholder="Компания" autocomplete="organization">
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
+                        <input type="checkbox" id="ndaAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
+                        <label for="ndaAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;" data-i18n="auth.nda_accept">
+                            Я принимаю условия NDA
+                        </label>
+                    </div>
+
+                    <button class="btn-pulse hover-trigger" id="ndaSubmitBtn" onclick="NDAManager.submit('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
+                        <span data-i18n="auth.nda_submit">Подписать и продолжить</span>
+                    </button>
                 </div>
             </div>
         `;
@@ -177,13 +120,11 @@ const NDAManager = (() => {
     async function submit(projectId, redirectUrl) {
         const fullName = document.getElementById('ndaFullName')?.value?.trim();
         const email = document.getElementById('ndaEmail')?.value?.trim();
-        const phone = document.getElementById('ndaPhone')?.value?.trim();
         const company = document.getElementById('ndaCompany')?.value?.trim();
         const accepted = document.getElementById('ndaAcceptCheckbox')?.checked;
 
-        if (!fullName || !email || !phone) {
-            if (typeof ALABToast !== 'undefined') ALABToast.error('Заполните обязательные поля (Имя, Email, Телефон)');
-            alert('Пожалуйста, заполните Имя, Email и Телефон');
+        if (!fullName || !email) {
+            if (typeof ALABToast !== 'undefined') ALABToast.error('Заполните имя и email');
             return;
         }
 
@@ -204,10 +145,9 @@ const NDAManager = (() => {
                 const { error } = await sb.from('nda_agreements').insert({
                     user_email: email,
                     full_name: fullName,
-                    phone: phone,
                     company: company || null,
                     project_id: projectId || null,
-                    ip_address: null
+                    ip_address: null // Could be fetched from API
                 });
 
                 if (error) throw error;
@@ -215,11 +155,6 @@ const NDAManager = (() => {
         } catch (e) {
             console.warn('[NDA] Save to DB failed, continuing locally:', e);
         }
-
-        // Create a 7-day session cookie
-        const expiry = new Date();
-        expiry.setDate(expiry.getDate() + 7);
-        document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
 
         // Save locally for future checks
         localStorage.setItem('alab_nda_email', email);
@@ -426,54 +361,5 @@ const NDAManager = (() => {
         document.head.appendChild(style);
     }
 
-
-
-    /**
-     * Submit access code
-     */
-    async function submitCode(projectId, redirectUrl) {
-        const name = document.getElementById('ndaCodeName')?.value?.trim();
-        const code = document.getElementById('ndaAccessCode')?.value?.trim()?.toUpperCase();
-
-        if (!name || !code) {
-            alert('Введите имя и код');
-            return;
-        }
-
-        // Verify against the authorized list
-        if (VALID_CODES.includes(code)) {
-            // Set 7-day session cookie
-            const expiry = new Date();
-            expiry.setDate(expiry.getDate() + 7);
-            document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
-
-            localStorage.setItem('alab_nda_signed', 'true');
-            localStorage.setItem('alab_nda_email', `authorized_${code.toLowerCase()}@a-lab.tech`);
-
-            if (typeof ALABToast !== 'undefined') ALABToast.success('Код принят! Доступ активирован на 7 дней.');
-            closeModal();
-            if (redirectUrl) window.location.href = redirectUrl;
-        } else {
-            alert('Неверный или недействительный код доступа');
-        }
-    }
-
-    /**
-     * Toggle modal views
-     */
-    function toggleView(view) {
-        const formSec = document.getElementById('nda-form-section');
-        const codeSec = document.getElementById('nda-code-section');
-        if (!formSec || !codeSec) return;
-
-        if (view === 'code') {
-            formSec.style.display = 'none';
-            codeSec.style.display = 'block';
-        } else {
-            formSec.style.display = 'block';
-            codeSec.style.display = 'none';
-        }
-    }
-
-    return { checkAccess, showModal, submit, submitCode, toggleView, closeModal, gate, enforce };
+    return { checkAccess, showModal, submit, closeModal, gate };
 })();

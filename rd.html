@@ -755,7 +755,7 @@
 
 
             <!-- AIR BRIDGES -->
-            <div class="rd-card hover-trigger" onclick="NDAManager.gate('air_bridges', 'project_air_bridges.html')"
+            <div class="rd-card hover-trigger" onclick="window.location.href='project_air_bridges.html'"
                 style="cursor: pointer;">
                 <div class="card-image" style="background: #000;">
                     <div class="scan-line"></div>
@@ -824,7 +824,7 @@
             </div>
 
             <!-- ARACHNID X1: HULL CLEANING -->
-            <div class="rd-card hover-trigger" onclick="NDAManager.gate('sprut', 'project_arachnid.html')"
+            <div class="rd-card hover-trigger" onclick="window.location.href='project_arachnid.html'"
                 style="cursor: pointer;">
                 <div class="card-image">
                     <div class="scan-line" style="background: #00E5FF;"></div>
@@ -864,7 +864,7 @@
 
         <div class="rd-grid">
             <!-- M01: PERSONAL SYSTEM -->
-            <div class="rd-card hover-trigger" onclick="NDAManager.gate('m01_internal', 'm01-internal.html')"
+            <div class="rd-card hover-trigger" onclick="window.location.href='m01-internal.html'"
                 style="cursor: pointer;">
                 <div class="card-image">
                     <div class="scan-line"></div>
@@ -958,8 +958,7 @@
 
         <div class="rd-grid">
             <!-- CHAMELEON OS -->
-            <div class="rd-card hover-trigger" onclick="NDAManager.gate('chameleon_os', 'rd-os.html')"
-                style="cursor: pointer;">
+            <div class="rd-card hover-trigger" onclick="window.location.href='rd-os.html'" style="cursor: pointer;">
                 <div class="card-image" style="background: #030407;">
                     <div class="scan-line" style="background: #00ff88;"></div>
                     <div class="data-grid"></div>
@@ -1028,7 +1027,7 @@
             </div>
 
             <!-- ВТЕМНОТЕ -->
-            <div class="rd-card hover-trigger" onclick="NDAManager.gate('vtemnote', 'project_vtemnote.html')"
+            <div class="rd-card hover-trigger" onclick="window.location.href='project_vtemnote.html'"
                 style="cursor: pointer;">
                 <div class="card-image" style="background: #000;">
                     <div class="scan-line" style="background: #9b59b6;"></div>
@@ -1106,115 +1105,26 @@
     <script src="cases-engine.js?v=1.2"></script>
 
     <!-- STEALTH MODE / NDA SECTION -->
-    <div class="stealth-section"
-        style="padding: 100px 20px; text-align: center; background: #000; position: relative; overflow: hidden;">
-        <div class="stealth-bg" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity: 0.3;">
+    <div class="stealth-section">
+        <div class="stealth-bg">
             <div class="stealth-card"></div>
             <div class="stealth-card"></div>
             <div class="stealth-card"></div>
         </div>
 
-        <div class="stealth-overlay" style="position: relative; z-index: 2;">
-            <div class="lock-icon" style="font-size: 3rem; margin-bottom: 20px;">🔒</div>
-            <h2 style="font-size: 2.5rem; margin-bottom: 15px; letter-spacing: 2px;">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH
-                СТАРТАПЫ</h2>
-            <p style="color: #888; max-width: 700px; margin: 0 auto 30px; line-height: 1.6;">
-                Доступ к информации о проектах в режиме "Stealth" предоставляется только аккредитованным партнерам после
-                подтверждения личности или ввода персонального кода доступа.
-            </p>
-            <div
-                style="font-family: var(--font-code); color: var(--accent); margin-bottom: 40px; letter-spacing: 3px; font-size: 0.8rem;">
-                ACCESS LEVEL: RESTRICTED</div>
+        <div class="stealth-overlay">
+            <div class="lock-icon">🔒</div>
+            <h2 data-i18n="page_rd.stealth_title">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH СТАРТАПЫ</h2>
+            <p data-i18n="page_rd.stealth_desc">Доступ к информации о проектах в режиме "Stealth" предоставляется
+                только
+                аккредитованным партнерам после
+                подписания NDA.</p>
+            <div style="font-family: var(--font-code); color: var(--accent); margin-bottom: 30px;">ACCESS LEVEL:
+                RESTRICTED</div>
 
-            <div id="inline-nda-request-section"
-                style="max-width: 500px; margin: 0 auto; text-align: left; background: rgba(10,10,15,0.8); padding: 40px; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-                <form id="inlineNdaForm" onsubmit="handleNdaSubmit(event)">
-                    <div style="margin-bottom: 15px;">
-                        <label
-                            style="font-family: var(--font-code); font-size: 0.65rem; color: #555; text-transform: uppercase;">Full
-                            Name</label>
-                        <input type="text" id="inline-nda-name" class="form-input" placeholder="Имя Фамилия" required
-                            style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); height: 45px;">
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <label
-                            style="font-family: var(--font-code); font-size: 0.65rem; color: #555; text-transform: uppercase;">Corporate
-                            Email</label>
-                        <input type="email" id="inline-nda-email" class="form-input" placeholder="email@corp.com"
-                            required
-                            style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); height: 45px;">
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <label
-                            style="font-family: var(--font-code); font-size: 0.65rem; color: #555; text-transform: uppercase;">Contact
-                            Phone</label>
-                        <input type="tel" id="inline-nda-phone" class="form-input" placeholder="+7 (___) ___-__-__"
-                            required
-                            style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); height: 45px;">
-                    </div>
-                    <div style="margin-bottom: 25px;">
-                        <label
-                            style="font-family: var(--font-code); font-size: 0.65rem; color: #555; text-transform: uppercase;">Company</label>
-                        <input type="text" id="inline-nda-company" class="form-input" placeholder="Organization"
-                            required
-                            style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); height: 45px;">
-                    </div>
-
-                    <label class="checkbox-container" style="margin-bottom: 30px;">
-                        <input type="checkbox" id="inline-nda-agree" required>
-                        <span class="checkmark"></span>
-                        <span class="label-text" style="font-size: 0.75rem; color: #777;">Я соглашаюсь с условиями NDA и
-                            политикой обработки данных.</span>
-                    </label>
-
-                    <button type="submit" class="btn-submit hover-trigger"
-                        style="width: 100%; height: 55px; background: white; color: black; border: none; font-weight: 700; border-radius: 4px; letter-spacing: 1px;">ПОДПИСАТЬ
-                        & ОТПРАВИТЬ</button>
-
-                    <div
-                        style="text-align: center; margin-top: 30px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 25px;">
-                        <a href="javascript:void(0)" onclick="toggleInlineNdaView('code')"
-                            style="color: #555; font-family: var(--font-code); font-size: 0.7rem; text-decoration: none; letter-spacing: 1px; transition: 0.3s;"
-                            onmouseover="this.style.color='#00E5FF'" onmouseout="this.style.color='#555'">УЖЕ ЕСТЬ КОД
-                            ДОСТУПА?</a>
-                    </div>
-                </form>
-            </div>
-
-            <div id="inline-nda-code-section"
-                style="display: none; max-width: 500px; margin: 0 auto; text-align: left; background: rgba(10,10,15,0.8); padding: 40px; border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 12px; backdrop-filter: blur(20px); box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);">
-                <form id="inlineNdaCodeForm" onsubmit="handleCodeSubmit(event)">
-                    <div style="margin-bottom: 20px;">
-                        <label
-                            style="font-family: var(--font-code); font-size: 0.65rem; color: #555; text-transform: uppercase;">Full
-                            Name</label>
-                        <input type="text" id="inline-nda-code-name" class="form-input" placeholder="Имя Фамилия"
-                            required
-                            style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.1); height: 45px;">
-                    </div>
-                    <div style="margin-bottom: 30px;">
-                        <label
-                            style="font-family: var(--font-code); font-size: 0.65rem; color: #555; text-transform: uppercase;">Access
-                            Code</label>
-                        <input type="text" id="inline-nda-access-code" class="form-input" placeholder="ALAB-XXXX"
-                            required
-                            style="letter-spacing: 5px; text-align: center; font-family: var(--font-code); border-color: var(--tech-blue); color: var(--tech-blue); font-weight: 700; background: rgba(0, 229, 255, 0.05); height: 60px; font-size: 1.2rem;">
-                    </div>
-
-                    <button type="submit" class="btn-submit hover-trigger"
-                        style="width: 100%; height: 55px; background: var(--tech-blue); color: black; border: none; font-weight: 700; border-radius: 4px; letter-spacing: 1px;">АКТИВИРОВАТЬ
-                        ДОСТУП</button>
-
-                    <div style="text-align: center; margin-top: 30px;">
-                        <a href="javascript:void(0)" onclick="toggleInlineNdaView('request')"
-                            style="color: #555; font-family: var(--font-code); font-size: 0.7rem; text-decoration: none; letter-spacing: 1px; transition: 0.3s;"
-                            onmouseover="this.style.color='white'" onmouseout="this.style.color='#555'">← ВЕРНУТЬСЯ К
-                            ЗАЯВКЕ</a>
-                    </div>
-                </form>
-            </div>
+            <button class="btn-action hover-trigger" onclick="openNdaModal()" data-i18n="page_rd.stealth_btn">ЗАПРОСИТЬ
+                ДОСТУП & ПОДПИСАТЬ NDA</button>
         </div>
-    </div>
     </div>
 
     </div>
@@ -1223,63 +1133,24 @@
     <div class="modal" id="ndaModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeNdaModal()">&times;</span>
+            <h2 style="color:var(--text); margin-bottom:10px;">NDA ACCESS REQUEST</h2>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">Подпишите электронное соглашение о
+                неразглашении для доступа к закрытым материалам.</p>
 
-            <div id="nda-request-section">
-                <h2 style="color:var(--text); margin-bottom:10px;">NDA ACCESS REQUEST</h2>
-                <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">Подпишите электронное соглашение о
-                    неразглашении для доступа к закрытым материалам.</p>
+            <form id="ndaForm" onsubmit="handleNdaSubmit(event)">
+                <input type="text" id="nda-name" class="form-input" placeholder="Имя Фамилия" required>
+                <input type="email" id="nda-email" class="form-input" placeholder="Корпоративная почта" required>
+                <input type="text" id="nda-company" class="form-input" placeholder="Название компании" required>
 
-                <form id="ndaForm" onsubmit="handleNdaSubmit(event)">
-                    <input type="text" id="nda-name" class="form-input" placeholder="Имя Фамилия" required>
-                    <input type="email" id="nda-email" class="form-input" placeholder="Корпоративная почта" required>
-                    <input type="tel" id="nda-phone" class="form-input" placeholder="Номер контактного телефона"
-                        required>
-                    <input type="text" id="nda-company" class="form-input" placeholder="Название компании" required>
+                <label class="checkbox-container">
+                    <input type="checkbox" id="nda-agree" required>
+                    <span class="checkmark"></span>
+                    <span class="label-text">Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать
+                        полученную информацию.</span>
+                </label>
 
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="nda-agree" required>
-                        <span class="checkmark"></span>
-                        <span class="label-text">Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать
-                            полученную информацию.</span>
-                    </label>
-
-                    <button type="submit" class="btn-submit hover-trigger">ПОДПИСАТЬ & ОТПРАВИТЬ</button>
-
-                    <div
-                        style="text-align: center; margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; opacity: 0.5;">
-                        <span
-                            style="color: #555; font-family: var(--font-code); font-size: 0.7rem; letter-spacing: 2px;">ИЛИ</span>
-                    </div>
-
-                    <div style="margin-top: 20px;">
-                        <button type="button" class="btn-submit hover-trigger" onclick="toggleNdaView('code')"
-                            style="background: rgba(255, 255, 255, 0.03); border-color: rgba(255,255,255,0.1); color: #666; font-size: 0.75rem;">
-                            ЕСТЬ КОД ДОСТУПА</button>
-                    </div>
-                </form>
-            </div>
-
-            <div id="nda-code-section" style="display: none;">
-                <h2 style="color:var(--text); margin-bottom:10px;">ACCESS CODE</h2>
-                <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">Введите ваш персональный код доступа и имя
-                    для мгновенной авторизации.</p>
-
-                <form id="ndaCodeForm" onsubmit="handleCodeSubmit(event)">
-                    <input type="text" id="nda-code-name" class="form-input" placeholder="Имя Фамилия" required>
-                    <input type="text" id="nda-access-code" class="form-input" placeholder="КОД ДОСТУПА" required
-                        style="letter-spacing: 4px; text-align: center; font-family: var(--font-code); border-color: var(--tech-blue); color: var(--tech-blue); font-weight: 700;">
-
-                    <button type="submit" class="btn-submit hover-trigger"
-                        style="border-color: var(--tech-blue); color: var(--tech-blue);">АКТИВИРОВАТЬ</button>
-
-                    <div style="text-align: center; margin-top: 25px;">
-                        <a href="javascript:void(0)" onclick="toggleNdaView('request')"
-                            style="color: #555; font-family: var(--font-code); font-size: 0.7rem; text-decoration: none; letter-spacing: 1px; border-bottom: 1px solid transparent; transition: 0.3s;"
-                            onmouseover="this.style.color='white'" onmouseout="this.style.color='#555'">← ВЕРНУТЬСЯ К
-                            ЗАЯВКЕ</a>
-                    </div>
-                </form>
-            </div>
+                <button type="submit" class="btn-submit hover-trigger">ПОДПИСАТЬ & ОТПРАВИТЬ</button>
+            </form>
         </div>
     </div>
 
@@ -1632,66 +1503,6 @@
             }, 5000);
         }
 
-        function toggleInlineNdaView(view) {
-            const reqSec = document.getElementById('inline-nda-request-section');
-            const codeSec = document.getElementById('inline-nda-code-section');
-            if (view === 'code') {
-                reqSec.style.display = 'none';
-                codeSec.style.display = 'block';
-            } else {
-                reqSec.style.display = 'block';
-                codeSec.style.display = 'none';
-            }
-        }
-
-        async function handleCodeSubmit(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const originalText = btn.innerText;
-
-            btn.innerText = 'VERIFYING...';
-            btn.disabled = true;
-
-            const isInline = e.target.id === 'inlineNdaCodeForm';
-            const nameId = isInline ? 'inline-nda-code-name' : 'nda-code-name';
-            const codeId = isInline ? 'inline-nda-access-code' : 'nda-access-code';
-
-            const name = document.getElementById(nameId).value;
-            const code = document.getElementById(codeId).value;
-
-            try {
-                if (window.NDAManager && typeof window.NDAManager.submitCode === 'function') {
-                    // Reuse the centralized logic if possible, or simulate here
-                    // For simplicity and immediate effect, we'll use the centralized keys we just added
-                    const VALID_CODES = [
-                        'ALAB-SPRUT-77', 'ALAB-DEEP-24', 'ALAB-HULL-91', 'ALAB-ROBO-15',
-                        'ALAB-AQUA-33', 'ALAB-TECH-50', 'ALAB-NODE-08', 'ALAB-CORE-12',
-                        'ALAB-FLOW-66', 'ALAB-LINK-99', 'ALAB2024DEV', 'ALAB2024TEST',
-                        'ALAB2024PROD', 'ALAB2024QA', 'ALAB2024ALPHA', 'ALAB2024BETA',
-                        'ALAB2024DEMO', 'ALAB2024VIP', 'ALAB2024GUEST', 'ALAB2024ADMIN'
-                    ];
-
-                    if (VALID_CODES.includes(code.toUpperCase())) {
-                        const expiry = new Date();
-                        expiry.setDate(expiry.getDate() + 7);
-                        document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
-                        localStorage.setItem('alab_nda_signed', 'true');
-
-                        alert(`Access granted for ${name}. Loading secure data stream...`);
-                        closeNdaModal();
-                        window.location.reload();
-                    } else {
-                        alert('Invalid Access Code.');
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-            } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
-        }
-
         async function handleNdaSubmit(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button');
@@ -1702,11 +1513,9 @@
             btn.classList.add('btn-loading');
             btn.disabled = true;
 
-            const isInline = e.target.id === 'inlineNdaForm';
-            const name = document.getElementById(isInline ? 'inline-nda-name' : 'nda-name').value;
-            const email = document.getElementById(isInline ? 'inline-nda-email' : 'nda-email').value;
-            const phone = document.getElementById(isInline ? 'inline-nda-phone' : 'nda-phone').value;
-            const company = document.getElementById(isInline ? 'inline-nda-company' : 'nda-company').value;
+            const name = document.getElementById('nda-name').value;
+            const email = document.getElementById('nda-email').value;
+            const company = document.getElementById('nda-company').value;
 
             try {
                 // Determine Supabase client
@@ -1721,7 +1530,6 @@
                     const { error } = await sb.from('nda_requests').insert({
                         full_name: name,
                         email: email,
-                        phone: phone,
                         company: company,
                         status: 'pending'
                     });
@@ -1734,7 +1542,6 @@
                 closeNdaModal();
                 showToast();
                 e.target.reset();
-                alert('NDA Request Sent Successfully.');
 
             } catch (err) {
                 console.error('NDA Error:', err);
