@@ -249,28 +249,7 @@ const NDAManager = (() => {
         grantSevenDayAccess(email, redirectUrl);
     }
 
-    /**
-     * Helper to set cookie and grant access
-     */
-    function grantSevenDayAccess(email, redirectUrl) {
-        // Create a 7-day session cookie
-        const expiry = new Date();
-        expiry.setDate(expiry.getDate() + 7);
-        document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
 
-        // Save locally for future checks
-        localStorage.setItem('alab_nda_email', email);
-        localStorage.setItem('alab_nda_signed', 'true');
-
-        if (typeof ALABToast !== 'undefined') ALABToast.success('Доступ предоставлен на 7 дней');
-
-        closeModal();
-
-        // Redirect
-        if (redirectUrl) {
-            setTimeout(() => { window.location.href = redirectUrl; }, 1000);
-        }
-    }
 
     /**
      * Close modal
@@ -420,6 +399,67 @@ const NDAManager = (() => {
 
             .nda-text-block li {
                 margin-bottom: 6px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+                text-align: left;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #555;
+                margin-bottom: 6px;
+                font-family: var(--font-code);
+            }
+
+            .form-input {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 12px 16px;
+                color: #fff;
+                font-size: 0.95rem;
+                transition: 0.3s;
+                font-family: var(--font-main);
+            }
+
+            .form-input:focus {
+                outline: none;
+                border-color: var(--tech-blue);
+                background: rgba(0, 229, 255, 0.05);
+            }
+
+            .btn-pulse {
+                width: 100%;
+                background: var(--tech-blue, #00e5ff);
+                color: #000;
+                border: none;
+                border-radius: 12px;
+                padding: 16px;
+                font-weight: 800;
+                font-family: var(--font-code);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                cursor: pointer;
+                transition: 0.3s;
+                margin-top: 10px;
+                box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+            }
+
+            .btn-pulse:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 229, 255, 0.5);
+            }
+
+            .btn-pulse:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                filter: grayscale(1);
             }
 
             /* Light theme */
