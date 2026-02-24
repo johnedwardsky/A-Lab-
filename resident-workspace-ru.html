@@ -1214,6 +1214,7 @@
     <script src="astra-manager.js"></script>
     <script src="shared-projects-manager.js"></script>
     <script src="message-manager.js"></script>
+    <script src="dao-manager.js"></script>
     <script src="nda-manager.js"></script>
 
     <script>
@@ -1230,6 +1231,7 @@
             if (profileId) {
                 console.log('[WORKSPACE] Initializing managers with profile ID:', profileId);
                 if (typeof AstraManager !== 'undefined') AstraManager.init(profileId);
+                if (typeof DaoManager !== 'undefined') DaoManager.init(profileId);
                 if (typeof ProjectsManager !== 'undefined') ProjectsManager.init(profileId);
                 if (typeof AnalyticsManager !== 'undefined') AnalyticsManager.init();
                 if (typeof CommunityManager !== 'undefined') CommunityManager.init();
