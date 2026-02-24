@@ -66,11 +66,11 @@ const NDAManager = (() => {
         modal.id = 'nda-modal';
         modal.innerHTML = `
             <div class="nda-backdrop" onclick="NDAManager.closeModal()"></div>
-            <div class="nda-dialog" style="padding: 40px; max-width: 500px; border-radius: 24px; position: relative;">
+            <div class="nda-dialog" style="padding: 50px; max-width: 500px; border-radius: 24px; position: relative;">
                 <button class="nda-close hover-trigger" onclick="NDAManager.closeModal()" style="top: 20px; right: 20px;">✕</button>
                 
                 <div id="nda-main-view">
-                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase;">NDA ACCESS REQUEST</h2>
+                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">NDA ACCESS REQUEST</h2>
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Подпишите электронное соглашение о неразглашении для доступа к закрытым материалам.</p>
 
                     <div class="nda-text-block">
@@ -84,24 +84,24 @@ const NDAManager = (() => {
 
                     <div class="form-group">
                         <label class="form-label">Полное имя</label>
-                        <input type="text" class="form-input" id="ndaFullName" placeholder="Имя Фамилия">
+                        <input type="text" class="form-input" id="ndaFullName" placeholder="Имя Фамилия" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="ndaEmail" placeholder="your@email.com">
+                        <input type="email" class="form-input" id="ndaEmail" placeholder="your@email.com" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Телефон</label>
-                        <input type="tel" class="form-input" id="ndaPhone" placeholder="+7 (___) ___-__-__">
+                        <input type="tel" class="form-input" id="ndaPhone" placeholder="Номер контактного телефона" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Компания</label>
-                        <input type="text" class="form-input" id="ndaCompany" placeholder="Название компании">
+                        <input type="text" class="form-input" id="ndaCompany" placeholder="Название компании" required>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
-                        <input type="checkbox" id="ndaAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
-                        <label for="ndaAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;">
+                    <div style="display: flex; align-items: flex-start; gap: 15px; margin: 25px 0;">
+                        <input type="checkbox" id="ndaAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer;">
+                        <label for="ndaAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer; color: #888; line-height: 1.4;">
                             Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать полученную информацию.
                         </label>
                     </div>
@@ -110,13 +110,13 @@ const NDAManager = (() => {
                         <span>ПОДПИСАТЬ & ОТПРАВИТЬ</span>
                     </button>
 
-                    <div style="text-align: center; margin-top: 25px;">
+                    <div style="text-align: center; margin-top: 30px;">
                         <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">Есть код доступа?</a>
                     </div>
                 </div>
 
                 <div id="nda-code-view" style="display: none;">
-                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase;">Ввод кода доступа</h2>
+                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">Ввод кода доступа</h2>
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Вставьте ваш код доступа.</p>
 
                     <div class="nda-text-block">
@@ -130,25 +130,25 @@ const NDAManager = (() => {
 
                     <div class="form-group">
                         <label class="form-label">Полное имя</label>
-                        <input type="text" class="form-input" id="ndaCodeName" placeholder="Имя Фамилия">
+                        <input type="text" class="form-input" id="ndaCodeName" placeholder="Имя Фамилия" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" style="color: var(--tech-blue);">Код доступа</label>
-                        <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="border-color: rgba(0,229,255,0.2); color: #00E5FF; letter-spacing: 2px;">
+                        <label class="form-label" style="color: var(--accent);">Код доступа</label>
+                        <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="letter-spacing: 2px;">
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
-                        <input type="checkbox" id="ndaCodeAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
-                        <label for="ndaCodeAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;">
+                    <div style="display: flex; align-items: flex-start; gap: 15px; margin: 25px 0;">
+                        <input type="checkbox" id="ndaCodeAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer;">
+                        <label for="ndaCodeAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer; color: #888; line-height: 1.4;">
                             Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать полученную информацию.
                         </label>
                     </div>
 
-                    <button class="btn-pulse hover-trigger" id="ndaCodeSubmitBtn" onclick="NDAManager.submitCode('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5; background: #00e5ff; color: #000;">
+                    <button class="btn-pulse hover-trigger" id="ndaCodeSubmitBtn" onclick="NDAManager.submitCode('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
                         <span>АКТИВИРОВАТЬ ДОСТУП</span>
                     </button>
 
-                    <div style="text-align: center; margin-top: 25px;">
+                    <div style="text-align: center; margin-top: 30px;">
                         <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('main')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">&larr; Вернуться к анкете</a>
                     </div>
                 </div>
@@ -329,35 +329,36 @@ const NDAManager = (() => {
 
             .nda-dialog {
                 position: relative;
-                background: var(--surface, #0b0d14);
-                border: 1px solid var(--border, rgba(255,255,255,0.06));
+                background: rgba(11, 13, 20, 0.9);
+                border: 1px solid rgba(255, 42, 42, 0.3);
                 border-radius: 24px;
                 max-width: 500px;
                 width: 90%;
-                max-height: 90vh;
+                max-height: 95vh;
                 overflow-y: auto;
-                padding: 40px;
-                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-                animation: ndaSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                padding: 50px;
+                box-shadow: 0 0 50px rgba(255, 42, 42, 0.1);
+                backdrop-filter: blur(20px);
+                animation: ndaScaleUp 0.3s forwards;
             }
 
-            @keyframes ndaSlideIn {
-                from { transform: translateY(30px); opacity: 0; }
-                to { transform: translateY(0); opacity: 1; }
+            @keyframes ndaScaleUp {
+                from { transform: scale(0.95); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
             }
 
             .nda-close {
                 position: absolute;
-                top: 15px;
-                right: 15px;
+                top: 25px;
+                right: 25px;
                 background: none;
-                border: 1px solid var(--border);
-                color: #888;
-                width: 36px;
-                height: 36px;
-                border-radius: 10px;
+                border: none;
+                color: #666;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
                 cursor: pointer;
-                font-size: 1.1rem;
+                font-size: 1.5rem;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -365,8 +366,9 @@ const NDAManager = (() => {
             }
 
             .nda-close:hover {
-                border-color: var(--accent);
-                color: var(--accent);
+                color: white;
+                background: rgba(255, 255, 255, 0.1);
+                transform: rotate(90deg);
             }
 
             .nda-header {
@@ -382,8 +384,8 @@ const NDAManager = (() => {
             }
 
             .nda-text-block {
-                background: rgba(0, 229, 255, 0.03);
-                border: 1px solid rgba(0, 229, 255, 0.1);
+                background: rgba(255, 42, 42, 0.05);
+                border: 1px solid rgba(255, 42, 42, 0.1);
                 border-radius: 12px;
                 padding: 20px;
                 margin-bottom: 25px;
@@ -421,26 +423,27 @@ const NDAManager = (() => {
                 background: rgba(255, 255, 255, 0.03);
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 12px;
-                padding: 12px 16px;
+                padding: 16px 20px;
                 color: #fff;
-                font-size: 0.95rem;
+                font-size: 1rem;
                 transition: 0.3s;
                 font-family: var(--font-main);
             }
 
             .form-input:focus {
                 outline: none;
-                border-color: var(--tech-blue);
-                background: rgba(0, 229, 255, 0.05);
+                border-color: var(--accent, #FF2A2A);
+                background: rgba(255, 42, 42, 0.05);
+                box-shadow: 0 0 20px rgba(255, 42, 42, 0.1);
             }
 
             .btn-pulse {
                 width: 100%;
-                background: var(--tech-blue, #00e5ff);
+                background: var(--accent, #FF2A2A);
                 color: #000;
                 border: none;
                 border-radius: 12px;
-                padding: 16px;
+                padding: 20px;
                 font-weight: 800;
                 font-family: var(--font-code);
                 text-transform: uppercase;
@@ -448,12 +451,12 @@ const NDAManager = (() => {
                 cursor: pointer;
                 transition: 0.3s;
                 margin-top: 10px;
-                box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+                box-shadow: 0 5px 20px rgba(255, 42, 42, 0.2);
             }
 
             .btn-pulse:hover:not(:disabled) {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(0, 229, 255, 0.5);
+                box-shadow: 0 10px 40px rgba(255, 42, 42, 0.5);
             }
 
             .btn-pulse:disabled {
