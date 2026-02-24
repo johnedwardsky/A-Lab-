@@ -48,7 +48,7 @@
             // Optional: Filter by visibility (handled by RLS or manually)
             const visibleList = this.residents.filter(r => {
                 const s = r.settings || {};
-                return s.visibility !== 'hidden';
+                return s.visibility !== 'hidden' && r.user_id !== 'ivan-lakshinsky';
             });
 
             if (visibleList.length === 0) return;
