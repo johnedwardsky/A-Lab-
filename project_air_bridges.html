@@ -520,6 +520,96 @@
             margin-top: 5px;
         }
 
+        /* --- PoE BLOCK --- */
+        .poe-block {
+            margin: 0 auto 80px;
+            max-width: 900px;
+            padding: 40px;
+            background: rgba(0, 229, 255, 0.03);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .poe-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--tech-blue), transparent);
+        }
+
+        .poe-tag {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: var(--tech-blue);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .poe-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .poe-desc {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .poe-hash-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+
+        .poe-hash-label {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--tech-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            min-width: 70px;
+        }
+
+        .poe-hash-value {
+            font-family: var(--font-code);
+            font-size: 0.72rem;
+            color: rgba(0, 229, 255, 0.9);
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .poe-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .poe-meta-item {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        .poe-meta-item span {
+            color: rgba(0, 229, 255, 0.7);
+        }
+
         footer {
             padding: 60px 40px;
             border-top: 1px solid var(--border);
@@ -1254,6 +1344,36 @@
             </div>
         </div>
 
+        <!-- Funding Section -->
+        <section class="container" style="padding-top: 0; margin-bottom: 60px;">
+            <div class="contact-card hover-trigger"
+                style="border-left: 4px solid var(--tech-blue); background: linear-gradient(90deg, rgba(0,229,255,0.05), transparent);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap;">
+                    <div>
+                        <h2 style="font-size: 2rem; margin-bottom: 10px;">ПОДДЕРЖАТЬ РАЗРАБОТКУ // FUNDING</h2>
+                        <p style="color: #888; max-width: 600px;">Ваш вклад ускорит создание децентрализованной
+                            логистической сети. Все донаты распределяются через смарт-контракт A-LAB DAO.</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 15px; min-width: 250px;">
+                        <div style="font-family: var(--font-code); font-size: 0.7rem; color: #555;">SELECT_AMOUNT (ETH)
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
+                                onclick="setFundAmount(0.01)">0.01</button>
+                            <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
+                                onclick="setFundAmount(0.1)">0.1</button>
+                            <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
+                                onclick="setFundAmount(1.0)">1.0</button>
+                        </div>
+                        <input type="number" id="fundAmount" class="form-input" placeholder="Custom Amount" step="0.01"
+                            style="height: 40px; font-size: 0.8rem;">
+                        <button class="submit-btn hover-trigger" onclick="fundProject()">ОТПРАВИТЬ ETH</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- CONTACT / INTEREST FORM -->
         <section class="contact-section">
             <div class="contact-card hover-trigger">
@@ -1285,11 +1405,6 @@
             </div>
         </section>
     </div>
-
-    <footer>
-        <div>© 2026 ARTIFACT LAB // R&D DIVISION</div>
-        <div>DATA ENCRYPTED // END-TO-END SYSTEM</div>
-    </footer>
 
     <script>
         // CURSOR
@@ -1764,35 +1879,32 @@
         });
 
     </script>
-    <!-- Funding Section -->
-    <section class="container" style="padding-top: 0; margin-bottom: 100px;">
-        <div class="contact-card hover-trigger"
-            style="border-left: 4px solid var(--tech-blue); background: linear-gradient(90deg, rgba(0,229,255,0.05), transparent);">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap;">
-                <div>
-                    <h2 style="font-size: 2rem; margin-bottom: 10px;">ПОДДЕРЖАТЬ РАЗРАБОТКУ // FUNDING</h2>
-                    <p style="color: #888; max-width: 600px;">Ваш вклад ускорит создание децентрализованной
-                        логистической сети. Все донаты распределяются через смарт-контракт A-LAB DAO.</p>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 15px; min-width: 250px;">
-                    <div style="font-family: var(--font-code); font-size: 0.7rem; color: #555;">SELECT_AMOUNT (ETH)
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
-                            onclick="setFundAmount(0.01)">0.01</button>
-                        <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
-                            onclick="setFundAmount(0.1)">0.1</button>
-                        <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
-                            onclick="setFundAmount(1.0)">1.0</button>
-                    </div>
-                    <input type="number" id="fundAmount" class="form-input" placeholder="Custom Amount" step="0.01"
-                        style="height: 40px; font-size: 0.8rem;">
-                    <button class="submit-btn hover-trigger" onclick="fundProject()">ОТПРАВИТЬ ETH</button>
-                </div>
+    <!-- ==================== PoE BLOCK ==================== -->
+    <section class="container" style="padding-top: 60px; margin-bottom: 40px;">
+        <div class="poe-block">
+            <div class="poe-tag">&gt; INTEGRITY // PROOF-OF-EXISTENCE</div>
+            <div class="poe-title">🔐 Криптографическая защита проекта</div>
+            <p class="poe-desc">Страница проекта «Воздушные мосты» криптографически хеширована (SHA-256)<br>для фиксации
+                авторства и первенства идеи по принципу Proof-of-Existence (PoE).</p>
+
+            <div class="poe-hash-row">
+                <div class="poe-hash-label">SHA-256</div>
+                <div class="poe-hash-value">4fc206b5e71eccb3075bbaadf6e77815751deee7cfeea67344bde382c55f422f</div>
+            </div>
+
+            <div class="poe-meta">
+                <div class="poe-meta-item">FILE: <span>project_air_bridges.html</span></div>
+                <div class="poe-meta-item">TIMESTAMP: <span>24 февраля 2026</span></div>
+                <div class="poe-meta-item">AUTHORS: <span>Ivan Lakshinsky · A-LAB.TECH R&amp;D</span></div>
+                <div class="poe-meta-item">STATUS: <span>VERIFIED</span></div>
             </div>
         </div>
     </section>
+
+    <footer>
+        <div>© 2026 ARTIFACT LAB // R&D DIVISION</div>
+        <div>DATA ENCRYPTED // END-TO-END SYSTEM</div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
