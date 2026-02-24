@@ -102,6 +102,21 @@ const MainMenu = (() => {
     }
 
     /**
+     * Get URL in current language (for pages with dedicated files)
+     */
+    function getURL(item) {
+        const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
+        if (lang === 'en') {
+            if (item.url === 'index.html') return 'index-en.html';
+            if (item.url === 'resident-admin-ru.html') return 'resident-admin-en.html';
+        } else {
+            if (item.url === 'index-en.html') return 'index.html';
+            if (item.url === 'resident-admin-en.html') return 'resident-admin-ru.html';
+        }
+        return item.url;
+    }
+
+    /**
      * Check auth status
      */
     function checkAuth() {
@@ -131,8 +146,8 @@ const MainMenu = (() => {
                         
                         <div class="menu-nav-list" style="margin-top: auto; margin-bottom: auto;">
                             ${menuItems.map((item, index) => `
-                                <a href="${item.url}" 
-                                   class="nav-link hover-trigger ${item.url === currentPage ? 'active' : ''}"
+                                <a href="${getURL(item)}" 
+                                   class="nav-link hover-trigger ${getURL(item) === currentPage ? 'active' : ''}"
                                    data-index="${String(index + 1).padStart(2, '0')}"
                                    data-target="item-${index}"
                                    ${item.onclick ? `onclick="event.preventDefault(); MainMenu.toggle(); ${item.onclick}"` : ''}
@@ -199,8 +214,23 @@ const MainMenu = (() => {
         if (typeof I18n !== 'undefined') {
             I18n.setLanguage(lang);
         }
-        // Re-render menu with new labels
-        render();
+        // Redirect if on a page that has a dedicated localized version
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        let targetPage = null;
+        if (lang === 'en') {
+            if (currentPage === 'index.html') targetPage = 'index-en.html';
+            if (currentPage === 'resident-admin-ru.html') targetPage = 'resident-admin-en.html';
+        } else {
+            if (currentPage === 'index-en.html') targetPage = 'index.html';
+            if (currentPage === 'resident-admin-en.html') targetPage = 'resident-admin-ru.html';
+        }
+
+        if (targetPage && targetPage !== currentPage) {
+            window.location.href = targetPage;
+        } else {
+            // Re-render menu with new labels if no redirect
+            render();
+        }
     }
 
     /**

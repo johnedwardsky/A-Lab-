@@ -14,6 +14,18 @@ const I18n = (() => {
     let translations = { ru: {}, en: {} };
     let loaded = false;
 
+    // Mapping for pages that have dedicated versions instead of just in-place translation
+    const pageMapping = {
+        'ru': {
+            'index-en.html': 'index.html',
+            'resident-admin-en.html': 'resident-admin-ru.html'
+        },
+        'en': {
+            'index.html': 'index-en.html',
+            'resident-admin-ru.html': 'resident-admin-en.html'
+        }
+    };
+
     /**
      * Load language files
      */
@@ -122,11 +134,24 @@ const I18n = (() => {
      * Set language and re-render
      */
     async function setLanguage(lang) {
+        const prevLang = currentLang;
         currentLang = lang;
         localStorage.setItem('alab_lang', lang);
         document.documentElement.lang = lang;
+
         if (!loaded) await loadTranslations();
         applyToDOM();
+
+        // Check for dedicated page redirect
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const targetPage = pageMapping[lang] ? pageMapping[lang][currentPage] : null;
+
+        if (targetPage && targetPage !== currentPage) {
+            console.log('[i18n] Redirecting to localized version:', targetPage);
+            window.location.href = targetPage;
+            return;
+        }
+
         // Fire event
         document.dispatchEvent(new CustomEvent('alab:lang-changed', { detail: { lang } }));
     }
