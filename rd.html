@@ -1133,24 +1133,63 @@
     <div class="modal" id="ndaModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeNdaModal()">&times;</span>
-            <h2 style="color:var(--text); margin-bottom:10px;">NDA ACCESS REQUEST</h2>
-            <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">Подпишите электронное соглашение о
-                неразглашении для доступа к закрытым материалам.</p>
 
-            <form id="ndaForm" onsubmit="handleNdaSubmit(event)">
-                <input type="text" id="nda-name" class="form-input" placeholder="Имя Фамилия" required>
-                <input type="email" id="nda-email" class="form-input" placeholder="Корпоративная почта" required>
-                <input type="text" id="nda-company" class="form-input" placeholder="Название компании" required>
+            <div id="nda-request-section">
+                <h2 style="color:var(--text); margin-bottom:10px;">NDA ACCESS REQUEST</h2>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">Подпишите электронное соглашение о
+                    неразглашении для доступа к закрытым материалам.</p>
 
-                <label class="checkbox-container">
-                    <input type="checkbox" id="nda-agree" required>
-                    <span class="checkmark"></span>
-                    <span class="label-text">Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать
-                        полученную информацию.</span>
-                </label>
+                <form id="ndaForm" onsubmit="handleNdaSubmit(event)">
+                    <input type="text" id="nda-name" class="form-input" placeholder="Имя Фамилия" required>
+                    <input type="email" id="nda-email" class="form-input" placeholder="Корпоративная почта" required>
+                    <input type="tel" id="nda-phone" class="form-input" placeholder="Номер контактного телефона"
+                        required>
+                    <input type="text" id="nda-company" class="form-input" placeholder="Название компании" required>
 
-                <button type="submit" class="btn-submit hover-trigger">ПОДПИСАТЬ & ОТПРАВИТЬ</button>
-            </form>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="nda-agree" required>
+                        <span class="checkmark"></span>
+                        <span class="label-text">Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать
+                            полученную информацию.</span>
+                    </label>
+
+                    <button type="submit" class="btn-submit hover-trigger">ПОДПИСАТЬ & ОТПРАВИТЬ</button>
+
+                    <div
+                        style="text-align: center; margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; opacity: 0.5;">
+                        <span
+                            style="color: #555; font-family: var(--font-code); font-size: 0.7rem; letter-spacing: 2px;">ИЛИ</span>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button type="button" class="btn-submit hover-trigger" onclick="toggleNdaView('code')"
+                            style="background: rgba(255, 255, 255, 0.03); border-color: rgba(255,255,255,0.1); color: #666; font-size: 0.75rem;">
+                            ЕСТЬ КОД ДОСТУПА</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="nda-code-section" style="display: none;">
+                <h2 style="color:var(--text); margin-bottom:10px;">ACCESS CODE</h2>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">Введите ваш персональный код доступа и имя
+                    для мгновенной авторизации.</p>
+
+                <form id="ndaCodeForm" onsubmit="handleCodeSubmit(event)">
+                    <input type="text" id="nda-code-name" class="form-input" placeholder="Имя Фамилия" required>
+                    <input type="text" id="nda-access-code" class="form-input" placeholder="КОД ДОСТУПА" required
+                        style="letter-spacing: 4px; text-align: center; font-family: var(--font-code); border-color: var(--tech-blue); color: var(--tech-blue); font-weight: 700;">
+
+                    <button type="submit" class="btn-submit hover-trigger"
+                        style="border-color: var(--tech-blue); color: var(--tech-blue);">АКТИВИРОВАТЬ</button>
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="javascript:void(0)" onclick="toggleNdaView('request')"
+                            style="color: #555; font-family: var(--font-code); font-size: 0.7rem; text-decoration: none; letter-spacing: 1px; border-bottom: 1px solid transparent; transition: 0.3s;"
+                            onmouseover="this.style.color='white'" onmouseout="this.style.color='#555'">← ВЕРНУТЬСЯ К
+                            ЗАЯВКЕ</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -1503,6 +1542,48 @@
             }, 5000);
         }
 
+        function toggleNdaView(view) {
+            const reqSec = document.getElementById('nda-request-section');
+            const codeSec = document.getElementById('nda-code-section');
+            if (view === 'code') {
+                reqSec.style.display = 'none';
+                codeSec.style.display = 'block';
+            } else {
+                reqSec.style.display = 'block';
+                codeSec.style.display = 'none';
+            }
+        }
+
+        async function handleCodeSubmit(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+
+            btn.innerText = 'VERIFYING...';
+            btn.disabled = true;
+
+            const name = document.getElementById('nda-code-name').value;
+            const code = document.getElementById('nda-access-code').value;
+
+            try {
+                // Simulate verification delay
+                await new Promise(r => setTimeout(r, 1200));
+
+                if (code.toUpperCase().includes('ALAB')) {
+                    closeNdaModal();
+                    alert(`Access granted for ${name}. Loading secure data stream...`);
+                    // In real scenario, would redirect or unlock content here
+                } else {
+                    alert('Invalid Access Code. Please try again or request regular access.');
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
         async function handleNdaSubmit(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button');
@@ -1515,6 +1596,7 @@
 
             const name = document.getElementById('nda-name').value;
             const email = document.getElementById('nda-email').value;
+            const phone = document.getElementById('nda-phone').value;
             const company = document.getElementById('nda-company').value;
 
             try {
@@ -1530,6 +1612,7 @@
                     const { error } = await sb.from('nda_requests').insert({
                         full_name: name,
                         email: email,
+                        phone: phone,
                         company: company,
                         status: 'pending'
                     });
