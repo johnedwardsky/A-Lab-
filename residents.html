@@ -755,9 +755,11 @@
 
     <div class="residents-grid">
         <!-- Ivan Lakshinsky -->
-        <a href="profile.html?id=ivan-lakshinsky" class="resident-card hover-trigger">
+        <a href="profile.html?id=ivan-lakshinsky"
+            onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+            class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="ivan_tech.png" alt="Ivan Lakshinsky">
+                <img src="Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky">
                 <div class="resident-status"></div>
             </div>
             <div class="resident-info">
@@ -780,7 +782,9 @@
         </a>
 
         <!-- Alexey Pak -->
-        <a href="profile.html?id=alexey-pak" class="resident-card hover-trigger">
+        <a href="profile.html?id=alexey-pak"
+            onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+            class="resident-card hover-trigger">
             <div class="resident-image">
                 <img src="alexey_tech.png" alt="Alexey Pak">
                 <div class="resident-status"></div>
@@ -804,7 +808,9 @@
             </div>
         </a>
         <!-- Alex River -->
-        <a href="profile.html?id=alex-river" class="resident-card hover-trigger">
+        <a href="profile.html?id=alex-river"
+            onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+            class="resident-card hover-trigger">
             <div class="resident-image">
                 <img src="alex_river.png" alt="Alex River">
                 <div class="resident-status"></div>
@@ -830,7 +836,9 @@
         </a>
 
         <!-- Maya Neural -->
-        <a href="profile.html?id=maya-neural" class="resident-card hover-trigger">
+        <a href="profile.html?id=maya-neural"
+            onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+            class="resident-card hover-trigger">
             <div class="resident-image">
                 <img src="maya_neural.png" alt="Maya Neural">
                 <div class="resident-status busy"></div>
@@ -855,7 +863,9 @@
         </a>
 
         <!-- Viktor Code -->
-        <a href="profile.html?id=viktor-code" class="resident-card hover-trigger">
+        <a href="profile.html?id=viktor-code"
+            onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+            class="resident-card hover-trigger">
             <div class="resident-image">
                 <img src="viktor_code.png" alt="Viktor Code">
                 <div class="resident-status"></div>
@@ -881,7 +891,9 @@
         </a>
 
         <!-- Sophia Brand -->
-        <a href="profile.html?id=sophia-brand" class="resident-card hover-trigger">
+        <a href="profile.html?id=sophia-brand"
+            onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+            class="resident-card hover-trigger">
             <div class="resident-image">
                 <img src="sophia_brand.png" alt="Sophia Brand">
                 <div class="resident-status away"></div>
@@ -906,7 +918,9 @@
         </a>
 
         <!-- Max Neural -->
-        <a href="profile.html?id=max-neural" class="resident-card hover-trigger">
+        <a href="profile.html?id=max-neural"
+            onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+            class="resident-card hover-trigger">
             <div class="resident-image">
                 <img src="max_neural.png" alt="Max Neural">
                 <div class="resident-status"></div>
@@ -931,30 +945,7 @@
             </div>
         </a>
 
-        <!-- Elena Motion -->
-        <a href="profile.html?id=elena-motion" class="resident-card hover-trigger">
-            <div class="resident-image">
-                <img src="elena_motion.png" alt="Elena Motion">
-                <div class="resident-status"></div>
-            </div>
-            <div class="resident-info">
-                <div class="resident-role" data-i18n="page_residents.elena_role">MOTION DESIGNER</div>
-                <h3 class="resident-name" data-i18n="page_residents.elena_name">Elena Motion</h3>
-                <p class="resident-bio" data-i18n="page_residents.elena_bio">Создает захватывающие анимации и
-                    motion-графику для digital-проектов и рекламных
-                    кампаний.</p>
-                <div class="resident-skills">
-                    <span class="skill-tag">AFTER EFFECTS</span>
-                    <span class="skill-tag">CINEMA 4D</span>
-                    <span class="skill-tag">3D</span>
-                </div>
-                <div class="resident-links">
-                    <div class="social-link">🎬</div>
-                    <div class="social-link">💼</div>
-                    <div class="social-link">📱</div>
-                </div>
-            </div>
-        </a>
+
     </div>
 
     <div class="quiz-modal" id="quizModal">

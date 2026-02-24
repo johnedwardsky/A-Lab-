@@ -37,10 +37,10 @@ const ResidentNav = {
                 <i>+</i> <span>${window.I18n?.t('nav.join') || 'ВСТУПИТЬ'}</span>
             </button>
             <nav style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                <a href="social-feed.html" class="nav-item hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}"><i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span></a>
+                <a href="${this.userLoggedIn ? 'social-feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}"><i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span></a>
                 <a href="residents.html" class="nav-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
-                <a href="messages.html" class="nav-item hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}"><i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span></a>
-                <a href="projects.html" class="nav-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
+                <a href="${this.userLoggedIn ? 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}"><i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span></a>
+                <a href="${this.userLoggedIn ? 'projects.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
             </nav>
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%;">
                 <button class="nav-item hover-trigger" style="background:none; border:none; width:100%;" onclick="ResidentNav.toggleTheme()">
@@ -57,10 +57,10 @@ const ResidentNav = {
         bottomNav.className = 'bottom-nav';
         bottomNav.innerHTML = `
             <a href="index.html" class="logo-bottom hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
-            <a href="social-feed.html" class="nav-item-bottom hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}">
+            <a href="${this.userLoggedIn ? 'social-feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}">
                 <i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span>
             </a>
-            <a href="messages.html" class="nav-item-bottom hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}">
+            <a href="${this.userLoggedIn ? 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}">
                 <i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span>
             </a>
             <button class="nav-item-bottom hover-trigger" onclick="ResidentNav.toggleTheme()">
@@ -78,7 +78,7 @@ const ResidentNav = {
 
         let moreItemsHTML = `
             <a href="residents.html" class="more-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
-            <a href="projects.html" class="more-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
+            <a href="${this.userLoggedIn ? 'projects.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="more-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
         `;
 
         // If we have custom items (e.g. for Admin page), prepend or replace
@@ -192,6 +192,44 @@ const ResidentNav = {
             openQuiz();
         } else {
             window.location.href = 'residents.html?join=true';
+        }
+    },
+
+    showRestrictedModal() {
+        if (document.getElementById('restrictedModal')) {
+            document.getElementById('restrictedModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            return;
+        }
+
+        const modal = document.createElement('div');
+        modal.id = 'restrictedModal';
+        modal.className = 'quiz-modal'; // Reuse quiz modal styles
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+            <div class="quiz-content" style="max-width: 500px; text-align: center;">
+                <span class="close-quiz" onclick="ResidentNav.closeRestrictedModal()">&times;</span>
+                <div style="margin-bottom: 30px;">
+                    <i style="font-size: 4rem; color: var(--accent); display: block; margin-bottom: 20px;">🔒</i>
+                    <h2 style="font-size: 1.8rem; text-transform: uppercase; margin-bottom: 15px;">ACCESS RESTRICTED</h2>
+                    <p style="color: #888; line-height: 1.6;">Вход в закрытую экосистему A-LAB доступен только резидентам. Пожалуйста, войдите в систему или подайте заявку на вступление.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <a href="login.html" class="btn-quiz-next" style="text-decoration: none; display: block;">ВОЙТИ В СИСТЕМУ // LOGIN</a>
+                    <button class="btn-quiz-back" style="margin: 0;" onclick="ResidentNav.closeRestrictedModal(); ResidentNav.handleJoinClick();">СТАТЬ РЕЗИДЕНТОМ // JOIN</button>
+                    <p style="font-family: var(--font-code); color: #444; font-size: 0.6rem; margin-top: 10px;">[ END-TO-END ENCRYPTED PROTOCOL ]</p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+    },
+
+    closeRestrictedModal() {
+        const modal = document.getElementById('restrictedModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
         }
     }
 };
