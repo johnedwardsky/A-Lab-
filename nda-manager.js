@@ -103,13 +103,6 @@ const NDAManager = (() => {
                         <input type="text" class="form-input" id="ndaCompany" placeholder="Компания" autocomplete="organization">
                     </div>
 
-                    <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1);">
-                        <div class="form-group">
-                            <label class="form-label" style="color: var(--tech-blue);">ЕСТЬ КОД ДОСТУПА? (ОПЦИОНАЛЬНО)</label>
-                            <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="border-color: rgba(0,229,255,0.2);">
-                        </div>
-                    </div>
-
                     <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
                         <input type="checkbox" id="ndaAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
                         <label for="ndaAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;" data-i18n="auth.nda_accept">
@@ -120,6 +113,45 @@ const NDAManager = (() => {
                     <button class="btn-pulse hover-trigger" id="ndaSubmitBtn" onclick="NDAManager.submit('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
                         <span data-i18n="auth.nda_submit">Подписать и продолжить</span>
                     </button>
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">Есть код доступа?</a>
+                    </div>
+                </div>
+
+                <div class="nda-body" id="nda-code-view" style="display: none;">
+                    <div class="nda-text-block">
+                        <p>Подписывая данное соглашение, вы обязуетесь:</p>
+                        <ul>
+                            <li>Не раскрывать информацию о проектах R&D Lab третьим лицам</li>
+                            <li>Использовать полученную информацию исключительно для сотрудничества с A-LAB</li>
+                            <li>Не копировать и не распространять материалы без разрешения</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Полное имя</label>
+                        <input type="text" class="form-input" id="ndaCodeName" placeholder="Иван Иванов">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="color: var(--tech-blue);">Код доступа</label>
+                        <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="border-color: rgba(0,229,255,0.2);">
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0;">
+                        <input type="checkbox" id="ndaCodeAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--tech-blue);">
+                        <label for="ndaCodeAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer;">
+                            Я принимаю условия NDA
+                        </label>
+                    </div>
+
+                    <button class="btn-pulse hover-trigger" id="ndaCodeSubmitBtn" onclick="NDAManager.submitCode('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
+                        <span>Активировать доступ</span>
+                    </button>
+
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('main')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">&larr; Вернуться к анкете</a>
+                    </div>
                 </div>
             </div>
         `;
@@ -130,10 +162,44 @@ const NDAManager = (() => {
         // Enable submit only when checkbox is checked
         const checkbox = document.getElementById('ndaAcceptCheckbox');
         const submitBtn = document.getElementById('ndaSubmitBtn');
-        checkbox.addEventListener('change', () => {
-            submitBtn.disabled = !checkbox.checked;
-            submitBtn.style.opacity = checkbox.checked ? '1' : '0.5';
-        });
+        if (checkbox && submitBtn) {
+            checkbox.addEventListener('change', () => {
+                submitBtn.disabled = !checkbox.checked;
+                submitBtn.style.opacity = checkbox.checked ? '1' : '0.5';
+            });
+        }
+
+        const codeCheckbox = document.getElementById('ndaCodeAcceptCheckbox');
+        const codeSubmitBtn = document.getElementById('ndaCodeSubmitBtn');
+        if (codeCheckbox && codeSubmitBtn) {
+            codeCheckbox.addEventListener('change', () => {
+                codeSubmitBtn.disabled = !codeCheckbox.checked;
+                codeSubmitBtn.style.opacity = codeCheckbox.checked ? '1' : '0.5';
+            });
+        }
+    }
+
+    /**
+     * Helper to set cookie and grant access
+     */
+    function grantSevenDayAccess(email, redirectUrl) {
+        // Create a 7-day session cookie
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + 7);
+        document.cookie = `alab_nda_session=true; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`;
+
+        // Save locally for future checks
+        localStorage.setItem('alab_nda_email', email);
+        localStorage.setItem('alab_nda_signed', 'true');
+
+        if (typeof ALABToast !== 'undefined') ALABToast.success('Доступ предоставлен на 7 дней');
+
+        closeModal();
+
+        // Redirect
+        if (redirectUrl) {
+            setTimeout(() => { window.location.href = redirectUrl; }, 1000);
+        }
     }
 
     /**
@@ -144,20 +210,9 @@ const NDAManager = (() => {
         const email = document.getElementById('ndaEmail')?.value?.trim();
         const phone = document.getElementById('ndaPhone')?.value?.trim();
         const company = document.getElementById('ndaCompany')?.value?.trim();
-        const accessCode = document.getElementById('ndaAccessCode')?.value?.trim()?.toUpperCase();
         const accepted = document.getElementById('ndaAcceptCheckbox')?.checked;
 
-        // Path A: Access Code
-        if (accessCode && VALID_CODES.includes(accessCode)) {
-            if (!fullName) {
-                alert('Пожалуйста, введите имя для авторизации по коду');
-                return;
-            }
-            grantSevenDayAccess('code_authorized@a-lab.tech', redirectUrl);
-            return;
-        }
 
-        // Path B: Regular NDA Request
         if (!fullName || !email || !phone) {
             alert('Пожалуйста, заполните Имя, Email и Телефон');
             return;
@@ -409,5 +464,39 @@ const NDAManager = (() => {
         document.head.appendChild(style);
     }
 
-    return { checkAccess, showModal, submit, closeModal, gate };
+    function toggleView(view) {
+        const main = document.body.querySelector('.nda-body'); // first
+        const code = document.getElementById('nda-code-view');
+        if (view === 'code') {
+            if (main) main.style.display = 'none';
+            if (code) code.style.display = 'block';
+        } else {
+            if (main) main.style.display = 'block';
+            if (code) code.style.display = 'none';
+        }
+    }
+
+    async function submitCode(projectId, redirectUrl) {
+        const fullName = document.getElementById('ndaCodeName')?.value?.trim();
+        const accessCode = document.getElementById('ndaAccessCode')?.value?.trim()?.toUpperCase();
+        const accepted = document.getElementById('ndaCodeAcceptCheckbox')?.checked;
+
+        if (!fullName || !accessCode) {
+            alert('Пожалуйста, введите имя и код доступа');
+            return;
+        }
+
+        if (!accepted) {
+            alert('Необходимо принять условия NDA');
+            return;
+        }
+
+        if (VALID_CODES.includes(accessCode)) {
+            grantSevenDayAccess('code_authorized@a-lab.tech', redirectUrl);
+        } else {
+            alert('Неверный код доступа');
+        }
+    }
+
+    return { checkAccess, showModal, submit, closeModal, gate, toggleView, submitCode };
 })();
