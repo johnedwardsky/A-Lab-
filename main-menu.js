@@ -62,13 +62,6 @@ const MainMenu = (() => {
             desc_ru: 'Закрытое сообщество инноваторов. Скоро будет открыто для резидентов A-LAB.',
             desc_en: 'A closed community of innovators. Opening soon for A-LAB residents.',
             is_upcoming: true
-        },
-        {
-            label_ru: 'Поддержать Лабораторию', label_en: 'Support A-LAB', url: '#',
-            code: 'FUNDING_NODE',
-            desc_ru: 'Внесите вклад в развитие открытых технологий и R&D проектов Artifact Lab.',
-            desc_en: 'Contribute to the development of open technologies and Artifact Lab R&D projects.',
-            onclick: 'FundingManager.open(\'ALAB\', \'ARTIFACT LAB\')'
         }
     ];
 
