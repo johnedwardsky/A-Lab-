@@ -224,6 +224,8 @@ const I18n = (() => {
     return { t, setLanguage, getLang, applyToDOM, init };
 })();
 
-// Global shortcuts
+// Global shortcuts and Window exposure
+window.I18n = I18n;
+window.t = I18n.t;
 const t = I18n.t;
 const setLanguage = I18n.setLanguage;
