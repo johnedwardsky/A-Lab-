@@ -1030,6 +1030,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>Превью</th>
                             <th>Название</th>
                             <th>Категория</th>
                             <th>Результат</th>
@@ -1040,7 +1041,7 @@
                     </thead>
                     <tbody id="projectsBody">
                         <tr>
-                            <td colspan="6" class="empty-state">
+                            <td colspan="7" class="empty-state">
                                 <div class="empty-icon">🗂️</div>
                                 <p>Нет проектов.</p>
                             </td>
@@ -1412,6 +1413,11 @@
                 const pJson = JSON.stringify(p).replace(/'/g, "&#39;");
                 return `
                 <tr>
+                    <td>
+                        <div style="width:40px; height:40px; border-radius:6px; overflow:hidden; background:rgba(255,255,255,0.05); border:1px solid var(--border);">
+                            <img src="${p.image_url || 'assets/img/A-lab-logo.svg'}" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                    </td>
                     <td style="color:var(--text); font-weight:600;">${p.title}</td>
                     <td><span class="badge badge-${p.category}">${p.category.toUpperCase()}</span></td>
                     <td>${p.result_value || '—'} ${p.result_label || ''}</td>
@@ -1641,6 +1647,21 @@
                 </div>
                 <div class="form-group"><label class="form-label">Описание</label>
                     <textarea class="form-textarea form-input" id="pDesc">${p.description || ''}</textarea></div>
+                
+                <div class="form-group">
+                    <label class="form-label">Изображение проекта</label>
+                    <div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:10px;">
+                        <div id="pImgPreview" style="width:80px; height:80px; border-radius:10px; background:rgba(255,255,255,0.05); border:1px solid var(--border); overflow:hidden;">
+                            <img src="${p.image_url || 'assets/img/A-lab-logo.svg'}" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                        <div style="flex:1;">
+                            <input type="file" id="pImgFile" accept="image/*" style="display:none;" onchange="handleProjectImageUpload(this)">
+                            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('pImgFile').click()" style="margin-bottom:8px;">Загрузить файл</button>
+                            <input class="form-input" id="pImgUrl" placeholder="Или вставьте URL..." value="${p.image_url || ''}" oninput="document.querySelector('#pImgPreview img').src = this.value || 'assets/img/A-lab-logo.svg'">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group"><label class="form-label">Порядок</label>
                     <input class="form-input" id="pOrder" type="number" value="${p.order_index || 0}"></div>
                 <div class="modal-footer">
@@ -1659,6 +1680,7 @@
                 result_value: document.getElementById('pResultVal').value,
                 result_label: document.getElementById('pResultLabel').value,
                 description: document.getElementById('pDesc').value,
+                image_url: document.getElementById('pImgUrl').value,
                 order_index: parseInt(document.getElementById('pOrder').value) || 0
             };
             try {
@@ -1674,6 +1696,38 @@
             } catch (err) {
                 alert('Ошибка сохранения: ' + err.message);
                 console.error(err);
+            }
+        }
+
+        async function handleProjectImageUpload(input) {
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const sb = window.supabase;
+            if (!sb) return;
+
+            const btn = input.nextElementSibling;
+            const originalText = btn.innerText;
+            btn.innerText = 'ЗАГРУЗКА...';
+            btn.disabled = true;
+
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `prj_${Math.random().toString(36).substring(2)}.${fileExt}`;
+                const filePath = `project-images/${fileName}`;
+
+                const { data, error } = await sb.storage.from('project-images').upload(filePath, file);
+                if (error) throw error;
+
+                const { data: { publicUrl } } = sb.storage.from('project-images').getPublicUrl(filePath);
+
+                document.getElementById('pImgUrl').value = publicUrl;
+                document.querySelector('#pImgPreview img').src = publicUrl;
+                btn.innerText = 'ГОТОВО';
+            } catch (err) {
+                alert('Ошибка загрузки: ' + err.message);
+                btn.innerText = originalText;
+            } finally {
+                btn.disabled = false;
             }
         }
 
