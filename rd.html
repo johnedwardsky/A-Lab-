@@ -643,6 +643,27 @@
             }
         }
 
+        /* --- R&D FOOTER GRID --- */
+        .rd-footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 100px 0 150px;
+        }
+
+        .rd-card.stealth-section:hover::before,
+        .rd-card.stealth-section:hover::after {
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 1024px) {
+            .rd-footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                margin: 40px 0 80px;
+            }
+        }
+
         /* --- FOOTER --- */
         footer {
             padding: 60px 40px;
@@ -1178,76 +1199,75 @@
                 [ INITIALIZING R&D DATA STREAM... ]</div>
         </div>
 
-        <!-- R&D Support Form Core -->
-        <div
-            style="max-width: 900px; margin: 80px auto; padding: 40px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 30px; position: relative; overflow: hidden;">
-            <div
-                style="position: absolute; top:0; left:0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.5;">
+        <div class="rd-footer-grid">
+            <!-- R&D Support Form Core -->
+            <div class="rd-card" style="padding: 60px 40px;">
+                <div style="display: flex; flex-direction: column; gap: 30px;">
+                    <div>
+                        <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 10px; color: white;"
+                            data-i18n="page_rd.funding_title">ПОДДЕРЖАТЬ R&D ЛАБОРАТОРИЮ</h2>
+                        <p style="color: #888; line-height: 1.6; font-size: 0.9rem;" data-i18n="page_rd.funding_desc">
+                            Ваша поддержка ускоряет создание открытых технологий будущего. Вы можете внести вклад
+                            анонимно
+                            или оставить комментарий для команды Artifact Lab.
+                        </p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label
+                                style="display: block; font-family: var(--font-code); font-size: 0.7rem; color: #555; margin-bottom: 10px; text-transform: uppercase;">Комментарий
+                                / Пожелание (Опционально)</label>
+                            <textarea id="rd-funding-comment"
+                                placeholder="Напишите что-нибудь или оставьте пустым для анонимного доната..."
+                                style="width: 100%; height: 120px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; padding: 20px; font-family: inherit; font-size: 0.9rem; resize: none; transition: 0.3s;"></textarea>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <button class="btn-action hover-trigger" style="flex: 1; margin: 0; padding: 20px;"
+                                onclick="const comment = document.getElementById('rd-funding-comment').value; FundingManager.open('RD_CORE', 'R&D LAB'); if(comment) setTimeout(() => { document.getElementById('fundingComment').value = comment; }, 100);"
+                                data-i18n="page_rd.funding_btn">
+                                ОТПРАВИТЬ ПОДДЕРЖКУ (CRYPTO)
+                            </button>
+                        </div>
+
+                        <div
+                            style="font-family: var(--font-code); font-size: 0.6rem; color: #444; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+                            [ SECURE TRANSACTION VIA A-LAB DAO PROTOCOL ]
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 30px;">
-                <div>
-                    <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 10px; color: white;"
-                        data-i18n="page_rd.funding_title">ПОДДЕРЖАТЬ R&D ЛАБОРАТОРИЮ</h2>
-                    <p style="color: #888; line-height: 1.6;" data-i18n="page_rd.funding_desc">
-                        Ваша поддержка ускоряет создание открытых технологий будущего. Вы можете внести вклад анонимно
-                        или оставить комментарий для команды Artifact Lab.
-                    </p>
+            <!-- STEALTH MODE / NDA SECTION -->
+            <div class="rd-card stealth-section" style="border-color: var(--accent);">
+                <div class="stealth-bg">
+                    <div class="stealth-card"></div>
+                    <div class="stealth-card"></div>
+                    <div class="stealth-card"></div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label
-                            style="display: block; font-family: var(--font-code); font-size: 0.7rem; color: #555; margin-bottom: 10px; text-transform: uppercase;">Комментарий
-                            / Пожелание (Опционально)</label>
-                        <textarea id="rd-funding-comment"
-                            placeholder="Напишите что-нибудь или оставьте пустым для анонимного доната..."
-                            style="width: 100%; height: 120px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 15px; color: white; padding: 20px; font-family: inherit; font-size: 0.9rem; resize: none; transition: 0.3s;"></textarea>
-                    </div>
-
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <button class="btn-action hover-trigger" style="flex: 1; margin: 0; padding: 20px;"
-                            onclick="const comment = document.getElementById('rd-funding-comment').value; FundingManager.open('RD_CORE', 'R&D LAB'); if(comment) setTimeout(() => { document.getElementById('fundingComment').value = comment; }, 100);"
-                            data-i18n="page_rd.funding_btn">
-                            ОТПРАВИТЬ ПОДДЕРЖКУ (CRYPTO)
-                        </button>
-                    </div>
-
+                <div class="stealth-overlay">
+                    <div class="lock-icon">🔒</div>
+                    <h2 data-i18n="page_rd.stealth_title" style="font-size: 1.8rem;">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH
+                        СТАРТАПЫ
+                    </h2>
+                    <p data-i18n="page_rd.stealth_desc" style="font-size: 0.9rem;">Доступ к информации о проектах в
+                        режиме "Stealth" предоставляется
+                        только
+                        аккредитованным партнерам после
+                        подписания NDA.</p>
                     <div
-                        style="font-family: var(--font-code); font-size: 0.6rem; color: #444; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
-                        [ SECURE TRANSACTION VIA A-LAB DAO PROTOCOL ]
-                    </div>
+                        style="font-family: var(--font-code); color: var(--accent); margin-bottom: 30px; font-size: 0.8rem;">
+                        ACCESS LEVEL:
+                        RESTRICTED</div>
+
+                    <button class="btn-danger hover-trigger" onclick="NDAManager.gate('stealth', '')"
+                        data-i18n="page_rd.stealth_btn" style="width: 100%;">ЗАПРОСИТЬ
+                        ДОСТУП & ПОДПИСАТЬ NDA</button>
                 </div>
             </div>
         </div>
-
-    </div>
-
-    <!-- Cases engine, etc. -->
-
-    <!-- STEALTH MODE / NDA SECTION -->
-    <div class="stealth-section">
-        <div class="stealth-bg">
-            <div class="stealth-card"></div>
-            <div class="stealth-card"></div>
-            <div class="stealth-card"></div>
-        </div>
-
-        <div class="stealth-overlay">
-            <div class="lock-icon">🔒</div>
-            <h2 data-i18n="page_rd.stealth_title">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH СТАРТАПЫ</h2>
-            <p data-i18n="page_rd.stealth_desc">Доступ к информации о проектах в режиме "Stealth" предоставляется
-                только
-                аккредитованным партнерам после
-                подписания NDA.</p>
-            <div style="font-family: var(--font-code); color: var(--accent); margin-bottom: 30px;">ACCESS LEVEL:
-                RESTRICTED</div>
-
-            <button class="btn-action hover-trigger" onclick="NDAManager.gate('stealth', '')"
-                data-i18n="page_rd.stealth_btn">ЗАПРОСИТЬ
-                ДОСТУП & ПОДПИСАТЬ NDA</button>
-        </div>
-    </div>
 
     </div>
 
@@ -1271,12 +1291,12 @@
         /* Stealth Section Styles */
         .stealth-section {
             position: relative;
-            margin-top: 150px;
-            padding: 100px 40px;
-            border: 1px solid var(--accent);
-            border-radius: 20px;
-            overflow: hidden;
-            background: rgba(10, 0, 0, 0.8);
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
         }
 
         .stealth-bg {
