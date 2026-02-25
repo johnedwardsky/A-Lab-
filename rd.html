@@ -1225,7 +1225,7 @@
 
                         <div style="display: flex; align-items: center; gap: 20px;">
                             <button class="btn-action hover-trigger" style="flex: 1; margin: 0; padding: 20px;"
-                                onclick="const comment = document.getElementById('rd-funding-comment').value; FundingManager.open('RD_CORE', 'R&D LAB'); if(comment) setTimeout(() => { document.getElementById('fundingComment').value = comment; }, 100);"
+                                onclick="const comment = document.getElementById('rd-funding-comment').value; FundingManager.open('RD_CORE', 'R&D LAB'); if(comment) { setTimeout(() => { const target = document.getElementById('fundingComment'); if(target) target.value = comment; }, 200); }"
                                 data-i18n="page_rd.funding_btn">
                                 ОТПРАВИТЬ ПОДДЕРЖКУ (CRYPTO)
                             </button>
