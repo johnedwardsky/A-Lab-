@@ -419,7 +419,7 @@ const ALabCases = {
                             <div class="spec-item">SECURE_NODE</div>
                             <div class="spec-item">ENCRYPTED_V2</div>
                         </div>
-                        <a href="${isConfidential ? '#' : item.link_url}" class="back-btn" style="margin-top:20px; text-align:center;">
+                        <a href="${isConfidential ? '#' : item.link_url}" class="${isConfidential ? 'btn-danger' : 'btn-primary'} hover-trigger" style="margin-top:20px; text-align:center;">
                             ${item.link_text || (isConfidential ? 'REQUEST ACCESS' : 'VIEW ARCHIVE')}
                         </a>
                     </div>
