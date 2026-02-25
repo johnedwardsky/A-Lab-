@@ -4,29 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-LAB. LLC // PREMIUM CONTRACT SYSTEM</title>
+    <title>A-LAB. LLC // CONTRACT SYSTEM</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --primary: #00E5FF;
-            --secondary: #FF2A2A;
-            --accent: #FFD700;
-            /* Gold accent for premium feel */
-            --bg-dark: #030407;
-            --surface-dark: #0b111a;
-            --text-dark: #ffffff;
-
-            --bg-light: #ffffff;
-            --text-light: #111111;
-
-            --panel-bg: rgba(13, 17, 26, 0.9);
-            --border: rgba(0, 229, 255, 0.2);
-            --glass: rgba(0, 229, 255, 0.03);
-
-            --font-main: 'Outfit', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --text-dim: #888;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --tech-blue-dim: rgba(0, 229, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
         }
 
         * {
@@ -36,391 +29,358 @@
         }
 
         body {
-            background-color: #05070a;
-            background-image:
-                radial-gradient(circle at 0px 0px, rgba(0, 229, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(255, 42, 42, 0.05) 0%, transparent 40%);
-            color: #fff;
+            background-color: var(--bg);
+            color: var(--text);
             font-family: var(--font-main);
             display: flex;
             height: 100vh;
             overflow: hidden;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
         /* --- CONTROL PANEL (Sidebar) --- */
         .sidebar {
             width: 380px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(20px);
+            background: #000;
             border-right: 1px solid var(--border);
-            padding: 40px 30px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
             overflow-y: auto;
             flex-shrink: 0;
             z-index: 100;
-            box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
         }
 
         .sidebar-title {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2px;
+            border-bottom: 1px solid var(--border);
             padding-bottom: 20px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         label {
-            font-family: var(--font-mono);
+            font-family: var(--font-code);
             font-size: 0.7rem;
-            color: var(--primary);
+            color: var(--tech-blue);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
         }
 
         input,
         select {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 12px 16px;
-            border-radius: 8px;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 4px;
             font-family: var(--font-main);
-            font-size: 0.95rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9rem;
+            transition: 0.3s;
             outline: none;
         }
 
         input:focus,
         select:focus {
-            border-color: var(--primary);
-            background: rgba(0, 229, 255, 0.05);
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
+            border-color: var(--tech-blue);
+            background: var(--tech-blue-dim);
         }
 
         .btn {
-            position: relative;
             background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 16px 24px;
-            border-radius: 8px;
-            font-family: var(--font-mono);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 15px;
+            border-radius: 4px;
+            font-family: var(--font-code);
             font-size: 0.8rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            overflow: hidden;
             text-align: center;
-            margin-top: 10px;
         }
 
         .btn:hover {
-            color: #000;
-            background: var(--primary);
-            box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
         }
 
-        .btn-print {
-            background: var(--primary);
-            border-color: var(--primary);
+        .btn-primary {
+            background: linear-gradient(135deg, #00E5FF 0%, #0099AA 100%);
+            border: none;
             color: #000;
             margin-top: auto;
-            font-size: 0.9rem;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+            transform: translateY(-2px);
         }
 
         /* --- DOCUMENT VIEWER --- */
         .workspace {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 60px;
+            padding: 40px;
             display: flex;
             justify-content: center;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
         }
 
-        .page {
+        .document-container {
             width: 210mm;
             min-height: 297mm;
-            padding: 30mm 25mm;
-            background: #fff;
-            color: #111;
-            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.8);
+            background: var(--surface);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border);
             position: relative;
-            font-size: 11pt;
             display: flex;
             flex-direction: column;
+            color: var(--text);
+            font-size: 11pt;
+            line-height: 1.6;
+            margin-bottom: 40px;
         }
 
-        /* Premium Assets on Sheet */
-        .page::before {
-            content: '';
+        .document-container.light-theme {
+            background: #ffffff;
+            color: #000000;
+            border-color: #cccccc;
+        }
+
+        /* Repeating Print Layout using Table */
+        table.print-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead.print-header-space tr td,
+        tfoot.print-footer-space tr td {
+            height: 180px;
+            /* Space reserved for repeating header/footer */
+        }
+
+        .main-content {
+            padding: 0 25mm;
+            outline: none;
+        }
+
+        .main-content p {
+            margin-bottom: 1.5em;
+            text-align: justify;
+        }
+
+        .main-content ul,
+        .main-content ol {
+            margin-bottom: 1.5em;
+            padding-left: 20px;
+        }
+
+        .main-content.light-theme {
+            color: #111;
+        }
+
+        /* Fixed Header for Print & Screen */
+        .fixed-header {
             position: absolute;
-            top: 10mm;
-            left: 10mm;
-            right: 10mm;
-            bottom: 10mm;
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 25mm 25mm 0 25mm;
+            height: 180px;
         }
 
-        .page::after {
-            content: '';
-            position: absolute;
-            top: 15mm;
-            left: 15mm;
-            width: 40px;
-            height: 40px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            border-left: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .corner-decoration {
-            position: absolute;
-            bottom: 15mm;
-            right: 15mm;
-            width: 40px;
-            height: 40px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            border-right: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .page.theme-dark {
-            background: var(--bg-dark);
-            color: #fff;
-        }
-
-        .page.theme-dark::before {
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .page.theme-dark::after {
-            border-color: var(--primary);
-        }
-
-        .page.theme-dark .corner-decoration {
-            border-color: var(--secondary);
-        }
-
-        /* Document Header */
         .doc-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 80px;
-            position: relative;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .light-theme .doc-header {
+            border-bottom-color: #ccc;
         }
 
         .brand-section {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .logo-wrap {
-            display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .logo-wrap img {
-            height: 60px;
+        .brand-section img {
+            height: 50px;
             width: auto;
-        }
-
-        .brand-text-block {
-            display: flex;
-            flex-direction: column;
         }
 
         .company-name {
             font-size: 1.8rem;
             font-weight: 800;
             letter-spacing: -1px;
-            line-height: 1;
-            color: inherit;
+            line-height: 1.1;
         }
 
         .company-subtitle {
-            font-family: var(--font-mono);
+            font-family: var(--font-code);
             font-size: 0.65rem;
-            letter-spacing: 4px;
+            color: var(--tech-blue);
+            letter-spacing: 2px;
             text-transform: uppercase;
-            color: #888;
-            margin-top: 5px;
         }
 
         .header-meta {
             text-align: right;
-            font-family: var(--font-mono);
+            font-family: var(--font-code);
             font-size: 0.65rem;
-            line-height: 2;
-            opacity: 0.6;
-            letter-spacing: 1px;
+            line-height: 1.8;
+            color: var(--text-dim);
         }
 
-        .header-meta b {
-            color: var(--secondary);
-        }
-
-        /* Meta Grid Section */
-        .meta-container {
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            padding: 25px 0;
-            margin-bottom: 60px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .page.theme-dark .meta-container {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .meta-item {
+        /* Fixed Footer for Print & Screen */
+        .fixed-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0 25mm 25mm 25mm;
+            height: 180px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            justify-content: flex-end;
         }
 
-        .meta-label {
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
-            opacity: 0.5;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .meta-val {
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
-
-        /* Document Content */
-        .doc-title {
-            font-size: 2.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 50px;
-            line-height: 1;
-            letter-spacing: -1px;
-        }
-
-        .doc-content {
-            flex-grow: 1;
-            line-height: 1.8;
-            text-align: justify;
-            outline: none;
-            color: #333;
-        }
-
-        .page.theme-dark .doc-content {
-            color: #ccc;
-        }
-
-        .doc-content p {
-            margin-bottom: 1.8em;
-        }
-
-        .highlight-text {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        /* Signatures Layout */
-        .sig-section {
-            margin-top: 80px;
+        .signatures-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 60px;
+            gap: 40px;
+            margin-bottom: 20px;
         }
 
-        .sig-block {
+        .sig-box {
             display: flex;
             flex-direction: column;
         }
 
         .sig-line {
             height: 1px;
-            background: currentColor;
-            opacity: 0.2;
-            margin-bottom: 20px;
+            background: var(--border);
+            margin-bottom: 10px;
+            width: 100%;
         }
 
-        .sig-body {
+        .light-theme .sig-line {
+            background: #ccc;
+        }
+
+        .sig-name {
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .sig-role {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        .doc-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.55rem;
+            color: var(--text-dim);
+        }
+
+        .light-theme .doc-footer {
+            border-top-color: #ccc;
+        }
+
+        /* Document Details (Title, Ref, Date) */
+        .doc-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            font-family: var(--font-code);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .light-theme .doc-details {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: #eee;
+        }
+
+        .detail-item {
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
 
-        .sig-name {
-            font-weight: 800;
-            font-size: 1.1rem;
+        .detail-label {
+            font-size: 0.6rem;
+            color: var(--tech-blue);
             text-transform: uppercase;
         }
 
-        .sig-role {
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            opacity: 0.6;
-            text-transform: uppercase;
-            line-height: 1.5;
-        }
-
-        /* Footer Elements */
-        .doc-footer {
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
-            opacity: 0.4;
-            letter-spacing: 2px;
-        }
-
-        .page.theme-dark .doc-footer {
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .poe-id {
-            color: var(--primary);
+        .detail-value {
+            font-size: 0.8rem;
             font-weight: 700;
         }
 
-        /* Interactive Effects */
+        .doc-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* Interactive Elements styling */
         [contenteditable="true"] {
-            transition: all 0.3s;
+            outline: none;
+            transition: 0.3s;
         }
 
         [contenteditable="true"]:hover,
         [contenteditable="true"]:focus {
-            background: rgba(0, 229, 255, 0.03);
-            box-shadow: 0 0 0 10px rgba(0, 229, 255, 0.03);
-            border-radius: 4px;
+            background: rgba(0, 229, 255, 0.05);
+            box-shadow: 0 0 0 5px rgba(0, 229, 255, 0.05);
+            border-radius: 2px;
         }
 
-        /* Print Specifics */
+        .light-theme [contenteditable="true"]:hover,
+        .light-theme [contenteditable="true"]:focus {
+            background: rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- PRINT STYLES (Multi-page support) --- */
         @media print {
             body {
                 background: #fff !important;
@@ -432,23 +392,55 @@
 
             .workspace {
                 padding: 0 !important;
-                overflow: visible !important;
                 display: block !important;
                 background: none !important;
             }
 
-            .page {
+            .document-container {
                 margin: 0 !important;
                 box-shadow: none !important;
+                border: none !important;
+                background: transparent !important;
                 width: 100% !important;
-                height: 100% !important;
+            }
+
+            /* For Dark Theme Print */
+            .document-container.dark-print {
+                background: #030407 !important;
+                color: #ffffff !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
 
-            .page.theme-dark {
-                background: #030407 !important;
-                color: #fff !important;
+            /* For Light Theme Print */
+            .document-container.light-theme {
+                color: #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Make header and footer repeat on every page */
+            .fixed-header {
+                position: fixed;
+                top: 0;
+            }
+
+            .fixed-footer {
+                position: fixed;
+                bottom: 0;
+            }
+
+            [contenteditable="true"]:hover,
+            [contenteditable="true"]:focus {
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+
+            /* Pacing */
+            @page {
+                size: A4;
+                margin: 0;
+                /* Margins handled by fixed div padding */
             }
         }
     </style>
@@ -456,173 +448,208 @@
 
 <body>
 
-    <!-- PREMUM CONTROL PANEL -->
+    <!-- CONTROL PANEL -->
     <div class="sidebar">
         <div class="sidebar-title">
-            <svg width="30" height="30" viewBox="0 0 100 100">
-                <path d="M50 10 L85 80 L15 80 Z" stroke="#00E5FF" stroke-width="6" fill="none" />
-                <circle cx="50" cy="55" r="5" fill="#FF2A2A" />
+            <svg width="24" height="24" viewBox="0 0 100 100">
+                <path d="M50 10 L85 80 L15 80 Z" stroke="#00E5FF" stroke-width="8" fill="none" />
             </svg>
-            A-LAB R&D
+            A-LAB. LLC
         </div>
 
         <div class="form-group">
-            <label>Interface Language</label>
+            <label>Язык / Language</label>
             <select id="inp-lang" onchange="updateLanguage()">
-                <option value="ru">RUSSIAN // 01</option>
-                <option value="en">ENGLISH // 02</option>
+                <option value="ru">Русский (RU)</option>
+                <option value="en">English (EN)</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label>Visual Protocol</label>
+            <label>Стиль / Theme</label>
             <select id="inp-theme" onchange="updateTheme()">
-                <option value="light">MINIMAL LIGHT // STANDARD</option>
-                <option value="dark">CYBERPUNK DARK // HIGH-TECH</option>
+                <option value="dark">A-LAB Cyber Dark</option>
+                <option value="light">Classic Light (for paper print)</option>
             </select>
         </div>
 
-        <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 10px 0;"></div>
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 10px 0;">
 
         <div class="form-group">
-            <label>Master Title</label>
-            <input type="text" id="inp-title" value="МЕМОРАНДУМ О СОТРУДНИЧЕСТВЕ" oninput="syncFields()">
+            <label>Название документа</label>
+            <input type="text" id="inp-title" value="ДОГОВОР О СОТРУДНИЧЕСТВЕ" oninput="syncFields()">
         </div>
 
         <div class="form-group">
-            <label>Identification Code</label>
-            <input type="text" id="inp-ref" value="ALAB-RD-2026-X01" oninput="syncFields()">
+            <label>Номер документа</label>
+            <input type="text" id="inp-ref" value="ALAB-CTR-2026-X01" oninput="syncFields()">
         </div>
 
         <div class="form-group">
-            <label>Addressed Party</label>
+            <label>Дата</label>
+            <input type="text" id="inp-date" value="25.02.2026" oninput="syncFields()">
+        </div>
+
+        <div class="form-group">
+            <label>Для кого (Адресат)</label>
             <input type="text" id="inp-to" value="Укажите Партнера / Компанию" oninput="syncFields()">
         </div>
 
-        <div class="btn" style="border-style: dashed;" onclick="document.getElementById('out-content').focus()">
-            EDIT TRANSACTION CONTENT
-        </div>
+        <button class="btn" style="border-style: dashed;" onclick="document.getElementById('out-content').focus()">
+            РЕДАКТИРОВАТЬ ТЕКСТ ДОГОВОРА
+        </button>
 
-        <div class="btn btn-print" onclick="window.print()">
-            GENERATE SECURE PDF
-        </div>
+        <button class="btn btn-primary" onclick="window.print()">
+            СОХРАНИТЬ В PDF / ПЕЧАТЬ
+        </button>
     </div>
 
-    <!-- PREMIUM DOCUMENT VIEWER -->
+    <!-- DOCUMENT WORKSPACE -->
     <div class="workspace">
-        <div class="page" id="doc-page">
-            <div class="corner-decoration"></div>
+        <div class="document-container dark-print" id="doc-page">
 
-            <div class="doc-header">
-                <div class="brand-section">
-                    <div class="logo-wrap">
-                        <img src="A-lab-logo.svg" alt="A-LAB LOGO">
-                        <div class="brand-text-block">
+            <!-- FIXED HEADER (Repeats on each printed page) -->
+            <div class="fixed-header">
+                <div class="doc-header">
+                    <div class="brand-section">
+                        <img src="A-lab-logo.svg" alt="A-LAB LLC">
+                        <div>
                             <div class="company-name">A-LAB. LLC</div>
-                            <div class="company-subtitle">RESEARCH & DEVELOPMENT DIV</div>
+                            <div class="company-subtitle" id="lbl-subtitle">RESEARCH & DEVELOPMENT</div>
                         </div>
                     </div>
-                </div>
-                <div class="header-meta" id="lbl-header-meta">
-                    <b>LOCATION //</b> BERLIN // 52.48° N, 13.32° E<br>
-                    <b>SECURE CHANNEL //</b> WWW.A-LAB.TECH
-                </div>
-            </div>
-
-            <div class="meta-container">
-                <div class="meta-item">
-                    <div class="meta-label" id="lbl-ref">DOC REF ID</div>
-                    <div class="meta-val" id="out-ref" contenteditable="true">ALAB-RD-2026-X01</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label" id="lbl-date">TIMESTAMP</div>
-                    <div class="meta-val" id="out-date" contenteditable="true">25.02.2026</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label" id="lbl-to">ATTENTION</div>
-                    <div class="meta-val" id="out-to" contenteditable="true">Укажите Партнера / Компанию</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label" id="lbl-status">CLEARANCE</div>
-                    <div class="meta-val" id="out-clearance" contenteditable="true">LEVEL 4 // SECURED</div>
+                    <div class="header-meta" id="lbl-header-meta">
+                        ОФИС // BUNDESPLATZ 12, BERLIN, DE<br>
+                        СИСТЕМА // WWW.A-LAB.TECH
+                    </div>
                 </div>
             </div>
 
-            <div class="doc-title" id="out-title" contenteditable="true">МЕМОРАНДУМ О СОТРУДНИЧЕСТВЕ</div>
+            <!-- MAIN CONTENT TABLE (Allows breaking across 20+ pages while preserving header/footer space) -->
+            <table class="print-table">
+                <thead class="print-header-space">
+                    <tr>
+                        <td><!-- Empty space for fixed header --></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="main-content" id="main-content-area">
 
-            <div class="doc-content" id="out-content" contenteditable="true">
-                <p>Настоящий юридический протокол устанавливает условия взаимодействия между <span
-                        class="highlight-text">A-LAB R&D (LLC)</span> и указанной стороной-партнером относительно
-                    разработки и внедрения технологий будущего.</p>
+                                <div class="doc-details">
+                                    <div class="detail-item">
+                                        <div class="detail-label" id="lbl-ref">DOC ID</div>
+                                        <div class="detail-value" id="out-ref" contenteditable="true">ALAB-CTR-2026-X01
+                                        </div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label" id="lbl-date">DATE</div>
+                                        <div class="detail-value" id="out-date" contenteditable="true">25.02.2026</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label" id="lbl-to">ATTENTION</div>
+                                        <div class="detail-value" id="out-to" contenteditable="true">Укажите Партнера /
+                                            Компанию</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label" id="lbl-status">STATUS</div>
+                                        <div class="detail-value" contenteditable="true">CONFIDENTIAL</div>
+                                    </div>
+                                </div>
 
-                <p><b>01 // СИНЕРГИЯ ИНТЕЛЛЕКТА</b><br>
-                    Мы объединяем вычислительные мощности нашей лаборатории и креативный потенциал для создания
-                    уникальных цифровых решений. Все разработки ведутся в соответствии с этическими нормами
-                    AI-безопасности.</p>
+                                <div class="doc-title" id="out-title" contenteditable="true">ДОГОВОР О СОТРУДНИЧЕСТВЕ
+                                </div>
 
-                <p><b>02 // ЗАЩИТА ИНТЕЛЛЕКТУАЛЬНЫХ АКТИВОВ</b><br>
-                    Любая информация, концепты, нейроархитектуры и алгоритмы, передаваемые в процессе взаимодействия,
-                    являются интеллектуальной собственностью A-LAB и защищены международным правом.</p>
+                                <div class="doc-text" id="out-content" contenteditable="true">
+                                    <p>Вставьте сюда текст вашего договора. Ограничений по объему нет: он может состоять
+                                        из одной страницы, десяти или двадцати.</p>
 
-                <p><b>03 // ГЛОБАЛЬНАЯ МИССИЯ</b><br>
-                    Партнерство направлено на масштабирование инноваций A-LAB и их интеграцию в реальный сектор
-                    экономики для ускорения технологической эволюции человечества.</p>
+                                    <p><b>1. СИСТЕМА ПЕЧАТИ (PAGINATION)</b><br>
+                                        Шаблон запрограммирован так, что если текст переходит на следующую страницу (или
+                                        на 20 страниц вперед), <b>заголовок с контактами компании и блок с подписями
+                                            будут корректно накладываться на каждую новую печатную страницу</b> при
+                                        экспорте в PDF. На экране это выглядит просто как один длинный бесшовный скролл.
+                                    </p>
 
-                <br>
-                <p><i>Вы можете редактировать этот текст, добавлять пункты или вставить готовый юридический договор.
-                        Дизайн адаптируется под любой объем информации.</i></p>
-            </div>
+                                    <p><b>2. ИДЕНТИЧНОСТЬ БРЕНДА</b><br>
+                                        Цвета, прозрачные рамки <code>rgba(255, 255, 255, 0.08)</code>, неоновый акцент
+                                        <code>#00E5FF</code>, а также шрифты <i>Inter</i> и <i>JetBrains Mono</i> на
+                                        100% соответствуют главному сайту A-LAB.TECH. Темная тема установлена по
+                                        умолчанию, так как именно она передает аутентичный стиль лаборатории.</p>
 
-            <div class="sig-section">
-                <div class="sig-block">
-                    <div class="sig-line"></div>
-                    <div class="sig-body">
+                                    <p><b>3. ПОДПИСАНТЫ (ПРЕЗИДЕНТ И ДИРЕКТОР)</b><br>
+                                        В конце документа автоматически выводятся закрепленные роли Founder (Ivan
+                                        Lakshinsky) и Director (Alexey Pak), что сразу формализует документ на высшем
+                                        уровне управления A-LAB. LLC.</p>
+
+                                    <p>Выделите этот текст `Cmd+A` (или `Ctrl+A`) и вставьте свои пункты договора.</p>
+                                    <br><br><br><br><br><br><br><br><br><br>
+                                    <p><i>Специально добавленные пустые отступы, чтобы показать, что документ может быть
+                                            сколь угодно длинным...</i></p>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot class="print-footer-space">
+                    <tr>
+                        <td><!-- Empty space for fixed footer --></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- FIXED FOOTER (Repeats on each printed page) -->
+            <div class="fixed-footer">
+                <div class="signatures-grid">
+                    <div class="sig-box">
+                        <div class="sig-line"></div>
                         <div class="sig-name">IVAN LAKSHINSKY</div>
-                        <div class="sig-role" id="lbl-role-ivan">FOUNDER & PRESIDENT<br>A-LAB. LLC // BOARD OF DIRECTORS
+                        <div class="sig-role" id="lbl-role-ivan">ПРЕЗИДЕНТ И ОСНОВАТЕЛЬ<br>A-LAB. LLC</div>
+                    </div>
+                    <div class="sig-box">
+                        <div class="sig-line"></div>
+                        <div class="sig-name">ALEXEY PAK</div>
+                        <div class="sig-role" id="lbl-role-alexey">ДИРЕКТОР ПО СТРАТЕГИЧЕСКОМУ РАЗВИТИЮ<br>A-LAB. LLC
                         </div>
                     </div>
                 </div>
-                <div class="sig-block">
-                    <div class="sig-line"></div>
-                    <div class="sig-body">
-                        <div class="sig-name">ALEXEY PAK</div>
-                        <div class="sig-role" id="lbl-role-alexey">DIRECTOR OF STRATEGIC DEVELOPMENT<br>A-LAB. LLC //
-                            R&D MANAGEMENT</div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="doc-footer">
-                <div>© 2026 ARTIFACT LAB // SYSTEM INTEGRITY // PoE VERIFIED</div>
-                <div>HASH ID: <span
-                        class="poe-id">84674f58b34f63cd58e25177c16ace1eb6150c634c397f60b91577d4f9f318b1</span></div>
+                <div class="doc-footer">
+                    <div>© 2026 ARTIFACT LAB // SYSTEM VERIFIED</div>
+                    <div>PAGE INTEGRITY PROTECTED</div>
+                </div>
             </div>
 
         </div>
     </div>
 
+    <!-- SCRIPTS -->
     <script>
         const i18n = {
             ru: {
-                ref: "DOC REF ID",
-                date: "TIMESTAMP",
-                to: "ATTENTION",
-                status: "CLEARANCE",
-                headerMeta: "<b>LOCATION //</b> BERLIN // 52.48° N, 13.32° E<br><b>SECURE CHANNEL //</b> WWW.A-LAB.TECH",
-                roleIvan: "ПРЕЗИДЕНТ И ОСНОВАТЕЛЬ<br>A-LAB. LLC // СОВЕТ ДИРЕКТОРОВ",
-                roleAlexey: "ДИРЕКТОР ПО СТРАТЕГИЧЕСКОМУ РАЗВИТИЮ<br>A-LAB. LLC // R&D МЕНЕДЖМЕНТ",
-                defaultTitle: "МЕМОРАНДУМ О СОТРУДНИЧЕСТВЕ",
+                ref: "НОМЕР ДОКУМЕНТА",
+                date: "ДАТА ПУБЛИКАЦИИ",
+                to: "АДРЕСАТ",
+                status: "СТАТУС",
+                subtitle: "RESEARCH & DEVELOPMENT",
+                headerMeta: "ОФИС // BUNDESPLATZ 12, BERLIN, DE<br>СИСТЕМА // WWW.A-LAB.TECH",
+                roleIvan: "ПРЕЗИДЕНТ И ОСНОВАТЕЛЬ<br>A-LAB. LLC",
+                roleAlexey: "ДИРЕКТОР ПО СТРАТЕГИЧЕСКОМУ РАЗВИТИЮ<br>A-LAB. LLC",
+                defaultTitle: "ДОГОВОР О СОТРУДНИЧЕСТВЕ",
                 defaultTo: "Укажите Партнера / Компанию"
             },
             en: {
-                ref: "DOC REF ID",
-                date: "TIMESTAMP",
-                to: "ATTENTION",
-                status: "CLEARANCE",
-                headerMeta: "<b>LOCATION //</b> BERLIN // 52.48° N, 13.32° E<br><b>SECURE CHANNEL //</b> WWW.A-LAB.TECH",
-                roleIvan: "FOUNDER & PRESIDENT<br>A-LAB. LLC // BOARD OF DIRECTORS",
-                roleAlexey: "DIRECTOR OF STRATEGIC DEVELOPMENT<br>A-LAB. LLC // R&D MANAGEMENT",
-                defaultTitle: "MEMORANDUM OF UNDERSTANDING",
+                ref: "REFERENCE ID",
+                date: "DATE OF ISSUE",
+                to: "ATTENTION TO",
+                status: "SECURITY LEVEL",
+                subtitle: "RESEARCH & DEVELOPMENT",
+                headerMeta: "OFFICE // BUNDESPLATZ 12, BERLIN, DE<br>SYSTEM // WWW.A-LAB.TECH",
+                roleIvan: "FOUNDER & PRESIDENT<br>A-LAB. LLC",
+                roleAlexey: "DIRECTOR OF STRATEGIC DEVELOPMENT<br>A-LAB. LLC",
+                defaultTitle: "COOPERATION AGREEMENT",
                 defaultTo: "Specify Partner / Company"
             }
         };
@@ -630,8 +657,18 @@
         function syncFields() {
             document.getElementById('out-title').innerText = document.getElementById('inp-title').value;
             document.getElementById('out-ref').innerText = document.getElementById('inp-ref').value;
+            document.getElementById('out-date').innerText = document.getElementById('inp-date').value;
             document.getElementById('out-to').innerText = document.getElementById('inp-to').value;
         }
+
+        const outFields = ['title', 'ref', 'date', 'to'];
+        outFields.forEach(f => {
+            const outEl = document.getElementById('out-' + f);
+            const inpEl = document.getElementById('inp-' + f);
+            outEl.addEventListener('input', () => {
+                inpEl.value = outEl.innerText;
+            });
+        });
 
         function updateLanguage() {
             const lang = document.getElementById('inp-lang').value;
@@ -642,11 +679,12 @@
             document.getElementById('lbl-to').innerText = t.to;
             document.getElementById('lbl-status').innerText = t.status;
 
+            document.getElementById('lbl-subtitle').innerText = t.subtitle;
             document.getElementById('lbl-header-meta').innerHTML = t.headerMeta;
             document.getElementById('lbl-role-ivan').innerHTML = t.roleIvan;
             document.getElementById('lbl-role-alexey').innerHTML = t.roleAlexey;
 
-            if (document.getElementById('inp-title').value.includes('МЕМОРАНДУМ') || document.getElementById('inp-title').value.includes('MEMORANDUM')) {
+            if (document.getElementById('inp-title').value === i18n[lang === 'ru' ? 'en' : 'ru'].defaultTitle) {
                 document.getElementById('inp-title').value = t.defaultTitle;
                 document.getElementById('out-title').innerText = t.defaultTitle;
             }
@@ -655,15 +693,27 @@
         function updateTheme() {
             const theme = document.getElementById('inp-theme').value;
             const page = document.getElementById('doc-page');
-            if (theme === 'dark') page.classList.add('theme-dark');
-            else page.classList.remove('theme-dark');
+            const content = document.getElementById('main-content-area');
+
+            if (theme === 'light') {
+                page.classList.add('light-theme');
+                page.classList.remove('dark-print');
+                content.classList.add('light-theme');
+            } else {
+                page.classList.remove('light-theme');
+                page.classList.add('dark-print');
+                content.classList.remove('light-theme');
+            }
         }
 
-        // Auto-date
-        const now = new Date();
-        document.getElementById('out-date').innerText = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
-
+        // Initialize date
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        document.getElementById('inp-date').value = `${dd}.${mm}.${yyyy}`;
         syncFields();
+
     </script>
 </body>
 
