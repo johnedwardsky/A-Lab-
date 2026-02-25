@@ -33,13 +33,23 @@ const I18n = (() => {
         if (loaded) return;
         try {
             const basePath = getBasePath();
-            const [ruResp, enResp] = await Promise.all([
-                fetch(`${basePath}lang/ru.json`),
-                fetch(`${basePath}lang/en.json`)
-            ]);
-            if (ruResp.ok) translations.ru = await ruResp.json();
-            if (enResp.ok) translations.en = await enResp.json();
+            // 1. Load current language first for speed
+            const currentResp = await fetch(`${basePath}lang/${currentLang}.json`);
+            if (currentResp.ok) translations[currentLang] = await currentResp.json();
+
+            // Mark as loaded (partially) so we can start applying
             loaded = true;
+            applyToDOM();
+
+            // 2. Load other language in background
+            const otherLang = currentLang === 'ru' ? 'en' : 'ru';
+            fetch(`${basePath}lang/${otherLang}.json`)
+                .then(resp => resp.ok ? resp.json() : null)
+                .then(json => {
+                    if (json) translations[otherLang] = json;
+                })
+                .catch(e => console.warn('[i18n] Background load failed:', e));
+
         } catch (e) {
             console.warn('[i18n] Failed to load translations:', e);
         }

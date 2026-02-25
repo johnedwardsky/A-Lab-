@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARTIFACT LAB | СИСТЕМА V.4</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet">
+    </noscript>
 
     <style>
         :root {
@@ -644,7 +650,8 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB" loading="lazy"
+                decoding="async"></a>
         <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">
             /// МЕНЮ
         </button>

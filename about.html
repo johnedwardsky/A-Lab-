@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="menu.about">A-LAB.TECH | О КОМПАНИИ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet">
+    </noscript>
     <link rel="stylesheet" href="resident-nav.css">
     <style>
         :root {
@@ -419,7 +425,8 @@
 <body data-no-resident-nav>
     <div class="cursor"></div>
     <header>
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB" loading="lazy"
+                decoding="async"></a>
         <div class="header-controls">
             <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
@@ -437,7 +444,8 @@
             <!-- Ivan Lakshinsky -->
             <div class="member-card hover-trigger">
                 <div class="member-portrait">
-                    <img src="Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky" style="object-position: top;">
+                    <img src="Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky" style="object-position: top;" loading="lazy"
+                        decoding="async">
                 </div>
                 <div class="member-info">
                     <div class="member-role" data-i18n="page_about.ivan_role">CEO & FOUNDER</div>
@@ -454,7 +462,8 @@
             <!-- Alexey Pak -->
             <div class="member-card hover-trigger">
                 <div class="member-portrait">
-                    <img src="alexey_tech.png" alt="Alexey Pak" style="object-position: top;">
+                    <img src="alexey_tech.png" alt="Alexey Pak" style="object-position: top;" loading="lazy"
+                        decoding="async">
                 </div>
                 <div class="member-info">
                     <div class="member-role" data-i18n="page_about.alexey_role">Director of Strategic Development</div>
@@ -479,31 +488,35 @@
     </main>
 
     <footer>
-        <div>© 2025 A-LAB.TECH // CORE TEAM</div>
+        <div data-i18n="common.copyright">© 2026 A-LAB.TECH // CORE TEAM</div>
         <div>A-LAB.TECH</div>
     </footer>
 
     <script>
         const cursor = document.querySelector('.cursor');
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-        function updateCursor() {
-            cursorX = mouseX;
-            cursorY = mouseY;
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            requestAnimationFrame(updateCursor);
+        if (!isMobile && cursor) {
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function updateCursor() {
+                cursorX = mouseX;
+                cursorY = mouseY;
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                requestAnimationFrame(updateCursor);
+            }
+            updateCursor();
+            document.querySelectorAll('.hover-trigger').forEach(t => {
+                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
         }
-        updateCursor();
-        document.querySelectorAll('.hover-trigger').forEach(t => {
-            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
     </script>
     <!-- A-LAB Integration -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

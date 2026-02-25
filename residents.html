@@ -7,9 +7,15 @@
     <title data-i18n="menu.residents">A-LAB.TECH | RESIDENTS COMMUNITY</title>
     <link rel="stylesheet" href="resident-nav.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
-        rel="stylesheet">
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet">
+    </noscript>
     <script>
         (function () {
             const savedLang = localStorage.getItem('alab_lang') || 'ru';
@@ -722,7 +728,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky">
+                <img src="Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky" loading="lazy" decoding="async">
                 <div class="resident-status"></div>
             </div>
             <div class="resident-info">
@@ -749,7 +755,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="alexey_tech.png" alt="Alexey Pak">
+                <img src="alexey_tech.png" alt="Alexey Pak" loading="lazy" decoding="async">
                 <div class="resident-status"></div>
             </div>
             <div class="resident-info">
@@ -775,7 +781,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="alex_river.png" alt="Alex River">
+                <img src="alex_river.png" alt="Alex River" loading="lazy" decoding="async">
                 <div class="resident-status"></div>
             </div>
             <div class="resident-info">
@@ -803,7 +809,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="maya_neural.png" alt="Maya Neural">
+                <img src="maya_neural.png" alt="Maya Neural" loading="lazy" decoding="async">
                 <div class="resident-status busy"></div>
             </div>
             <div class="resident-info">
@@ -830,7 +836,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="viktor_code.png" alt="Viktor Code">
+                <img src="viktor_code.png" alt="Viktor Code" loading="lazy" decoding="async">
                 <div class="resident-status"></div>
             </div>
             <div class="resident-info">
@@ -858,7 +864,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="sophia_brand.png" alt="Sophia Brand">
+                <img src="sophia_brand.png" alt="Sophia Brand" loading="lazy" decoding="async">
                 <div class="resident-status away"></div>
             </div>
             <div class="resident-info">
@@ -885,7 +891,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="max_neural.png" alt="Max Neural">
+                <img src="max_neural.png" alt="Max Neural" loading="lazy" decoding="async">
                 <div class="resident-status"></div>
             </div>
             <div class="resident-info">
@@ -913,7 +919,7 @@
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
-                <img src="elena_motion.png" alt="Elena Motion">
+                <img src="elena_motion.png" alt="Elena Motion" loading="lazy" decoding="async">
                 <div class="resident-status"></div>
             </div>
             <div class="resident-info">
@@ -1013,27 +1019,31 @@
     </div>
 
     <footer>
-        <div>© 2025 A-LAB.TECH // RESIDENTS</div>
+        <div data-i18n="common.copyright">© 2026 A-LAB.TECH // RESIDENTS</div>
         <div>DISCORD</div>
     </footer>
 
     <script>
         const cursor = document.querySelector('.cursor');
-        let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-        function updateCursor() {
-            cursor.style.transform = `translate3d(${mouseX - 10}px, ${mouseY - 10}px, 0)`;
-            requestAnimationFrame(updateCursor);
+        if (!isMobile && cursor) {
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function updateCursor() {
+                cursor.style.transform = `translate3d(${mouseX - 10}px, ${mouseY - 10}px, 0)`;
+                requestAnimationFrame(updateCursor);
+            }
+            updateCursor();
+            document.querySelectorAll('.hover-trigger').forEach(t => {
+                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
         }
-        updateCursor();
-        document.querySelectorAll('.hover-trigger').forEach(t => {
-            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
         function openQuiz() { document.getElementById('quizModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
         function closeQuiz() {
             document.getElementById('quizModal').classList.remove('active');
