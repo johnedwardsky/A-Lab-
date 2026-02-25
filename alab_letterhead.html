@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB. LLC // CONTRACT GENERATOR</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00E5FF;
+            --secondary: #FF2A2A;
+            --bg-dark: #030407;
+            --text-dark: #ffffff;
+            --bg-light: #ffffff;
+            --text-light: #111111;
+
+            --panel-bg: #0d111a;
+            --border: rgba(0, 229, 255, 0.2);
+
+            --doc-bg: var(--bg-light);
+            --doc-text: var(--text-light);
+
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a24;
+            color: #fff;
+            font-family: var(--font-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- CONTROL PANEL (Sidebar) --- */
+        .sidebar {
+            width: 350px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-title img {
+            height: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        input,
+        select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-print {
+            background: var(--primary);
+            color: #000;
+            margin-top: auto;
+        }
+
+        .btn-print:hover {
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        /* --- DOCUMENT VIEWER --- */
+        .workspace {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 25mm 20mm;
+            background: var(--doc-bg);
+            color: var(--doc-text);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .page.theme-dark {
+            --doc-bg: var(--bg-dark);
+            --doc-text: var(--text-dark);
+        }
+
+        .page.theme-dark::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 10% 10%, rgba(0, 229, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(255, 42, 42, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Header */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 50px;
+            border-bottom: 2px solid var(--doc-text);
+            padding-bottom: 20px;
+        }
+
+        .doc-header.theme-dark {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-section img {
+            height: 45px;
+            width: auto;
+        }
+
+        .company-name {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .company-sub {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            letter-spacing: 2px;
+            color: var(--primary);
+        }
+
+        .company-details {
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            line-height: 1.6;
+            opacity: 0.7;
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-item b {
+            font-size: 0.65rem;
+            opacity: 0.5;
+            text-transform: uppercase;
+        }
+
+        .meta-value {
+            font-weight: 700;
+        }
+
+        /* Title Area */
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.2;
+        }
+
+        /* Editable Content */
+        .doc-content {
+            font-size: 11pt;
+            line-height: 1.6;
+            margin-bottom: 60px;
+            min-height: 300px;
+            outline: none;
+            text-align: justify;
+        }
+
+        .doc-content p {
+            margin-bottom: 1em;
+        }
+
+        /* Signatures */
+        .signatures-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 80px;
+        }
+
+        .signature-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sig-line {
+            height: 1px;
+            background: var(--doc-text);
+            margin-bottom: 12px;
+            width: 100%;
+            opacity: 0.3;
+        }
+
+        .sig-name {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .sig-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            opacity: 0.6;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        /* Editing Highlights */
+        [contenteditable="true"]:focus,
+        [contenteditable="true"]:hover {
+            background: rgba(0, 229, 255, 0.05);
+            outline: 1px dashed var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .sidebar {
+                display: none !important;
+            }
+
+            .workspace {
+                padding: 0;
+                overflow: visible;
+                display: block;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                padding: 15mm;
+                width: 100%;
+                height: 100%;
+                /* Standardize print colors to ensure contrast */
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            [contenteditable="true"]:focus,
+            [contenteditable="true"]:hover {
+                background: transparent;
+                outline: none;
+            }
+
+            /* Add some spacing for pages if contents wrap */
+            .page {
+                page-break-after: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CONTROL PANEL -->
+    <div class="sidebar">
+        <div class="sidebar-title">
+            <svg width="24" height="24" viewBox="0 0 100 100">
+                <path d="M50 10 L85 80 L15 80 Z" stroke="#00E5FF" stroke-width="8" fill="none" />
+            </svg>
+            A-LAB. LLC
+        </div>
+
+        <div class="form-group">
+            <label>Language / Язык</label>
+            <select id="inp-lang" onchange="updateLanguage()">
+                <option value="ru">Русский (RU)</option>
+                <option value="en">English (EN)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Theme</label>
+            <select id="inp-theme" onchange="updateTheme()">
+                <option value="light">Light (Print Default)</option>
+                <option value="dark">Dark (Cyberpunk)</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label>Document Title</label>
+            <input type="text" id="inp-title" value="ДОГОВОР О СОТРУДНИЧЕСТВЕ" oninput="syncFields()">
+        </div>
+
+        <div class="form-group">
+            <label>Reference ID</label>
+            <input type="text" id="inp-ref" value="ALAB-2026-CTR-01" oninput="syncFields()">
+        </div>
+
+        <div class="form-group">
+            <label>Date</label>
+            <input type="text" id="inp-date" value="25.02.2026" oninput="syncFields()">
+        </div>
+
+        <div class="form-group">
+            <label>Addressed To / Client</label>
+            <input type="text" id="inp-to" value="УКАЖИТЕ ИМЯ ИЛИ КОМПАНИЮ" oninput="syncFields()">
+        </div>
+
+        <div class="btn" onclick="document.getElementById('out-content').focus()">EDIT BODY TEXT</div>
+
+        <div class="btn btn-print" onclick="window.print()">PRINT / EXPORT PDF</div>
+    </div>
+
+    <!-- DOCUMENT WORKSPACE -->
+    <div class="workspace">
+        <div class="page" id="doc-page">
+
+            <div class="doc-header" id="doc-header-border">
+                <div class="brand-section">
+                    <img src="A-lab-logo.svg" alt="A-LAB Logo" id="doc-logo">
+                    <div>
+                        <div class="company-name">A-LAB. LLC</div>
+                        <div class="company-sub">ADVANCED LABORATORY</div>
+                    </div>
+                </div>
+                <div class="company-details" id="lbl-company">
+                    <b>ОФИС //</b> BUNDESPLATZ 12, BERLIN, DE<br>
+                    <b>WEB //</b> WWW.A-LAB.TECH
+                </div>
+            </div>
+
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <b id="lbl-ref">НОМЕР ДОКУМЕНТА</b>
+                    <div class="meta-value" id="out-ref" contenteditable="true">ALAB-2026-CTR-01</div>
+                </div>
+                <div class="meta-item">
+                    <b id="lbl-date">ДАТА ПУБЛИКАЦИИ</b>
+                    <div class="meta-value" id="out-date" contenteditable="true">25.02.2026</div>
+                </div>
+                <div class="meta-item">
+                    <b id="lbl-to">АДРЕСАТ</b>
+                    <div class="meta-value" id="out-to" contenteditable="true">УКАЖИТЕ ИМЯ ИЛИ КОМПАНИЮ</div>
+                </div>
+                <div class="meta-item">
+                    <b id="lbl-lang">ЯЗЫК ДОКУМЕНТА</b>
+                    <div class="meta-value" id="out-lang" contenteditable="true">РУССКИЙ (RU)</div>
+                </div>
+            </div>
+
+            <div class="doc-title" id="out-title" contenteditable="true">ДОГОВОР О СОТРУДНИЧЕСТВЕ</div>
+
+            <div class="doc-content" id="out-content" contenteditable="true">
+                <p>Настоящий договор устанавливает рамки стратегического партнерства между A-LAB. LLC и стороной,
+                    указанной в качестве Адресата.</p>
+                <p>1. <b>ПРЕДМЕТ ДОГОВОРА</b><br>
+                    Стороны договорились о совместном развитии проектов в сфере высоких технологий, нейросетей и Web3
+                    инфраструктуры.</p>
+                <p>2. <b>ОБЯЗАННОСТИ СТОРОН</b><br>
+                    A-LAB. LLC обязуется предоставить технологическую экспертизу и доступ к R&D инфраструктуре. Адресат
+                    гарантирует своевременное исполнение финансовых и организационных обязательств.</p>
+                <p>3. <b>КОНФИДЕНЦИАЛЬНОСТЬ (NDA)</b><br>
+                    Любая информация, переданная в рамках данного соглашения, является строго конфиденциальной и не
+                    подлежит разглашению третьим лицам без письменного согласия Основателя компании A-LAB. LLC.</p>
+                <br>
+                <p><i>Вы можете полностью стереть этот текст и вставить сюда свой собственный договор или
+                        меморандум.</i></p>
+            </div>
+
+            <div class="signatures-grid">
+                <div class="signature-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-name">IVAN LAKSHINSKY</div>
+                    <div class="sig-title" id="lbl-role-ivan">ПРЕЗИДЕНТ И ОСНОВАТЕЛЬ<br>A-LAB. LLC</div>
+                </div>
+                <div class="signature-box">
+                    <div class="sig-line"></div>
+                    <div class="sig-name">ALEXEY PAK</div>
+                    <div class="sig-title" id="lbl-role-alexey">ДИРЕКТОР ПО СТРАТЕГИЧЕСКОМУ РАЗВИТИЮ<br>A-LAB. LLC</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        const i18n = {
+            ru: {
+                ref: "НОМЕР ДОКУМЕНТА",
+                date: "ДАТА ПУБЛИКАЦИИ",
+                to: "АДРЕСАТ",
+                lang: "ЯЗЫК ДОКУМЕНТА",
+                langVal: "РУССКИЙ (RU)",
+                defaultTitle: "ДОГОВОР О СОТРУДНИЧЕСТВЕ",
+                defaultTo: "УКАЖИТЕ ИМЯ ИЛИ КОМПАНИЮ",
+                companyDetails: "<b>ОФИС //</b> BUNDESPLATZ 12, BERLIN, DE<br><b>WEB //</b> WWW.A-LAB.TECH",
+                roleIvan: "ПРЕЗИДЕНТ И ОСНОВАТЕЛЬ<br>A-LAB. LLC",
+                roleAlexey: "ДИРЕКТОР ПО СТРАТЕГИЧЕСКОМУ РАЗВИТИЮ<br>A-LAB. LLC"
+            },
+            en: {
+                ref: "REFERENCE ID",
+                date: "DATE OF ISSUE",
+                to: "ATTENTION TO",
+                lang: "DOCUMENT LANGUAGE",
+                langVal: "ENGLISH (EN)",
+                defaultTitle: "MEMORANDUM OF UNDERSTANDING",
+                defaultTo: "ENTER CLIENT NAME OR ORG",
+                companyDetails: "<b>OFFICE //</b> BUNDESPLATZ 12, BERLIN, DE<br><b>WEB //</b> WWW.A-LAB.TECH",
+                roleIvan: "FOUNDER & PRESIDENT<br>A-LAB. LLC",
+                roleAlexey: "DIRECTOR OF STRATEGIC DEVELOPMENT<br>A-LAB. LLC"
+            }
+        };
+
+        function syncFields() {
+            document.getElementById('out-title').innerText = document.getElementById('inp-title').value;
+            document.getElementById('out-ref').innerText = document.getElementById('inp-ref').value;
+            document.getElementById('out-date').innerText = document.getElementById('inp-date').value;
+            document.getElementById('out-to').innerText = document.getElementById('inp-to').value;
+        }
+
+        // Also sync back if user edits directly on the page
+        const outFields = ['title', 'ref', 'date', 'to'];
+        outFields.forEach(f => {
+            const outEl = document.getElementById('out-' + f);
+            const inpEl = document.getElementById('inp-' + f);
+            outEl.addEventListener('input', () => {
+                inpEl.value = outEl.innerText;
+            });
+        });
+
+        function updateLanguage() {
+            const lang = document.getElementById('inp-lang').value;
+            const t = i18n[lang];
+
+            document.getElementById('lbl-ref').innerText = t.ref;
+            document.getElementById('lbl-date').innerText = t.date;
+            document.getElementById('lbl-to').innerText = t.to;
+            document.getElementById('lbl-lang').innerText = t.lang;
+            document.getElementById('out-lang').innerText = t.langVal;
+
+            document.getElementById('lbl-company').innerHTML = t.companyDetails;
+            document.getElementById('lbl-role-ivan').innerHTML = t.roleIvan;
+            document.getElementById('lbl-role-alexey').innerHTML = t.roleAlexey;
+
+            // Optional: update placeholders if user hasn't changed them
+            if (document.getElementById('inp-title').value === i18n[lang === 'ru' ? 'en' : 'ru'].defaultTitle) {
+                document.getElementById('inp-title').value = t.defaultTitle;
+                document.getElementById('out-title').innerText = t.defaultTitle;
+            }
+            if (document.getElementById('inp-to').value === i18n[lang === 'ru' ? 'en' : 'ru'].defaultTo) {
+                document.getElementById('inp-to').value = t.defaultTo;
+                document.getElementById('out-to').innerText = t.defaultTo;
+            }
+        }
+
+        function updateTheme() {
+            const theme = document.getElementById('inp-theme').value;
+            const page = document.getElementById('doc-page');
+            const headerBorder = document.getElementById('doc-header-border');
+
+            if (theme === 'dark') {
+                page.classList.add('theme-dark');
+                headerBorder.classList.add('theme-dark');
+            } else {
+                page.classList.remove('theme-dark');
+                headerBorder.classList.remove('theme-dark');
+            }
+        }
+
+        // Initialize date to today
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        document.getElementById('inp-date').value = `${dd}.${mm}.${yyyy}`;
+        syncFields();
+
+    </script>
+</body>
+
+</html>
