@@ -149,26 +149,28 @@ const ALabCases = {
             image_url: "design_case_med_v3.png"
         },
         {
-            id: 6,
+            id: 'lumina_ai',
             title: "Lumina AI Framework",
             result_value: "OPEN_SOURCE",
             result_label: "tag-open",
-            description: "Ультра-быстрая библиотека для визуализации работы нейросетей.",
+            description: "Ультра-быстрая библиотека для визуализации работы нейросетей. Позволяет в реальном времени отслеживать активации слоев и веса.",
             category: "rd",
             lang: "ru",
             image_url: "rd_lumina_ai.png",
-            link_text: "Документация"
+            link_text: "ДОКУМЕНТАЦИЯ",
+            link_url: "https://github.com/johnedwardsky/lumina-ai"
         },
         {
-            id: 7,
+            id: 'project_matrix',
             title: "Project Matrix",
             result_value: "CONFIDENTIAL",
             result_label: "tag-closed",
-            description: "Система визуализации нейронных связей сообщества.",
+            description: "Система визуализации нейронных связей сообщества. Анализ паттернов взаимодействия и прогнозирование трендов.",
             category: "rd",
             lang: "ru",
             image_url: "rd_project_matrix.png",
-            link_text: "Запросить доступ",
+            link_text: "ЗАПРОСИТЬ ДОСТУП",
+            link_url: "project_matrix.html",
             is_locked: true
         },
         // --- DIGITAL CATEGORY (RU) ---
@@ -396,9 +398,8 @@ const ALabCases = {
                 card.onclick = (e) => {
                     if (isConfidential) {
                         triggerNDA(e);
-                    } else {
-                        if (e.target.closest('a')) return;
-                        window.location.href = item.link_url;
+                    } else if (!e.target.closest('a')) {
+                        window.location.href = item.link_url || '#';
                     }
                 };
             } else if (catLower === 'rd') {
@@ -435,8 +436,7 @@ const ALabCases = {
                 card.onclick = (e) => {
                     if (isConfidential) {
                         triggerNDA(e);
-                    } else {
-                        if (e.target.closest('a')) return;
+                    } else if (!e.target.closest('a')) {
                         window.location.href = item.link_url || '#';
                     }
                 };
@@ -459,8 +459,7 @@ const ALabCases = {
                 card.onclick = (e) => {
                     if (isConfidential) {
                         triggerNDA(e);
-                    } else {
-                        if (e.target.closest('a')) return;
+                    } else if (!e.target.closest('a')) {
                         window.location.href = item.link_url || '#';
                     }
                 };
