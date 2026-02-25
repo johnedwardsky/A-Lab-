@@ -1201,8 +1201,8 @@
 
         <div class="rd-footer-grid">
             <!-- R&D Support Form Core -->
-            <div class="rd-card" style="padding: 60px 40px;">
-                <div style="display: flex; flex-direction: column; gap: 30px;">
+            <div class="rd-card" style="padding: 60px 40px; position: relative; z-index: 1;">
+                <div style="display: flex; flex-direction: column; gap: 30px; position: relative; z-index: 10;">
                     <div>
                         <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 10px; color: white;"
                             data-i18n="page_rd.funding_title">ПОДДЕРЖАТЬ R&D ЛАБОРАТОРИЮ</h2>
@@ -1240,14 +1240,14 @@
             </div>
 
             <!-- STEALTH MODE / NDA SECTION -->
-            <div class="rd-card stealth-section" style="border-color: var(--accent);">
+            <div class="rd-card stealth-section" style="border-color: var(--accent); position: relative; z-index: 1;">
                 <div class="stealth-bg">
                     <div class="stealth-card"></div>
                     <div class="stealth-card"></div>
                     <div class="stealth-card"></div>
                 </div>
 
-                <div class="stealth-overlay">
+                <div class="stealth-overlay" style="position: relative; z-index: 10;">
                     <div class="lock-icon">🔒</div>
                     <h2 data-i18n="page_rd.stealth_title" style="font-size: 1.8rem;">ЗАКРЫТЫЕ РАЗРАБОТКИ & STEALTH
                         СТАРТАПЫ
