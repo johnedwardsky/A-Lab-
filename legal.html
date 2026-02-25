@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-LAB.LEGAL | DOCUMENTATION HUB</title>
+    <title data-i18n="menu.legal">A-LAB.LEGAL | DOCUMENTATION HUB</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -395,82 +395,94 @@
     <header>
         <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
         <div class="header-controls">
-            <a href="index.html" class="back-btn hover-trigger">HOME</a>
-            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()">/// МЕНЮ</button>
+            <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.home">HOME</a>
+            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+                МЕНЮ</button>
         </div>
     </header>
 
     <div class="container">
 
         <aside class="doc-nav">
-            <div style="font-weight: 800; margin-bottom: 20px; color: white;">LEGAL HUB</div>
-            <a href="#privacy" class="doc-link hover-trigger">Политика Конфиденциальности</a>
-            <a href="#terms" class="doc-link hover-trigger">Пользовательское Соглашение</a>
-            <a href="#nda" class="doc-link hover-trigger">NDA (Соглашение о Неразглашении)</a>
-            <a href="#dao-rules" class="doc-link hover-trigger">Правила DAO & Web3</a>
-            <a href="#ip" class="doc-link hover-trigger">Интеллектуальная Собственность</a>
+            <div style="font-weight: 800; margin-bottom: 20px; color: white;" data-i18n="page_legal.nav_title">LEGAL HUB
+            </div>
+            <a href="#privacy" class="doc-link hover-trigger" data-i18n="page_legal.nav_privacy">Политика
+                Конфиденциальности</a>
+            <a href="#terms" class="doc-link hover-trigger" data-i18n="page_legal.nav_terms">Пользовательское
+                Соглашение</a>
+            <a href="#nda" class="doc-link hover-trigger" data-i18n="page_legal.nav_nda">NDA (Соглашение о
+                Неразглашении)</a>
+            <a href="#dao-rules" class="doc-link hover-trigger" data-i18n="page_legal.nav_dao">Правила DAO & Web3</a>
+            <a href="#ip" class="doc-link hover-trigger" data-i18n="page_legal.nav_ip">Интеллектуальная
+                Собственность</a>
         </aside>
 
         <main class="legal-content">
             <!-- CLASSIFIED CLASSIFICATION BANNER -->
-            <div
-                style="border: 1px solid var(--accent); background: rgba(255, 42, 42, 0.05); color: var(--accent); padding: 10px 15px; font-family: var(--font-code); font-size: 0.7rem; margin-bottom: 30px; display: inline-block;">
+            <div style="border: 1px solid var(--accent); background: rgba(255, 42, 42, 0.05); color: var(--accent); padding: 10px 15px; font-family: var(--font-code); font-size: 0.7rem; margin-bottom: 30px; display: inline-block;"
+                data-i18n="page_legal.banner">
                 ⚠️ INTERNAL DOCUMENTATION // PUBLIC PREVIEW ENABLED FOR RECRUITMENT PURPOSES
             </div>
 
-            <h1>Правовая Информация</h1>
+            <h1 data-i18n="page_legal.title">Правовая Информация</h1>
 
             <!-- PRIVACY -->
             <section id="privacy" class="doc-section">
-                <h2>Политика Конфиденциальности</h2>
-                <div style="font-family: var(--font-code); font-size: 0.7rem; color: #666; margin-bottom: 20px;">LAST
+                <h2 data-i18n="page_legal.privacy_title">Политика Конфиденциальности</h2>
+                <div style="font-family: var(--font-code); font-size: 0.7rem; color: #666; margin-bottom: 20px;"
+                    data-i18n="page_legal.privacy_updated">LAST
                     UPDATED: 15.02.2026 // VERSION 2.1</div>
 
-                <h3>1. Сбор Данных</h3>
-                <p>A-LAB.TECH собирает данные, необходимые для функционирования платформы и взаимодействия резидентов,
+                <h3 data-i18n="page_legal.privacy_s1_title">1. Сбор Данных</h3>
+                <p data-i18n="page_legal.privacy_s1_text">A-LAB.TECH собирает данные, необходимые для функционирования
+                    платформы и взаимодействия резидентов,
                     включая: персональные данные, профессиональное портфолио, данные о транзакциях токенов Astra и
                     цифровые следы взаимодействия с интерфейсом.</p>
 
-                <h3>2. Использование Данных</h3>
-                <p>Мы используем данные для:
+                <h3 data-i18n="page_legal.privacy_s2_title">2. Использование Данных</h3>
+                <p data-i18n="page_legal.privacy_s2_text">Мы используем данные для:
                 <ul>
-                    <li>Обеспечения безопасности аккаунтов резидентов.</li>
-                    <li>Анализа эффективности R&D проектов.</li>
-                    <li>Расчета коэффициентов участия (Engagement Rate) для токеномики.</li>
+                    <li data-i18n="page_legal.privacy_s2_l1">Обеспечения безопасности аккаунтов резидентов.</li>
+                    <li data-i18n="page_legal.privacy_s2_l2">Анализа эффективности R&D проектов.</li>
+                    <li data-i18n="page_legal.privacy_s2_l3">Расчета коэффициентов участия (Engagement Rate) для
+                        токеномики.</li>
                 </ul>
                 </p>
 
-                <h3>3. Ответственность за цифровые активы</h3>
-                <p>A-LAB не хранит приватные ключи пользователей. Резиндент несет единоличную ответственность за
+                <h3 data-i18n="page_legal.privacy_s3_title">3. Ответственность за цифровые активы</h3>
+                <p data-i18n="page_legal.privacy_s3_text">A-LAB не хранит приватные ключи пользователей. Резиндент несет
+                    единоличную ответственность за
                     безопасность своего кошелька (MetaMask и др.) и сохранность токенов Astra в On-chain. Потеря доступа
                     к кошельку означает безвозвратную потерю активов.</p>
 
-                <a href="#" class="download-btn hover-trigger">↓ DOWNLOAD FULL PDF</a>
+                <a href="#" class="download-btn hover-trigger" data-i18n="page_legal.btn_download_pdf">↓ DOWNLOAD FULL
+                    PDF</a>
             </section>
 
             <!-- TERMS -->
             <section id="terms" class="doc-section">
-                <h2>Устав Резидента (Charter)</h2>
+                <h2 data-i18n="page_legal.charter_title">Устав Резидента (Charter)</h2>
 
-                <h3>1. Статус Резидента</h3>
-                <p>Резидент A-LAB — это авторизованный участник DAO, прошедший верификацию. Статус дает право на доступ
+                <h3 data-i18n="page_legal.charter_s1_title">1. Статус Резидента</h3>
+                <p data-i18n="page_legal.charter_s1_text">Резидент A-LAB — это авторизованный участник DAO, прошедший
+                    верификацию. Статус дает право на доступ
                     к ресурсам, R&D проектам и финансовой экосистеме Astra.</p>
 
-                <h3>2. Экономика Участия (Astra Tokens)</h3>
+                <h3 data-i18n="page_legal.charter_s2_title">2. Экономика Участия (Astra Tokens)</h3>
                 <div
                     style="background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                     <ul style="margin: 0; list-style: none;">
-                        <li style="margin-bottom: 10px;">
+                        <li style="margin-bottom: 10px;" data-i18n-html="page_legal.charter_s2_l1">
                             <strong style="color: var(--tech-blue);">2.1 Приветственный Бонус:</strong>
                             Каждый новый резидент при регистрации получает стартовый пакет в размере <strong>150
                                 ASTRA</strong> (эквивалент ~$225). Это доля в общем успехе Лаборатории.
                         </li>
-                        <li style="margin-bottom: 10px;">
+                        <li style="margin-bottom: 10px;" data-i18n-html="page_legal.charter_s2_l2">
                             <strong style="color: var(--accent);">2.2 Период Вестинга (Vesting Period):</strong>
                             Возможность вывода (Claim) токенов ASTRA в On-chain открывается через <strong>6
                                 месяцев</strong> активности. Обмен на фиат или листинг — через <strong>1 год</strong>.
                         </li>
-                        <li style="margin-bottom: 0;">
+                        <li style="margin-bottom: 0;" data-i18n-html="page_legal.charter_s2_l3">
                             <strong style="color: #00FF41;">2.3 Стратегия Роста:</strong>
                             Ценность сообщества определяется совокупным интеллектуальным капиталом. Любые действия,
                             направленные на девальвацию или искусственное манипулирование курсом Astra, ведут к
@@ -479,77 +491,91 @@
                     </ul>
                 </div>
 
-                <h3>3. Механика Голосования (DAO Voting)</h3>
-                <p>Голоса в DAO распределяются пропорционально количеству токенов Astra на кошельке резидента.
+                <h3 data-i18n="page_legal.charter_s3_title">3. Механика Голосования (DAO Voting)</h3>
+                <p data-i18n="page_legal.charter_s3_text">Голоса в DAO распределяются пропорционально количеству токенов
+                    Astra на кошельке резидента.
                     Минимальный порог для создания предложения (Proposal) — 1000 Astra.</p>
 
-                <h3>3. Обязанности Сторон</h3>
-                <p>Платформа обязуется обеспечивать прозрачность начисления токенов и рост их стоимости через реальные
+                <h3 data-i18n="page_legal.charter_s4_title">4. Обязанности Сторон</h3>
+                <p data-i18n="page_legal.charter_s4_text">Платформа обязуется обеспечивать прозрачность начисления
+                    токенов и рост их стоимости через реальные
                     промышленные контракты. Резидент обязуется вносить интеллектуальный вклад в развитие экосистемы.</p>
 
-                <a href="#" class="download-btn hover-trigger">↓ DOWNLOAD FULL CHARTER (PDF)</a>
+                <a href="#" class="download-btn hover-trigger" data-i18n="page_legal.btn_download_charter">↓ DOWNLOAD
+                    FULL CHARTER (PDF)</a>
             </section>
 
             <!-- NDA -->
             <section id="nda" class="doc-section">
-                <h2>NDA (Соглашение о Неразглашении)</h2>
+                <h2 data-i18n="page_legal.nda_title">NDA (Соглашение о Неразглашении)</h2>
 
-                <p>Работа в A-LAB подразумевает доступ к конфиденциальным разработкам в сферах Automotive, Aerospace и
+                <p data-i18n="page_legal.nda_p1">Работа в A-LAB подразумевает доступ к конфиденциальным разработкам в
+                    сферах Automotive, Aerospace и
                     Robotics.</p>
 
-                <h3>Ключевые Положения:</h3>
+                <h3 data-i18n="page_legal.nda_h3">Ключевые Положения:</h3>
                 <ul>
-                    <li>Запрещено публиковать материалы проектов, находящихся в статусе "TOP SECRET", без письменного
+                    <li data-i18n="page_legal.nda_l1">Запрещено публиковать материалы проектов, находящихся в статусе
+                        "TOP SECRET", без письменного
                         разрешения.</li>
-                    <li>Все наработки (код, чертежи, промпты), созданные в рамках оплачиваемых контрактов, являются
+                    <li data-i18n="page_legal.nda_l2">Все наработки (код, чертежи, промпты), созданные в рамках
+                        оплачиваемых контрактов, являются
                         собственностью Лаборатории.</li>
-                    <li>Разглашение технических деталей третьим лицам влечет за собой юридическую ответственность и
+                    <li data-i18n="page_legal.nda_l3">Разглашение технических деталей третьим лицам влечет за собой
+                        юридическую ответственность и
                         исключение из DAO.</li>
                 </ul>
 
-                <a href="#" class="download-btn hover-trigger">↓ DOWNLOAD NDA TEMPLATE</a>
+                <a href="#" class="download-btn hover-trigger" data-i18n="page_legal.btn_download_nda">↓ DOWNLOAD NDA
+                    TEMPLATE</a>
             </section>
 
             <!-- DAO RULES -->
             <section id="dao-rules" class="doc-section">
-                <h2>Правила DAO & Web3 Integrity</h2>
+                <h2 data-i18n="page_legal.dao_title">Правила DAO & Web3 Integrity</h2>
                 <div
                     style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 25px; border-radius: 12px;">
-                    <h3 style="margin-top: 0;">1. Анти-фрод и Безопасность</h3>
-                    <p>Любые попытки проведения атак типа Sybil (множественные аккаунты для захвата власти в
+                    <h3 style="margin-top: 0;" data-i18n="page_legal.dao_s1_title">1. Анти-фрод и Безопасность</h3>
+                    <p data-i18n="page_legal.dao_s1_text">Любые попытки проведения атак типа Sybil (множественные
+                        аккаунты для захвата власти в
                         голосовании) или использование уязвимостей смарт-контрактов для несанкционированного получения
                         токенов Astra караются пожизненным исключением из DAO с аннулированием всех активов.</p>
 
-                    <h3>2. Этика Коллаборации</h3>
-                    <p>Резиденты обязаны уважать интеллектуальный вклад друг друга. Плагиат кода или концепций внутри
+                    <h3 data-i18n="page_legal.dao_s2_title">2. Этика Коллаборации</h3>
+                    <p data-i18n="page_legal.dao_s2_text">Резиденты обязаны уважать интеллектуальный вклад друг друга.
+                        Плагиат кода или концепций внутри
                         Лаборатории является основанием для арбитража DAO.</p>
 
-                    <h3>3. Разрешение Конфликтов</h3>
-                    <p>Все споры, возникающие в рамках совместных проектов, решаются через комитет Арбитража DAO.
+                    <h3 data-i18n="page_legal.dao_s3_title">3. Разрешение Конфликтов</h3>
+                    <p data-i18n="page_legal.dao_s3_text">Все споры, возникающие в рамках совместных проектов, решаются
+                        через комитет Арбитража DAO.
                         Решение комитета является окончательным и записывается в историю репутации резидента.</p>
                 </div>
             </section>
 
             <!-- IP RIGHTS -->
             <section id="ip" class="doc-section">
-                <h2>Интеллектуальная Собственность</h2>
+                <h2 data-i18n="page_legal.ip_title">Интеллектуальная Собственность</h2>
 
-                <h3>1. Токенизация IP</h3>
-                <p>A-LAB признает вклад каждого резидента. Права на интеллектуальную собственность (IP) могут быть
+                <h3 data-i18n="page_legal.ip_s1_title">1. Токенизация IP</h3>
+                <p data-i18n="page_legal.ip_s1_text">A-LAB признает вклад каждого резидента. Права на интеллектуальную
+                    собственность (IP) могут быть
                     частично токенизированы и выражены в токенах Astra.</p>
 
-                <h3>2. Отчуждение и Роялти</h3>
-                <p>При коммерческой реализации продукта, резиденты, чьи идеи были использованы, имеют право на получение
+                <h3 data-i18n="page_legal.ip_s2_title">2. Отчуждение и Роялти</h3>
+                <p data-i18n="page_legal.ip_s2_text">При коммерческой реализации продукта, резиденты, чьи идеи были
+                    использованы, имеют право на получение
                     роялти (в фиате или токенах), согласно смарт-контракту проекта.</p>
 
-                <h3>3. NFT Достижения</h3>
-                <p>Выпущенные NFT-бейджи являются неделимым подтверждением квалификации и вклада резидента.
+                <h3 data-i18n="page_legal.ip_s3_title">3. NFT Достижения</h3>
+                <p data-i18n="page_legal.ip_s3_text">Выпущенные NFT-бейджи являются неделимым подтверждением
+                    квалификации и вклада резидента.
                     Покупка-продажа бейджей запрещена правилами экосистемы, если иное не предусмотрено правилами
                     конкретного бейджа.</p>
             </section>
             </section>
 
-            <div class="footer">
+            <div class="footer" data-i18n="page_legal.footer">
                 © 2026 A-LAB.TECH LEGAL DEPARTMENT. ALL RIGHTS RESERVED.
             </div>
 

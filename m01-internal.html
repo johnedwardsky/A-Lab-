@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROJECT M01 | SYSTEM OVERVIEW</title>
+    <title data-i18n="page_rd.m01_title">PROJECT M01 | SYSTEM OVERVIEW</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -723,7 +723,7 @@
     <header>
         <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
         <div class="header-controls">
-            <a href="rd.html" class="back-btn hover-trigger">/// НАЗАД В LAB</a>
+            <a href="rd.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
                 МЕНЮ</button>
         </div>
@@ -734,9 +734,9 @@
         <!-- INTRO HERO -->
         <section class="hero">
             <div class="hero-content animate-in">
-                <div class="hero-tag">// PHILOSOPHY</div>
-                <h1>M01 <br> <span>SYSTEM</span></h1>
-                <p class="hero-desc">
+                <div class="hero-tag" data-i18n="page_m01.hero_tag">// PHILOSOPHY</div>
+                <h1 data-i18n="page_m01.hero_title">M01 <br> <span>SYSTEM</span></h1>
+                <p class="hero-desc" data-i18n="page_m01.hero_desc">
                     Персональное устройство нового поколения. Гармоничное слияние личного пространства и глобальной
                     коммуникации.
                     <br><br>
@@ -745,7 +745,8 @@
                     <strong>3. Технологии:</strong> AR-визор и P2P-связь.
                 </p>
                 <div style="display: flex; gap: 20px; margin-top: 40px;">
-                    <a href="m01_economic_model.pdf" class="btn-primary hover-trigger">DOWNLOAD WHITEPAPER</a>
+                    <a href="m01_economic_model.pdf" class="btn-primary hover-trigger"
+                        data-i18n="page_m01.btn_whitepaper">DOWNLOAD WHITEPAPER</a>
                 </div>
             </div>
 
@@ -760,13 +761,13 @@
 
         <!-- TECHNICAL SOLUTION -->
         <section class="animate-in delay-2">
-            <h2 class="section-title">Техническая Архитектура</h2>
+            <h2 class="section-title" data-i18n="page_m01.tech_title">Техническая Архитектура</h2>
             <div class="tech-grid">
                 <!-- MODULE 1 -->
                 <div class="tech-card hover-trigger">
                     <div class="tech-icon">👁️</div>
-                    <h3>HEAD UNIT</h3>
-                    <ul class="tech-list">
+                    <h3 data-i18n="page_m01.mod_1_title">HEAD UNIT</h3>
+                    <ul class="tech-list" data-i18n="page_m01.mod_1_list">
                         <li>Маска / Шлем с модульным дизайном</li>
                         <li>Сменные стили (Winter/Summer)</li>
                         <li>Полугибкий AR-визор</li>
@@ -776,8 +777,8 @@
                 <!-- MODULE 2 -->
                 <div class="tech-card hover-trigger">
                     <div class="tech-icon">🎒</div>
-                    <h3>BACKPACK BLOCK</h3>
-                    <ul class="tech-list">
+                    <h3 data-i18n="page_m01.mod_2_title">BACKPACK BLOCK</h3>
+                    <ul class="tech-list" data-i18n="page_m01.mod_2_list">
                         <li>HEPA & Угольная фильтрация</li>
                         <li>Активная вентиляция</li>
                         <li>Power Bank & CPU Core</li>
@@ -787,8 +788,8 @@
                 <!-- MODULE 3 -->
                 <div class="tech-card hover-trigger">
                     <div class="tech-icon">🧤</div>
-                    <h3>CONTROLLER</h3>
-                    <ul class="tech-list">
+                    <h3 data-i18n="page_m01.mod_3_title">CONTROLLER</h3>
+                    <ul class="tech-list" data-i18n="page_m01.mod_3_list">
                         <li>Перчатка или Смарт-кольцо</li>
                         <li>Управление AR-интерфейсом</li>
                         <li>Виртуальная клавиатура</li>
@@ -1030,6 +1031,7 @@
             });
         }
     </script>
+    <script src="i18n.js"></script>
     <script src="nda-manager.js"></script>
     <script src="main-menu.js"></script>
 </body>

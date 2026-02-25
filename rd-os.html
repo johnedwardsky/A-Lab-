@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chameleon OS | A-LAB.TECH</title>
+    <title data-i18n="page_rd_os.title">Chameleon OS | A-LAB.TECH</title>
     <meta name="description" content="Chameleon OS — Liquid UI Demo. Генеративная адаптивная ОС.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
@@ -738,21 +738,23 @@
             <img src="A-lab-logo.svg" alt="A-LAB.TECH">
         </a>
         <div class="topbar-links">
-            <a href="rd.html" class="toplink">/// Назад в Lab</a>
-            <button class="toplink" onclick="MainMenu.toggle()">/// Меню</button>
+            <a href="rd.html" class="toplink" data-i18n="menu.back">/// Назад в Lab</a>
+            <button class="toplink" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">/// Меню</button>
         </div>
     </div>
 
     <!-- HERO -->
     <section class="hero">
         <div>
-            <h1>Chameleon OS</h1>
-            <p class="hero-sub">Генеративная адаптивная операционная система. Интерфейс, который подстраивается под вас
+            <h1 data-i18n="page_rd_os.hero_title">Chameleon OS</h1>
+            <p class="hero-sub" data-i18n="page_rd_os.hero_desc">Генеративная адаптивная операционная система.
+                Интерфейс, который подстраивается под вас
                 — а не наоборот.</p>
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:0;">
-                <a href="#demo" class="btn-main">Попробовать Liquid UI ↓</a>
+                <a href="#demo" class="btn-main" data-i18n="page_rd_os.btn_try">Попробовать Liquid UI ↓</a>
                 <a href="rd-os-whitepaper.html" class="btn-main"
-                    style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);">Читать Whitepaper
+                    style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);"
+                    data-i18n="page_rd_os.btn_whitepaper">Читать Whitepaper
                     →</a>
             </div>
         </div>
@@ -761,31 +763,36 @@
     <!-- FEATURES -->
     <section class="features">
         <div class="feat-card">
-            <h3>Age-Adaptive Engine</h3>
-            <p>От безопасной песочницы для 7-летнего до интерфейса с мониторингом здоровья для пожилых. ОС
+            <h3 data-i18n="page_rd_os.feat_1_title">Age-Adaptive Engine</h3>
+            <p data-i18n="page_rd_os.feat_1_desc">От безопасной песочницы для 7-летнего до интерфейса с мониторингом
+                здоровья для пожилых. ОС
                 трансформируется под физиологические потребности.</p>
         </div>
         <div class="feat-card">
-            <h3>Эффект Хамелеона</h3>
-            <p>Нравится стиль Apple, но хотите свободу? Chameleon OS эмулирует UI любой экосистемы через смарт-контракты
+            <h3 data-i18n="page_rd_os.feat_2_title">Эффект Хамелеона</h3>
+            <p data-i18n="page_rd_os.feat_2_desc">Нравится стиль Apple, но хотите свободу? Chameleon OS эмулирует UI
+                любой экосистемы через смарт-контракты
                 роялти.</p>
         </div>
         <div class="feat-card">
-            <h3>Smart Royalties</h3>
-            <p>Встроенный Web3-слой автоматически выплачивает микро-роялти правообладателям, когда их UI/UX паттерны
+            <h3 data-i18n="page_rd_os.feat_3_title">Smart Royalties</h3>
+            <p data-i18n="page_rd_os.feat_3_desc">Встроенный Web3-слой автоматически выплачивает микро-роялти
+                правообладателям, когда их UI/UX паттерны
                 генерируются.</p>
         </div>
         <div class="feat-card">
-            <h3>Local-First AI</h3>
-            <p>Цифровой профиль не покидает устройство. Генерация и аналитика работают на локальном NPU-чипе.</p>
+            <h3 data-i18n="page_rd_os.feat_4_title">Local-First AI</h3>
+            <p data-i18n="page_rd_os.feat_4_desc">Цифровой профиль не покидает устройство. Генерация и аналитика
+                работают на локальном NPU-чипе.</p>
         </div>
     </section>
 
     <!-- DEMO -->
     <section id="demo" class="demo-section" x-data="chameleonDemo()">
         <div class="demo-header">
-            <h2>Liquid UI Demonstration</h2>
-            <p>Выберите возрастной профиль — и наблюдайте, как ОС перестраивает логику и дизайн</p>
+            <h2 data-i18n="page_rd_os.demo_title">Liquid UI Demonstration</h2>
+            <p data-i18n="page_rd_os.demo_desc">Выберите возрастной профиль — и наблюдайте, как ОС перестраивает логику
+                и дизайн</p>
         </div>
         <div class="demo-grid">
 
@@ -1007,6 +1014,7 @@
             };
         }
     </script>
+    <script src="i18n.js"></script>
 </body>
 
 </html>

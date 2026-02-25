@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-LAB.TECH | ВОЗДУШНЫЕ МОСТЫ</title>
+    <title data-i18n="page_rd.air_bridges_title">A-LAB.TECH | ВОЗДУШНЫЕ МОСТЫ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -1067,7 +1067,7 @@
     <header>
         <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
         <div class="header-controls">
-            <a href="rd.html" class="back-btn hover-trigger">/// НАЗАД В LAB</a>
+            <a href="rd.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
                 МЕНЮ</button>
         </div>
@@ -1075,9 +1075,9 @@
 
     <div class="container">
         <section class="hero">
-            <span class="project-tag">PROJECT_ID: AIR_BRIDGES_V1</span>
-            <h1>ВОЗДУШНЫЕ МОСТЫ</h1>
-            <p class="hero-desc">
+            <span class="project-tag" data-i18n="page_rd.air_bridges_tag">PROJECT_ID: AIR_BRIDGES_V1</span>
+            <h1 data-i18n="page_rd.air_bridges_title">ВОЗДУШНЫЕ МОСТЫ</h1>
+            <p class="hero-desc" data-i18n="page_air_bridges.hero_desc">
                 Интеллектуальная сеть автономной логистики. Создаем транспортные коридоры там, где заканчиваются дороги.
                 Революция в доставке критически важных грузов.
             </p>
@@ -1149,8 +1149,9 @@
             </div>
             <div class="intel-details">
                 <span class="project-tag">SECTOR_INTEL: <span id="intel-sector-id">AGRI_ZONE</span></span>
-                <h2 id="intel-title">Интеллектуальный анализ местности</h2>
-                <p id="intel-desc">Система датчиков дрона анализирует рельеф и биометрические показатели в реальном
+                <h2 id="intel-title" data-i18n="page_air_bridges.intel_title">Интеллектуальный анализ местности</h2>
+                <p id="intel-desc" data-i18n="page_air_bridges.intel_desc">Система датчиков дрона анализирует рельеф и
+                    биометрические показатели в реальном
                     времени. Статус: Сбор данных завершен.</p>
                 <div class="intel-specs">
                     <div class="intel-spec-item">TEMP: -10°C / +45°C</div>
@@ -1166,8 +1167,9 @@
             <div class="vr-container">
                 <div class="vr-info">
                     <span class="project-tag">INTERFACE: VR_LINK_v4</span>
-                    <h2>VR ТЕЛЕПРИСУТСТВИЕ</h2>
-                    <p style="color: #aaa; margin-bottom: 30px;">Система дистанционного пилотирования позволяет
+                    <h2 data-i18n="page_air_bridges.vr_title">VR ТЕЛЕПРИСУТСТВИЕ</h2>
+                    <p style="color: #aaa; margin-bottom: 30px;" data-i18n="page_air_bridges.vr_desc">Система
+                        дистанционного пилотирования позволяет
                         оператору находиться в кабине дрона, находясь за тысячи километров. Полное погружение и
                         нейро-обратная связь.</p>
 
@@ -1292,34 +1294,40 @@
         <div class="grid">
             <div class="sector-card hover-trigger">
                 <span class="sector-icon">🌾</span>
-                <h3>Аграрный сектор</h3>
-                <p>Мониторинг посевов, точечная доставка удобрений и сбор образцов почвы в труднодоступных районах.</p>
+                <h3 data-i18n="page_air_bridges.sector_agri_title">Аграрный сектор</h3>
+                <p data-i18n="page_air_bridges.sector_agri_desc">Мониторинг посевов, точечная доставка удобрений и сбор
+                    образцов почвы в труднодоступных районах.</p>
             </div>
             <div class="sector-card hover-trigger">
                 <span class="sector-icon">📦</span>
-                <h3>Логистический</h3>
-                <p>Сверхбыстрая доставка "последней мили" в условиях сложного рельефа и островных территорий.</p>
+                <h3 data-i18n="page_air_bridges.sector_logistics_title">Логистический</h3>
+                <p data-i18n="page_air_bridges.sector_logistics_desc">Сверхбыстрая доставка "последней мили" в условиях
+                    сложного рельефа и островных территорий.</p>
             </div>
             <div class="sector-card hover-trigger">
                 <span class="sector-icon">🏥</span>
-                <h3>Медицинский</h3>
-                <p>Экстренная доставка медикаментов, крови и органов для трансплантации со скоростью звука.</p>
+                <h3 data-i18n="page_air_bridges.sector_medical_title">Медицинский</h3>
+                <p data-i18n="page_air_bridges.sector_medical_desc">Экстренная доставка медикаментов, крови и органов
+                    для трансплантации со скоростью звука.</p>
             </div>
             <div class="sector-card hover-trigger">
                 <span class="sector-icon">🆘</span>
-                <h3>Спасательный</h3>
-                <p>Доставка спасательных комплектов, связи и провизии в зоны стихийных бедствий.</p>
+                <h3 data-i18n="page_air_bridges.sector_rescue_title">Спасательный</h3>
+                <p data-i18n="page_air_bridges.sector_rescue_desc">Доставка спасательных комплектов, связи и провизии в
+                    зоны стихийных бедствий.</p>
             </div>
             <div class="sector-card hover-trigger">
                 <span class="sector-icon">🔍</span>
-                <h3>Исследовательский</h3>
-                <p>Автономная разведка территорий, картография и экологический мониторинг в режиме реального времени.
+                <h3 data-i18n="page_air_bridges.sector_research_title">Исследовательский</h3>
+                <p data-i18n="page_air_bridges.sector_research_desc">Автономная разведка территорий, картография и
+                    экологический мониторинг в режиме реального времени.
                 </p>
             </div>
             <div class="sector-card hover-trigger">
                 <span class="sector-icon">❄️</span>
-                <h3>Устойчивость среды</h3>
-                <p>Конструкция адаптирована к экстремальным температурам. Надежная работа в условиях Арктики и
+                <h3 data-i18n="page_air_bridges.sector_resilience_title">Устойчивость среды</h3>
+                <p data-i18n="page_air_bridges.sector_resilience_desc">Конструкция адаптирована к экстремальным
+                    температурам. Надежная работа в условиях Арктики и
                     раскаленных пустынь.</p>
             </div>
         </div>
@@ -1904,8 +1912,8 @@
     </section>
 
     <footer>
-        <div>© 2026 ARTIFACT LAB // R&D DIVISION</div>
-        <div>DATA ENCRYPTED // END-TO-END SYSTEM</div>
+        <div data-i18n="page_air_bridges.footer_copy">© 2026 ARTIFACT LAB // R&D DIVISION</div>
+        <div data-i18n="page_air_bridges.footer_status">DATA ENCRYPTED // END-TO-END SYSTEM</div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

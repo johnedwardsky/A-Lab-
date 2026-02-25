@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-LAB.TECH | ПРОЕКТ СПРУТ</title>
+    <title data-i18n="page_rd.arachnid_title">A-LAB.TECH | ПРОЕКТ СПРУТ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -500,7 +500,7 @@
     <header>
         <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
         <div class="header-controls">
-            <a href="rd.html" class="back-btn hover-trigger">/// НАЗАД В LAB</a>
+            <a href="rd.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
                 МЕНЮ</button>
         </div>
@@ -508,13 +508,14 @@
 
     <div class="container">
         <section class="hero">
-            <span class="project-tag">PROJECT_ID: SPRUT_HUB_X1</span>
-            <h1>ПРОЕКТ СПРУТ</h1>
+            <span class="project-tag" data-i18n="page_arachnid.hero_badge">PROJECT_ID: SPRUT_HUB_X1</span>
+            <h1 data-i18n="page_arachnid.hero_title">ПРОЕКТ СПРУТ</h1>
             <div class="project-goal">
-                <h4>ЦЕЛЬ ПРОЕКТА // PROJECT_GOAL</h4>
-                <p>Автономная система роботизированной очистки днищ крупнотоннажных судов прямо на ходу.</p>
+                <h4 data-i18n="page_arachnid.goal_title">ЦЕЛЬ ПРОЕКТА // PROJECT_GOAL</h4>
+                <p data-i18n="page_arachnid.goal_text">Автономная система роботизированной очистки днищ крупнотоннажных
+                    судов прямо на ходу.</p>
             </div>
-            <p class="hero-desc">
+            <p class="hero-desc" data-i18n="page_arachnid.hero_desc">
                 Малый робот с передовой технологией магнитных присосок. Совместно с центральным обтекаемым хабом, роботы
                 "Спрут" перемещаются по периметру судна и гидроструями сверхвысокого давления очищают ракушки и морские
                 наросты.
@@ -533,18 +534,21 @@
 
         <div class="tech-grid">
             <div class="tech-card hover-trigger">
-                <h3>Гидродинамический Хаб</h3>
-                <p>Умный обтекаемый хаб крепится к носовой части судна, снижая сопротивление воды. Двигаясь к корме, он
+                <h3 data-i18n="page_arachnid.tech_1_title">Гидродинамический Хаб</h3>
+                <p data-i18n="page_arachnid.tech_1_desc">Умный обтекаемый хаб крепится к носовой части судна, снижая
+                    сопротивление воды. Двигаясь к корме, он
                     служит единым узлом подачи воды под напором для группы роботов.</p>
             </div>
             <div class="tech-card hover-trigger">
-                <h3>Магнитная сцепка</h3>
-                <p>Усовершенствованные электромагнитные манипуляторы "Спрут" надежно удерживают робота на корпусе даже в
+                <h3 data-i18n="page_arachnid.tech_2_title">Магнитная сцепка</h3>
+                <p data-i18n="page_arachnid.tech_2_desc">Усовершенствованные электромагнитные манипуляторы "Спрут"
+                    надежно удерживают робота на корпусе даже в
                     условиях сильного течения во время движения судна на крейсерской скорости.</p>
             </div>
             <div class="tech-card hover-trigger">
-                <h3>AI-Анализ износа (Premium)</h3>
-                <p>Базовые модели имеют дистанционное управление с камер. В премиальной линейке искусственный интеллект
+                <h3 data-i18n="page_arachnid.tech_3_title">AI-Анализ износа (Premium)</h3>
+                <p data-i18n="page_arachnid.tech_3_desc">Базовые модели имеют дистанционное управление с камер. В
+                    премиальной линейке искусственный интеллект
                     автоматически оценивает качество работ и высчитывает частоту необходимых очисток.</p>
             </div>
         </div>
@@ -575,12 +579,15 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap;">
                     <div>
-                        <h2 style="font-size: 2rem; margin-bottom: 10px;">ПОДДЕРЖАТЬ РАЗРАБОТКУ // FUNDING</h2>
-                        <p style="color: #888; max-width: 600px;">Ваш вклад ускорит создание системы Спрут. Все донаты
+                        <h2 style="font-size: 2rem; margin-bottom: 10px;" data-i18n="page_arachnid.funding_title">
+                            ПОДДЕРЖАТЬ РАЗРАБОТКУ // FUNDING</h2>
+                        <p style="color: #888; max-width: 600px;" data-i18n="page_arachnid.funding_desc">Ваш вклад
+                            ускорит создание системы Спрут. Все донаты
                             распределяются через смарт-контракт A-LAB DAO.</p>
                     </div>
                     <button class="submit-btn hover-trigger" onclick="FundingManager.open('sprut', 'SPRUT')"
-                        style="margin-top: 0; min-width: 250px;">ПОДДЕРЖАТЬ ПРОЕКТ // DONATE</button>
+                        style="margin-top: 0; min-width: 250px;" data-i18n="page_arachnid.funding_btn">ПОДДЕРЖАТЬ ПРОЕКТ
+                        // DONATE</button>
                 </div>
             </div>
         </section>

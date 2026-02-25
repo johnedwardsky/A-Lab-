@@ -10,28 +10,61 @@ const ALabCases = {
             id: 1,
             title: "E-com Giant",
             result_value: "+214",
-            result_label: "ROI",
+            result_label: "% ROI",
             description: "Внедрение ИИ-рекомендаций и автоматического ретаргетинга.",
             category: "marketing",
-            lang: "ru"
+            lang: "ru",
+            link_url: "#"
         },
         {
             id: 2,
             title: "SaaS Platform",
             result_value: "-40",
-            result_label: "CAC",
+            result_label: "% CAC",
             description: "Оптимизация воронки через предиктивный скоринг лидов.",
             category: "marketing",
-            lang: "ru"
+            lang: "ru",
+            link_url: "#"
         },
         {
             id: 3,
             title: "Global Brand",
             result_value: "1.5M",
-            result_label: "Reach",
+            result_label: " Reach",
             description: "Виральная кампания с использованием нейросетевых фильтров.",
             category: "marketing",
-            lang: "ru"
+            lang: "ru",
+            link_url: "#"
+        },
+        {
+            id: 11,
+            title: "E-com Giant",
+            result_value: "+214",
+            result_label: "% ROI",
+            description: "AI-driven recommendation engines and automated retargeting implementation.",
+            category: "marketing",
+            lang: "en",
+            link_url: "#"
+        },
+        {
+            id: 12,
+            title: "SaaS Platform",
+            result_value: "-40",
+            result_label: "% CAC",
+            description: "Funnel optimization via predictive lead scoring models.",
+            category: "marketing",
+            lang: "en",
+            link_url: "#"
+        },
+        {
+            id: 13,
+            title: "Global Brand",
+            result_value: "1.5M",
+            result_label: " Reach",
+            description: "Viral campaign utilizing neural network-based AR filters.",
+            category: "marketing",
+            lang: "en",
+            link_url: "#"
         },
 
         {

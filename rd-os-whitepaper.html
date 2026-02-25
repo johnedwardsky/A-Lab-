@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chameleon OS — Whitepaper | A-LAB.TECH</title>
+    <title data-i18n="page_rd_os_whitepaper.title">Chameleon OS — Whitepaper | A-LAB.TECH</title>
     <meta name="description"
         content="Whitepaper Chameleon OS — генеративная адаптивная операционная система с AI-интерфейсом, Web3 экосистемой и смарт-роялти.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -471,27 +471,29 @@
             <img src="A-lab-logo.svg" alt="A-LAB.TECH" style="height:28px;">
         </a>
         <nav>
-            <a href="rd.html">/// Назад в Lab</a>
-            <a href="rd-os.html">/// Demo</a>
-            <button onclick="MainMenu.toggle()">/// Меню</button>
+            <a href="rd.html" data-i18n="menu.back">/// Назад в Lab</a>
+            <a href="rd-os.html" data-i18n="menu.demo">/// Demo</a>
+            <button onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">/// Меню</button>
         </nav>
     </div>
 
     <!-- ==================== HERO ==================== -->
     <section class="hero">
-        <div class="hero-badge">WHITEPAPER v1.0 · ФЕВРАЛЬ 2026</div>
-        <h1>Chameleon OS</h1>
-        <p class="hero-sub">Generative Adaptive Operating System — первая в мире ОС, где интерфейс адаптируется под
+        <div class="hero-badge" data-i18n="page_rd_os_whitepaper.hero_badge">WHITEPAPER v1.0 · ФЕВРАЛЬ 2026</div>
+        <h1 data-i18n="page_rd_os_whitepaper.hero_title">Chameleon OS</h1>
+        <p class="hero-sub" data-i18n="page_rd_os_whitepaper.hero_desc">Generative Adaptive Operating System — первая в
+            мире ОС, где интерфейс адаптируется под
             человека, а не наоборот.</p>
         <div class="hero-actions">
-            <a href="rd-os.html#demo" class="btn btn-primary">Посмотреть Liquid UI Demo →</a>
-            <a href="#s1" class="btn btn-ghost">Читать Whitepaper ↓</a>
+            <a href="rd-os.html#demo" class="btn btn-primary" data-i18n="page_rd_os_whitepaper.btn_demo">Посмотреть
+                Liquid UI Demo →</a>
+            <a href="#s1" class="btn btn-ghost" data-i18n="page_rd_os_whitepaper.btn_read">Читать Whitepaper ↓</a>
         </div>
     </section>
 
     <!-- ==================== TABLE OF CONTENTS ==================== -->
     <div class="toc">
-        <h2>Содержание</h2>
+        <h2 data-i18n="page_rd_os_whitepaper.toc_title">Содержание</h2>
         <div class="toc-grid">
             <a href="#s1" class="toc-item"><span class="toc-num">01</span> Аннотация</a>
             <a href="#s2" class="toc-item"><span class="toc-num">02</span> Введение</a>
@@ -728,8 +730,9 @@
 
             <!-- PoE Block -->
             <div class="poe-block">
-                <h3>🔐 Proof-of-Existence</h3>
-                <p style="color: var(--muted); font-size: .9rem;">Криптографический отпечаток документа зафиксирован в
+                <h3 data-i18n="page_air_bridges.poe_title">🔐 Proof-of-Existence</h3>
+                <p style="color: var(--muted); font-size: .9rem;" data-i18n="page_rd_os_whitepaper.poe_desc">
+                    Криптографический отпечаток документа зафиксирован в
                     блокчейне</p>
                 <p style="color:var(--muted);font-size:.85rem;margin-bottom:.5rem;">Inventor & Author: <strong
                         style="color:var(--text);">Ivan Lakshinnsky</strong> · A-LAB.TECH R&D</p>
@@ -746,8 +749,8 @@
         <a href="rd-os.html#demo" class="btn btn-primary">Открыть Liquid UI Demo →</a>
     </section>
 
-    <footer>&copy; 2026 A-LAB.TECH · Future Systems Division</footer>
-
+    <script src="i18n.js"></script>
+    <script src="main-menu.js"></script>
 </body>
 
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-LAB.TECH | CONTACTS_NODE</title>
+    <title data-i18n="menu.contacts">A-LAB.TECH | CONTACTS_NODE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -407,8 +407,9 @@
             <img src="A-lab-logo.svg" alt="A-LAB">
         </a>
         <div class="header-controls">
-            <a href="index.html" class="back-btn hover-trigger">/// НАЗАД</a>
-            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()">/// МЕНЮ</button>
+            <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
+            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+                МЕНЮ</button>
         </div>
     </header>
 
@@ -420,21 +421,24 @@
 
         <div class="contact-grid">
             <div class="contact-card hover-trigger">
-                <span class="card-label">EMAIL_NODE</span>
+                <span class="card-label" data-i18n="page_contacts.email_node">EMAIL_NODE</span>
                 <a href="mailto:hello@a-lab.tech" class="card-value">hello@a-lab.tech</a>
-                <p class="card-desc">По вопросам сотрудничества, прессы и общим запросам. Время ответа: < 24ч.</p>
+                <p class="card-desc" data-i18n="page_contacts.email_desc">По вопросам сотрудничества, прессы и общим
+                    запросам. Время ответа: < 24ч.</p>
             </div>
 
             <div class="contact-card hover-trigger">
-                <span class="card-label">TELEGRAM_DIRECT</span>
+                <span class="card-label" data-i18n="page_contacts.tg_direct">TELEGRAM_DIRECT</span>
                 <a href="https://t.me/alab_tech" target="_blank" class="card-value">@alab_tech</a>
-                <p class="card-desc">Прямой канал связи для оперативного обсуждения проектов и идей.</p>
+                <p class="card-desc" data-i18n="page_contacts.tg_desc">Прямой канал связи для оперативного обсуждения
+                    проектов и идей.</p>
             </div>
 
             <div class="contact-card hover-trigger">
-                <span class="card-label">BASE_COORDINATES</span>
+                <span class="card-label" data-i18n="page_contacts.base_coords">BASE_COORDINATES</span>
                 <span class="card-value">Digital Nomad Mode</span>
-                <p class="card-desc">Мы работаем распределенно. Основные R&D узлы: Москва / Dubai / Remote.</p>
+                <p class="card-desc" data-i18n="page_contacts.base_desc">Мы работаем распределенно. Основные R&D узлы:
+                    Москва / Dubai / Remote.</p>
             </div>
         </div>
 
@@ -457,11 +461,11 @@
                     <div class="form-group">
                         <label data-i18n="page_contacts.form_subject">Тема запроса</label>
                         <select id="contactSubject">
-                            <option>Новый проект</option>
-                            <option>Стать резидентом</option>
-                            <option>R&D сотрудничество</option>
-                            <option>Консалтинг</option>
-                            <option>Другое</option>
+                            <option data-i18n="page_contacts.opt_new_project">Новый проект</option>
+                            <option data-i18n="page_contacts.opt_resident">Стать резидентом</option>
+                            <option data-i18n="page_contacts.opt_rd">R&D сотрудничество</option>
+                            <option data-i18n="page_contacts.opt_consulting">Консалтинг</option>
+                            <option data-i18n="page_contacts.opt_other">Другое</option>
                         </select>
                     </div>
                     <div class="form-group">
