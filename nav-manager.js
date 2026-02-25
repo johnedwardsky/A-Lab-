@@ -200,32 +200,32 @@ const ResidentNav = {
     },
 
     showRestrictedModal() {
-        if (document.getElementById('restrictedModal')) {
-            document.getElementById('restrictedModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            return;
+        let modal = document.getElementById('restrictedModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'restrictedModal';
+            modal.className = 'quiz-modal';
+            document.body.appendChild(modal);
         }
 
-        const modal = document.createElement('div');
-        modal.id = 'restrictedModal';
-        modal.className = 'quiz-modal'; // Reuse quiz modal styles
-        modal.style.display = 'flex';
+        // Always refresh content to match current language
         modal.innerHTML = `
             <div class="quiz-content" style="max-width: 500px; text-align: center;">
                 <span class="close-quiz" onclick="ResidentNav.closeRestrictedModal()">&times;</span>
                 <div style="margin-bottom: 30px;">
                     <i style="font-size: 4rem; color: var(--accent); display: block; margin-bottom: 20px;">🔒</i>
-                    <h2 style="font-size: 1.8rem; text-transform: uppercase; margin-bottom: 15px;">${window.I18n?.t('nav.restricted_title') || 'ACCESS RESTRICTED'}</h2>
-                    <p style="color: #888; line-height: 1.6;">${window.I18n?.t('nav.restricted_desc') || 'Entry to the closed A-LAB ecosystem is available only to residents. Please log in or apply for membership.'}</p>
+                    <h2 class="quiz-q" style="font-size: 1.6rem; margin-bottom: 15px;">${window.I18n?.t('nav.restricted_title') || 'ACCESS RESTRICTED'}</h2>
+                    <p style="color: #888; line-height: 1.6; font-size: 0.95rem;">${window.I18n?.t('nav.restricted_desc') || 'Entry to the closed A-LAB ecosystem is available only to residents. Please log in or apply for membership.'}</p>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <a href="login.html" class="btn-quiz-next" style="text-decoration: none; display: block;">${window.I18n?.t('nav.login_btn') || 'LOGIN TO SYSTEM'}</a>
-                    <button class="btn-quiz-back" style="margin: 0;" onclick="ResidentNav.closeRestrictedModal(); ResidentNav.handleJoinClick();">${window.I18n?.t('nav.join_btn') || 'BECOME A RESIDENT'}</button>
-                    <p style="font-family: var(--font-code); color: #444; font-size: 0.6rem; margin-top: 10px;">[ ${window.I18n?.t('nav.protocol_tag') || 'END-TO-END ENCRYPTED PROTOCOL'} ]</p>
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                    <a href="login.html" class="btn-quiz-next" style="width: 100%; box-sizing: border-box;">${window.I18n?.t('nav.login_btn') || 'LOGIN TO SYSTEM'}</a>
+                    <button class="btn-quiz-back" style="width: 100%; margin: 0; box-sizing: border-box;" onclick="ResidentNav.closeRestrictedModal(); ResidentNav.handleJoinClick();">${window.I18n?.t('nav.join_btn') || 'BECOME A RESIDENT'}</button>
+                    <p style="font-family: var(--font-code); color: #444; font-size: 0.6rem; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;">[ ${window.I18n?.t('nav.protocol_tag') || 'END-TO-END ENCRYPTED PROTOCOL'} ]</p>
                 </div>
             </div>
         `;
-        document.body.appendChild(modal);
+
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     },
 

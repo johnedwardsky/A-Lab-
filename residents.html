@@ -1069,7 +1069,7 @@
 
         function submitCustomStrength() {
             const customValue = document.getElementById('customStrengthInput').value.trim();
-            if (!customValue) return alert('Пожалуйста, укажите вашу специализацию');
+            if (!customValue) return alert(window.I18n?.t('page_residents.alert_spec') || 'Please specify your specialization');
             window.selectedStrength = customValue;
             nextStep(2);
         }
@@ -1086,12 +1086,12 @@
             const recommender = document.getElementById('recommenderId').value.trim();
             const btn = document.getElementById('submitAppBtn');
 
-            if (!fullName) return alert('Пожалуйста, введите ваше имя');
-            if (!tg) return alert('Введите Telegram');
-            if (!recommender) return alert('Введите ID резидента');
+            if (!fullName) return alert(window.I18n?.t('page_residents.alert_name') || 'Please enter your name');
+            if (!tg) return alert(window.I18n?.t('page_residents.alert_tg') || 'Enter Telegram');
+            if (!recommender) return alert(window.I18n?.t('page_residents.alert_id') || 'Enter Resident ID');
 
             btn.disabled = true;
-            btn.innerText = 'ОТПРАВКА...';
+            btn.innerText = window.I18n?.t('page_residents.btn_sending') || 'SENDING...';
 
             try {
                 const db = window.ALabCore?.db;
@@ -1110,16 +1110,16 @@
 
                 if (error) throw error;
 
-                const successMsg = `ЗАЯВКА ПРИНЯТА: Мы свяжемся с вами в Telegram после проверки данных администратором.`;
+                const successMsg = window.I18n?.t('page_residents.success_msg') || `APPLICATION RECEIVED: We will contact you on Telegram after the administrator reviews your data.`;
                 alert(successMsg);
                 closeQuiz();
 
             } catch (err) {
                 console.error('[QUIZ] Submit error:', err);
-                alert('Ошибка при отправке: ' + err.message);
+                alert((window.I18n?.t('page_residents.error_msg') || 'Error: ') + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'ОТПРАВИТЬ ЗАЯВКУ';
+                btn.innerText = window.I18n?.t('page_residents.quiz_submit') || 'SUBMIT APPLICATION';
             }
         }
 

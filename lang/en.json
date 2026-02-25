@@ -584,7 +584,14 @@
         "quiz_progress": "STEP",
         "quiz_exp_1_3": "1-3 YEARS",
         "quiz_exp_3_7": "3-7 YEARS",
-        "quiz_exp_7_plus": "7+ YEARS"
+        "quiz_exp_7_plus": "7+ YEARS",
+        "alert_name": "Please enter your name",
+        "alert_tg": "Enter Telegram @username",
+        "alert_id": "Enter Resident ID",
+        "alert_spec": "Please specify your specialization",
+        "btn_sending": "SENDING...",
+        "success_msg": "APPLICATION RECEIVED: We will contact you on Telegram after the administrator reviews your data.",
+        "error_msg": "Error during submission: "
     },
     "roles": {
         "resident": "Resident",
