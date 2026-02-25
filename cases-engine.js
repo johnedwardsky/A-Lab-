@@ -366,7 +366,7 @@ const ALabCases = {
             const triggerNDA = (e) => {
                 if (e) e.preventDefault();
                 if (window.NDAManager) {
-                    window.NDAManager.showModal(item.id, item.link_url);
+                    window.NDAManager.gate(item.id, item.link_url || '#');
                 } else if (window.openNdaModal) {
                     window.openNdaModal();
                 } else {
@@ -393,7 +393,14 @@ const ALabCases = {
                     </div>
                 `;
 
-                card.onclick = isConfidential ? triggerNDA : () => { window.location.href = item.link_url; };
+                card.onclick = (e) => {
+                    if (isConfidential) {
+                        triggerNDA(e);
+                    } else {
+                        if (e.target.closest('a')) return;
+                        window.location.href = item.link_url;
+                    }
+                };
             } else if (catLower === 'rd') {
                 const imgPath = item.image_url ? (item.image_url.startsWith('http') ? item.image_url : './' + item.image_url) : './rd_ai_tech.png';
                 card.className = `rd-card hover-trigger`;
@@ -425,17 +432,14 @@ const ALabCases = {
                     </div>
                 `;
 
-                if (isConfidential) {
-                    card.onclick = (e) => {
-                        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+                card.onclick = (e) => {
+                    if (isConfidential) {
                         triggerNDA(e);
-                    };
-                } else {
-                    card.onclick = (e) => {
-                        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
-                        window.location.href = item.link_url;
-                    };
-                }
+                    } else {
+                        if (e.target.closest('a')) return;
+                        window.location.href = item.link_url || '#';
+                    }
+                };
             } else {
                 card.className = 'case-card hover-trigger';
                 if (isConfidential) card.classList.add('is-restricted');
@@ -452,7 +456,14 @@ const ALabCases = {
                     ${isConfidential ? `<div style="margin-top:15px; font-family:var(--font-code); font-size:0.6rem; color:var(--accent); letter-spacing:1px;">[ NDA_REQUIRED ]</div>` : ''}
                 `;
 
-                card.onclick = isConfidential ? triggerNDA : () => { window.location.href = item.link_url; };
+                card.onclick = (e) => {
+                    if (isConfidential) {
+                        triggerNDA(e);
+                    } else {
+                        if (e.target.closest('a')) return;
+                        window.location.href = item.link_url || '#';
+                    }
+                };
             }
 
             container.appendChild(card);
