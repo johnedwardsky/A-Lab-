@@ -426,9 +426,15 @@ const ALabCases = {
                 `;
 
                 if (isConfidential) {
-                    card.onclick = triggerNDA;
+                    card.onclick = (e) => {
+                        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+                        triggerNDA(e);
+                    };
                 } else {
-                    card.onclick = () => { window.location.href = item.link_url; };
+                    card.onclick = (e) => {
+                        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+                        window.location.href = item.link_url;
+                    };
                 }
             } else {
                 card.className = 'case-card hover-trigger';
