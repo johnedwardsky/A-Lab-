@@ -373,16 +373,6 @@
             gap: 80px;
         }
 
-        @media (max-width: 768px) {
-            .lead-form-section {
-                padding: 40px 20px;
-            }
-
-            .form-info h2 {
-                font-size: 2.2rem;
-            }
-        }
-
         .form-info h2 {
             font-size: 3rem;
             font-weight: 800;
@@ -470,6 +460,37 @@
 
             .lead-form-section {
                 padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .lead-form-section {
+                padding: 30px 20px;
+                gap: 40px;
+                border-radius: 20px;
+            }
+
+            .form-info h2 {
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+
+            .form-info p {
+                font-size: 0.9rem;
+            }
+
+            input,
+            select,
+            textarea {
+                padding: 14px;
+                font-size: 0.95rem;
+                border-radius: 8px;
+            }
+
+            .submit-btn {
+                padding: 16px;
+                font-size: 0.95rem;
+                border-radius: 8px;
             }
         }
     </style>
