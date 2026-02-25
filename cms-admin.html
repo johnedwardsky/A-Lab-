@@ -865,7 +865,8 @@
     <div class="cursor"></div>
 
     <aside class="sidebar">
-        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
+                alt="A-LAB" loading="eager" decoding="async"></a>
 
         <a href="#" class="side-icon active hover-trigger" onclick="switchTab('dashboard')"><i>📊</i>
             <span>Dashboard</span></a>
@@ -1407,7 +1408,9 @@
         async function loadProjects(sb) {
             const { data } = await sb.from('projects').select('*').order('order_index');
             if (!data || !data.length) return;
-            document.getElementById('projectsBody').innerHTML = data.map(p => `
+            document.getElementById('projectsBody').innerHTML = data.map(p => {
+                const pJson = JSON.stringify(p).replace(/'/g, "&#39;");
+                return `
                 <tr>
                     <td style="color:var(--text); font-weight:600;">${p.title}</td>
                     <td><span class="badge badge-${p.category}">${p.category.toUpperCase()}</span></td>
@@ -1415,11 +1418,12 @@
                     <td style="font-family:var(--font-code); font-size:0.7rem;">${(p.lang || 'ru').toUpperCase()}</td>
                     <td style="font-family:var(--font-code);">${p.order_index}</td>
                     <td>
-                        <button class="action-btn hover-trigger" title="Редактировать">✏️</button>
+                        <button class="action-btn hover-trigger" onclick='openProjectForm(${pJson})' title="Редактировать">✏️</button>
                         <button class="action-btn hover-trigger" onclick="deleteProject('${p.id}')" title="Удалить">🗑</button>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
 
         async function loadResidents(sb) {
@@ -1440,7 +1444,9 @@
         async function loadBlocks(sb) {
             const { data } = await sb.from('page_blocks').select('*').order('page_slug').order('order_index');
             if (!data || !data.length) return;
-            document.getElementById('blocksGrid').innerHTML = data.map(b => `
+            document.getElementById('blocksGrid').innerHTML = data.map(b => {
+                const bJson = JSON.stringify(b).replace(/'/g, "&#39;");
+                return `
                 <div class="cms-card hover-trigger">
                     <div class="cms-card-header">
                         <span class="cms-card-title">${b.page_slug} / ${b.block_type}</span>
@@ -1448,13 +1454,14 @@
                     </div>
                     <div class="cms-card-meta">ORDER: ${b.order_index} • ${new Date(b.updated_at).toLocaleDateString('ru')}</div>
                     <div style="display:flex; gap:8px;">
-                        <button class="btn btn-secondary btn-sm hover-trigger">✏️ EDIT</button>
+                        <button class="btn btn-secondary btn-sm hover-trigger" onclick='openBlockForm(${bJson})'>✏️ EDIT</button>
                         <button class="btn btn-secondary btn-sm hover-trigger" onclick="toggleBlockVisibility('${b.id}', ${!b.is_visible})">
                             ${b.is_visible ? '👁 HIDE' : '👁 SHOW'}
                         </button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         async function loadMenu(sb) {
