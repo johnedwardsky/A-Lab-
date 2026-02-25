@@ -720,6 +720,114 @@
                 position: static !important;
             }
         }
+
+        /* --- PoE BLOCK --- */
+        .poe-block {
+            margin: 80px auto;
+            max-width: 900px;
+            padding: 40px;
+            background: rgba(0, 229, 255, 0.03);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .poe-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--tech-blue), transparent);
+        }
+
+        .poe-tag {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: var(--tech-blue);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .poe-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .poe-desc {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .poe-hash-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+
+        .poe-hash-label {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--tech-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            min-width: 70px;
+        }
+
+        .poe-hash-value {
+            font-family: var(--font-code);
+            font-size: 0.72rem;
+            color: rgba(0, 229, 255, 0.9);
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .poe-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .poe-meta-item {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        .poe-meta-item span {
+            color: rgba(0, 229, 255, 0.7);
+        }
+
+        footer {
+            padding: 60px 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
     </style>
 </head>
 
@@ -942,6 +1050,33 @@
         </section>
 
     </main>
+
+    <!-- ==================== PoE BLOCK ==================== -->
+    <div class="container" style="padding-top: 60px; margin-bottom: 40px;">
+        <div class="poe-block">
+            <div class="poe-tag">> INTEGRITY // PROOF-OF-EXISTENCE</div>
+            <div class="poe-title">🔐 Криптографическая защита проекта</div>
+            <p class="poe-desc">Страница системы «M01» криптографически хеширована (SHA-256) для фиксации авторства и
+                первенства идеи по принципу Proof-of-Existence (PoE).</p>
+
+            <div class="poe-hash-row">
+                <div class="poe-hash-label">SHA-256</div>
+                <div class="poe-hash-value">9483a870cffa1215c434bf19701e7ad73eb5cbf5f0e2c6f8205ede520aafeefa</div>
+            </div>
+
+            <div class="poe-meta">
+                <div class="poe-meta-item">FOUNDER: <span>Alexey Pak</span></div>
+                <div class="poe-meta-item">SYSTEM: <span>SHA-256 SECURED URL & IDENTITY</span></div>
+                <div class="poe-meta-item">TIMESTAMP: <span>25 февраля 2026</span></div>
+                <div class="poe-meta-item">STATUS: <span>VERIFIED FOUNDER NODE</span></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>© 2026 ARTIFACT LAB // R&D DIVISION</div>
+        <div>DATA ENCRYPTED // END-TO-END SYSTEM</div>
+    </footer>
 
     <script>
         // Custom Cursor
