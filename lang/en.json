@@ -19,6 +19,20 @@
         "back": "/// BACK",
         "menu_btn": "/// MENU"
     },
+    "nav": {
+        "join": "Join",
+        "feed": "Feed",
+        "residents": "Residents",
+        "messenger": "Messenger",
+        "projects": "Projects",
+        "theme": "Theme",
+        "more": "MORE",
+        "restricted_title": "ACCESS RESTRICTED",
+        "restricted_desc": "Entry to the closed A-LAB ecosystem is available only to residents. Please log in or apply for membership.",
+        "login_btn": "LOGIN TO SYSTEM",
+        "join_btn": "BECOME A RESIDENT",
+        "protocol_tag": "END-TO-END ENCRYPTED PROTOCOL"
+    },
     "sidebar": {
         "join": "Join",
         "feed": "Feed",
@@ -140,12 +154,32 @@
         "ev_chassis_title": "Smart EV Chassis"
     },
     "nda": {
-        "title": "NDA Verification",
-        "full_name": "Full Name",
-        "email": "Email",
-        "company": "Company",
-        "accept": "Accept NDA",
-        "access_granted": "Access Granted"
+        "title": "NDA ACCESS REQUEST",
+        "desc": "Sign an electronic non-disclosure agreement to access private materials.",
+        "commitment": "By signing this agreement, you undertake:",
+        "item1": "Not to disclose information about R&D Lab projects to third parties",
+        "item2": "To use the information received exclusively for cooperation with A-LAB",
+        "item3": "Not to copy or distribute materials without permission",
+        "label_name": "Full Name",
+        "label_email": "Email",
+        "label_phone": "Phone",
+        "label_company": "Company",
+        "placeholder_name": "First Last Name",
+        "placeholder_phone": "Contact phone number",
+        "placeholder_company": "Company name",
+        "accept_checkbox": "I agree to the terms of the electronic NDA and undertake not to disclose the information received.",
+        "submit_btn": "SIGN & SEND",
+        "have_code": "Have an access code?",
+        "code_title": "Enter Access Code",
+        "code_desc": "Insert your access code.",
+        "label_code": "Access Code",
+        "activate_btn": "ACTIVATE ACCESS",
+        "back_to_form": "← Back to form",
+        "alert_fill": "Please fill in all required fields",
+        "alert_accept": "You must accept the NDA terms",
+        "alert_email": "Please provide a valid email",
+        "alert_code": "Invalid access code",
+        "success_access": "Access granted for 7 days"
     },
     "notifications": {
         "title": "Notifications",
@@ -542,10 +576,15 @@
         "quiz_step2_title": "Your experience in years?",
         "quiz_back": "\u2190 BACK",
         "quiz_step3_title": "Tell us about yourself",
+        "quiz_step3_placeholder": "Your motivation...",
         "quiz_step4_title": "Recommendation (ID)",
         "quiz_step4_desc": "You need the ID of an existing resident to join.",
-        "quiz_step5_title": "Telegram for contact?",
-        "quiz_submit": "SUBMIT APPLICATION"
+        "quiz_step5_title": "Your name and Telegram?",
+        "quiz_submit": "SUBMIT APPLICATION",
+        "quiz_progress": "STEP",
+        "quiz_exp_1_3": "1-3 YEARS",
+        "quiz_exp_3_7": "3-7 YEARS",
+        "quiz_exp_7_plus": "7+ YEARS"
     },
     "roles": {
         "resident": "Resident",

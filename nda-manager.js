@@ -70,86 +70,86 @@ const NDAManager = (() => {
                 <button class="nda-close hover-trigger" onclick="NDAManager.closeModal()" style="top: 20px; right: 20px;">✕</button>
                 
                 <div id="nda-main-view">
-                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">NDA ACCESS REQUEST</h2>
-                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Подпишите электронное соглашение о неразглашении для доступа к закрытым материалам.</p>
+                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">${window.I18n?.t('nda.title') || 'NDA ACCESS REQUEST'}</h2>
+                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">${window.I18n?.t('nda.desc') || 'Sign an electronic non-disclosure agreement to access private materials.'}</p>
 
                     <div class="nda-text-block">
-                        <p>Подписывая данное соглашение, вы обязуетесь:</p>
+                        <p>${window.I18n?.t('nda.commitment') || 'By signing this agreement, you undertake:'}</p>
                         <ul>
-                            <li>Не раскрывать информацию о проектах R&D Lab третьим лицам</li>
-                            <li>Использовать полученную информацию исключительно для сотрудничества с A-LAB</li>
-                            <li>Не копировать и не распространять материалы без разрешения</li>
+                            <li>${window.I18n?.t('nda.item1') || 'Not to disclose information about R&D Lab projects to third parties'}</li>
+                            <li>${window.I18n?.t('nda.item2') || 'To use the information received exclusively for cooperation with A-LAB'}</li>
+                            <li>${window.I18n?.t('nda.item3') || 'Not to copy or distribute materials without permission'}</li>
                         </ul>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Полное имя</label>
-                        <input type="text" class="form-input" id="ndaFullName" placeholder="Имя Фамилия" required>
+                        <label class="form-label">${window.I18n?.t('nda.label_name') || 'Full Name'}</label>
+                        <input type="text" class="form-input" id="ndaFullName" placeholder="${window.I18n?.t('nda.placeholder_name') || 'First Last Name'}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">${window.I18n?.t('nda.label_email') || 'Email'}</label>
                         <input type="email" class="form-input" id="ndaEmail" placeholder="your@email.com" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Телефон</label>
-                        <input type="tel" class="form-input" id="ndaPhone" placeholder="Номер контактного телефона" required>
+                        <label class="form-label">${window.I18n?.t('nda.label_phone') || 'Phone'}</label>
+                        <input type="tel" class="form-input" id="ndaPhone" placeholder="${window.I18n?.t('nda.placeholder_phone') || 'Contact phone number'}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Компания</label>
-                        <input type="text" class="form-input" id="ndaCompany" placeholder="Название компании" required>
+                        <label class="form-label">${window.I18n?.t('nda.label_company') || 'Company'}</label>
+                        <input type="text" class="form-input" id="ndaCompany" placeholder="${window.I18n?.t('nda.placeholder_company') || 'Company name'}" required>
                     </div>
 
                     <div style="display: flex; align-items: flex-start; gap: 15px; margin: 25px 0;">
                         <input type="checkbox" id="ndaAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer;">
                         <label for="ndaAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer; color: #888; line-height: 1.4;">
-                            Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать полученную информацию.
+                            ${window.I18n?.t('nda.accept_checkbox') || 'I agree to the terms of the electronic NDA and undertake not to disclose the information received.'}
                         </label>
                     </div>
 
                     <button class="btn-pulse hover-trigger" id="ndaSubmitBtn" onclick="NDAManager.submit('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
-                        <span>ПОДПИСАТЬ & ОТПРАВИТЬ</span>
+                        <span>${window.I18n?.t('nda.submit_btn') || 'SIGN & SEND'}</span>
                     </button>
 
                     <div style="text-align: center; margin-top: 30px;">
-                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">Есть код доступа?</a>
+                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">${window.I18n?.t('nda.have_code') || 'Have an access code?'}</a>
                     </div>
                 </div>
 
                 <div id="nda-code-view" style="display: none;">
-                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">Ввод кода доступа</h2>
-                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">Вставьте ваш код доступа.</p>
+                    <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">${window.I18n?.t('nda.code_title') || 'Enter Access Code'}</h2>
+                    <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">${window.I18n?.t('nda.code_desc') || 'Insert your access code.'}</p>
 
                     <div class="nda-text-block">
-                        <p>Подписывая данное соглашение, вы обязуетесь:</p>
+                        <p>${window.I18n?.t('nda.commitment') || 'By signing this agreement, you undertake:'}</p>
                         <ul>
-                            <li>Не раскрывать информацию о проектах R&D Lab третьим лицам</li>
-                            <li>Использовать полученную информацию исключительно для сотрудничества с A-LAB</li>
-                            <li>Не копировать и не распространять материалы без разрешения</li>
+                            <li>${window.I18n?.t('nda.item1') || 'Not to disclose information about R&D Lab projects to third parties'}</li>
+                            <li>${window.I18n?.t('nda.item2') || 'To use the information received exclusively for cooperation with A-LAB'}</li>
+                            <li>${window.I18n?.t('nda.item3') || 'Not to copy or distribute materials without permission'}</li>
                         </ul>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Полное имя</label>
-                        <input type="text" class="form-input" id="ndaCodeName" placeholder="Имя Фамилия" required>
+                        <label class="form-label">${window.I18n?.t('nda.label_name') || 'Full Name'}</label>
+                        <input type="text" class="form-input" id="ndaCodeName" placeholder="${window.I18n?.t('nda.placeholder_name') || 'First Last Name'}" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" style="color: var(--accent);">Код доступа</label>
+                        <label class="form-label" style="color: var(--accent);">${window.I18n?.t('nda.label_code') || 'Access Code'}</label>
                         <input type="text" class="form-input" id="ndaAccessCode" placeholder="ALAB-XXXX" style="letter-spacing: 2px;">
                     </div>
 
                     <div style="display: flex; align-items: flex-start; gap: 15px; margin: 25px 0;">
                         <input type="checkbox" id="ndaCodeAcceptCheckbox" style="width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer;">
                         <label for="ndaCodeAcceptCheckbox" style="font-size: 0.85rem; cursor: pointer; color: #888; line-height: 1.4;">
-                            Я соглашаюсь с условиями электронного NDA и обязуюсь не разглашать полученную информацию.
+                            ${window.I18n?.t('nda.accept_checkbox') || 'I agree to the terms of the electronic NDA and undertake not to disclose the information received.'}
                         </label>
                     </div>
 
                     <button class="btn-pulse hover-trigger" id="ndaCodeSubmitBtn" onclick="NDAManager.submitCode('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
-                        <span>АКТИВИРОВАТЬ ДОСТУП</span>
+                        <span>${window.I18n?.t('nda.activate_btn') || 'ACTIVATE ACCESS'}</span>
                     </button>
 
                     <div style="text-align: center; margin-top: 30px;">
-                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('main')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">&larr; Вернуться к анкете</a>
+                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('main')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">${window.I18n?.t('nda.back_to_form') || '&larr; Back to form'}</a>
                     </div>
                 </div>
             </div>
@@ -191,7 +191,7 @@ const NDAManager = (() => {
         localStorage.setItem('alab_nda_email', email);
         localStorage.setItem('alab_nda_signed', 'true');
 
-        if (typeof ALABToast !== 'undefined') ALABToast.success('Доступ предоставлен на 7 дней');
+        if (typeof ALABToast !== 'undefined') ALABToast.success(window.I18n?.t('nda.success_access') || 'Access granted for 7 days');
 
         closeModal();
 
@@ -213,18 +213,18 @@ const NDAManager = (() => {
 
 
         if (!fullName || !email || !phone) {
-            alert('Пожалуйста, заполните Имя, Email и Телефон');
+            alert(window.I18n?.t('nda.alert_fill') || 'Please fill in all required fields');
             return;
         }
 
         if (!accepted) {
-            alert('Необходимо принять условия NDA');
+            alert(window.I18n?.t('nda.alert_accept') || 'You must accept the NDA terms');
             return;
         }
 
         // Basic email validation
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            alert('Укажите корректный email');
+            alert(window.I18n?.t('nda.alert_email') || 'Please provide a valid email');
             return;
         }
 
@@ -524,19 +524,19 @@ const NDAManager = (() => {
         const accepted = document.getElementById('ndaCodeAcceptCheckbox')?.checked;
 
         if (!fullName || !accessCode) {
-            alert('Пожалуйста, введите имя и код доступа');
+            alert(window.I18n?.t('nda.alert_fill') || 'Please fill in all required fields');
             return;
         }
 
         if (!accepted) {
-            alert('Необходимо принять условия NDA');
+            alert(window.I18n?.t('nda.alert_accept') || 'You must accept the NDA terms');
             return;
         }
 
         if (VALID_CODES.includes(accessCode)) {
             grantSevenDayAccess('code_authorized@a-lab.tech', redirectUrl);
         } else {
-            alert('Неверный код доступа');
+            alert(window.I18n?.t('nda.alert_code') || 'Invalid access code');
         }
     }
 

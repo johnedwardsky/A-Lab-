@@ -9,6 +9,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="resident-nav.css">
     <style>
         :root {
             --bg: #030407;
@@ -415,7 +416,7 @@
     </style>
 </head>
 
-<body>
+<body data-no-resident-nav>
     <div class="cursor"></div>
     <header>
         <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
@@ -444,8 +445,9 @@
                     <p class="member-bio" data-i18n="page_about.ivan_bio">Визионер и стратег с 12-летним опытом в Deep
                         Tech. Руководит развитием
                         компании, определяя ключевые технологические векторы и формируя культуру инноваций.</p>
-                    <a href="profile.html?id=ivan-lakshinsky" class="btn-connect"
-                        data-i18n="page_about.ivan_btn">Увидеть в сети</a>
+                    <a href="profile.html?id=ivan-lakshinsky"
+                        onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+                        class="btn-connect" data-i18n="page_about.ivan_btn">Увидеть в сети</a>
                 </div>
             </div>
 
@@ -460,8 +462,9 @@
                     <p class="member-bio" data-i18n="page_about.alexey_bio">Эксперт по глобальному масштабированию и
                         стратегическому партнерству. Алексей
                         выстраивает мосты между технологиями и бизнесом мирового уровня.</p>
-                    <a href="profile.html?id=alexey-pak" class="btn-connect" data-i18n="page_about.alexey_btn">Связаться
-                        в сети</a>
+                    <a href="profile.html?id=alexey-pak"
+                        onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
+                        class="btn-connect" data-i18n="page_about.alexey_btn">Связаться в сети</a>
                 </div>
             </div>
         </div>
@@ -508,6 +511,7 @@
     <script src="i18n.js"></script>
     <script src="nda-manager.js"></script>
     <script src="main-menu.js"></script>
+    <script src="nav-manager.js"></script>
 </body>
 
 </html>

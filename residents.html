@@ -560,49 +560,10 @@
         }
 
         .social-link:hover {
-            background: var(--tech-blue);
-            border-color: var(--tech-blue);
             transform: translateY(-3px) rotate(5deg);
         }
 
-        /* Quiz Modal */
-        .quiz-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(3, 4, 7, 0.98);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(20px);
-        }
-
-        .quiz-modal.active {
-            display: flex;
-        }
-
-        .quiz-content {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 60px;
-            border-radius: 40px;
-            width: 100%;
-            max-width: 700px;
-            position: relative;
-        }
-
-        .close-quiz {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            font-size: 2.5rem;
-            color: var(--text-tertiary);
-            cursor: pointer;
-        }
-
+        /* Quiz Modal styles moved to resident-nav.css */
         .quiz-step {
             display: none;
         }
@@ -623,6 +584,8 @@
                 transform: translateY(0);
             }
         }
+
+
 
         .quiz-progress {
             font-family: var(--font-code);
@@ -979,60 +942,68 @@
             <span class="close-quiz" onclick="closeQuiz()">&times;</span>
             <div id="quizForm">
                 <div class="quiz-step active" id="step1">
-                    <div class="quiz-progress">ШАГ 1 // 4</div>
-                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step1_title">В чем ваша сила?</h2>
-                    <div class="quiz-opt" onclick="selectStrength('DESIGN & BRANDING')">DESIGN & BRANDING</div>
-                    <div class="quiz-opt" onclick="selectStrength('DEVELOPMENT & AI')">DEVELOPMENT & AI</div>
-                    <div class="quiz-opt" onclick="selectStrength('STRATEGY & PRODUCT')">STRATEGY & PRODUCT</div>
-                    <div class="quiz-opt" onclick="selectStrength('CREATIVE LEADER')">CREATIVE LEADER</div>
-                    <div class="quiz-opt" onclick="toggleCustomStrength()" data-i18n="page_residents.quiz_other">ДРУГОЕ
-                        (УКАЗАТЬ СВОЕ)</div>
-
-                    <div id="customStrengthField" style="display:none; margin-top:20px;">
-                        <input type="text" class="quiz-input" placeholder="Укажите вашу специализацию..."
-                            id="customStrengthInput" style="margin-bottom:15px;">
+                    <div class="quiz-progress"><span data-i18n="page_residents.quiz_progress">ШАГ</span> 1 // 5</div>
+                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step1_title">Ваша суперсила?</h2>
+                    <div class="quiz-opt" onclick="selectStrength('DEVELOPMENT')">DEVELOPMENT</div>
+                    <div class="quiz-opt" onclick="selectStrength('DESIGN / UI / UX')">DESIGN / UI / UX</div>
+                    <div class="quiz-opt" onclick="selectStrength('MARKETING / BIZDEV')">MARKETING / BIZDEV</div>
+                    <div class="quiz-opt" onclick="selectStrength('CONTENT / AI ART')">CONTENT / AI ART</div>
+                    <div class="quiz-opt" id="otherStrength" onclick="showOtherStrength()"
+                        data-i18n="page_residents.quiz_other">ДРУГОЕ (УКАЗАТЬ)</div>
+                    <div id="customStrengthBlock" style="display:none;">
+                        <input type="text" class="quiz-input" id="customStrengthInput" placeholder="...">
                         <button class="btn-quiz-next" onclick="submitCustomStrength()"
                             data-i18n="page_residents.quiz_next">ДАЛЕЕ</button>
                     </div>
                 </div>
                 <div class="quiz-step" id="step2">
-                    <div class="quiz-progress">ШАГ 2 // 4</div>
+                    <div class="quiz-progress"><span data-i18n="page_residents.quiz_progress">ШАГ</span> 2 // 5</div>
                     <h2 class="quiz-q" data-i18n="page_residents.quiz_step2_title">Ваш опыт в годах?</h2>
-                    <div class="quiz-opt" onclick="selectExp('1-3 ГОДА')">1-3 ГОДА</div>
-                    <div class="quiz-opt" onclick="selectExp('3-7 ЛЕТ')">3-7 ЛЕТ</div>
-                    <div class="quiz-opt" onclick="selectExp('7+ ЛЕТ')">7+ ЛЕТ</div>
+                    <div class="quiz-opt" onclick="selectExp('1-3 ГОДА')" data-i18n="page_residents.quiz_exp_1_3">1-3
+                        ГОДА</div>
+                    <div class="quiz-opt" onclick="selectExp('3-7 ЛЕТ')" data-i18n="page_residents.quiz_exp_3_7">3-7 ЛЕТ
+                    </div>
+                    <div class="quiz-opt" onclick="selectExp('7+ ЛЕТ')" data-i18n="page_residents.quiz_exp_7_plus">7+
+                        ЛЕТ</div>
                     <button class="btn-quiz-back" onclick="prevStep(1)" data-i18n="page_residents.quiz_back">←
                         НАЗАД</button>
                 </div>
                 <div class="quiz-step" id="step3">
-                    <div class="quiz-progress">ШАГ 3 // 5</div>
+                    <div class="quiz-progress"><span data-i18n="page_residents.quiz_progress">ШАГ</span> 3 // 5</div>
                     <h2 class="quiz-q" data-i18n="page_residents.quiz_step3_title">Расскажите о себе</h2>
-                    <textarea class="quiz-input" id="regBio" placeholder="Ваша мотивация..."></textarea>
+                    <textarea class="quiz-input" id="regBio"
+                        data-i18n="[placeholder]page_residents.quiz_step3_placeholder"
+                        placeholder="Ваша мотивация..."></textarea>
                     <div style="display:flex; gap:15px; margin-top:20px;">
-                        <button class="btn-quiz-back" onclick="prevStep(2)">← НАЗАД</button>
-                        <button class="btn-quiz-next" onclick="nextStep('recommender')" style="flex:1;">ДАЛЕЕ</button>
+                        <button class="btn-quiz-back" onclick="prevStep(2)" data-i18n="page_residents.quiz_back">←
+                            НАЗАД</button>
+                        <button class="btn-quiz-next" onclick="nextStep('recommender')" style="flex:1;"
+                            data-i18n="page_residents.quiz_next">ДАЛЕЕ</button>
                     </div>
                 </div>
                 <div class="quiz-step" id="step-recommender">
-                    <div class="quiz-progress">ШАГ 4 // 5</div>
+                    <div class="quiz-progress"><span data-i18n="page_residents.quiz_progress">ШАГ</span> 4 // 5</div>
                     <h2 class="quiz-q" data-i18n="page_residents.quiz_step4_title">Рекомендация (ID)</h2>
                     <p style="font-size: 0.7rem; color: #666; margin-bottom: 15px; font-family: var(--font-code);"
                         data-i18n="page_residents.quiz_step4_desc">Для
                         вступления необходим ID действующего резидента.</p>
                     <input type="text" class="quiz-input" placeholder="ID.XXXXXX" id="recommenderId">
                     <div style="display:flex; gap:15px; margin-top:20px;">
-                        <button class="btn-quiz-back" onclick="prevStep(3)">← НАЗАД</button>
-                        <button class="btn-quiz-next" onclick="nextStep(4)" style="flex:1;">ДАЛЕЕ</button>
+                        <button class="btn-quiz-back" onclick="prevStep(3)" data-i18n="page_residents.quiz_back">←
+                            НАЗАД</button>
+                        <button class="btn-quiz-next" onclick="nextStep(4)" style="flex:1;"
+                            data-i18n="page_residents.quiz_next">ДАЛЕЕ</button>
                     </div>
                 </div>
                 <div class="quiz-step" id="step4">
-                    <div class="quiz-progress">ШАГ 5 // 5</div>
+                    <div class="quiz-progress"><span data-i18n="page_residents.quiz_progress">ШАГ</span> 5 // 5</div>
                     <h2 class="quiz-q" data-i18n="page_residents.quiz_step5_title">Ваше имя и Telegram?</h2>
                     <input type="text" class="quiz-input" placeholder="Имя Фамилия" id="regFullName"
                         style="margin-bottom:10px;">
                     <input type="text" class="quiz-input" placeholder="@username" id="regTg">
                     <div style="display:flex; gap:15px; margin-top:20px;">
-                        <button class="btn-quiz-back" onclick="prevStep('recommender')">← НАЗАД</button>
+                        <button class="btn-quiz-back" onclick="prevStep('recommender')"
+                            data-i18n="page_residents.quiz_back">← НАЗАД</button>
                         <button class="btn-quiz-next" id="submitAppBtn" onclick="finishQuiz()" style="flex:1;"
                             data-i18n="page_residents.quiz_submit">ОТПРАВИТЬ ЗАЯВКУ</button>
                     </div>

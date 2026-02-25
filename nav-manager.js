@@ -8,6 +8,10 @@
 const ResidentNav = {
     init() {
         this.checkAuth();
+        if (document.body.hasAttribute('data-no-resident-nav')) {
+            document.body.classList.add('resident-nav-loaded'); // Mark as loaded for scripts that check it
+            return;
+        }
         this.render();
         this.bindEvents();
         this.applyTheme();
@@ -211,13 +215,13 @@ const ResidentNav = {
                 <span class="close-quiz" onclick="ResidentNav.closeRestrictedModal()">&times;</span>
                 <div style="margin-bottom: 30px;">
                     <i style="font-size: 4rem; color: var(--accent); display: block; margin-bottom: 20px;">🔒</i>
-                    <h2 style="font-size: 1.8rem; text-transform: uppercase; margin-bottom: 15px;">ACCESS RESTRICTED</h2>
-                    <p style="color: #888; line-height: 1.6;">Вход в закрытую экосистему A-LAB доступен только резидентам. Пожалуйста, войдите в систему или подайте заявку на вступление.</p>
+                    <h2 style="font-size: 1.8rem; text-transform: uppercase; margin-bottom: 15px;">${window.I18n?.t('nav.restricted_title') || 'ACCESS RESTRICTED'}</h2>
+                    <p style="color: #888; line-height: 1.6;">${window.I18n?.t('nav.restricted_desc') || 'Entry to the closed A-LAB ecosystem is available only to residents. Please log in or apply for membership.'}</p>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <a href="login.html" class="btn-quiz-next" style="text-decoration: none; display: block;">ВОЙТИ В СИСТЕМУ // LOGIN</a>
-                    <button class="btn-quiz-back" style="margin: 0;" onclick="ResidentNav.closeRestrictedModal(); ResidentNav.handleJoinClick();">СТАТЬ РЕЗИДЕНТОМ // JOIN</button>
-                    <p style="font-family: var(--font-code); color: #444; font-size: 0.6rem; margin-top: 10px;">[ END-TO-END ENCRYPTED PROTOCOL ]</p>
+                    <a href="login.html" class="btn-quiz-next" style="text-decoration: none; display: block;">${window.I18n?.t('nav.login_btn') || 'LOGIN TO SYSTEM'}</a>
+                    <button class="btn-quiz-back" style="margin: 0;" onclick="ResidentNav.closeRestrictedModal(); ResidentNav.handleJoinClick();">${window.I18n?.t('nav.join_btn') || 'BECOME A RESIDENT'}</button>
+                    <p style="font-family: var(--font-code); color: #444; font-size: 0.6rem; margin-top: 10px;">[ ${window.I18n?.t('nav.protocol_tag') || 'END-TO-END ENCRYPTED PROTOCOL'} ]</p>
                 </div>
             </div>
         `;
