@@ -865,7 +865,7 @@
     <div class="cursor"></div>
 
     <aside class="sidebar">
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
 
         <a href="#" class="side-icon active hover-trigger" onclick="switchTab('dashboard')"><i>📊</i>
             <span>Dashboard</span></a>
@@ -1905,9 +1905,9 @@
     </script>
 
     <!-- A-LAB Integration -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="i18n.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="i18n.js"></script>
 </body>
 
 </html>

@@ -650,7 +650,7 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB" loading="lazy"
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="A-lab-logo.svg" alt="A-LAB" loading="eager"
                 decoding="async"></a>
         <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">
             /// МЕНЮ
@@ -658,7 +658,7 @@
     </header>
 
     <section class="hero">
-        <video class="video-background" autoplay muted loop playsinline poster="m01_model.png">
+        <video class="video-background" autoplay muted loop playsinline preload="metadata" poster="m01_model.png">
             <source src="m01_ad.mp4" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
@@ -906,15 +906,15 @@
     </script>
 
     <!-- A-LAB Integration -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="i18n.js"></script>
-    <script src="main-menu.js"></script>
-    <script src="search-manager.js"></script>
-    <script src="feed-manager.js"></script>
-    <script src="nda-manager.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="i18n.js"></script>
+    <script defer src="main-menu.js"></script>
+    <script defer src="search-manager.js"></script>
+    <script defer src="feed-manager.js"></script>
+    <script defer src="nda-manager.js"></script>
     <script>
-        // Search manager and other core init
+        // Init logic
     </script>
 </body>
 

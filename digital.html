@@ -444,7 +444,7 @@
 <body>
     <div class="cursor"></div>
     <header>
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
         <div class="header-controls">
             <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
@@ -547,12 +547,12 @@
         });
     </script>
     <!-- A-LAB Integration -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="cases-engine.js"></script>
-    <script src="i18n.js"></script>
-    <script src="nda-manager.js"></script>
-    <script src="main-menu.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="cases-engine.js"></script>
+    <script defer src="i18n.js"></script>
+    <script defer src="nda-manager.js"></script>
+    <script defer src="main-menu.js"></script>
 </body>
 
 </html>

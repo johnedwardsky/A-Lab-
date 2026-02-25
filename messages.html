@@ -431,7 +431,7 @@
             <header class="window-header">
                 <div class="active-user">
                     <div class="chat-avatar" style="width: 40px; height: 40px;">
-                        <img src="alex_river.png">
+                        <img decoding="async" src="alex_river.png">
                     </div>
                     <div>
                         <div class="chat-name">Alex River</div>
@@ -459,10 +459,10 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="auth-guard.js"></script>
-    <script src="message-manager.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="auth-guard.js"></script>
+    <script defer src="message-manager.js"></script>
 
     <script>
         const cursor = document.querySelector('.cursor');
@@ -519,7 +519,7 @@
                 <a href="#" class="chat-item hover-trigger ${window.MessageManager.currentRecipientId === chat.id ? 'active' : ''}" 
                    onclick="selectChat('${chat.id}', '${chat.full_name}', '${chat.avatar_url || 'maya_neural.png'}')">
                     <div class="chat-avatar">
-                        <img src="${chat.avatar_url || 'maya_neural.png'}">
+                        <img decoding="async" src="${chat.avatar_url || 'maya_neural.png'}">
                     </div>
                     <div class="chat-info">
                         <div class="chat-header-meta">
@@ -588,7 +588,7 @@
         }
 
     </script>
-    <script src="nav-manager.js"></script>
+    <script defer src="nav-manager.js"></script>
 </body>
 
 </html>

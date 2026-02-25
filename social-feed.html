@@ -1080,7 +1080,7 @@
 
     <!-- Mobile Header -->
     <header class="mobile-header">
-        <a href="index.html" class="logo"><img src="A-lab-logo.svg" alt="A-LAB" style="width: 30px;"></a>
+        <a href="index.html" class="logo"><img decoding="async" src="A-lab-logo.svg" alt="A-LAB" style="width: 30px;"></a>
         <div style="display: flex; align-items: center; gap: 15px;">
             <button class="theme-toggle" id="themeBtn">☽</button>
             <a href="resident-admin-ru.html" style="text-decoration: none; font-size: 1.2rem;">⚙️</a>
@@ -1126,7 +1126,7 @@
                     <!-- Image Preview Area (Hidden by default) -->
                     <div id="imagePreview" style="display: none; margin: 20px 0 0 65px; position: relative;">
                         <div style="position: relative; display: inline-block;">
-                            <img src=""
+                            <img decoding="async" src=""
                                 style="max-width: 100%; max-height: 300px; border-radius: 16px; border: 1px solid var(--border);">
                             <button onclick="removePreview()"
                                 style="position: absolute; top: -10px; right: -10px; background: var(--accent); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid var(--surface);">×</button>
@@ -1202,7 +1202,7 @@
 
         <div class="resident-item">
             <div class="resident-meta">
-                <div class="avatar" style="width:35px; height:35px;"><img src="viktor_code.png"></div>
+                <div class="avatar" style="width:35px; height:35px;"><img decoding="async" src="viktor_code.png"></div>
                 <div style="font-size: 0.85rem; font-weight: 600;">Ivan_Fix</div>
             </div>
             <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
@@ -1210,7 +1210,7 @@
 
         <div class="resident-item">
             <div class="resident-meta">
-                <div class="avatar" style="width:35px; height:35px;"><img src="max_neural.png"></div>
+                <div class="avatar" style="width:35px; height:35px;"><img decoding="async" src="max_neural.png"></div>
                 <div style="font-size: 0.85rem; font-weight: 600;">Neo_D</div>
             </div>
             <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
@@ -1436,14 +1436,14 @@
     </div>
 
     <!-- A-LAB Web3 & Social Integration -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="web3-manager.js"></script>
-    <script src="feed-manager.js"></script>
-    <script src="dao-manager.js"></script>
-    <script src="search-manager.js"></script>
-    <script src="i18n.js"></script>
-    <script src="nav-manager.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="web3-manager.js"></script>
+    <script defer src="feed-manager.js"></script>
+    <script defer src="dao-manager.js"></script>
+    <script defer src="search-manager.js"></script>
+    <script defer src="i18n.js"></script>
+    <script defer src="nav-manager.js"></script>
 </body>
 
 </html>

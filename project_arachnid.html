@@ -499,7 +499,7 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
         <div class="header-controls">
             <a href="rd.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
@@ -524,7 +524,7 @@
         </section>
 
         <div class="concept-visual hover-trigger">
-            <img src="arachnid_hub_hologram.png" alt="Sprut Schematic Hub" id="hero-img">
+            <img decoding="async" src="arachnid_hub_hologram.png" alt="Sprut Schematic Hub" id="hero-img">
             <div class="visual-overlay">
                 > PROTO_VERSION: 3.1 <br>
                 > MODE: HULL_CLEANING <br>
@@ -608,7 +608,7 @@
         <!-- PHOTO IN ACTION -->
         <div class="action-photo" style="margin-bottom: 100px;">
             <div class="sim-viewport" style="background: transparent;">
-                <img src="sprut_in_action.png" alt="Спрут в работе на днище судна"
+                <img decoding="async" src="sprut_in_action.png" alt="Спрут в работе на днище судна"
                     style="width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--border);">
             </div>
             <div
@@ -706,14 +706,14 @@
     </script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="nda-manager.js"></script>
-    <script src="i18n.js"></script>
-    <script src="main-menu.js"></script>
-    <script src="web3-manager.js"></script>
-    <script src="funding-manager.js"></script>
-    <script src="toast.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="nda-manager.js"></script>
+    <script defer src="i18n.js"></script>
+    <script defer src="main-menu.js"></script>
+    <script defer src="web3-manager.js"></script>
+    <script defer src="funding-manager.js"></script>
+    <script defer src="toast.js"></script>
 
     <script>
         // Enforce NDA protection

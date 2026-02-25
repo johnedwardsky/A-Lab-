@@ -425,7 +425,7 @@
 <body data-no-resident-nav>
     <div class="cursor"></div>
     <header>
-        <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB" loading="lazy"
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="A-lab-logo.svg" alt="A-LAB" loading="eager"
                 decoding="async"></a>
         <div class="header-controls">
             <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
@@ -444,7 +444,7 @@
             <!-- Ivan Lakshinsky -->
             <div class="member-card hover-trigger">
                 <div class="member-portrait">
-                    <img src="Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky" style="object-position: top;" loading="lazy"
+                    <img decoding="async" src="Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky" style="object-position: top;" loading="lazy"
                         decoding="async">
                 </div>
                 <div class="member-info">
@@ -462,7 +462,7 @@
             <!-- Alexey Pak -->
             <div class="member-card hover-trigger">
                 <div class="member-portrait">
-                    <img src="alexey_tech.png" alt="Alexey Pak" style="object-position: top;" loading="lazy"
+                    <img decoding="async" src="alexey_tech.png" alt="Alexey Pak" style="object-position: top;" loading="lazy"
                         decoding="async">
                 </div>
                 <div class="member-info">
@@ -519,12 +519,12 @@
         }
     </script>
     <!-- A-LAB Integration -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="i18n.js"></script>
-    <script src="nda-manager.js"></script>
-    <script src="main-menu.js"></script>
-    <script src="nav-manager.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="i18n.js"></script>
+    <script defer src="nda-manager.js"></script>
+    <script defer src="main-menu.js"></script>
+    <script defer src="nav-manager.js"></script>
 </body>
 
 </html>
