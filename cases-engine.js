@@ -378,8 +378,8 @@ const ALabCases = {
 
             if (catLower === 'design' || catLower === 'digital') {
                 let imgPath = item.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop';
-                if (imgPath && !imgPath.startsWith('http') && !imgPath.startsWith('/')) {
-                    imgPath = './' + imgPath;
+                if (imgPath && !imgPath.startsWith('http') && !imgPath.startsWith('/') && !imgPath.startsWith('assets/')) {
+                    imgPath = 'assets/img/' + imgPath;
                 }
 
                 card.className = 'case-card hover-trigger';
@@ -403,7 +403,7 @@ const ALabCases = {
                     }
                 };
             } else if (catLower === 'rd') {
-                const imgPath = item.image_url ? (item.image_url.startsWith('http') ? item.image_url : './' + item.image_url) : './rd_ai_tech.png';
+                const imgPath = item.image_url ? (item.image_url.startsWith('http') || item.image_url.startsWith('assets/') ? item.image_url : 'assets/img/' + item.image_url) : 'assets/img/rd_ai_tech.png';
                 card.className = `rd-card hover-trigger`;
 
                 card.innerHTML = `
