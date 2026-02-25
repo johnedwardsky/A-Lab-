@@ -1,0 +1,60 @@
+User-agent: *
+
+# Public Pages - Allowed for Indexing
+Allow: /$
+Allow: /index
+Allow: /index.html
+Allow: /about
+Allow: /about.html
+Allow: /consulting
+Allow: /consulting.html
+Allow: /digital
+Allow: /digital.html
+Allow: /design
+Allow: /design.html
+Allow: /marketing
+Allow: /marketing.html
+Allow: /contacts
+Allow: /contacts.html
+Allow: /whitepaper_2026
+Allow: /whitepaper_2026.html
+
+# Restricted Content - Disallow Indexing
+Disallow: /rd.html
+Disallow: /rd
+Disallow: /rd-os.html
+Disallow: /rd-os
+Disallow: /rd-os-whitepaper.html
+Disallow: /vtemnote-whitepaper.html
+Disallow: /project_air_bridges.html
+Disallow: /project_air_bridges
+Disallow: /project_vtemnote.html
+Disallow: /project_vtemnote
+Disallow: /project_arachnid.html
+Disallow: /project_arachnid
+Disallow: /m01-internal.html
+Disallow: /m01-internal
+Disallow: /cms-admin.html
+Disallow: /cms-login.html
+Disallow: /register-resident.html
+Disallow: /resident-admin-en.html
+Disallow: /resident-admin-ru.html
+Disallow: /resident-workspace-ru.html
+Disallow: /profile.html
+Disallow: /messages.html
+Disallow: /social-feed.html
+Disallow: /projects.html
+Disallow: /residents.html
+
+# Block common sensitive paths and extensions
+Disallow: /.*
+Disallow: /lang/
+Disallow: /backups/
+Disallow: /migrations/
+Disallow: /*.js$
+Disallow: /*.json$
+Disallow: /*.py$
+Disallow: /*.sh$
+Disallow: /*.md$
+Disallow: /*.php$
+Disallow: /*.env$
