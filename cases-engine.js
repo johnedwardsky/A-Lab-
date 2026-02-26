@@ -182,7 +182,7 @@ const ALabCases = {
             description: "Интеграция LLM-ассистента в поддержку крупного маркетплейса. 85% ответов без участия человека.",
             category: "digital",
             lang: "ru",
-            image_url: "case_cyberpunk.png"
+            image_url: "rd_lumina_ai.png"
         },
         {
             id: 202,
@@ -192,7 +192,7 @@ const ALabCases = {
             description: "Нейросетевая модель прогнозирования спроса и оптимизации складских запасов.",
             category: "digital",
             lang: "ru",
-            image_url: "case_agri.png"
+            image_url: "rd_industrial.png"
         },
         {
             id: 203,
@@ -212,7 +212,7 @@ const ALabCases = {
             description: "Высокопроизводительный SDK для распознавания лиц и биометрической аутентификации.",
             category: "digital",
             lang: "ru",
-            image_url: "case_eco.png"
+            image_url: "rd_ai_tech.png"
         },
         {
             id: 209,
@@ -243,7 +243,7 @@ const ALabCases = {
             description: "LLM assistant integration for a major marketplace. 85% of queries managed without humans.",
             category: "digital",
             lang: "en",
-            image_url: "case_cyberpunk.png"
+            image_url: "rd_lumina_ai.png"
         },
         {
             id: 206,
@@ -253,7 +253,7 @@ const ALabCases = {
             description: "Neural network model for demand forecasting and inventory optimization.",
             category: "digital",
             lang: "en",
-            image_url: "case_agri.png"
+            image_url: "rd_industrial.png"
         },
         {
             id: 207,
@@ -273,7 +273,7 @@ const ALabCases = {
             description: "High-performance SDK for facial recognition and biometric authentication.",
             category: "digital",
             lang: "en",
-            image_url: "case_eco.png"
+            image_url: "rd_ai_tech.png"
         },
         {
             id: 211,
