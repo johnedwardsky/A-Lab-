@@ -30,28 +30,32 @@ const ResidentNav = {
         if (oldSidebar) oldSidebar.remove();
         if (oldBottomNav) oldBottomNav.remove();
 
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const path = window.location.pathname;
+        const isInsideFolder = path.includes('/residents/');
+        this.pathPrefix = isInsideFolder ? '' : 'residents/';
+        this.rootPrefix = isInsideFolder ? '../' : '';
+        const currentPage = path.split('/').pop() || 'index.html';
 
         // Render Sidebar (Desktop)
         const sidebar = document.createElement('aside');
         sidebar.className = 'sidebar';
         sidebar.innerHTML = `
-            <a href="index.html" class="logo hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
+            <a href="${this.rootPrefix}index.html" class="logo hover-trigger"><img src="${this.rootPrefix}assets/img/A-lab-logo.svg" alt="A-LAB"></a>
             <button class="join-btn-sidebar hover-trigger" onclick="ResidentNav.handleJoinClick()">
                 <i>+</i> <span>${window.I18n?.t('nav.join') || 'ВСТУПИТЬ'}</span>
             </button>
             <nav style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                <a href="${this.userLoggedIn ? 'social-feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}"><i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span></a>
-                <a href="residents.html" class="nav-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
-                <a href="${this.userLoggedIn ? 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}"><i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span></a>
-                <a href="${this.userLoggedIn ? 'projects.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
+                <a href="${this.userLoggedIn ? this.pathPrefix + 'feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'feed.html' ? 'active' : ''}"><i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span></a>
+                <a href="${this.pathPrefix}index.html" class="nav-item hover-trigger ${currentPage === 'index.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
+                <a href="${this.userLoggedIn ? this.pathPrefix + 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}"><i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span></a>
+                <a href="${this.userLoggedIn ? this.pathPrefix + 'projects.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
             </nav>
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%;">
                 <button class="nav-item hover-trigger" style="background:none; border:none; width:100%;" onclick="ResidentNav.toggleTheme()">
                     <i id="sidebarThemeIcon">☽</i> <span>${window.I18n?.t('nav.theme') || 'Фон'}</span>
                 </button>
-                <button class="nav-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" style="background:none; border:none; width:100%;" onclick="ResidentNav.handleSettingsClick()">
-                    <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? (window.I18n?.t('sidebar.settings') || 'Настройки') : (window.I18n?.t('auth.login') || 'Войти')}</span>
+                <button class="nav-item hover-trigger ${currentPage.includes('admin') || currentPage.includes('workspace') ? 'active' : ''}" style="background:none; border:none; width:100%;" onclick="ResidentNav.handleSettingsClick()">
+                    <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? (window.I18n?.t('sidebar.settings') || 'Личный Кабинет') : (window.I18n?.t('auth.login') || 'Войти')}</span>
                 </button>
             </div>
         `;
@@ -60,11 +64,11 @@ const ResidentNav = {
         const bottomNav = document.createElement('nav');
         bottomNav.className = 'bottom-nav';
         bottomNav.innerHTML = `
-            <a href="index.html" class="logo-bottom hover-trigger"><img src="A-lab-logo.svg" alt="A-LAB"></a>
-            <a href="${this.userLoggedIn ? 'social-feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'social-feed.html' ? 'active' : ''}">
+            <a href="${this.rootPrefix}index.html" class="logo-bottom hover-trigger"><img src="${this.rootPrefix}assets/img/A-lab-logo.svg" alt="A-LAB"></a>
+            <a href="${this.userLoggedIn ? this.pathPrefix + 'feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'feed.html' ? 'active' : ''}">
                 <i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span>
             </a>
-            <a href="${this.userLoggedIn ? 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}">
+            <a href="${this.userLoggedIn ? this.pathPrefix + 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}">
                 <i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span>
             </a>
             <button class="nav-item-bottom hover-trigger" onclick="ResidentNav.toggleTheme()">
@@ -81,11 +85,10 @@ const ResidentNav = {
         moreMenu.id = 'moreMenuPopup';
 
         let moreItemsHTML = `
-            <a href="residents.html" class="more-item hover-trigger ${currentPage === 'residents.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
-            <a href="${this.userLoggedIn ? 'projects.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="more-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
+            <a href="${this.pathPrefix}index.html" class="more-item hover-trigger ${currentPage === 'index.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
+            <a href="${this.userLoggedIn ? this.pathPrefix + 'projects.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="more-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
         `;
 
-        // If we have custom items (e.g. for Admin page), prepend or replace
         if (this.config && this.config.moreItems) {
             moreItemsHTML = this.config.moreItems.map(item => `
                 <button class="more-item hover-trigger ${item.active ? 'active' : ''}" onclick="${item.onclick}">
@@ -97,12 +100,11 @@ const ResidentNav = {
         moreMenu.innerHTML = `
             ${moreItemsHTML}
             <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
-            <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
             <button class="more-item join-btn hover-trigger" onclick="ResidentNav.handleJoinClick()"><i>+</i> <span>${window.I18n?.t('nav.join') || 'ВСТУПИТЬ'}</span></button>
-            <button class="more-item hover-trigger ${currentPage.includes('admin') ? 'active' : ''}" onclick="ResidentNav.handleSettingsClick()">
-                <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? (window.I18n?.t('nav.settings') || 'Настройки') : (window.I18n?.t('nav.login') || 'Войти')}</span>
+            <button class="more-item hover-trigger" onclick="ResidentNav.handleSettingsClick()">
+                <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? (window.I18n?.t('nav.settings') || 'Личный Кабинет') : (window.I18n?.t('nav.login') || 'Войти')}</span>
             </button>
-            ${this.config && this.config.showLogout ? `
+            ${this.userLoggedIn ? `
                 <button class="more-item hover-trigger" style="color: var(--accent);" onclick="ResidentNav.logout()"><i>🔌</i> <span>${window.I18n?.t('nav.logout') || 'Выход'}</span></button>
             ` : ''}
         `;
@@ -120,12 +122,13 @@ const ResidentNav = {
     },
 
     logout() {
+        const rootDir = window.location.pathname.includes('/residents/') ? '../' : '';
         if (window.ALabAuth && window.ALabCore && window.ALabCore.db && window.ALabCore.db.auth) {
-            window.ALabCore.db.auth.signOut().then(() => window.location.href = 'index.html');
+            window.ALabCore.db.auth.signOut().then(() => window.location.href = rootDir + 'index.html');
         } else {
             localStorage.removeItem('sb-yirszunrxtunvzpxwvqz-auth-token');
             localStorage.removeItem('alab_resident_id');
-            window.location.href = 'index.html';
+            window.location.href = rootDir + 'index.html';
         }
     },
 
@@ -134,21 +137,18 @@ const ResidentNav = {
         document.addEventListener('click', (e) => {
             const menu = document.getElementById('moreMenuPopup');
             const moreBtn = e.target.closest('button');
-            if (menu && menu.classList.contains('active') && !menu.contains(e.target) && (!moreBtn || !moreBtn.innerText.includes('ЕЩЕ'))) {
+            if (menu && menu.classList.contains('active') && !menu.contains(e.target) && (!moreBtn || !moreBtn.querySelector('i')?.innerText.includes('📂'))) {
                 menu.classList.remove('active');
             }
         });
 
-        // Re-bind cursor triggers for injected elements
-        if (typeof bindHover === 'function') bindHover();
-        else {
-            const cursor = document.querySelector('.cursor');
-            if (cursor) {
-                document.querySelectorAll('.hover-trigger').forEach(t => {
-                    t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                    t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-                });
-            }
+        // Re-bind cursor triggers
+        const cursor = document.querySelector('.cursor');
+        if (cursor) {
+            document.querySelectorAll('.hover-trigger').forEach(t => {
+                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
         }
     },
 
@@ -181,26 +181,30 @@ const ResidentNav = {
 
     async handleSettingsClick() {
         this.checkAuth();
-        const lang = window.I18n?.getLang() || (document.documentElement.lang === 'en' ? 'en' : 'ru');
-        const adminPage = lang === 'en' ? 'resident-admin-en.html' : 'resident-admin-ru.html';
+        const prefix = this.pathPrefix || (window.location.pathname.includes('/residents/') ? '' : 'residents/');
+        const workspacePage = prefix + 'workspace.html';
+        const loginPage = prefix + 'login.html';
 
         if (this.userLoggedIn) {
-            window.location.href = adminPage;
+            window.location.href = workspacePage;
         } else {
-            window.location.href = 'login.html';
+            window.location.href = loginPage;
         }
     },
 
     handleJoinClick() {
+        const prefix = this.pathPrefix || (window.location.pathname.includes('/residents/') ? '' : 'residents/');
         if (typeof openQuiz === 'function') {
             openQuiz();
         } else {
-            window.location.href = 'residents.html?join=true';
+            window.location.href = prefix + 'index.html?join=true';
         }
     },
 
     showRestrictedModal() {
         let modal = document.getElementById('restrictedModal');
+        const prefix = this.pathPrefix || (window.location.pathname.includes('/residents/') ? '' : 'residents/');
+
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'restrictedModal';
@@ -208,7 +212,6 @@ const ResidentNav = {
             document.body.appendChild(modal);
         }
 
-        // Always refresh content to match current language
         modal.innerHTML = `
             <div class="quiz-content" style="max-width: 500px; text-align: center;">
                 <span class="close-quiz" onclick="ResidentNav.closeRestrictedModal()">&times;</span>
@@ -218,7 +221,7 @@ const ResidentNav = {
                     <p style="color: #888; line-height: 1.6; font-size: 0.95rem;">${window.I18n?.t('nav.restricted_desc') || 'Entry to the closed A-LAB ecosystem is available only to residents. Please log in or apply for membership.'}</p>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-                    <a href="login.html" class="btn-quiz-next" style="width: 100%; box-sizing: border-box;">${window.I18n?.t('nav.login_btn') || 'LOGIN TO SYSTEM'}</a>
+                    <a href="${prefix}login.html" class="btn-quiz-next" style="width: 100%; box-sizing: border-box;">${window.I18n?.t('nav.login_btn') || 'LOGIN TO SYSTEM'}</a>
                     <button class="btn-quiz-back" style="width: 100%; margin: 0; box-sizing: border-box;" onclick="ResidentNav.closeRestrictedModal(); ResidentNav.handleJoinClick();">${window.I18n?.t('nav.join_btn') || 'BECOME A RESIDENT'}</button>
                     <p style="font-family: var(--font-code); color: #444; font-size: 0.6rem; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;">[ ${window.I18n?.t('nav.protocol_tag') || 'END-TO-END ENCRYPTED PROTOCOL'} ]</p>
                 </div>
@@ -236,6 +239,7 @@ const ResidentNav = {
             document.body.style.overflow = '';
         }
     }
+
 };
 
 // Global shortcuts for historical reasons/inline calls

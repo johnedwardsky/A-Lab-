@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>A-LAB.CORE | РАБОЧАЯ СТАНЦИЯ РЕЗИДЕНТА</title>
+    <link rel="stylesheet" href="../resident-nav.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --panel: #0d111a;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            overflow-x: hidden;
+            /* clip here — does NOT affect position:fixed */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--tech-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--tech-blue);
+            opacity: 0.5;
+        }
+
+        .main-container {
+            margin-left: 80px;
+            /* collapsed sidebar width */
+            padding: 40px 50px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+            height: 100vh;
+            /* scroll happens inside this container */
+            /* Max width: optimal reading width */
+            max-width: calc(1440px + 80px);
+            width: 100%;
+            transition: margin-left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* Push content when sidebar is hovered OR pinned */
+        .sidebar:hover~.main-container,
+        body:has(.sidebar:hover) .main-container,
+        body:has(.sidebar.pinned) .main-container,
+        .sidebar.pinned~.main-container {
+            margin-left: 220px;
+        }
+
+        /* Sidebar pinned state */
+        .sidebar.pinned {
+            width: 220px;
+        }
+
+        .sidebar.pinned .nav-item span,
+        .sidebar.pinned .join-btn-sidebar span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Sidebar toggle pin button */
+        .sidebar-pin-btn {
+            position: absolute;
+            top: 20px;
+            right: -14px;
+            width: 28px;
+            height: 28px;
+            background: var(--surface, #0b0d14);
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.65rem;
+            color: #555;
+            transition: 0.3s;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar:hover .sidebar-pin-btn,
+        .sidebar.pinned .sidebar-pin-btn {
+            opacity: 1;
+        }
+
+        .sidebar-pin-btn:hover,
+        .sidebar.pinned .sidebar-pin-btn {
+            color: var(--tech-blue, #00E5FF);
+            border-color: var(--tech-blue, #00E5FF);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-top h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .mode-badge {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--tech-blue);
+            border: 1px solid var(--tech-blue);
+            padding: 4px 12px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            align-items: start;
+            max-width: 1360px;
+            /* cap inner content width */
+        }
+
+        .tab-content.no-sidebar {
+            grid-template-columns: 1fr;
+            max-width: 1360px;
+        }
+
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '>';
+            color: var(--tech-blue);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--tech-blue);
+        }
+
+        .status-btn {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: #888;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .status-btn:hover,
+        .status-btn.active {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .btn-pulse {
+            width: 100%;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: var(--font-code);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-pulse:hover {
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        /* Messenger Styles */
+        .chat-container {
+            height: calc(100vh - 250px);
+            display: flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            width: 250px;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .bubble-in {
+            background: rgba(255, 255, 255, 0.05);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .bubble-out {
+            background: var(--tech-blue);
+            color: black;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.03;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-container {
+                margin-left: 0 !important;
+                padding: 20px;
+                padding-bottom: 100px;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+
+            .tab-content.active {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+
+            .right-panel {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex !important;
+            }
+
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        /* Mid-size tablets: compact sidebar, single column right panel */
+        @media (min-width: 769px) and (max-width: 1100px) {
+            .tab-content.active {
+                grid-template-columns: 1fr 260px;
+            }
+
+            .main-container {
+                padding: 30px 35px;
+            }
+        }
+
+        /* ========== BOTTOM NAV BAR (Mobile) ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            /* explicit viewport width — immune to parent overflow tricks */
+            height: 72px;
+            background: rgba(7, 9, 18, 0.92);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            display: none;
+            justify-content: space-evenly;
+            /* evenly distribute 5 items */
+            align-items: center;
+            z-index: 3000;
+            padding: 0;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-item-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.55rem;
+            font-family: var(--font-code);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            gap: 5px;
+            transition: color 0.25s, transform 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            height: 100%;
+            padding: 10px 5px 8px;
+            position: relative;
+        }
+
+        .nav-item-bottom i {
+            font-size: 1.35rem;
+            font-style: normal;
+            line-height: 1;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-item-bottom.active {
+            color: var(--tech-blue);
+        }
+
+        .nav-item-bottom.active i {
+            transform: translateY(-3px) scale(1.15);
+        }
+
+        .nav-item-bottom.active::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--tech-blue);
+            box-shadow: 0 0 8px var(--tech-blue);
+        }
+
+        /* ========== BOTTOM SHEET ========== */
+        .sheet-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 3500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sheet-backdrop.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            /* explicit viewport width */
+            z-index: 4000;
+            background: linear-gradient(180deg, #0e1120 0%, #080a14 100%);
+            border-top: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 24px 24px 0 0;
+            padding: 0 0 24px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .bottom-sheet.active {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            margin: 12px auto 0;
+        }
+
+        .sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sheet-title {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .sheet-close {
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            color: #888;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .sheet-close:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+        }
+
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 16px 20px;
+        }
+
+        .sheet-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
+            padding: 16px;
+            color: #ccc;
+            text-decoration: none;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            text-align: left;
+        }
+
+        .sheet-item:active,
+        .sheet-item:hover {
+            background: rgba(0, 229, 255, 0.08);
+            border-color: rgba(0, 229, 255, 0.25);
+            color: var(--tech-blue);
+        }
+
+        .sheet-item-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            font-style: normal;
+        }
+
+        .sheet-item-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sheet-exit {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 4px 20px 0;
+            padding: 14px 20px;
+            background: rgba(255, 42, 42, 0.07);
+            border: 1px solid rgba(255, 42, 42, 0.2);
+            border-radius: 16px;
+            color: var(--accent);
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .sheet-exit:active {
+            background: rgba(255, 42, 42, 0.15);
+        }
+
+        /* FAB — quick action button */
+        .fab {
+            position: fixed;
+            bottom: 88px;
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 229, 255, 0.4);
+            z-index: 2500;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            font-weight: 700;
+        }
+
+        .fab:active {
+            transform: scale(0.92);
+        }
+
+        @media (max-width: 768px) {
+            .fab.visible {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body data-no-resident-nav>
+    <div class="noise"></div>
+    <div class="cursor"></div>
+
+    <header style="position: fixed; top: 30px; right: 40px; z-index: 1001; display: flex; gap: 15px;">
+        <button class="status-btn hover-trigger" id="sidebarPinBtn" onclick="toggleSidebarPin()" title="Закрепить меню"
+            style="font-size: 0.9rem; padding: 6px 12px;">📌</button>
+        <button class="status-btn hover-trigger" onclick="toggleTheme()" id="themeBtn">☽</button>
+    </header>
+
+    <aside class="sidebar" id="mainSidebar">
+        <a href="../index.html" class="logo hover-trigger" style="margin-bottom: 20px; padding-left: 5px;">
+            <img src="../assets/img/A-lab-logo.svg" alt="A-LAB" style="width: 35px; height: auto;">
+        </a>
+        <a href="#" class="nav-item active hover-trigger" onclick="switchTab('profile')"><i>👤</i>
+            <span>Профиль</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('feed')"><i>📡</i> <span>Лента</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('messages')"><i>💬</i> <span>Сообщения</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('projects')"><i>🚀</i> <span>Проекты</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('portfolio')"><i>🖼️</i>
+            <span>Портфолио</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('astra')"><i>💎</i> <span>Astra Wallet</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('security')"><i>🔒</i>
+            <span>Безопасность</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('settings')"><i>⚙️</i> <span>Настройки</span></a>
+
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%;">
+            <a href="../index.html" class="nav-item hover-trigger" style="color: var(--accent);"><i>🔌</i> <span>На
+                    сайт</span></a>
+        </div>
+    </aside>
+
+    <!-- Bottom Nav Bar (Mobile) -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item-bottom active" id="bnav-profile" onclick="switchTab('profile')">
+            <i>👤</i><span>Кабинет</span>
+        </button>
+        <button class="nav-item-bottom" id="bnav-feed" onclick="switchTab('feed')">
+            <i>📡</i><span>Лента</span>
+        </button>
+        <button class="nav-item-bottom" id="bnav-projects" onclick="switchTab('projects')">
+            <i>🚀</i><span>Проекты</span>
+        </button>
+        <button class="nav-item-bottom" id="bnav-messages" onclick="switchTab('messages')">
+            <i>💬</i><span>Чат</span>
+        </button>
+        <button class="nav-item-bottom" onclick="toggleBottomSheet()">
+            <i>⋯</i><span>Ещё</span>
+        </button>
+    </nav>
+
+    <!-- Bottom Sheet Backdrop -->
+    <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeBottomSheet()"></div>
+
+    <!-- Bottom Sheet -->
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+            <span class="sheet-title">// навигация</span>
+            <button class="sheet-close" onclick="closeBottomSheet()">✕</button>
+        </div>
+        <div class="sheet-grid">
+            <button class="sheet-item" onclick="switchTab('portfolio'); closeBottomSheet()">
+                <i class="sheet-item-icon">🖼️</i>
+                <span class="sheet-item-label">Портфолио</span>
+            </button>
+            <button class="sheet-item" onclick="switchTab('astra'); closeBottomSheet()">
+                <i class="sheet-item-icon">💎</i>
+                <span class="sheet-item-label">Astra Wallet</span>
+            </button>
+            <button class="sheet-item" onclick="switchTab('security'); closeBottomSheet()">
+                <i class="sheet-item-icon">🔒</i>
+                <span class="sheet-item-label">Безопасность</span>
+            </button>
+            <button class="sheet-item" onclick="switchTab('settings'); closeBottomSheet()">
+                <i class="sheet-item-icon">⚙️</i>
+                <span class="sheet-item-label">Настройки</span>
+            </button>
+        </div>
+        <a href="../index.html" class="sheet-exit">
+            <i style="font-size:1.2rem; font-style:normal;">🔌</i>
+            <span>Вернуться на сайт</span>
+        </a>
+    </div>
+
+    <!-- FAB (Floating Action Button) -->
+    <button class="fab" id="fabBtn" onclick="fabAction()">+</button>
+
+
+    <div class="main-container">
+        <div class="header-top">
+            <div>
+                <h1 id="pageTitle">Рабочая Станция</h1>
+                <p style="color: #888; font-size: 0.8rem; font-family: var(--font-code);">STATUS: AUTHENTICATED //
+                    ACCESS: RESIDENT</p>
+            </div>
+            <div class="mode-badge" id="modeBadge">РЕЖИМ_УПРАВЛЕНИЯ_ПРОФИЛЕМ</div>
+        </div>
+
+        <!-- PROFILE TAB -->
+        <div class="tab-content active" id="profile-tab">
+            <div class="left-col">
+
+                <!-- AVATAR + IDENTITY -->
+                <section class="section-card">
+                    <div class="section-title">Идентичность Резидента</div>
+                    <div
+                        style="display: flex; gap: 25px; align-items: flex-start; margin-bottom: 30px; flex-wrap: wrap;">
+                        <div style="position: relative; flex-shrink: 0;">
+                            <div id="avatarPreview"
+                                style="width: 110px; height: 110px; border-radius: 50%; border: 2px solid var(--tech-blue); overflow: hidden; background: #111; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+                                👤
+                            </div>
+                            <label for="avatarInput"
+                                style="position: absolute; bottom: 0; right: 0; background: var(--tech-blue); color: black; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; font-weight: 800;">+</label>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;"
+                                onchange="previewAvatar(this)">
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div
+                                style="font-family: var(--font-code); font-size: 0.65rem; color: #555; margin-bottom: 8px; text-transform: uppercase;">
+                                Публичный ID резidента</div>
+                            <div style="font-family: var(--font-code); font-size: 1.1rem; color: var(--tech-blue); margin-bottom: 12px;"
+                                id="residentPublicId">ID.РЕЗИДЕНТ</div>
+                            <div style="font-size: 0.7rem; color: #444; line-height: 1.5;">Ваш ID присваивается при
+                                регистрации и не изменяется. Он используется для идентификации в ASTRA Wallet и R&D
+                                системе.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Имя / Псевдоним</label>
+                        <input type="text" id="profileName" class="form-input" placeholder="Ваше имя или псевдоним">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Специализация (роль)</label>
+                        <input type="text" id="profileRole" class="form-input"
+                            placeholder="AI Engineer, Designer, Developer...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">О себе / Биография</label>
+                        <textarea id="profileBio" class="form-textarea" rows="4"
+                            placeholder="Расскажите о себе, своём опыте и проектах..."></textarea>
+                        <div style="font-size: 0.65rem; color: #444; margin-top: 5px; font-family: var(--font-code);">>
+                            Виден в публичном профиле</div>
+                    </div>
+
+                    <button class="btn-pulse" onclick="saveProfile()" style="margin-top: 5px;">Сохранить
+                        Профиль</button>
+                </section>
+
+                <!-- SKILLS STACK -->
+                <section class="section-card">
+                    <div class="section-title">Технологический Стек</div>
+                    <div id="skillTagsContainer"
+                        style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; min-height: 30px;"></div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="newSkillInput" class="form-input" placeholder="React, PyTorch, Figma..."
+                            onkeypress="if(event.key==='Enter')addSkill()">
+                        <button class="status-btn" onclick="addSkill()" style="flex-shrink: 0; padding: 0 15px;">+
+                            Добавить</button>
+                    </div>
+                </section>
+
+                <!-- SOCIAL LINKS -->
+                <section class="section-card">
+                    <div class="section-title">Внешние Каналы</div>
+                    <div class="form-group">
+                        <label class="form-label">🌐 Сайт / Портфолио</label>
+                        <input type="url" id="linkWebsite" class="form-input" placeholder="https://yoursite.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">✈️ Telegram</label>
+                        <div
+                            style="display: flex; align-items: center; gap: 0; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+                            <span
+                                style="padding: 12px 15px; color: #555; font-family: var(--font-code); font-size: 0.85rem; background: rgba(255,255,255,0.03);">@</span>
+                            <input type="text" id="linkTelegram" class="form-input" placeholder="username"
+                                style="border: none; background: transparent;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">💻 GitHub</label>
+                        <input type="text" id="linkGithub" class="form-input" placeholder="github.com/username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bē Behance / Dribbble</label>
+                        <input type="url" id="linkBehance" class="form-input" placeholder="behance.net/username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">💼 LinkedIn</label>
+                        <input type="url" id="linkLinkedin" class="form-input" placeholder="linkedin.com/in/username">
+                    </div>
+                    <button class="btn-pulse" onclick="saveLinks()">Сохранить Ссылки</button>
+                </section>
+
+            </div>
+            <div class="right-panel">
+
+                <!-- STATUS SELECTOR -->
+                <section class="section-card">
+                    <div class="section-title">Статус Онлайн</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="status-btn active" id="statusOnline" onclick="setStatus('online', this)">
+                            <span style="color: #00FF41; margin-right: 8px;">●</span> В СЕТИ
+                        </button>
+                        <button class="status-btn" id="statusBusy" onclick="setStatus('busy', this)">
+                            <span style="color: var(--accent); margin-right: 8px;">●</span> ЗАНЯТ
+                        </button>
+                        <button class="status-btn" id="statusAway" onclick="setStatus('away', this)">
+                            <span style="color: #888; margin-right: 8px;">●</span> ОТСУТСТВУЮ
+                        </button>
+                    </div>
+                </section>
+
+                <!-- PUBLIC PROFILE PREVIEW CARD -->
+                <section class="section-card" style="margin-top: 0;">
+                    <div class="section-title">Предпросмотр Профиля</div>
+                    <div
+                        style="background: rgba(0,0,0,0.3); border-radius: 15px; padding: 20px; border: 1px solid var(--border);">
+                        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                            <div id="previewAvatar"
+                                style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--tech-blue); background: #111; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                👤</div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.95rem;" id="previewName">Ваше Имя</div>
+                                <div style="font-family: var(--font-code); font-size: 0.65rem; color: var(--tech-blue);"
+                                    id="previewRole">СПЕЦИАЛИЗАЦИЯ</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.75rem; color: #888; line-height: 1.5; margin-bottom: 15px;"
+                            id="previewBio">Ваше описание появится здесь...</p>
+                        <div id="previewSkills" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border);">
+                            <a href="#" id="viewPublicProfile" target="_blank"
+                                style="font-family: var(--font-code); font-size: 0.65rem; color: var(--tech-blue); text-decoration: none;">ОТКРЫТЬ
+                                ПУБЛИЧНЫЙ ПРОФИЛЬ →</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STATS -->
+                <section class="section-card">
+                    <div class="section-title">Статистика</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div
+                            style="text-align: center; padding: 15px; background: rgba(0,229,255,0.05); border-radius: 12px; border: 1px solid rgba(0,229,255,0.1);">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--tech-blue);"
+                                id="statProjectsDisplay">0</div>
+                            <div style="font-size: 0.6rem; color: #555; text-transform: uppercase; margin-top: 4px;">
+                                Проектов</div>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 15px; background: rgba(255,42,42,0.05); border-radius: 12px; border: 1px solid rgba(255,42,42,0.1);">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);"
+                                id="statDaysDisplay">1</div>
+                            <div style="font-size: 0.6rem; color: #555; text-transform: uppercase; margin-top: 4px;">
+                                Дней в A-LAB</div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- FEED TAB -->
+        <div class="tab-content" id="feed-tab">
+            <div class="left-col" style="grid-column: span 2;">
+                <section class="section-card">
+                    <div class="section-title">Создать Пост</div>
+                    <textarea class="form-textarea" placeholder="Что происходит в вашей лаборатории?"
+                        style="height: 80px;"></textarea>
+                    <button class="btn-pulse" style="margin-top: 15px;">Опубликовать в Ленту</button>
+                </section>
+                <div id="postsList">
+                    <div class="section-card">
+                        <div style="font-size: 0.7rem; color: #555; margin-bottom: 5px;">СЕГОДНЯ // 12:45</div>
+                        <p>Успешно завершен этап обучения модели Vision_V4. Детали доступны в R&D хабе.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MESSAGES TAB -->
+        <div class="tab-content no-sidebar" id="messages-tab">
+            <div class="chat-container">
+                <div class="chat-sidebar">
+                    <div style="padding: 15px; border-bottom: 1px solid var(--border);">
+                        <input type="text" class="form-input" placeholder="Поиск...">
+                    </div>
+                    <div id="chatList" style="flex-grow: 1; overflow-y: auto;">
+                        <div
+                            style="padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; cursor: pointer; background: rgba(0,229,255,0.05);">
+                            <div
+                                style="width: 40px; height: 40px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                👤</div>
+                            <div>
+                                <div style="font-size: 0.8rem; font-weight: 700;">A-LAB // CORE</div>
+                                <div style="font-size: 0.6rem; color: #555;">Системное сообщение...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-main">
+                    <div class="chat-history">
+                        <div class="chat-bubble bubble-in">Добро пожаловать в мессенджер A-LAB. Начните общение с
+                            другими резидентами.</div>
+                        <div class="chat-bubble bubble-in">Используйте этот канал для связи с поддержкой или другими
+                            участниками.</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="form-input" placeholder="Введите сообщение...">
+                        <button class="btn-pulse" style="width: auto; padding: 0 20px;">✉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PORTFOLIO TAB -->
+        <div class="tab-content" id="portfolio-tab">
+            <div class="left-col">
+
+                <!-- ADD WORK FORM -->
+                <section class="section-card">
+                    <div class="section-title">Добавить Работу</div>
+
+                    <!-- Image Upload -->
+                    <div id="portfolioDropZone" onclick="document.getElementById('portfolioImgInput').click()"
+                        style="border: 2px dashed rgba(0,229,255,0.3); border-radius: 16px; padding: 30px; text-align: center; cursor: pointer; margin-bottom: 20px; transition: 0.3s; background: rgba(0,229,255,0.02);"
+                        ondragover="event.preventDefault();this.style.borderColor='var(--tech-blue)'"
+                        ondragleave="this.style.borderColor='rgba(0,229,255,0.3)'" ondrop="handlePortfolioDrop(event)">
+                        <div id="portfolioImgPreview" style="display:none; margin-bottom: 10px;">
+                            <img id="portfolioImgTag" src=""
+                                style="max-height: 180px; border-radius: 10px; object-fit: cover;">
+                        </div>
+                        <div id="portfolioDropLabel">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🖼️</div>
+                            <div style="font-family: var(--font-code); font-size: 0.75rem; color: #555;">Перетащите
+                                изображение или кликните для загрузки</div>
+                            <div style="font-size: 0.65rem; color: #333; margin-top: 4px;">JPG, PNG, WEBP — до 5MB</div>
+                        </div>
+                        <input type="file" id="portfolioImgInput" accept="image/*" style="display:none;"
+                            onchange="loadPortfolioImg(this)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Название Работы</label>
+                        <input type="text" id="portfolioTitle" class="form-input"
+                            placeholder="Project Alpha, UI Kit 2.0...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Описание</label>
+                        <textarea id="portfolioDesc" class="form-textarea" rows="3"
+                            placeholder="Что это за работа? Какие технологии? Какой результат?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🔗 Ссылка (GitHub, Behance, сайт)</label>
+                        <input type="url" id="portfolioUrl" class="form-input" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Категория</label>
+                        <select id="portfolioCategory" class="form-input">
+                            <option value="design">🎨 Design / UI-UX</option>
+                            <option value="dev">💻 Development</option>
+                            <option value="ai">🤖 AI / ML</option>
+                            <option value="motion">🎬 Motion / Video</option>
+                            <option value="web3">🔗 Web3 / Blockchain</option>
+                            <option value="other">📌 Другое</option>
+                        </select>
+                    </div>
+                    <button class="btn-pulse" onclick="addPortfolioWork()">Добавить в Портфолио</button>
+                </section>
+
+            </div>
+            <div class="right-panel" style="">
+
+                <!-- GALLERY -->
+                <section class="section-card" style="height: calc(100vh - 200px); overflow-y: auto;">
+                    <div class="section-title">Мои Работы <span id="portfolioCount"
+                            style="color: var(--tech-blue);">0</span></div>
+                    <div id="portfolioGallery" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div
+                            style="text-align: center; padding: 40px; color: #333; font-family: var(--font-code); font-size: 0.7rem;">
+                            [PORTFOLIO_EMPTY] // Добавьте первую работу
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- PROJECTS TAB -->
+        <div class="tab-content" id="projects-tab">
+            <div class="left-col">
+
+                <!-- CREATE PROJECT -->
+                <section class="section-card">
+                    <div class="section-title">Новый Проект</div>
+
+                    <div class="form-group">
+                        <label class="form-label">Название Проекта</label>
+                        <input type="text" id="projTitle" class="form-input" placeholder="Project Nova, AI Engine X...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Категория</label>
+                        <select id="projCategory" class="form-input">
+                            <option value="rd">🧪 R&D / Исследование</option>
+                            <option value="product">📦 Продукт</option>
+                            <option value="design">🎨 Design</option>
+                            <option value="ai">🤖 AI / ML</option>
+                            <option value="startup">🚀 Стартап</option>
+                            <option value="open">🌐 Open Source</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Описание / Цели</label>
+                        <textarea id="projDesc" class="form-textarea" rows="4"
+                            placeholder="Что вы разрабатываете? Какая проблема решается? Ожидаемые результаты..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">💎 Бюджет в Astra Tokens</label>
+                        <div style="position: relative;">
+                            <input type="number" id="projBudget" class="form-input" placeholder="0" min="0"
+                                style="padding-right: 80px;">
+                            <span
+                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-family: var(--font-code); font-size: 0.75rem; color: var(--tech-blue);">ASTRA</span>
+                        </div>
+                        <div style="font-size: 0.65rem; color: #444; margin-top: 6px; font-family: var(--font-code);">≈
+                            <span id="projBudgetUsd">$0.00</span> USD
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Нужны участники со стеком</label>
+                        <input type="text" id="projSkillsNeeded" class="form-input"
+                            placeholder="React, Python, 3D Design... (через запятую)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Срок (дедлайн)</label>
+                        <input type="date" id="projDeadline" class="form-input">
+                    </div>
+                    <button class="btn-pulse" onclick="createProject()">Создать Проект</button>
+                </section>
+
+            </div>
+            <div class="right-panel">
+
+                <!-- MY PROJECTS LIST -->
+                <section class="section-card" style="height: calc(100vh - 200px); overflow-y: auto;">
+                    <div class="section-title">Мои Проекты <span id="projectsCount"
+                            style="color: var(--tech-blue);">0</span></div>
+                    <div id="projectsList" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div
+                            style="text-align: center; padding: 40px; color: #333; font-family: var(--font-code); font-size: 0.7rem;">
+                            [PROJECTS_EMPTY] // Создайте первый проект
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- INVITE MODAL -->
+        <div id="inviteModal"
+            style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:9000; align-items:center; justify-content:center;">
+            <div
+                style="background: var(--surface); border: 1px solid var(--tech-blue); border-radius: 24px; padding: 40px; width: 480px; max-width: 95vw; position: relative;">
+                <button onclick="closeInviteModal()"
+                    style="position:absolute; top:15px; right:15px; background:transparent; border:1px solid #333; color:#888; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1rem;">✕</button>
+                <div
+                    style="font-family: var(--font-code); color: var(--tech-blue); font-size: 0.7rem; margin-bottom: 8px;">
+                    INVITE_PROTOCOL //</div>
+                <h3 style="font-size: 1.4rem; margin-bottom: 5px;" id="inviteProjectTitle">Название Проекта</h3>
+                <p style="color: #555; font-size: 0.8rem; margin-bottom: 25px;">Пригласите резидента принять участие в
+                    проекте</p>
+
+                <div class="form-group">
+                    <label class="form-label">ID Резидента или @Telegram</label>
+                    <input type="text" id="inviteResidentId" class="form-input" placeholder="ID.ARTEM или @username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Сообщение с приглашением</label>
+                    <textarea id="inviteMessage" class="form-textarea" rows="3"
+                        placeholder="Привет! Я работаю над проектом и хотел бы пригласить тебя..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn-pulse" onclick="sendInvite()" style="flex: 1;">Отправить Приглашение 🚀</button>
+                    <button class="status-btn" onclick="closeInviteModal()" style="flex: 0 0 auto;">Отмена</button>
+                </div>
+
+                <!-- Astra budget preview inside modal -->
+                <div
+                    style="margin-top: 20px; padding: 15px; background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.15); border-radius: 12px;">
+                    <div style="font-family: var(--font-code); font-size: 0.65rem; color: #555; margin-bottom: 5px;">
+                        БЮДЖЕТ ПРОЕКТА</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--tech-blue);" id="inviteBudgetDisplay">
+                        0 ASTRA</div>
+                    <div style="font-size: 0.7rem; color: #555; margin-top: 3px;" id="inviteBudgetUsd">≈ $0.00 USD</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASTRA TAB -->
+        <div class="tab-content" id="astra-tab">
+            <div class="left-col">
+                <section class="section-card" style="text-align: center;">
+                    <div class="section-title">Баланс Astra</div>
+                    <div
+                        style="font-size: 3.5rem; font-weight: 800; color: var(--tech-blue); margin: 30px 0; text-shadow: 0 0 20px rgba(0,229,255,0.3);">
+                        1,250 💎</div>
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn-pulse">Отправить</button>
+                        <button class="status-btn" style="flex: 1;">История</button>
+                    </div>
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Информация</div>
+                    <p style="font-size: 0.8rem; color: #888; line-height: 1.6;">Токены Astra используются для оплаты
+                        GPU-вычислений и вознаграждения участников за вклад в проекты R&D.</p>
+                </section>
+            </div>
+        </div>
+
+        <!-- R&D (USER) TAB -->
+        <div class="tab-content" id="rd-tab">
+            <div class="left-col" style="grid-column: span 2;">
+                <section class="section-card">
+                    <div class="section-title">Новый Исследовательский Запрос</div>
+                    <div class="form-group">
+                        <label class="form-label">Суть проекта / Идея</label>
+                        <textarea class="form-textarea" placeholder="Опишите ваш запрос к лаборатории..."></textarea>
+                    </div>
+                    <button class="btn-pulse">Создать Тикет</button>
+                </section>
+                <section class="section-card">
+                    <div class="section-title">Мои Проекты</div>
+                    <div
+                        style="padding: 20px; text-align: center; color: #555; background: rgba(0,0,0,0.1); border-radius: 10px;">
+                        Активных запросов нет</div>
+                </section>
+            </div>
+        </div>
+
+        <!-- SECURITY TAB -->
+        <div class="tab-content" id="security-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Смена Пароля</div>
+                    <div class="form-group">
+                        <label class="form-label">Текущий пароль</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Новый пароль</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Повторите новый пароль</label>
+                        <input type="password" class="form-input">
+                    </div>
+                    <button class="btn-pulse">Обновить Пароль</button>
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Активные Сессии</div>
+                    <div
+                        style="font-size: 0.75rem; padding: 15px; background: rgba(0,229,255,0.05); border: 1px solid var(--tech-blue); border-radius: 8px;">
+                        <b>Chrome / MacOS</b><br>
+                        <span style="font-size: 0.65rem; opacity: 0.6; display: block; margin-top: 5px;">IP:
+                            192.168.1.1</span>
+                        <span
+                            style="font-size: 0.6rem; color: var(--tech-blue); text-transform: uppercase; margin-top: 5px; display: block;">Текущая
+                            сессия</span>
+                    </div>
+                    <button class="status-btn"
+                        style="width: 100%; margin-top: 15px; border-color: var(--accent); color: var(--accent);">Завершить
+                        остальные</button>
+                </section>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div class="tab-content no-sidebar" id="settings-tab">
+            <section class="section-card">
+                <div class="section-title">Предпочтения</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div class="form-group">
+                        <label class="form-label">Язык / Language</label>
+                        <select class="form-input">
+                            <option>РУССКИЙ</option>
+                            <option>ENGLISH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Уведомления</label>
+                        <button class="status-btn active" style="width: 100%;">ВКЛЮЧЕНЫ</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-client.js"></script>
+    <script src="../i18n.js"></script>
+    <script src="../toast.js"></script>
+
+    <script>
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            const target = document.getElementById(tabId + '-tab');
+            if (target) target.classList.add('active');
+
+            // Sidebar items
+            document.querySelectorAll('.sidebar .nav-item').forEach(i => {
+                i.classList.remove('active');
+                if (i.getAttribute('onclick')?.includes(tabId)) i.classList.add('active');
+            });
+
+            // Bottom Nav items — sync by id
+            const bnavMap = {
+                profile: 'bnav-profile', feed: 'bnav-feed',
+                projects: 'bnav-projects', messages: 'bnav-messages'
+            };
+            document.querySelectorAll('.nav-item-bottom').forEach(i => i.classList.remove('active'));
+            const bnavId = bnavMap[tabId];
+            if (bnavId) {
+                const bnavEl = document.getElementById(bnavId);
+                if (bnavEl) bnavEl.classList.add('active');
+            }
+
+            // FAB visibility — show on projects and portfolio tabs
+            const fab = document.getElementById('fabBtn');
+            if (fab) {
+                if (tabId === 'projects' || tabId === 'portfolio') {
+                    fab.classList.add('visible');
+                } else {
+                    fab.classList.remove('visible');
+                }
+            }
+
+            const titles = {
+                'profile': 'Рабочая Станция',
+                'feed': 'Лента Событий',
+                'portfolio': 'Портфолио',
+                'projects': 'Мои Проекты',
+                'messages': 'Messenger',
+                'astra': 'Astra Wallet',
+                'security': 'Безопасность',
+                'settings': 'Настройки'
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId] || 'Личный Кабинет';
+
+            // Close bottom sheet if open
+            closeBottomSheet();
+        }
+
+        // Sidebar pin toggle
+        function toggleSidebarPin() {
+            const sidebar = document.getElementById('mainSidebar');
+            const btn = document.getElementById('sidebarPinBtn');
+            sidebar.classList.toggle('pinned');
+            const isPinned = sidebar.classList.contains('pinned');
+            btn.innerText = isPinned ? '🔓' : '📌';
+            btn.title = isPinned ? 'Открепить меню' : 'Закрепить меню';
+            localStorage.setItem('sidebar_pinned', isPinned ? '1' : '0');
+        }
+
+        // Restore pin state on load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('sidebar_pinned') === '1') {
+                const sidebar = document.getElementById('mainSidebar');
+                const btn = document.getElementById('sidebarPinBtn');
+                sidebar?.classList.add('pinned');
+                if (btn) { btn.innerText = '🔓'; btn.title = 'Открепить меню'; }
+            }
+        });
+
+
+        // ========== BOTTOM SHEET ==========
+        function toggleBottomSheet() {
+            const sheet = document.getElementById('bottomSheet');
+            const backdrop = document.getElementById('sheetBackdrop');
+            if (!sheet || !backdrop) return;
+            const isOpen = sheet.classList.contains('active');
+            if (isOpen) {
+                closeBottomSheet();
+            } else {
+                backdrop.style.display = 'block';
+                requestAnimationFrame(() => {
+                    backdrop.classList.add('active');
+                    sheet.classList.add('active');
+                });
+            }
+        }
+
+        function closeBottomSheet() {
+            const sheet = document.getElementById('bottomSheet');
+            const backdrop = document.getElementById('sheetBackdrop');
+            if (!sheet || !backdrop) return;
+            sheet.classList.remove('active');
+            backdrop.classList.remove('active');
+            setTimeout(() => { backdrop.style.display = 'none'; }, 320);
+        }
+
+        // FAB action — open relevant form based on active tab
+        function fabAction() {
+            const active = document.querySelector('.tab-content.active');
+            if (!active) return;
+            if (active.id === 'projects-tab') {
+                const el = document.getElementById('projTitle');
+                if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); }
+            } else if (active.id === 'portfolio-tab') {
+                const el = document.getElementById('portTitle');
+                if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); }
+            }
+        }
+
+
+        // Theme
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeBtn').innerText = isLight ? '☀' : '☽';
+        }
+
+        /* ==============================
+           PROJECTS MODULE
+        ============================== */
+        let projects = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+        let currentInviteProjectId = null;
+
+        // Astra → USD converter (1 ASTRA = $1.50)
+        const ASTRA_RATE = 1.5;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Budget live converter
+            const budgetInput = document.getElementById('projBudget');
+            if (budgetInput) {
+                budgetInput.addEventListener('input', () => {
+                    const v = parseFloat(budgetInput.value) || 0;
+                    document.getElementById('projBudgetUsd').innerText = '$' + (v * ASTRA_RATE).toFixed(2);
+                });
+            }
+            renderProjects();
+            renderPortfolio();
+        });
+
+        function createProject() {
+            const title = document.getElementById('projTitle').value.trim();
+            const category = document.getElementById('projCategory').value;
+            const desc = document.getElementById('projDesc').value.trim();
+            const budget = parseInt(document.getElementById('projBudget').value) || 0;
+            const skills = document.getElementById('projSkillsNeeded').value.trim();
+            const deadline = document.getElementById('projDeadline').value;
+
+            if (!title) { showToast('⚠️ Укажите название проекта'); return; }
+            if (!desc) { showToast('⚠️ Добавьте описание проекта'); return; }
+
+            const project = {
+                id: 'proj_' + Date.now(),
+                title, category, desc, budget, skills, deadline,
+                status: 'active',
+                createdAt: new Date().toISOString(),
+                collaborators: []
+            };
+
+            projects.unshift(project);
+            localStorage.setItem('alab_projects', JSON.stringify(projects));
+
+            // Reset form
+            ['projTitle', 'projDesc', 'projSkillsNeeded', 'projDeadline'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('projBudget').value = '';
+            document.getElementById('projBudgetUsd').innerText = '$0.00';
+
+            renderProjects();
+            showToast('✓ Проект «' + title + '» создан!');
+
+            // Try save to Supabase
+            const db = window.ALabCore?.db;
+            if (db) {
+                db.from('projects').insert([{
+                    title, category, description: desc,
+                    astra_budget: budget, skills_needed: skills,
+                    deadline_date: deadline || null,
+                    owner_id: window.ALabCore?.userId,
+                    status: 'active'
+                }]).then(({ error }) => {
+                    if (error) console.warn('[PROJECTS] Supabase save error:', error.message);
+                });
+            }
+        }
+
+        const categoryIcons = { rd: '🧪', product: '📦', design: '🎨', ai: '🤖', startup: '🚀', open: '🌐' };
+        const statusColors = { active: '#00FF41', pause: '#ffa500', done: '#888' };
+
+        function renderProjects() {
+            const list = document.getElementById('projectsList');
+            const count = document.getElementById('projectsCount');
+            if (!list) return;
+
+            if (projects.length === 0) {
+                list.innerHTML = '<div style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">[PROJECTS_EMPTY] // Создайте первый проект</div>';
+                if (count) count.innerText = '0';
+                return;
+            }
+            if (count) count.innerText = projects.length;
+
+            list.innerHTML = projects.map((p, idx) => `
+                <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:16px;padding:20px;transition:0.3s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                        <div>
+                            <span style="font-size:0.7rem;font-family:var(--font-code);color:#555;">${categoryIcons[p.category] || '📌'} ${p.category.toUpperCase()}</span>
+                            <div style="font-weight:800;font-size:1rem;margin-top:4px;">${p.title}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <span style="width:8px;height:8px;border-radius:50%;background:${statusColors[p.status] || '#888'};display:inline-block;"></span>
+                            <span style="font-family:var(--font-code);font-size:0.6rem;color:#555;">${p.status.toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <p style="font-size:0.8rem;color:#888;line-height:1.5;margin-bottom:15px;">${p.desc.length > 150 ? p.desc.substring(0, 150) + '...' : p.desc}</p>
+                    ${p.skills ? `<div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:5px;">${p.skills.split(',').map(s => `<span style="font-size:0.6rem;font-family:var(--font-code);border:1px solid #333;padding:2px 8px;border-radius:5px;color:#666;">${s.trim()}</span>`).join('')}</div>` : ''}
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border);">
+                        <div style="font-family:var(--font-code);font-size:0.75rem;color:var(--tech-blue);">💎 ${p.budget.toLocaleString()} ASTRA <span style="color:#555;font-size:0.65rem;">≈ $${(p.budget * ASTRA_RATE).toFixed(0)}</span></div>
+                        <div style="display:flex;gap:8px;">
+                            <button onclick="openInviteModal('${p.id}')" style="font-family:var(--font-code);font-size:0.65rem;border:1px solid rgba(0,229,255,0.3);background:rgba(0,229,255,0.05);color:var(--tech-blue);padding:6px 12px;border-radius:8px;cursor:pointer;transition:0.3s;">✉️ Пригласить</button>
+                            <button onclick="deleteProject(${idx})" style="font-family:var(--font-code);font-size:0.65rem;border:1px solid #222;background:transparent;color:#555;padding:6px 10px;border-radius:8px;cursor:pointer;">×</button>
+                        </div>
+                    </div>
+                    ${p.deadline ? `<div style="font-size:0.6rem;color:#444;font-family:var(--font-code);margin-top:8px;">DEADLINE: ${new Date(p.deadline).toLocaleDateString('ru-RU')}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteProject(idx) {
+            projects.splice(idx, 1);
+            localStorage.setItem('alab_projects', JSON.stringify(projects));
+            renderProjects();
+            showToast('🗑 Проект удалён');
+        }
+
+        function openInviteModal(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            currentInviteProjectId = projectId;
+            document.getElementById('inviteProjectTitle').innerText = p.title;
+            document.getElementById('inviteBudgetDisplay').innerText = p.budget.toLocaleString() + ' ASTRA';
+            document.getElementById('inviteBudgetUsd').innerText = '≈ $' + (p.budget * ASTRA_RATE).toFixed(2) + ' USD';
+            document.getElementById('inviteResidentId').value = '';
+            document.getElementById('inviteMessage').value = `Привет! Работаю над проектом «${p.title}» и хотел бы пригласить тебя в команду. Бюджет проекта: ${p.budget} ASTRA.`;
+            const modal = document.getElementById('inviteModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeInviteModal() {
+            document.getElementById('inviteModal').style.display = 'none';
+            currentInviteProjectId = null;
+        }
+
+        async function sendInvite() {
+            const recipientId = document.getElementById('inviteResidentId').value.trim();
+            const message = document.getElementById('inviteMessage').value.trim();
+            const p = projects.find(x => x.id === currentInviteProjectId);
+
+            if (!recipientId) { showToast('⚠️ Укажите ID резидента'); return; }
+            if (!message) { showToast('⚠️ Напишите сообщение'); return; }
+
+            const db = window.ALabCore?.db;
+            if (db) {
+                try {
+                    await db.from('project_invites').insert([{
+                        project_id: p?.id,
+                        project_title: p?.title,
+                        recipient_identifier: recipientId,
+                        message,
+                        astra_budget: p?.budget || 0,
+                        sender_id: window.ALabCore?.userId,
+                        status: 'pending'
+                    }]);
+                } catch (e) {
+                    console.warn('[INVITE] DB error:', e.message);
+                }
+            }
+
+            showToast('🚀 Приглашение отправлено!');
+            closeInviteModal();
+        }
+
+        /* ==============================
+           PORTFOLIO MODULE
+        ============================== */
+        let portfolioWorks = JSON.parse(localStorage.getItem('alab_portfolio') || '[]');
+        let portfolioCurrentImg = null;
+
+        function loadPortfolioImg(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                portfolioCurrentImg = e.target.result;
+                document.getElementById('portfolioImgTag').src = portfolioCurrentImg;
+                document.getElementById('portfolioImgPreview').style.display = 'block';
+                document.getElementById('portfolioDropLabel').style.display = 'none';
+                document.getElementById('portfolioDropZone').style.borderColor = 'var(--tech-blue)';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function handlePortfolioDrop(e) {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const fakeInput = { files: [file] };
+                loadPortfolioImg(fakeInput);
+            }
+            document.getElementById('portfolioDropZone').style.borderColor = 'rgba(0,229,255,0.3)';
+        }
+
+        function addPortfolioWork() {
+            const title = document.getElementById('portfolioTitle').value.trim();
+            const desc = document.getElementById('portfolioDesc').value.trim();
+            const url = document.getElementById('portfolioUrl').value.trim();
+            const category = document.getElementById('portfolioCategory').value;
+
+            if (!title) { showToast('⚠️ Укажите название работы'); return; }
+
+            const work = {
+                id: 'work_' + Date.now(),
+                title, desc, url, category,
+                img: portfolioCurrentImg || null,
+                createdAt: new Date().toISOString()
+            };
+
+            portfolioWorks.unshift(work);
+            // Store without base64 img to keep localStorage lean
+            const toStore = portfolioWorks.map(w => ({ ...w, img: w.img ? '[IMAGE]' : null }));
+            try { localStorage.setItem('alab_portfolio_meta', JSON.stringify(toStore)); } catch (e) { }
+
+            // Reset form
+            ['portfolioTitle', 'portfolioDesc', 'portfolioUrl'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.value = '';
+            });
+            portfolioCurrentImg = null;
+            document.getElementById('portfolioImgPreview').style.display = 'none';
+            document.getElementById('portfolioDropLabel').style.display = 'block';
+            document.getElementById('portfolioDropZone').style.borderColor = 'rgba(0,229,255,0.3)';
+            document.getElementById('portfolioImgInput').value = '';
+
+            renderPortfolio();
+            showToast('✓ Работа «' + title + '» добавлена!');
+        }
+
+        const catPortIcons = { design: '🎨', dev: '💻', ai: '🤖', motion: '🎬', web3: '🔗', other: '📌' };
+
+        function renderPortfolio() {
+            const gallery = document.getElementById('portfolioGallery');
+            const count = document.getElementById('portfolioCount');
+            if (!gallery) return;
+
+            if (portfolioWorks.length === 0) {
+                gallery.innerHTML = '<div style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">[PORTFOLIO_EMPTY] // Добавьте первую работу</div>';
+                if (count) count.innerText = '0';
+                return;
+            }
+            if (count) count.innerText = portfolioWorks.length;
+
+            gallery.innerHTML = portfolioWorks.map((w, idx) => `
+                <div style="display:flex;gap:15px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:16px;padding:15px;transition:0.3s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.2)'" onmouseout="this.style.borderColor='var(--border)'">
+                    <div style="flex-shrink:0;width:90px;height:90px;border-radius:12px;overflow:hidden;background:#111;border:1px solid #222;display:flex;align-items:center;justify-content:center;font-size:2rem;">
+                        ${w.img ? `<img src="${w.img}" style="width:100%;height:100%;object-fit:cover;">` : (catPortIcons[w.category] || '📌')}
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div>
+                                <div style="font-size:0.6rem;font-family:var(--font-code);color:#555;margin-bottom:4px;">${catPortIcons[w.category] || '📌'} ${w.category.toUpperCase()}</div>
+                                <div style="font-weight:800;font-size:0.95rem;">${w.title}</div>
+                            </div>
+                            <button onclick="deleteWork(${idx})" style="background:transparent;border:1px solid #222;color:#555;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.8rem;flex-shrink:0;">×</button>
+                        </div>
+                        ${w.desc ? `<p style="font-size:0.75rem;color:#888;line-height:1.4;margin-top:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${w.desc}</p>` : ''}
+                        ${w.url ? `<a href="${w.url}" target="_blank" style="font-family:var(--font-code);font-size:0.65rem;color:var(--tech-blue);text-decoration:none;margin-top:8px;display:inline-block;">🔗 Открыть работу →</a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteWork(idx) {
+            portfolioWorks.splice(idx, 1);
+            renderPortfolio();
+            showToast('🗑 Работа удалена');
+        }
+
+        // Close invite modal on backdrop click
+        document.getElementById('inviteModal')?.addEventListener('click', function (e) {
+            if (e.target === this) closeInviteModal();
+        });
+
+        /* ============================
+           PROFILE MANAGEMENT
+        ============================ */
+
+        let skills = [];
+
+        // Avatar preview
+        function previewAvatar(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewEl = document.getElementById('avatarPreview');
+                const previewSmall = document.getElementById('previewAvatar');
+                const img = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                previewEl.innerHTML = img;
+                previewSmall.innerHTML = img;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // Skills management
+        function addSkill() {
+            const input = document.getElementById('newSkillInput');
+            const val = input.value.trim();
+            if (!val || skills.includes(val)) { input.value = ''; return; }
+            skills.push(val);
+            input.value = '';
+            renderSkillTags();
+            updatePreview();
+        }
+
+        function removeSkill(skill) {
+            skills = skills.filter(s => s !== skill);
+            renderSkillTags();
+            updatePreview();
+        }
+
+        function renderSkillTags() {
+            const container = document.getElementById('skillTagsContainer');
+            container.innerHTML = skills.map(s => `
+                <div style="display:flex;align-items:center;gap:6px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);padding:6px 12px;border-radius:8px;font-family:var(--font-code);font-size:0.72rem;color:var(--tech-blue);">
+                    ${s}
+                    <span onclick="removeSkill('${s}')" style="cursor:pointer;color:#555;font-size:0.8rem;margin-left:2px;transition:0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='#555'">✕</span>
+                </div>
+            `).join('');
+        }
+
+        // Live preview update
+        function updatePreview() {
+            const name = document.getElementById('profileName')?.value || 'Ваше Имя';
+            const role = document.getElementById('profileRole')?.value || 'СПЕЦИАЛИЗАЦИЯ';
+            const bio = document.getElementById('profileBio')?.value || 'Ваше описание появится здесь...';
+
+            const nameEl = document.getElementById('previewName');
+            const roleEl = document.getElementById('previewRole');
+            const bioEl = document.getElementById('previewBio');
+            const skillsEl = document.getElementById('previewSkills');
+
+            if (nameEl) nameEl.innerText = name;
+            if (roleEl) roleEl.innerText = role.toUpperCase();
+            if (bioEl) bioEl.innerText = bio.length > 120 ? bio.substring(0, 120) + '...' : bio;
+            if (skillsEl) {
+                skillsEl.innerHTML = skills.slice(0, 5).map(s =>
+                    `<span style="font-size:0.6rem;font-family:var(--font-code);border:1px solid #333;padding:3px 8px;border-radius:5px;color:#888;">${s}</span>`
+                ).join('');
+            }
+        }
+
+        // Save profile data to localStorage (or Supabase if available)
+        async function saveProfile() {
+            const profileData = {
+                name: document.getElementById('profileName').value,
+                role: document.getElementById('profileRole').value,
+                bio: document.getElementById('profileBio').value,
+                skills: skills
+            };
+            localStorage.setItem('alab_profile', JSON.stringify(profileData));
+
+            // Try to save to Supabase
+            const db = window.ALabCore?.db;
+            if (db) {
+                try {
+                    const { error } = await db.from('residents').update({
+                        full_name: profileData.name,
+                        role: profileData.role,
+                        bio: profileData.bio,
+                        skills: profileData.skills
+                    }).eq('user_id', window.ALabCore?.userId);
+                    if (error) throw error;
+                } catch (e) {
+                    console.warn('[PROFILE] Supabase save error, cached locally:', e.message);
+                }
+            }
+
+            showToast('✓ Профиль сохранён');
+        }
+
+        async function saveLinks() {
+            const links = {
+                website: document.getElementById('linkWebsite').value,
+                telegram: document.getElementById('linkTelegram').value,
+                github: document.getElementById('linkGithub').value,
+                behance: document.getElementById('linkBehance').value,
+                linkedin: document.getElementById('linkLinkedin').value
+            };
+            localStorage.setItem('alab_links', JSON.stringify(links));
+            showToast('✓ Ссылки сохранены');
+        }
+
+        function setStatus(statusId, btn) {
+            document.querySelectorAll('[id^="status"]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            localStorage.setItem('alab_status', statusId);
+            showToast(`● Статус обновлён`);
+        }
+
+        function showToast(msg) {
+            // Use toast.js if available
+            if (window.Toast) { window.Toast.show(msg); return; }
+            // Fallback
+            const t = document.createElement('div');
+            t.innerText = msg;
+            t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#00E5FF;color:black;padding:10px 20px;border-radius:30px;font-family:var(--font-code);font-size:0.75rem;font-weight:700;z-index:9999;animation:fadeIn 0.2s ease-out;';
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        // Load saved profile data on page load
+        function loadProfileData() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('alab_profile') || '{}');
+                if (saved.name) document.getElementById('profileName').value = saved.name;
+                if (saved.role) document.getElementById('profileRole').value = saved.role;
+                if (saved.bio) document.getElementById('profileBio').value = saved.bio;
+                if (saved.skills) { skills = saved.skills; renderSkillTags(); }
+
+                const savedLinks = JSON.parse(localStorage.getItem('alab_links') || '{}');
+                if (savedLinks.website) document.getElementById('linkWebsite').value = savedLinks.website;
+                if (savedLinks.telegram) document.getElementById('linkTelegram').value = savedLinks.telegram;
+                if (savedLinks.github) document.getElementById('linkGithub').value = savedLinks.github;
+                if (savedLinks.behance) document.getElementById('linkBehance').value = savedLinks.behance;
+                if (savedLinks.linkedin) document.getElementById('linkLinkedin').value = savedLinks.linkedin;
+
+                const savedStatus = localStorage.getItem('alab_status') || 'online';
+                document.querySelectorAll('[id^="status"]').forEach(b => b.classList.remove('active'));
+                const activeBtn = document.getElementById('status' + savedStatus.charAt(0).toUpperCase() + savedStatus.slice(1));
+                if (activeBtn) activeBtn.classList.add('active');
+
+            } catch (e) { console.warn('[PROFILE] Load error:', e); }
+            updatePreview();
+        }
+
+        // Bind live preview to inputs
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfileData();
+            ['profileName', 'profileRole', 'profileBio'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', updatePreview);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -17,12 +17,10 @@ const I18n = (() => {
     // Mapping for pages that have dedicated versions instead of just in-place translation
     const pageMapping = {
         'ru': {
-            'index-en.html': 'index.html',
-            'resident-admin-en.html': 'resident-admin-ru.html'
+            'index-en.html': 'index.html'
         },
         'en': {
-            'index.html': 'index-en.html',
-            'resident-admin-ru.html': 'resident-admin-en.html'
+            'index.html': 'index-en.html'
         }
     };
 

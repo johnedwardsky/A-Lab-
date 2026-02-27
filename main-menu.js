@@ -7,61 +7,66 @@
  */
 
 const MainMenu = (() => {
+    // Determine prefix based on location
+    const isSubfolder = window.location.pathname.includes('/residents/');
+    const prefix = isSubfolder ? '../' : '';
+    const residentPrefix = isSubfolder ? '' : 'residents/';
+
     const fallbackItems = [
         {
-            label_ru: 'Главная', label_en: 'Home', url: 'index.html',
+            label_ru: 'Главная', label_en: 'Home', url: prefix + 'index.html',
             code: 'CORE_HUB',
             desc_ru: 'Точка входа в экосистему A-LAB. Будущее технологий начинается здесь.',
             desc_en: 'Entry point to the A-LAB ecosystem. The future of technology starts here.'
         },
         {
-            label_ru: 'О компании', label_en: 'About', url: 'about.html',
+            label_ru: 'О компании', label_en: 'About', url: prefix + 'about.html',
             code: 'VISION_CORE',
             desc_ru: 'Кто мы и почему мы меняем правила игры. Наша миссия и визионеры.',
             desc_en: 'Who we are and why we change the rules. Our mission and visionaries.'
         },
         {
-            label_ru: 'R&D Lab', label_en: 'R&D Lab', url: 'rd.html',
+            label_ru: 'R&D Lab', label_en: 'R&D Lab', url: prefix + 'rd.html',
             code: 'RND_LAB',
             desc_ru: 'Секретные разработки, прототипы будущего и глубокие исследования.',
             desc_en: 'Secret developments, prototypes of the future, and deep research.'
         },
         {
-            label_ru: 'Тех консалтинг', label_en: 'Tech Consulting', url: 'consulting.html',
+            label_ru: 'Тех консалтинг', label_en: 'Tech Consulting', url: prefix + 'consulting.html',
             code: 'TECH_CONSULT',
             desc_ru: 'Масштабируем ваш бизнес через внедрение передовых архитектурных решений.',
             desc_en: 'Scaling your business through the implementation of advanced architectural solutions.'
         },
         {
-            label_ru: 'Digital & AI', label_en: 'Digital & AI', url: 'digital.html',
+            label_ru: 'Digital & AI', label_en: 'Digital & AI', url: prefix + 'digital.html',
             code: 'DIGITAL_AI',
             desc_ru: 'Нейросети, автоматизация и цифровые двойники для лидерства на рынке.',
             desc_en: 'Neural networks, automation, and digital twins for market leadership.'
         },
         {
-            label_ru: 'Дизайн', label_en: 'Design', url: 'design.html',
+            label_ru: 'Дизайн', label_en: 'Design', url: prefix + 'design.html',
             code: 'DESIGN_NODE',
             desc_ru: 'Эстетика высоких технологий и интерфейсы, опережающие время.',
             desc_en: 'High-tech aesthetics and interfaces ahead of their time.'
         },
         {
-            label_ru: 'Маркетинг', label_en: 'Marketing', url: 'marketing.html',
+            label_ru: 'Маркетинг', label_en: 'Marketing', url: prefix + 'marketing.html',
             code: 'GROWTH_ENGINE',
             desc_ru: 'Стратегии роста, основанные на данных и психологии потребления.',
             desc_en: 'Growth strategies based on data and consumer psychology.'
         },
         {
-            label_ru: 'Контакты', label_en: 'Contacts', url: 'contacts.html',
+            label_ru: 'Контакты', label_en: 'Contacts', url: prefix + 'contacts.html',
             code: 'CONTACT_NODE',
             desc_ru: 'Свяжитесь с нами напрямую. Обсуждение проектов и партнерство.',
             desc_en: 'Contact us directly. Project discussion and partnership.'
         },
         {
-            label_ru: 'Резиденты', label_en: 'Residents', url: 'residents.html',
+            label_ru: 'Резиденты', label_en: 'Residents', url: residentPrefix + 'index.html',
             code: 'RESIDENT_GRID',
             desc_ru: 'Закрытое сообщество инноваторов. Скоро будет открыто для резидентов A-LAB.',
             desc_en: 'A closed community of innovators. Opening soon for A-LAB residents.',
-            is_upcoming: true
+            is_upcoming: false
         }
     ];
 
@@ -83,7 +88,18 @@ const MainMenu = (() => {
                     .order('order_index', { ascending: true });
 
                 if (!error && data && data.length > 0) {
-                    menuItems = data;
+                    menuItems = data.map(item => {
+                        // Ensure URLs are path-aware if they come from DB
+                        if (!item.url.startsWith('http') && !item.url.startsWith('/') && !item.url.startsWith('.')) {
+                            // If it's a resident page, it might need different prefixing
+                            if (item.url.includes('resident') || item.url === 'login.html') {
+                                item.url = residentPrefix + item.url;
+                            } else {
+                                item.url = prefix + item.url;
+                            }
+                        }
+                        return item;
+                    });
                     return;
                 }
             }
@@ -106,20 +122,19 @@ const MainMenu = (() => {
      */
     function getURL(item) {
         const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
+        let url = item.url;
         if (lang === 'en') {
-            if (item.url === 'index.html') return 'index-en.html';
-            if (item.url === 'resident-admin-ru.html') return 'resident-admin-en.html';
-        } else {
-            if (item.url === 'index-en.html') return 'index.html';
-            if (item.url === 'resident-admin-en.html') return 'resident-admin-ru.html';
+            if (url.endsWith('index.html')) url = url.replace('index.html', 'index-en.html');
+            // Add other localized page mapping here if needed
         }
-        return item.url;
+        return url;
     }
 
     /**
      * Check auth status
      */
     function checkAuth() {
+        // Updated check for our localized storage keys
         const token = localStorage.getItem('sb-yirszunrxtunvzpxwvqz-auth-token') || localStorage.getItem('alab_resident_id');
         userLoggedIn = !!token;
     }
@@ -136,6 +151,9 @@ const MainMenu = (() => {
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
 
+        const dashboardUrl = residentPrefix + 'workspace.html';
+        const loginUrl = residentPrefix + 'login.html';
+
         const container = document.createElement('div');
         container.id = 'alab-main-menu';
         container.innerHTML = `
@@ -147,7 +165,7 @@ const MainMenu = (() => {
                         <div class="menu-nav-list" style="margin-top: auto; margin-bottom: auto;">
                             ${menuItems.map((item, index) => `
                                 <a href="${getURL(item)}" 
-                                   class="nav-link hover-trigger ${getURL(item) === currentPage ? 'active' : ''}"
+                                   class="nav-link hover-trigger ${getURL(item).includes(currentPage) ? 'active' : ''}"
                                    data-index="${String(index + 1).padStart(2, '0')}"
                                    data-target="item-${index}"
                                    ${item.onclick ? `onclick="event.preventDefault(); MainMenu.toggle(); ${item.onclick}"` : ''}
@@ -164,7 +182,7 @@ const MainMenu = (() => {
                                 <button class="lang-btn hover-trigger ${lang === 'en' ? 'active' : ''}" onclick="MainMenu.switchLang('en')">EN</button>
                             </div>
                             
-                            <a href="${userLoggedIn ? 'resident-workspace-ru.html' : 'login.html'}" class="auth-text-btn hover-trigger">
+                            <a href="${userLoggedIn ? dashboardUrl : loginUrl}" class="auth-text-btn hover-trigger">
                                 ${userLoggedIn ? (lang === 'en' ? 'DASHBOARD' : 'КАБИНЕТ') : (lang === 'en' ? 'LOGIN' : 'ВХОД')}
                             </a>
                         </div>

@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title data-i18n="menu.registration">A-LAB.CORE | REGISTRATION</title>
+    <title>A-LAB.CORE | REGISTRATION</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -43,7 +42,7 @@
         }
 
         .bg-glow {
-            position: fixed;
+            position: absolute;
             width: 800px;
             height: 800px;
             background: radial-gradient(circle, rgba(0, 229, 255, 0.03) 0%, transparent 70%);
@@ -187,7 +186,7 @@
 
         <div id="registerFormView">
             <div class="auth-logo">
-                <img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async">
+                <img src="A-lab-logo.svg" alt="A-LAB">
                 <h2>REGISTRATION_PROTOCOL</h2>
             </div>
 
@@ -213,19 +212,23 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-register" id="submitBtn">Send Application</button>
+                <div class="form-group">
+                    <label class="form-label">Encryption Key (Password)</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-register" id="submitBtn">Complete Registration</button>
             </form>
         </div>
 
         <div id="successView">
             <div class="success-icon">✔️</div>
-            <h2 style="font-family: var(--font-code); color: var(--tech-blue); margin-bottom: 15px;">APPLICATION_SENT
-            </h2>
-            <p style="font-size: 0.9rem; color: #888; margin-bottom: 30px; line-height: 1.5;">Протокол подачи заявки
-                завершен. <br>Данные переданы на модерацию. После проверки вы получите пароль для входа на указанную
-                почту.</p>
-            <a href="index.html" class="btn-register"
-                style="display: block; text-decoration: none; text-align: center;">Вернуться на главную</a>
+            <h2 style="font-family: var(--font-code); color: var(--tech-blue); margin-bottom: 15px;">ID_CREATED</h2>
+            <p style="font-size: 0.9rem; color: #888; margin-bottom: 30px; line-height: 1.5;">Протокол регистрации
+                завершен успешно. Теперь вы являетесь официальным резидентом A-LAB.</p>
+            <a href="resident-workspace-ru.html" class="btn-register"
+                style="display: block; text-decoration: none; text-align: center;">Войти в
+                Workstation</a>
         </div>
 
         <div class="auth-footer">
@@ -235,9 +238,9 @@
     </div>
 
     <!-- SUPABASE & AUTH -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script defer src="supabase-client.js"></script>
-    <script defer src="auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+    <script src="auth.js"></script>
 
 
     <script>
@@ -245,25 +248,19 @@
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const fullName = document.getElementById('fullName').value;
             const residentId = document.getElementById('residentId').value;
 
-            btn.innerText = 'SENDING_APPLICATION...';
+            btn.innerText = 'WAIT_FOR_ENCRYPTION...';
             btn.disabled = true;
 
             try {
-                const db = window.ALabCore?.db;
-                if (!db) throw new Error('DATABASE_OFFLINE');
-
-                // Insert into resident_applications instead of Auth
-                const { error } = await db
-                    .from('resident_applications')
-                    .insert([{
-                        email: email,
-                        full_name: fullName,
-                        requested_id: residentId,
-                        status: 'pending'
-                    }]);
+                // Auth Sign Up (Trigger handle_new_user in DB will create the profile)
+                const { data, error } = await ALabAuth.signUp(email, password, {
+                    full_name: fullName,
+                    resident_id: residentId
+                });
 
                 if (error) throw error;
 
@@ -272,8 +269,7 @@
                 document.getElementById('successView').style.display = 'block';
 
             } catch (err) {
-                console.error('Registration Error:', err);
-                alert('PROTOCOL_ERROR: ' + err.message);
+                alert('REG_ERROR: ' + err.message);
                 btn.innerText = 'Complete Registration';
                 btn.disabled = false;
             }

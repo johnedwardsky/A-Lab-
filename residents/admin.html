@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>A-LAB.CORE | ПАНЕЛЬ УПРАВЛЕНИЯ</title>
-    <link rel="stylesheet" href="resident-nav.css">
+    <link rel="stylesheet" href="../resident-nav.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
@@ -247,18 +247,120 @@
             letter-spacing: 1px;
         }
 
-        body.light-theme {
-            --bg: #f5f5f7;
-            --surface: #ffffff;
-            --text: #1d1d1f;
-            --border: rgba(0, 0, 0, 0.08);
-            --tech-blue: #008fa4;
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-container {
+                padding: 20px;
+                padding-bottom: 100px;
+            }
+
+            .tab-content.active {
+                grid-template-columns: 1fr;
+            }
+
+            .right-panel {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex !important;
+            }
+
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
         }
 
-        body.light-theme .stat-card,
-        body.light-theme .section-card,
-        body.light-theme .sidebar {
-            background: #fff;
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: rgba(11, 13, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: none;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 2000;
+            padding: 0 10px;
+        }
+
+        .nav-item-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.6rem;
+            font-family: var(--font-code);
+            gap: 4px;
+            transition: 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-item-bottom i {
+            font-size: 1.2rem;
+            font-style: normal;
+        }
+
+        .nav-item-bottom.active {
+            color: var(--accent);
+        }
+
+        /* More Menu Popup */
+        .more-menu-popup {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 200px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2001;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .more-menu-popup.active {
+            display: flex;
+        }
+
+        .more-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ccc;
+            text-decoration: none;
+            padding: 12px;
+            font-size: 0.8rem;
+            font-family: var(--font-code);
+            border-radius: 8px;
+            transition: 0.3s;
+            background: none;
+            border: none;
+            text-align: left;
+            width: 100%;
+        }
+
+        .more-item:hover,
+        .more-item.active {
+            background: rgba(255, 42, 42, 0.1);
+            color: var(--accent);
         }
     </style>
 </head>
@@ -272,8 +374,8 @@
     </header>
 
     <aside class="sidebar">
-        <a href="index.html" class="logo hover-trigger" style="margin-bottom: 20px; padding-left: 5px;">
-            <img src="assets/img/A-lab-logo.svg" alt="A-LAB" style="width: 35px; height: auto;">
+        <a href="../index.html" class="logo hover-trigger" style="margin-bottom: 20px; padding-left: 5px;">
+            <img src="../assets/img/A-lab-logo.svg" alt="A-LAB" style="width: 35px; height: auto;">
         </a>
         <a href="#" class="nav-item active hover-trigger" onclick="switchTab('dashboard')"><i>📊</i>
             <span>Дашборд</span></a>
@@ -283,17 +385,30 @@
         <a href="#" class="nav-item hover-trigger" onclick="switchTab('nda')"><i>🔒</i> <span>NDA Реестр</span></a>
         <a href="#" class="nav-item hover-trigger" onclick="switchTab('community')"><i>👥</i>
             <span>Сообщество</span></a>
-        <a href="#" class="nav-item hover-trigger" onclick="switchTab('broadcast')"><i>📣</i>
-            <span>Оповещения</span></a>
-        <a href="#" class="nav-item hover-trigger" onclick="switchTab('logs')"><i>📜</i> <span>Системные Логи</span></a>
         <a href="#" class="nav-item hover-trigger" onclick="switchTab('settings')"><i>⚙️</i> <span>Настройки
                 Ядра</span></a>
 
         <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%;">
-            <a href="index.html" class="nav-item hover-trigger" style="color: var(--accent);"><i>🔌</i> <span>На
+            <a href="../index.html" class="nav-item hover-trigger" style="color: var(--accent);"><i>🔌</i> <span>На
                     сайт</span></a>
         </div>
     </aside>
+
+    <nav class="bottom-nav">
+        <button class="nav-item-bottom active" onclick="switchTab('dashboard')"><i>📊</i><span>Панель</span></button>
+        <button class="nav-item-bottom" onclick="switchTab('rd')"><i>🧪</i><span>R&D</span></button>
+        <button class="nav-item-bottom" onclick="switchTab('applications')"><i>📝</i><span>Заявки</span></button>
+        <button class="nav-item-bottom" onclick="toggleMoreMenu()"><i>📂</i><span>ЕЩЕ</span></button>
+    </nav>
+
+    <div class="more-menu-popup" id="moreMenu">
+        <button class="more-item" onclick="switchTab('astra')"><i>💎</i><span>Tokens</span></button>
+        <button class="more-item" onclick="switchTab('nda')"><i>🔒</i><span>NDA</span></button>
+        <button class="more-item" onclick="switchTab('community')"><i>👥</i><span>Community</span></button>
+        <button class="more-item" onclick="switchTab('settings')"><i>⚙️</i><span>Config</span></button>
+        <div style="height: 1px; background: var(--border); margin: 5px 0;"></div>
+        <a href="../index.html" class="more-item" style="color: var(--accent);"><i>🔌</i><span>Выход</span></a>
+    </div>
 
     <div class="main-container">
         <div class="header-top">
@@ -456,10 +571,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
-    <script src="i18n.js"></script>
-    <script src="toast.js"></script>
-    <script src="nav-manager.js"></script>
+    <script src="../supabase-client.js"></script>
+    <script src="../i18n.js"></script>
+    <script src="../toast.js"></script>
+    <script src="../nav-manager.js"></script>
 
     <script>
         // Cursor Logic
@@ -475,9 +590,22 @@
             const target = document.getElementById(tabId + '-tab');
             if (target) target.classList.add('active');
 
-            document.querySelectorAll('.nav-item').forEach(i => {
+            // Sidebar items
+            document.querySelectorAll('.sidebar .nav-item').forEach(i => {
                 i.classList.remove('active');
-                if (i.getAttribute('onclick').includes(tabId)) i.classList.add('active');
+                if (i.getAttribute('onclick')?.includes(tabId)) i.classList.add('active');
+            });
+
+            // Bottom Nav items
+            document.querySelectorAll('.nav-item-bottom').forEach(i => {
+                i.classList.remove('active');
+                if (i.getAttribute('onclick')?.includes(tabId)) i.classList.add('active');
+            });
+
+            // More Menu items
+            document.querySelectorAll('.more-item').forEach(i => {
+                i.classList.remove('active');
+                if (i.getAttribute('onclick')?.includes(tabId)) i.classList.add('active');
             });
 
             // Specific titles
@@ -491,13 +619,23 @@
                 'settings': 'Настройки Ядра'
             };
             document.getElementById('pageTitle').innerText = titles[tabId] || 'Администрирование';
+
+            // Close more menu
+            const moreMenu = document.getElementById('moreMenu');
+            if (moreMenu) moreMenu.classList.remove('active');
+        }
+
+        // More Menu
+        function toggleMoreMenu() {
+            const menu = document.getElementById('moreMenu');
+            if (menu) menu.classList.toggle('active');
         }
 
         // Theme Toggle
         function toggleTheme() {
             document.body.classList.toggle('light-theme');
-            const btn = document.getElementById('themeBtn');
-            btn.innerText = document.body.classList.contains('light-theme') ? '☀️' : '☽';
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeBtn').innerText = isLight ? '☀️' : '☽';
         }
 
         // Fake Data Loader

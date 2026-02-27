@@ -1066,6 +1066,7 @@
                             <th>Навыки</th>
                             <th>Админ</th>
                             <th>Регистрация</th>
+                            <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody id="residentsBody">
@@ -1211,8 +1212,8 @@
                         <tr>
                             <th>Имя</th>
                             <th>Email</th>
-                            <th>Сильная сторона</th>
-                            <th>Опыт</th>
+                            <th>Telegram</th>
+                            <th>Желаемый ID</th>
                             <th>Статус</th>
                             <th>Дата</th>
                             <th>Действия</th>
@@ -1439,12 +1440,46 @@
                 <tr>
                     <td><span class="status-dot ${r.status || 'online'}"></span></td>
                     <td style="color:var(--text); font-weight:600;">${r.full_name}</td>
-                    <td style="font-family:var(--font-code); font-size:0.7rem;">${r.role || '—'}</td>
+                    <td style="font-family:var(--font-code); font-size:0.75rem;">
+                        <input type="text" value="${r.role || ''}" 
+                            class="form-input" style="width:120px; padding:4px 8px; font-size:0.7rem;"
+                            onchange="updateResidentField('${r.id}', 'role', this.value)">
+                    </td>
                     <td>${(r.skills || []).map(s => `<span class="badge badge-design" style="margin:2px;">${s}</span>`).join('') || '—'}</td>
-                    <td>${r.is_admin ? '<span class="badge badge-active">ADMIN</span>' : '—'}</td>
+                    <td>
+                        <button class="badge ${r.is_admin ? 'badge-active' : 'badge-closed'}" 
+                            onclick="toggleAdmin('${r.id}', ${!r.is_admin})" style="border:none; cursor:pointer;">
+                            ${r.is_admin ? 'ADMIN' : 'USER'}
+                        </button>
+                    </td>
                     <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(r.created_at).toLocaleDateString('ru')}</td>
+                    <td>
+                        <button class="action-btn hover-trigger" onclick="deleteResident('${r.id}')" title="Удалить">🗑</button>
+                    </td>
                 </tr>
             `).join('');
+        }
+
+        async function updateResidentField(id, field, value) {
+            const sb = window.supabase;
+            if (!sb) return;
+            await sb.from('residents').update({ [field]: value }).eq('id', id);
+            ALabToast?.success('Данные обновлены');
+        }
+
+        async function toggleAdmin(id, state) {
+            const sb = window.supabase;
+            if (!sb) return;
+            await sb.from('residents').update({ is_admin: state }).eq('id', id);
+            loadResidents(sb);
+        }
+
+        async function deleteResident(id) {
+            if (!confirm('Удалить резидента?')) return;
+            const sb = window.supabase;
+            if (!sb) return;
+            await sb.from('residents').delete().eq('id', id);
+            loadResidents(sb);
         }
 
         async function loadBlocks(sb) {
@@ -1969,6 +2004,9 @@
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="i18n.js"></script>
+    <script defer src="toast.js"></script>
+    <script defer src="auth.js"></script>
+    <script defer src="auth-guard.js"></script>
 </body>
 
 </html>

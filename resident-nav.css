@@ -33,8 +33,16 @@
     filter: drop-shadow(0 0 12px rgba(255, 42, 42, 0.5));
 }
 
-.sidebar:hover {
+.sidebar:hover,
+.sidebar.pinned {
     width: 220px;
+}
+
+/* Pinned: keep labels visible even when not hovered */
+.sidebar.pinned .nav-item span,
+.sidebar.pinned .join-btn-sidebar span {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .sidebar .nav-item {

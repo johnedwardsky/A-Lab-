@@ -97,20 +97,23 @@
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                         <div>
                             <div style="font-weight: 800; font-size: 1.1rem; color: var(--tech-blue);">${app.full_name}</div>
-                            <div style="font-family: var(--font-code); font-size: 0.7rem; color: #555;">${app.telegram} // ${app.strength}</div>
+                            <div style="font-family: var(--font-code); font-size: 0.75rem; color: #aaa; margin-top: 4px;">
+                                <span style="color: var(--accent);">EMAIL:</span> ${app.email || '—'} <br>
+                                <span style="color: var(--accent);">TG:</span> ${app.telegram || '—'}
+                            </div>
                         </div>
                         <div style="font-size: 0.6rem; color: #333;">${new Date(app.created_at).toLocaleString()}</div>
                     </div>
                     
                     <div style="font-size: 0.85rem; color: #ccc; margin-bottom: 15px; border-left: 2px solid var(--accent); padding-left: 10px;">
+                        DESIRED ID: <span style="color: var(--tech-blue); font-family: var(--font-code);">${app.requested_id || '—'}</span>
+                    </div>
+
+                    <div style="font-size: 0.85rem; color: #888; margin-bottom: 15px;">
                         ${app.bio || 'Нет описания'}
                     </div>
 
-                    <div style="font-size: 0.7rem; color: #555; margin-bottom: 15px;">
-                        РЕКОМЕНДАЦИЯ: <span style="color: var(--tech-blue);">${app.recommender_id}</span>
-                    </div>
-
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
                         ${app.status === 'pending' ? `
                             <button onclick="ApplicationsManager.processApplication('${app.id}', 'approved')" 
                                 style="background: #00FF41; color: black; border: none; padding: 8px 15px; border-radius: 6px; font-weight: 800; cursor: pointer;">ОДОБРИТЬ</button>
