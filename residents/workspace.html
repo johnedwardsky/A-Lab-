@@ -25,11 +25,6 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        html {
-            overflow-x: hidden;
-            /* clip here — does NOT affect position:fixed */
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -41,7 +36,6 @@
             background-color: var(--bg);
             color: var(--text);
             font-family: var(--font-main);
-            overflow-y: auto;
             min-height: 100vh;
         }
 
@@ -268,64 +262,405 @@
         }
 
         /* Messenger Styles */
-        .chat-container {
-            height: calc(100vh - 250px);
+        /* ========== MESSENGER (Telegram-UX) ========== */
+        .tg-messenger {
             display: flex;
+            height: calc(100vh - 180px);
+            min-height: 500px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 20px;
             overflow: hidden;
         }
 
-        .chat-sidebar {
-            width: 250px;
+        /* --- CHAT LIST PANEL --- */
+        .tg-list-panel {
+            width: 300px;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
             border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
+            background: rgba(0, 0, 0, 0.3);
         }
 
-        .chat-main {
-            flex-grow: 1;
+        .tg-list-header {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .chat-history {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .chat-bubble {
-            max-width: 80%;
-            padding: 12px 15px;
-            border-radius: 15px;
+        .tg-list-title {
+            font-family: var(--font-code);
             font-size: 0.85rem;
-            line-height: 1.4;
+            font-weight: 700;
+            color: var(--tech-blue);
+            letter-spacing: 0.05em;
         }
 
-        .bubble-in {
-            background: rgba(255, 255, 255, 0.05);
-            align-self: flex-start;
-            border-bottom-left-radius: 2px;
+        .tg-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #555;
+            transition: color 0.2s;
+            padding: 4px;
         }
 
-        .bubble-out {
+        .tg-icon-btn:hover {
+            color: var(--tech-blue);
+        }
+
+        .tg-search-wrap {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tg-search {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: var(--text);
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .tg-search:focus {
+            border-color: rgba(0, 229, 255, 0.3);
+        }
+
+        .tg-chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Individual chat row */
+        .tg-chat-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.2s;
+        }
+
+        .tg-chat-row:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tg-chat-row.active {
+            background: rgba(0, 229, 255, 0.07);
+            border-left: 2px solid var(--tech-blue);
+        }
+
+        .tg-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #151820;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .tg-chat-row-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tg-chat-row-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 3px;
+        }
+
+        .tg-chat-row-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tg-chat-row-time {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #444;
+            flex-shrink: 0;
+        }
+
+        .tg-chat-row-preview {
+            font-size: 0.72rem;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: var(--font-code);
+        }
+
+        .tg-unread {
             background: var(--tech-blue);
             color: black;
-            align-self: flex-end;
-            border-bottom-right-radius: 2px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            font-family: var(--font-code);
+            border-radius: 10px;
+            padding: 2px 7px;
+            flex-shrink: 0;
         }
 
-        .chat-input-area {
-            padding: 20px;
-            border-top: 1px solid var(--border);
+        /* --- CHAT VIEW PANEL --- */
+        .tg-chat-panel {
+            flex: 1;
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            min-width: 0;
         }
+
+        .tg-chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tg-back-btn {
+            background: none;
+            border: none;
+            color: var(--tech-blue);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            display: none;
+            /* shown only on mobile */
+        }
+
+        .tg-back-btn:hover {
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        .tg-chat-header-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #151820;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .tg-chat-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tg-chat-header-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .tg-chat-header-status {
+            font-family: var(--font-code);
+            font-size: 0.62rem;
+            color: var(--tech-blue);
+        }
+
+        /* Empty state */
+        .tg-empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        /* Messages area */
+        .tg-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            scroll-behavior: smooth;
+        }
+
+        /* Message date separator */
+        .tg-date-sep {
+            text-align: center;
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #333;
+            padding: 10px 0 4px;
+            letter-spacing: 0.08em;
+        }
+
+        /* Message bubble */
+        .tg-bubble {
+            max-width: 70%;
+            padding: 10px 14px 6px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            position: relative;
+            word-break: break-word;
+        }
+
+        .tg-bubble-in {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            color: var(--text);
+        }
+
+        .tg-bubble-out {
+            background: rgba(0, 229, 255, 0.12);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            color: var(--text);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .tg-bubble-time {
+            font-family: var(--font-code);
+            font-size: 0.58rem;
+            color: #444;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .tg-bubble-out .tg-bubble-time {
+            color: rgba(0, 229, 255, 0.5);
+        }
+
+        .tg-bubble-sender {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--tech-blue);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        /* Input area */
+        .tg-input-area {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tg-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+            line-height: 1.4;
+            transition: border-color 0.2s;
+        }
+
+        .tg-input:focus {
+            border-color: rgba(0, 229, 255, 0.4);
+        }
+
+        .tg-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 3px 12px rgba(0, 229, 255, 0.3);
+        }
+
+        .tg-send-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 18px rgba(0, 229, 255, 0.5);
+        }
+
+        .tg-send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* --- MOBILE: single-panel view --- */
+        @media (max-width: 768px) {
+            .tg-messenger {
+                height: calc(100vh - 100px);
+                min-height: unset;
+                border-radius: 16px;
+            }
+
+            .tg-list-panel {
+                width: 100%;
+                min-width: unset;
+                border-right: none;
+            }
+
+            .tg-chat-panel {
+                display: none;
+                /* hidden until a chat is opened */
+                position: absolute;
+                inset: 0;
+                z-index: 10;
+                background: var(--surface);
+                border-radius: 16px;
+            }
+
+            .tg-messenger.chat-open .tg-list-panel {
+                display: none;
+            }
+
+            .tg-messenger.chat-open .tg-chat-panel {
+                display: flex;
+            }
+
+            .tg-back-btn {
+                display: flex !important;
+            }
+
+            .tg-bubble {
+                max-width: 85%;
+            }
+        }
+
+
 
         .noise {
             position: fixed;
@@ -365,7 +700,23 @@
 
             .bottom-nav {
                 display: flex !important;
+                position: fixed !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+                transform: none !important;
             }
+
+            .bottom-nav .nav-item-bottom {
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
+
 
             .cursor {
                 display: none !important;
@@ -393,8 +744,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            width: 100vw;
-            /* explicit viewport width — immune to parent overflow tricks */
+            width: 100%;
+            max-width: 100vw !important;
             height: 72px;
             background: rgba(7, 9, 18, 0.92);
             backdrop-filter: blur(24px) saturate(180%);
@@ -402,12 +753,14 @@
             border-top: 1px solid rgba(255, 255, 255, 0.07);
             display: none;
             justify-content: space-evenly;
-            /* evenly distribute 5 items */
             align-items: center;
             z-index: 3000;
             padding: 0;
+            margin: 0 !important;
+            box-sizing: border-box;
             box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
         }
+
 
         .nav-item-bottom {
             display: flex;
@@ -924,38 +1277,55 @@
 
         <!-- MESSAGES TAB -->
         <div class="tab-content no-sidebar" id="messages-tab">
-            <div class="chat-container">
-                <div class="chat-sidebar">
-                    <div style="padding: 15px; border-bottom: 1px solid var(--border);">
-                        <input type="text" class="form-input" placeholder="Поиск...">
+            <div class="tg-messenger" id="tgMessenger">
+
+                <!-- ====== CHAT LIST PANEL ====== -->
+                <div class="tg-list-panel" id="tgListPanel">
+                    <div class="tg-list-header">
+                        <span class="tg-list-title">💬 Сообщения</span>
+                        <button class="tg-icon-btn" title="Новый чат">✏️</button>
                     </div>
-                    <div id="chatList" style="flex-grow: 1; overflow-y: auto;">
-                        <div
-                            style="padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; cursor: pointer; background: rgba(0,229,255,0.05);">
-                            <div
-                                style="width: 40px; height: 40px; background: #222; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                👤</div>
-                            <div>
-                                <div style="font-size: 0.8rem; font-weight: 700;">A-LAB // CORE</div>
-                                <div style="font-size: 0.6rem; color: #555;">Системное сообщение...</div>
-                            </div>
+                    <div class="tg-search-wrap">
+                        <input class="tg-search" type="text" placeholder="Поиск..." oninput="filterChats(this.value)">
+                    </div>
+                    <div class="tg-chat-list" id="tgChatList">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+
+                <!-- ====== CHAT VIEW PANEL ====== -->
+                <div class="tg-chat-panel" id="tgChatPanel">
+                    <!-- Header -->
+                    <div class="tg-chat-header" id="tgChatHeader">
+                        <button class="tg-back-btn" onclick="closeTgChat()" title="Назад">←</button>
+                        <div class="tg-chat-header-avatar" id="tgChatAvatar">👤</div>
+                        <div class="tg-chat-header-info">
+                            <div class="tg-chat-header-name" id="tgChatName">Выберите чат</div>
+                            <div class="tg-chat-header-status" id="tgChatStatus">в сети</div>
                         </div>
                     </div>
-                </div>
-                <div class="chat-main">
-                    <div class="chat-history">
-                        <div class="chat-bubble bubble-in">Добро пожаловать в мессенджер A-LAB. Начните общение с
-                            другими резидентами.</div>
-                        <div class="chat-bubble bubble-in">Используйте этот канал для связи с поддержкой или другими
-                            участниками.</div>
+
+                    <!-- Empty state -->
+                    <div class="tg-empty-state" id="tgEmptyState">
+                        <div style="font-size:3rem; margin-bottom:16px;">💬</div>
+                        <div style="font-family: var(--font-code); color:#444; font-size:0.8rem;">Выберите чат слева
+                        </div>
                     </div>
-                    <div class="chat-input-area">
-                        <input type="text" class="form-input" placeholder="Введите сообщение...">
-                        <button class="btn-pulse" style="width: auto; padding: 0 20px;">✉</button>
+
+                    <!-- Messages area -->
+                    <div class="tg-messages" id="tgMessages" style="display:none;"></div>
+
+                    <!-- Input area -->
+                    <div class="tg-input-area" id="tgInputArea" style="display:none;">
+                        <textarea class="tg-input" id="tgMsgInput" placeholder="Сообщение..." rows="1"
+                            onkeydown="tgKeyDown(event)" oninput="tgAutoResize(this)"></textarea>
+                        <button class="tg-send-btn" onclick="tgSendMsg()" title="Отправить">➤</button>
                     </div>
                 </div>
+
             </div>
         </div>
+
 
         <!-- PORTFOLIO TAB -->
         <div class="tab-content" id="portfolio-tab">
@@ -1153,6 +1523,17 @@
                         <button class="status-btn" style="flex: 1;">История</button>
                     </div>
                 </section>
+
+                <!-- DAO VOTING SECTION -->
+                <section class="section-card" style="margin-top:0;">
+                    <div class="section-title">🗳️ DAO Голосование</div>
+                    <div id="daoVotesList" style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
+                        <div
+                            style="text-align:center;padding:30px;color:#333;font-family:var(--font-code);font-size:0.7rem;">
+                            // Нет активных голосований
+                        </div>
+                    </div>
+                </section>
             </div>
             <div class="right-panel">
                 <section class="section-card">
@@ -1162,6 +1543,8 @@
                 </section>
             </div>
         </div>
+
+
 
         <!-- R&D (USER) TAB -->
         <div class="tab-content" id="rd-tab">
@@ -1369,8 +1752,222 @@
         }
 
 
+        /* ==============================
+           MESSENGER MODULE
+        ============================== */
+        const TG_CHATS = [
+            {
+                id: 'alab-core',
+                name: 'A-LAB // CORE',
+                avatar: '🏢',
+                status: 'официальный канал',
+                preview: 'Добро пожаловать в A-Lab',
+                time: 'сейчас',
+                unread: 1
+            },
+            {
+                id: 'rd-team',
+                name: 'R&D Команда',
+                avatar: '🔬',
+                status: 'группа · 12 участников',
+                preview: 'Новый проект в работе...',
+                time: '14:30',
+                unread: 3
+            },
+            {
+                id: 'support',
+                name: 'Поддержка',
+                avatar: '⚙️',
+                status: 'техническая поддержка',
+                preview: 'Ваш запрос принят',
+                time: 'вчера',
+                unread: 0
+            },
+            {
+                id: 'dao',
+                name: 'DAO Голосование',
+                avatar: '🗳️',
+                status: 'группа · 47 участников',
+                preview: 'Новое предложение к голосованию',
+                time: 'вчера',
+                unread: 0
+            }
+        ];
+
+        // Default messages per chat
+        const TG_DEFAULT_MSGS = {
+            'alab-core': [
+                { from: 'in', sender: 'A-LAB // CORE', text: 'Добро пожаловать, резидент. Ваш доступ активирован.', time: '10:00' },
+                { from: 'in', sender: 'A-LAB // CORE', text: 'Используйте рабочую станцию для управления проектами и портфолио.', time: '10:01' }
+            ],
+            'rd-team': [
+                { from: 'in', sender: 'R&D', text: 'Привет! Добавляем тебя в команду исследований.', time: '14:28' },
+                { from: 'in', sender: 'R&D', text: 'Новый проект Air Bridges уже в разработке 🚀', time: '14:30' }
+            ],
+            'support': [
+                { from: 'in', sender: 'Поддержка', text: 'Здравствуйте! Ваш запрос #1042 принят в обработку.', time: 'вчера' }
+            ],
+            'dao': [
+                { from: 'in', sender: 'DAO', text: 'Новое предложение: увеличить пул токенов для R&D на 15%.', time: 'вчера' },
+                { from: 'in', sender: 'DAO', text: 'Голосование открыто до 01.03.2026', time: 'вчера' }
+            ]
+        };
+
+        let tgCurrentChat = null;
+
+        function tgInit() {
+            renderChatList(TG_CHATS);
+        }
+
+        function renderChatList(chats) {
+            const list = document.getElementById('tgChatList');
+            if (!list) return;
+            list.innerHTML = chats.map(c => `
+                <div class="tg-chat-row ${tgCurrentChat === c.id ? 'active' : ''}" onclick="openTgChat('${c.id}')">
+                    <div class="tg-avatar">${c.avatar}</div>
+                    <div class="tg-chat-row-info">
+                        <div class="tg-chat-row-top">
+                            <span class="tg-chat-row-name">${c.name}</span>
+                            <span class="tg-chat-row-time">${c.time}</span>
+                        </div>
+                        <div class="tg-chat-row-preview">${c.preview}</div>
+                    </div>
+                    ${c.unread ? `<span class="tg-unread">${c.unread}</span>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function openTgChat(chatId) {
+            tgCurrentChat = chatId;
+            const chat = TG_CHATS.find(c => c.id === chatId);
+            if (!chat) return;
+
+            // Update header
+            document.getElementById('tgChatAvatar').textContent = chat.avatar;
+            document.getElementById('tgChatName').textContent = chat.name;
+            document.getElementById('tgChatStatus').textContent = chat.status;
+
+            // Hide empty state, show messages & input
+            document.getElementById('tgEmptyState').style.display = 'none';
+            document.getElementById('tgMessages').style.display = 'flex';
+            document.getElementById('tgInputArea').style.display = 'flex';
+
+            // Clear unread badge
+            chat.unread = 0;
+
+            // Render messages
+            renderMessages(chatId);
+
+            // On mobile: push to chat view
+            document.getElementById('tgMessenger').classList.add('chat-open');
+
+            // Highlight active in list
+            renderChatList(TG_CHATS);
+        }
+
+        function renderMessages(chatId) {
+            const area = document.getElementById('tgMessages');
+            const stored = JSON.parse(localStorage.getItem('tg_msgs_' + chatId) || 'null');
+            const msgs = stored || TG_DEFAULT_MSGS[chatId] || [];
+
+            if (!stored) localStorage.setItem('tg_msgs_' + chatId, JSON.stringify(msgs));
+
+            area.innerHTML = '';
+
+            // Date separator
+            const sep = document.createElement('div');
+            sep.className = 'tg-date-sep';
+            sep.textContent = '// СЕГОДНЯ';
+            area.appendChild(sep);
+
+            msgs.forEach(m => {
+                const wrap = document.createElement('div');
+                wrap.className = 'tg-bubble ' + (m.from === 'out' ? 'tg-bubble-out' : 'tg-bubble-in');
+                wrap.innerHTML = `
+                    ${m.from === 'in' ? `<div class="tg-bubble-sender">${m.sender}</div>` : ''}
+                    <div>${escTg(m.text)}</div>
+                    <div class="tg-bubble-time">${m.time}</div>
+                `;
+                area.appendChild(wrap);
+            });
+
+            area.scrollTop = area.scrollHeight;
+        }
+
+        function closeTgChat() {
+            document.getElementById('tgMessenger').classList.remove('chat-open');
+        }
+
+        function tgSendMsg() {
+            const input = document.getElementById('tgMsgInput');
+            const text = input.value.trim();
+            if (!text || !tgCurrentChat) return;
+
+            const now = new Date();
+            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            // Save to localStorage
+            const key = 'tg_msgs_' + tgCurrentChat;
+            const msgs = JSON.parse(localStorage.getItem(key) || '[]');
+            msgs.push({ from: 'out', sender: 'Я', text, time });
+            localStorage.setItem(key, JSON.stringify(msgs));
+
+            // Update preview in list
+            const chat = TG_CHATS.find(c => c.id === tgCurrentChat);
+            if (chat) { chat.preview = text; chat.time = time; }
+            renderChatList(TG_CHATS);
+
+            // Render messages
+            renderMessages(tgCurrentChat);
+
+            // Reset input
+            input.value = '';
+            input.style.height = 'auto';
+            input.focus();
+        }
+
+        function tgKeyDown(e) {
+            // Enter sends; Shift+Enter = new line
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                tgSendMsg();
+            }
+        }
+
+        function tgAutoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        }
+
+        function filterChats(q) {
+            const filtered = TG_CHATS.filter(c =>
+                c.name.toLowerCase().includes(q.toLowerCase()) ||
+                c.preview.toLowerCase().includes(q.toLowerCase())
+            );
+            renderChatList(filtered);
+        }
+
+        function escTg(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // Init messenger when messages tab is opened
+        const _origSwitch = window.switchTab;
+        document.addEventListener('DOMContentLoaded', () => {
+            tgInit();
+            // Also re-init when switching to messages tab
+            const oldSwitch = window.switchTab;
+            if (oldSwitch) {
+                window.switchTab = function (tabId) {
+                    oldSwitch(tabId);
+                    if (tabId === 'messages') tgInit();
+                };
+            }
+        });
+
         // Theme
         function toggleTheme() {
+
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
             document.getElementById('themeBtn').innerText = isLight ? '☀' : '☽';
@@ -1396,7 +1993,73 @@
             }
             renderProjects();
             renderPortfolio();
+            renderDaoVotes();
         });
+
+        /* ==============================
+           DAO VOTING (read from admin localStorage)
+        ============================== */
+        function renderDaoVotes() {
+            const el = document.getElementById('daoVotesList');
+            if (!el) return;
+            const votes = JSON.parse(localStorage.getItem('dao_votes') || '[]');
+            if (votes.length === 0) {
+                el.innerHTML = `<div style="text-align:center;padding:30px;color:#333;font-family:var(--font-code);font-size:0.7rem;">// Нет активных голосований</div>`;
+                return;
+            }
+            el.innerHTML = votes.map(v => {
+                const myVote = localStorage.getItem('dao_myvote_' + v.id);
+                const count1 = parseInt(localStorage.getItem('dao_count1_' + v.id) || '0');
+                const count2 = parseInt(localStorage.getItem('dao_count2_' + v.id) || '0');
+                const total = count1 + count2 || 1;
+                return `
+                <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(0,229,255,0.15);border-radius:14px;padding:18px 20px;">
+                    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:1.1rem;">🗳️</span>
+                        <div style="font-weight:700;font-size:0.88rem;">${v.title}</div>
+                    </div>
+                    ${v.desc ? `<div style="font-size:0.75rem;color:#888;margin-bottom:12px;line-height:1.5;">${v.desc}</div>` : ''}
+                    ${v.deadline ? `<div style="font-family:var(--font-code);font-size:0.62rem;color:#555;margin-bottom:12px;">⏰ Дедлайн: ${v.deadline}</div>` : ''}
+                    ${myVote ? `
+                        <div style="margin-bottom:10px;">
+                            <div style="display:flex;gap:8px;margin-bottom:6px;font-family:var(--font-code);font-size:0.65rem;color:#666;">
+                                <span style="color:var(--green);">${v.opt1}</span>
+                                <span>${Math.round(count1 / total * 100)}%</span>
+                            </div>
+                            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;margin-bottom:8px;">
+                                <div style="height:100%;width:${Math.round(count1 / total * 100)}%;background:var(--green);border-radius:3px;transition:width 0.4s;"></div>
+                            </div>
+                            <div style="display:flex;gap:8px;margin-bottom:6px;font-family:var(--font-code);font-size:0.65rem;color:#666;">
+                                <span style="color:var(--accent);">${v.opt2}</span>
+                                <span>${Math.round(count2 / total * 100)}%</span>
+                            </div>
+                            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;">
+                                <div style="height:100%;width:${Math.round(count2 / total * 100)}%;background:var(--accent);border-radius:3px;transition:width 0.4s;"></div>
+                            </div>
+                            <div style="font-family:var(--font-code);font-size:0.6rem;color:#444;margin-top:8px;">// Вы проголосовали: ${myVote}</div>
+                        </div>
+                    ` : `
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <button onclick="castVote('${v.id}','1','${v.opt1.replace(/'/g, "&#39;")}')"
+                                style="padding:8px 18px;border-radius:8px;cursor:pointer;border:1px solid rgba(0,255,65,0.3);background:rgba(0,255,65,0.08);color:var(--green);font-family:var(--font-code);font-size:0.72rem;font-weight:700;transition:0.2s;"
+                                onmouseover="this.style.background='rgba(0,255,65,0.18)'" onmouseout="this.style.background='rgba(0,255,65,0.08)'">${v.opt1}</button>
+                            <button onclick="castVote('${v.id}','2','${v.opt2.replace(/'/g, "&#39;")}')"
+                                style="padding:8px 18px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,42,42,0.3);background:rgba(255,42,42,0.08);color:var(--accent);font-family:var(--font-code);font-size:0.72rem;font-weight:700;transition:0.2s;"
+                                onmouseover="this.style.background='rgba(255,42,42,0.18)'" onmouseout="this.style.background='rgba(255,42,42,0.08)'">${v.opt2}</button>
+                        </div>
+                    `}
+                </div>`;
+            }).join('');
+        }
+
+        function castVote(voteId, option, label) {
+            localStorage.setItem('dao_myvote_' + voteId, label);
+            const key = 'dao_count' + option + '_' + voteId;
+            localStorage.setItem(key, (parseInt(localStorage.getItem(key) || '0') + 1).toString());
+            renderDaoVotes();
+        }
+
+
 
         function createProject() {
             const title = document.getElementById('projTitle').value.trim();
