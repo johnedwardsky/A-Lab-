@@ -47,10 +47,10 @@
 
             // Filter and Sort by Activity (Status)
             const visibleList = this.residents.filter(r => {
-                const s = r.settings || {};
+                const l = r.links || {};
                 const rName = (r.full_name || '').toLowerCase();
                 // Exclude John Edward (test/hidden name) and respect visibility setting
-                return s.visibility !== 'hidden' && !rName.includes('john edward');
+                return l.visibility !== 'hidden' && !rName.includes('john edward');
             });
 
             // Status weights for activity sorting: Online (0) > Busy (1) > Away/Offline (2)

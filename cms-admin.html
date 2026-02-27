@@ -1570,10 +1570,10 @@
                             onchange="updateResidentField('${r.id}', 'role', this.value)">
                     </td>
                     <td style="text-align: center;">
-                        <button class="badge ${r.settings?.visibility === 'hidden' ? 'badge-closed' : 'badge-active'}" 
-                            onclick="toggleVisibility('${r.id}', ${r.settings?.visibility === 'hidden'})" 
+                        <button class="badge ${r.links?.visibility === 'hidden' ? 'badge-closed' : 'badge-active'}" 
+                            onclick="toggleVisibility('${r.id}', ${r.links?.visibility === 'hidden'})" 
                             style="border:none; cursor:pointer; min-width: 80px;">
-                            ${r.settings?.visibility === 'hidden' ? 'СКРЫТ' : 'ПОКАЗАН'}
+                            ${r.links?.visibility === 'hidden' ? 'СКРЫТ' : 'ПОКАЗАН'}
                         </button>
                     </td>
                     <td>
@@ -1608,16 +1608,19 @@
             const sb = window.supabase;
             if (!sb) return;
             try {
-                // Get current to preserve other settings fields
-                const { data: res } = await sb.from('residents').select('settings').eq('id', id).single();
-                const settings = res?.settings || {};
-                settings.visibility = makeVisible ? 'public' : 'hidden';
+                // Get current to preserve other links fields (socials)
+                const { data: res } = await sb.from('residents').select('links').eq('id', id).single();
+                const links = res?.links || {};
+                links.visibility = makeVisible ? 'public' : 'hidden';
 
-                await sb.from('residents').update({ settings }).eq('id', id);
+                const { error } = await sb.from('residents').update({ links }).eq('id', id);
+                if (error) throw error;
+
                 ALabToast?.success(makeVisible ? 'Профиль открыт' : 'Профиль скрыт');
                 loadResidents(sb);
             } catch (err) {
                 console.error('[ADMIN] Visibility toggle error:', err);
+                ALabToast?.error('Ошибка обновления');
             }
         }
 
