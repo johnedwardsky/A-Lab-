@@ -1,6 +1,12 @@
 {
     "cleanUrls": true,
     "trailingSlash": false,
+    "rewrites": [
+        {
+            "source": "/residents",
+            "destination": "/residents/index.html"
+        }
+    ],
     "headers": [
         {
             "source": "/(.*).(jpg|jpeg|png|svg|webp|gif|ico|mp4|webm|woff|woff2|ttf|otf)",
