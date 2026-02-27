@@ -1581,17 +1581,42 @@
                     <div class="section-title">Смена Пароля</div>
                     <div class="form-group">
                         <label class="form-label">Текущий пароль</label>
-                        <input type="password" class="form-input">
+                        <input type="password" id="oldPassword" class="form-input" placeholder="Для подтверждения...">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Новый пароль</label>
-                        <input type="password" class="form-input">
+                        <input type="password" id="newPassword" class="form-input">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Повторите новый пароль</label>
-                        <input type="password" class="form-input">
+                        <input type="password" id="confirmPassword" class="form-input">
                     </div>
-                    <button class="btn-pulse">Обновить Пароль</button>
+                    <button class="btn-pulse" onclick="updatePassword()">Обновить Пароль</button>
+
+                    <script>
+                        async function updatePassword() {
+                            const newPass = document.getElementById('newPassword').value;
+                            const confirmPass = document.getElementById('confirmPassword').value;
+
+                            if (!newPass) { showToast('⚠️ Введите новый пароль'); return; }
+                            if (newPass !== confirmPass) { showToast('⚠️ Пароли не совпадают'); return; }
+                            if (newPass.length < 6) { showToast('⚠️ Пароль должен быть не менее 6 символов'); return; }
+
+                            const db = window.ALabCore?.db;
+                            if (!db) return;
+
+                            const { error } = await db.auth.updateUser({ password: newPass });
+
+                            if (error) {
+                                showToast('❌ Ошибка: ' + error.message);
+                            } else {
+                                showToast('✅ Пароль успешно обновлён!');
+                                document.getElementById('newPassword').value = '';
+                                document.getElementById('confirmPassword').value = '';
+                                document.getElementById('oldPassword').value = '';
+                            }
+                        }
+                    </script>
                 </section>
             </div>
             <div class="right-panel">

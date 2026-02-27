@@ -1803,6 +1803,15 @@
                 `).join('');
         }
 
+        function generateTempPassword(length = 10) {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let retVal = "";
+            for (let i = 0, n = charset.length; i < length; ++i) {
+                retVal += charset.charAt(Math.floor(Math.random() * n));
+            }
+            return retVal;
+        }
+
         // ═══════════ MUTATIONS ═══════════
         async function updateLeadStatus(id, status) {
             if (typeof window.supabase === 'undefined') return;
@@ -1815,7 +1824,8 @@
             if (!confirm(`Одобрить заявку от ${name}?`)) return;
             await updateLeadStatus(id, 'contacted');
 
-            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: [ПАРОЛЬ КОМАНДЫ]\nСсылка для входа: https://a-lab-tech.vercel.app/login\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
+            const tempPass = generateTempPassword();
+            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: ${tempPass}\nСсылка для входа: https://a-lab-tech.vercel.app/login\n\n⚠️ После входа обязательно смени пароль в настройках профиля.\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
             openNotifyModal(contact, msg, `ОДОБРЕНИЕ: ${name}`);
         }
 
