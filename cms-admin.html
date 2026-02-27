@@ -1738,8 +1738,8 @@
                     <td><span class="badge badge-${a.status === 'new' ? 'new' : a.status === 'contacted' ? 'contacted' : 'closed'}">${(a.status || 'pending').toUpperCase()}</span></td>
                     <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(a.created_at).toLocaleDateString('ru')}</td>
                     <td>
-                        <button class="action-btn hover-trigger" onclick="updateLeadStatus('${a.id}','contacted')" title="Одобрить">✅</button>
-                        <button class="action-btn hover-trigger" onclick="updateLeadStatus('${a.id}','closed')" title="Отклонить">❌</button>
+                        <button class="action-btn hover-trigger" onclick="approveResident('${a.id}','${a.contact}','${a.name}')" title="Одобрить">✅</button>
+                        <button class="action-btn hover-trigger" onclick="rejectResident('${a.id}','${a.contact}','${a.name}')" title="Отклонить">❌</button>
                         <button class="action-btn hover-trigger" onclick="deleteLead('${a.id}')" title="Удалить">🗑</button>
                     </td>
                 </tr>
@@ -1766,6 +1766,38 @@
             await window.supabase.from('leads').update({ status }).eq('id', id);
             loadLeads(window.supabase);
             loadApps(window.supabase);
+        }
+
+        async function approveResident(id, contact, name) {
+            if (!confirm(`Одобрить заявку от ${name} и отправить уведомление?`)) return;
+
+            await updateLeadStatus(id, 'contacted');
+
+            const isEmail = String(contact).includes('@');
+            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: [ВВЕДИ ПАРОЛЬ]\nСсылка для входа: https://a-lab.tech/login\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
+
+            if (isEmail) {
+                window.location.href = `mailto:${contact}?subject=Заявка A-LAB Одобрена&body=${encodeURIComponent(msg)}`;
+            } else {
+                const tgUser = contact.replace('@', '');
+                window.open(`https://t.me/${tgUser}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+        }
+
+        async function rejectResident(id, contact, name) {
+            if (!confirm(`Отклонить заявку от ${name} и отправить уведомление?`)) return;
+
+            await updateLeadStatus(id, 'closed');
+
+            const isEmail = String(contact).includes('@');
+            const msg = `Привет, ${name}.\n\nК сожалению, твоя заявка на присоединение к A-LAB была отклонена.\nСпасибо за интерес и удачи!\n\n— Служба Безопасности A-LAB`;
+
+            if (isEmail) {
+                window.location.href = `mailto:${contact}?subject=Статус заявки A-LAB&body=${encodeURIComponent(msg)}`;
+            } else {
+                const tgUser = contact.replace('@', '');
+                window.open(`https://t.me/${tgUser}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
         }
 
         async function deleteLead(id) {
