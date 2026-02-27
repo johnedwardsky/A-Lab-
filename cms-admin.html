@@ -1717,21 +1717,33 @@
         }
 
         async function loadApps(sb) {
-            const { data } = await sb.from('leads').select('*').eq('source', 'quiz').order('created_at', { ascending: false });
+            const { data } = await sb.from('leads').select('*').in('source', ['quiz', 'register']).order('created_at', { ascending: false });
             if (!data || !data.length) return;
-            document.getElementById('appsBody').innerHTML = data.map(a => `
+            document.getElementById('appsBody').innerHTML = data.map(a => {
+                const isEmail = String(a.contact).includes('@');
+                const contactLink = isEmail ? `mailto:${a.contact}` : `https://t.me/${a.contact.replace('@', '')}`;
+                return `
                 <tr data-status="${a.status}">
                     <td style="color:var(--text); font-weight:600;">${a.name}</td>
-                    <td>${a.contact}</td>
-                    <td>${a.message || '—'}</td>
-                    <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${a.source_detail || '—'}</td>
+                    <td>
+                        <a href="${contactLink}" target="_blank" style="color: var(--tech-blue); text-decoration: none;">
+                            ${a.contact} ↗
+                        </a>
+                    </td>
+                    <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">${a.message || '—'}</td>
+                    <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        <span style="color:var(--accent);">${(a.source || '').toUpperCase()}</span><br>
+                        ${a.source_detail || '—'}
+                    </td>
                     <td><span class="badge badge-${a.status === 'new' ? 'new' : a.status === 'contacted' ? 'contacted' : 'closed'}">${(a.status || 'pending').toUpperCase()}</span></td>
                     <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(a.created_at).toLocaleDateString('ru')}</td>
                     <td>
                         <button class="action-btn hover-trigger" onclick="updateLeadStatus('${a.id}','contacted')" title="Одобрить">✅</button>
                         <button class="action-btn hover-trigger" onclick="updateLeadStatus('${a.id}','closed')" title="Отклонить">❌</button>
+                        <button class="action-btn hover-trigger" onclick="deleteLead('${a.id}')" title="Удалить">🗑</button>
                     </td>
                 </tr>
+            `}).join('');
             `).join('');
         }
 
@@ -1739,14 +1751,14 @@
             const { data } = await sb.from('system_logs').select('*').order('created_at', { ascending: false }).limit(100);
             if (!data || !data.length) return;
             document.getElementById('logsBody').innerHTML = data.map(l => `
-                <tr data-level="${l.level || 'info'}">
+                < tr data - level="${l.level || 'info'}" >
                     <td><span class="badge badge-${l.level || 'info'}">${(l.level || 'INFO').toUpperCase()}</span></td>
                     <td style="color:var(--text); font-weight:600;">${l.action || '—'}</td>
                     <td style="font-family:var(--font-code); font-size:0.7rem;">${l.user_id || 'system'}</td>
                     <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${JSON.stringify(l.details || {}).substring(0, 80)}</td>
                     <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(l.created_at).toLocaleString('ru')}</td>
-                </tr>
-            `).join('');
+                </tr >
+                `).join('');
         }
 
         // ═══════════ MUTATIONS ═══════════
@@ -1808,7 +1820,7 @@
         function openProjectForm(existing) {
             const p = existing || {};
             openModal(`
-                <h2>${p.id ? 'Редактировать' : 'Новый'} проект</h2>
+                < h2 > ${ p.id ? 'Редактировать' : 'Новый' } проект</h2 >
                 <div class="form-group"><label class="form-label">Название</label>
                     <input class="form-input" id="pTitle" value="${p.title || ''}"></div>
                 <div class="form-row">
