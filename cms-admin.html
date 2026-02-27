@@ -1392,6 +1392,34 @@
         <div class="modal-box" id="modalContent"></div>
     </div>
 
+    <!-- ═══════════ NOTIFY MODAL ═══════════ -->
+    <div class="modal-overlay" id="notifyModal"
+        onclick="if(event.target===this)document.getElementById('notifyModal').classList.remove('active')">
+        <div class="modal-box">
+            <h2 id="notifyTitle">Уведомление резидента</h2>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label
+                    style="font-size:0.7rem; color:var(--text-dim); display:block; margin-bottom:5px;">ПОЛУЧАТЕЛЬ</label>
+                <input type="text" id="notifyContact" class="form-input" readonly
+                    style="background:rgba(255,255,255,0.05);">
+            </div>
+            <div class="form-group" style="margin-bottom:20px;">
+                <label style="font-size:0.7rem; color:var(--text-dim); display:block; margin-bottom:5px;">ТЕКСТ
+                    СООБЩЕНИЯ</label>
+                <textarea id="notifyMsg" class="form-input"
+                    style="min-height:180px; font-family:var(--font-code); font-size:0.8rem; line-height:1.5;"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary hover-trigger"
+                    onclick="document.getElementById('notifyModal').classList.remove('active')">ОТМЕНА</button>
+                <button class="btn btn-primary hover-trigger" id="sendEmailBtn" onclick="sendResidentNotify('email')">📧
+                    ЧЕРЕЗ EMAIL</button>
+                <button class="btn btn-primary hover-trigger" id="sendTgBtn" onclick="sendResidentNotify('tg')"
+                    style="background:var(--tech-blue); color:var(--bg);">↗ ЧЕРЕЗ TELEGRAM</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ═══════════ CURSOR ═══════════
         const cursor = document.querySelector('.cursor');
@@ -1784,35 +1812,46 @@
         }
 
         async function approveResident(id, contact, name) {
-            if (!confirm(`Одобрить заявку от ${name} и отправить уведомление?`)) return;
-
+            if (!confirm(`Одобрить заявку от ${name}?`)) return;
             await updateLeadStatus(id, 'contacted');
 
-            const isEmail = String(contact).includes('@');
-            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: [ВВЕДИ ПАРОЛЬ]\nСсылка для входа: https://a-lab.tech/login\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
-
-            if (isEmail) {
-                window.location.href = `mailto:${contact}?subject=Заявка A-LAB Одобрена&body=${encodeURIComponent(msg)}`;
-            } else {
-                const tgUser = contact.replace('@', '');
-                window.open(`https://t.me/${tgUser}?text=${encodeURIComponent(msg)}`, '_blank');
-            }
+            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: [ПАРОЛЬ КОМАНДЫ]\nСсылка для входа: https://a-lab-tech.vercel.app/login\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
+            openNotifyModal(contact, msg, `ОДОБРЕНИЕ: ${name}`);
         }
 
         async function rejectResident(id, contact, name) {
-            if (!confirm(`Отклонить заявку от ${name} и отправить уведомление?`)) return;
-
+            if (!confirm(`Отклонить заявку от ${name}?`)) return;
             await updateLeadStatus(id, 'closed');
 
-            const isEmail = String(contact).includes('@');
             const msg = `Привет, ${name}.\n\nК сожалению, твоя заявка на присоединение к A-LAB была отклонена.\nСпасибо за интерес и удачи!\n\n— Служба Безопасности A-LAB`;
+            openNotifyModal(contact, msg, `ОТКАЗ: ${name}`);
+        }
 
-            if (isEmail) {
-                window.location.href = `mailto:${contact}?subject=Статус заявки A-LAB&body=${encodeURIComponent(msg)}`;
+        function openNotifyModal(contact, msg, title) {
+            const modal = document.getElementById('notifyModal');
+            document.getElementById('notifyTitle').innerText = title;
+            document.getElementById('notifyContact').value = contact;
+            document.getElementById('notifyMsg').value = msg;
+
+            const isEmail = String(contact).includes('@');
+            document.getElementById('sendEmailBtn').style.display = isEmail ? 'block' : 'none';
+            document.getElementById('sendTgBtn').style.display = !isEmail ? 'block' : 'none';
+
+            modal.classList.add('active');
+        }
+
+        function sendResidentNotify(type) {
+            const contact = document.getElementById('notifyContact').value;
+            const body = document.getElementById('notifyMsg').value;
+
+            if (type === 'email') {
+                const subject = document.getElementById('notifyTitle').innerText;
+                window.location.href = `mailto:${contact}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             } else {
                 const tgUser = contact.replace('@', '');
-                window.open(`https://t.me/${tgUser}?text=${encodeURIComponent(msg)}`, '_blank');
+                window.open(`https://t.me/${tgUser}?text=${encodeURIComponent(body)}`, '_blank');
             }
+            document.getElementById('notifyModal').classList.remove('active');
         }
 
         async function deleteLead(id) {
