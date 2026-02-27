@@ -2395,8 +2395,7 @@
                 name: document.getElementById('profileName').value,
                 role: document.getElementById('profileRole').value,
                 bio: document.getElementById('profileBio').value,
-                skills: skills,
-                settings: { visibility: isVisible ? 'public' : 'hidden' }
+                skills: skills
             };
             localStorage.setItem('alab_profile', JSON.stringify(profileData));
 
@@ -2404,12 +2403,17 @@
             const db = window.ALabCore?.db;
             if (db) {
                 try {
+                    // Get current links to keep visibility if it was set by admin
+                    const { data: current } = await db.from('residents').select('links').eq('user_id', window.ALabCore?.userId).single();
+                    const links = current?.links || {};
+                    links.visibility = isVisible ? 'public' : 'hidden';
+
                     const { error } = await db.from('residents').update({
                         full_name: profileData.name,
                         role: profileData.role,
                         bio: profileData.bio,
                         skills: profileData.skills,
-                        settings: profileData.settings
+                        links: links
                     }).eq('user_id', window.ALabCore?.userId);
                     if (error) throw error;
                 } catch (e) {
@@ -2458,11 +2462,11 @@
                 if (saved.role) document.getElementById('profileRole').value = saved.role;
                 if (saved.bio) document.getElementById('profileBio').value = saved.bio;
                 if (saved.skills) { skills = saved.skills; renderSkillTags(); }
-                if (saved.settings) {
-                    document.getElementById('profileVisibility').checked = saved.settings.visibility !== 'hidden';
-                }
 
+                // Visibility fallback from local or remote links
                 const savedLinks = JSON.parse(localStorage.getItem('alab_links') || '{}');
+                document.getElementById('profileVisibility').checked = savedLinks.visibility !== 'hidden';
+
                 if (savedLinks.website) document.getElementById('linkWebsite').value = savedLinks.website;
                 if (savedLinks.telegram) document.getElementById('linkTelegram').value = savedLinks.telegram;
                 if (savedLinks.github) document.getElementById('linkGithub').value = savedLinks.github;
