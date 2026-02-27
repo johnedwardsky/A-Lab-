@@ -1488,41 +1488,56 @@
             // Recent leads
             const { data: recent } = await sb.from('leads').select('*').order('created_at', { ascending: false }).limit(5);
             if (recent && recent.length) {
-                document.getElementById('recentLeadsBody').innerHTML = recent.map(l => `
+                document.getElementById('recentLeadsBody').innerHTML = recent.map(l => {
+                    const isEmail = String(l.contact).includes('@');
+                    const contactLink = isEmail ? `mailto:${l.contact}` : `https://t.me/${l.contact.replace('@', '')}`;
+                    return `
                     <tr>
                         <td style="color:var(--text); font-weight:600;">${l.name}</td>
-                        <td>${l.contact}</td>
+                        <td><a href="${contactLink}" target="_blank" style="color:var(--tech-blue); text-decoration:none;">${l.contact}</a></td>
                         <td>${l.source || '—'}</td>
-                        <td><span class="badge badge-${l.status}">${l.status.toUpperCase()}</span></td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="badge badge-${l.status}">${l.status.toUpperCase()}</span>
+                                <button class="action-btn hover-trigger" onclick="approveResident('${l.id}','${l.contact}','${l.name}')" style="padding:0; background:none; border:none; cursor:pointer;" title="Одобрить">✅</button>
+                            </div>
+                        </td>
                         <td style="font-family:var(--font-code); font-size:0.75rem;">${new Date(l.created_at).toLocaleDateString('ru')}</td>
                     </tr>
-                `).join('');
+                `}).join('');
             }
         }
 
         async function loadLeads(sb) {
             const { data } = await sb.from('leads').select('*').order('created_at', { ascending: false });
             if (!data || !data.length) return;
-            document.getElementById('leadsBody').innerHTML = data.map(l => `
+            document.getElementById('leadsBody').innerHTML = data.map(l => {
+                const isEmail = String(l.contact).includes('@');
+                const contactLink = isEmail ? `mailto:${l.contact}` : `https://t.me/${l.contact.replace('@', '')}`;
+                return `
                 <tr>
                     <td style="color:var(--text); font-weight:600;">${l.name}</td>
-                    <td>${l.contact}</td>
+                    <td><a href="${contactLink}" target="_blank" style="color:var(--tech-blue); text-decoration:none;">${l.contact} ↗</a></td>
                     <td>${l.source || '—'}</td>
                     <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${l.message || '—'}</td>
                     <td>
-                        <select class="form-select" style="width:auto; padding:4px 8px; font-size:0.7rem;"
-                            onchange="updateLeadStatus('${l.id}', this.value)">
-                            <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
-                            <option value="contacted" ${l.status === 'contacted' ? 'selected' : ''}>CONTACTED</option>
-                            <option value="closed" ${l.status === 'closed' ? 'selected' : ''}>CLOSED</option>
-                        </select>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <select class="form-select" style="width:auto; padding:4px 8px; font-size:0.7rem;"
+                                onchange="updateLeadStatus('${l.id}', this.value)">
+                                <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
+                                <option value="contacted" ${l.status === 'contacted' ? 'selected' : ''}>CONTACTED</option>
+                                <option value="closed" ${l.status === 'closed' ? 'selected' : ''}>CLOSED</option>
+                            </select>
+                            <button class="action-btn hover-trigger" onclick="approveResident('${l.id}','${l.contact}','${l.name}')" title="Одобрить">✅</button>
+                            <button class="action-btn hover-trigger" onclick="rejectResident('${l.id}','${l.contact}','${l.name}')" title="Отклонить">❌</button>
+                        </div>
                     </td>
                     <td style="font-family:var(--font-code); font-size:0.7rem;">${new Date(l.created_at).toLocaleDateString('ru')}</td>
                     <td>
                         <button class="action-btn hover-trigger" onclick="deleteLead('${l.id}')" title="Удалить">🗑</button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         async function loadProjects(sb) {
