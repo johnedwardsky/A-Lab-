@@ -255,14 +255,15 @@
                 const db = window.ALabCore?.db;
                 if (!db) throw new Error('DATABASE_OFFLINE');
 
-                // Insert into resident_applications instead of Auth
                 const { error } = await db
-                    .from('resident_applications')
+                    .from('leads')
                     .insert([{
-                        email: email,
-                        full_name: fullName,
-                        requested_id: residentId,
-                        status: 'pending'
+                        name: fullName,
+                        contact: email,
+                        source: 'register',
+                        source_detail: `Requested ID: ${residentId}`,
+                        message: 'Заявка на регистрацию резидента',
+                        status: 'new'
                     }]);
 
                 if (error) throw error;
