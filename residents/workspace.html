@@ -1136,6 +1136,16 @@
                         <div style="font-size: 0.65rem; color: #444; margin-top: 5px; font-family: var(--font-code);">>
                             Виден в публичном профиле</div>
                     </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+                        <input type="checkbox" id="profileVisibility" checked
+                            style="width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer;">
+                        <label for="profileVisibility" class="form-label"
+                            style="margin: 0; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
+                            Отображать профиль в списках комьюнити
+                            <i title="Если отключено, ваш профиль не будет виден другим на главной странице раздела Резиденты"
+                                style="cursor:help; opacity:0.6; font-style:normal; font-size:0.8rem;">ℹ️</i>
+                        </label>
+                    </div>
 
                     <button class="btn-pulse" onclick="saveProfile()" style="margin-top: 5px;">Сохранить
                         Профиль</button>
@@ -2380,11 +2390,13 @@
 
         // Save profile data to localStorage (or Supabase if available)
         async function saveProfile() {
+            const isVisible = document.getElementById('profileVisibility').checked;
             const profileData = {
                 name: document.getElementById('profileName').value,
                 role: document.getElementById('profileRole').value,
                 bio: document.getElementById('profileBio').value,
-                skills: skills
+                skills: skills,
+                settings: { visibility: isVisible ? 'public' : 'hidden' }
             };
             localStorage.setItem('alab_profile', JSON.stringify(profileData));
 
@@ -2396,7 +2408,8 @@
                         full_name: profileData.name,
                         role: profileData.role,
                         bio: profileData.bio,
-                        skills: profileData.skills
+                        skills: profileData.skills,
+                        settings: profileData.settings
                     }).eq('user_id', window.ALabCore?.userId);
                     if (error) throw error;
                 } catch (e) {
@@ -2445,6 +2458,9 @@
                 if (saved.role) document.getElementById('profileRole').value = saved.role;
                 if (saved.bio) document.getElementById('profileBio').value = saved.bio;
                 if (saved.skills) { skills = saved.skills; renderSkillTags(); }
+                if (saved.settings) {
+                    document.getElementById('profileVisibility').checked = saved.settings.visibility !== 'hidden';
+                }
 
                 const savedLinks = JSON.parse(localStorage.getItem('alab_links') || '{}');
                 if (savedLinks.website) document.getElementById('linkWebsite').value = savedLinks.website;
