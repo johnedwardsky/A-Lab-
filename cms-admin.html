@@ -1063,10 +1063,10 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Статус</th>
-                            <th>Имя</th>
+                            <th>Активность</th>
+                            <th>Имя / ID</th>
                             <th>Роль</th>
-                            <th>Видим</th>
+                            <th>Показ на главной</th>
                             <th>Админ</th>
                             <th>Регистрация</th>
                             <th>Действия</th>
@@ -1556,17 +1556,24 @@
             if (!data || !data.length) return;
             document.getElementById('residentsBody').innerHTML = data.map(r => `
                 <tr>
-                    <td><span class="status-dot ${r.status || 'online'}"></span></td>
-                    <td style="color:var(--text); font-weight:600;">${r.full_name}</td>
+                    <td>
+                        <span class="status-dot ${r.status || 'online'}"></span>
+                        <span style="font-size: 0.6rem; font-family: var(--font-code); color: var(--text-dim);">${(r.status || 'online').toUpperCase()}</span>
+                    </td>
+                    <td style="color:var(--text); font-weight:600;">
+                        <div>${r.full_name}</div>
+                        <div style="font-size: 0.6rem; color: #555; font-family: var(--font-code);">${r.user_id || r.id}</div>
+                    </td>
                     <td style="font-family:var(--font-code); font-size:0.75rem;">
                         <input type="text" value="${r.role || ''}" 
                             class="form-input" style="width:120px; padding:4px 8px; font-size:0.7rem;"
                             onchange="updateResidentField('${r.id}', 'role', this.value)">
                     </td>
-                    <td>
+                    <td style="text-align: center;">
                         <button class="badge ${r.settings?.visibility === 'hidden' ? 'badge-closed' : 'badge-active'}" 
-                            onclick="toggleVisibility('${r.id}', ${r.settings?.visibility === 'hidden'})" style="border:none; cursor:pointer;">
-                            ${r.settings?.visibility === 'hidden' ? 'HIDDEN' : 'PUBLIC'}
+                            onclick="toggleVisibility('${r.id}', ${r.settings?.visibility === 'hidden'})" 
+                            style="border:none; cursor:pointer; min-width: 80px;">
+                            ${r.settings?.visibility === 'hidden' ? 'СКРЫТ' : 'ПОКАЗАН'}
                         </button>
                     </td>
                     <td>

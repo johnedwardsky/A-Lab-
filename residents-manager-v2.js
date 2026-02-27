@@ -45,11 +45,23 @@
             const container = document.querySelector('.residents-grid');
             if (!container) return;
 
-            // Optional: Filter by visibility (handled by RLS or manually)
+            // Filter and Sort by Activity (Status)
             const visibleList = this.residents.filter(r => {
                 const s = r.settings || {};
                 const rName = (r.full_name || '').toLowerCase();
+                // Exclude John Edward (test/hidden name) and respect visibility setting
                 return s.visibility !== 'hidden' && !rName.includes('john edward');
+            });
+
+            // Status weights for activity sorting: Online (0) > Busy (1) > Away/Offline (2)
+            const statusWeights = { 'online': 0, 'busy': 1, 'away': 2, 'offline': 3 };
+
+            visibleList.sort((a, b) => {
+                const weightA = statusWeights[a.status?.toLowerCase()] ?? 2;
+                const weightB = statusWeights[b.status?.toLowerCase()] ?? 2;
+                if (weightA !== weightB) return weightA - weightB;
+                // Secondary sort: newest first
+                return new Date(b.created_at) - new Date(a.created_at);
             });
 
             if (visibleList.length === 0) return;
