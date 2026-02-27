@@ -1744,7 +1744,6 @@
                     </td>
                 </tr>
             `}).join('');
-            `).join('');
         }
 
         async function loadLogs(sb) {
@@ -1820,7 +1819,7 @@
         function openProjectForm(existing) {
             const p = existing || {};
             openModal(`
-                < h2 > ${ p.id ? 'Редактировать' : 'Новый' } проект</h2 >
+                < h2 > ${p.id ? 'Редактировать' : 'Новый'} проект</h2 >
                 <div class="form-group"><label class="form-label">Название</label>
                     <input class="form-input" id="pTitle" value="${p.title || ''}"></div>
                 <div class="form-row">
