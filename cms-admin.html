@@ -1773,6 +1773,7 @@
             if (typeof window.supabase === 'undefined') return;
             await window.supabase.from('leads').delete().eq('id', id);
             loadLeads(window.supabase);
+            loadApps(window.supabase);
         }
 
         async function deleteProject(id) {
