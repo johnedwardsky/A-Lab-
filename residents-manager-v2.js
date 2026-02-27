@@ -48,13 +48,8 @@
             // Optional: Filter by visibility (handled by RLS or manually)
             const visibleList = this.residents.filter(r => {
                 const s = r.settings || {};
-                const rRole = (r.role || '').toLowerCase();
                 const rName = (r.full_name || '').toLowerCase();
-                return s.visibility !== 'hidden' &&
-                    r.user_id !== 'ivan-lakshinsky' &&
-                    r.user_id !== 'admin' &&
-                    rRole !== 'admin' &&
-                    !rName.includes('john edward');
+                return s.visibility !== 'hidden' && !rName.includes('john edward');
             });
 
             if (visibleList.length === 0) return;
