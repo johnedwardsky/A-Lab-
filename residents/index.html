@@ -1117,14 +1117,14 @@
                 if (!db) throw new Error('Database not connected');
 
                 const { error } = await db
-                    .from('resident_applications')
+                    .from('leads')
                     .insert({
-                        full_name: fullName,
-                        telegram: tg,
-                        strength: window.selectedStrength || 'N/A',
-                        experience: window.selectedExp || 'N/A',
-                        bio: bio,
-                        recommender_id: recommender
+                        name: fullName,
+                        contact: tg,
+                        source: 'quiz',
+                        source_detail: `Скилл: ${window.selectedStrength || 'N/A'}, Опыт: ${window.selectedExp || 'N/A'}`,
+                        message: `О себе: ${bio}\nРекомендатель ID: ${recommender}`,
+                        status: 'new'
                     });
 
                 if (error) throw error;
