@@ -532,6 +532,29 @@
                 </div>
             </section>
         </div>
+        <!-- COMMUNITY TAB -->
+        <div class="tab-content no-sidebar" id="community-tab">
+            <section class="section-card">
+                <div class="section-title">Управление Резидентами</div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="text-align: left; border-bottom: 1px solid var(--border);">
+                                <th style="padding: 10px; font-size: 0.7rem;">ИМЯ / ID</th>
+                                <th style="padding: 10px; font-size: 0.7rem;">РОЛЬ</th>
+                                <th style="padding: 10px; font-size: 0.7rem;">ВИДИМОСТЬ</th>
+                                <th style="padding: 10px; font-size: 0.7rem;">ДЕЙСТВИЯ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="communityTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding: 20px; color: #555;">ЗАГРУЗКА...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
 
         <!-- BROADCAST TAB -->
         <div class="tab-content" id="broadcast-tab">
@@ -615,10 +638,15 @@
                 'astra': 'Управление Токеномикой',
                 'applications': 'Модерация Заявок',
                 'nda': 'Реестр Документов',
+                'community': 'Управление Сообществом',
                 'broadcast': 'Центр Оповещений',
                 'settings': 'Настройки Ядра'
             };
             document.getElementById('pageTitle').innerText = titles[tabId] || 'Администрирование';
+
+            if (tabId === 'community') loadCommunity();
+            if (tabId === 'applications') loadApplications();
+            if (tabId === 'nda') loadNDA();
 
             // Close more menu
             const moreMenu = document.getElementById('moreMenu');
@@ -638,8 +666,72 @@
             document.getElementById('themeBtn').innerText = isLight ? '☀️' : '☽';
         }
 
+        async function loadCommunity() {
+            const db = window.ALabCore?.db;
+            if (!db) return;
+            const { data, error } = await db.from('residents').select('*').order('created_at', { ascending: false });
+            if (error) return;
+
+            const tbody = document.getElementById('communityTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = data.map(r => {
+                const isHidden = r.settings?.visibility === 'hidden';
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 15px;">
+                            <div style="font-size: 0.85rem; font-weight: 600;">${r.full_name || 'Anonymous'}</div>
+                            <div style="font-size: 0.6rem; color: #555; font-family: var(--font-code);">${r.user_id}</div>
+                        </td>
+                        <td style="padding: 15px; font-size: 0.75rem; color: #888;">${r.role || 'Resident'}</td>
+                        <td style="padding: 15px;">
+                            <span class="mode-badge" style="color: ${isHidden ? 'var(--accent)' : 'var(--tech-blue)'}; border-color: ${isHidden ? 'var(--accent)' : 'var(--tech-blue)'}; font-size: 0.6rem;">
+                                ${isHidden ? 'HIDDEN' : 'PUBLIC'}
+                            </span>
+                        </td>
+                        <td style="padding: 15px;">
+                            <button class="status-btn ${isHidden ? '' : 'active'}" onclick="toggleResidentVisibility('${r.user_id}', ${isHidden})">
+                                ${isHidden ? 'Сделать Публичным' : 'Скрыть из списка'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function toggleResidentVisibility(userId, makeVisible) {
+            const db = window.ALabCore?.db;
+            if (!db) return;
+
+            try {
+                // Get current resident to preserve other settings
+                const { data: res } = await db.from('residents').select('settings').eq('user_id', userId).single();
+                const settings = res?.settings || {};
+                settings.visibility = makeVisible ? 'public' : 'hidden';
+
+                const { error } = await db.from('residents')
+                    .update({ settings })
+                    .eq('user_id', userId);
+
+                if (error) throw error;
+                if (window.Toast) window.Toast.show(makeVisible ? '✓ Профиль открыт' : '✕ Профиль скрыт');
+                loadCommunity();
+            } catch (err) {
+                console.error('[ADMIN] Visibility toggle error:', err);
+                if (window.Toast) window.Toast.show('! Ошибка обновления');
+            }
+        }
+
+        // Placeholder for other functions mentioned in switchTab
+        async function loadApplications() { console.log('Applications loading...'); }
+        async function loadNDA() { console.log('NDA loading...'); }
+
         // Fake Data Loader
         document.addEventListener('DOMContentLoaded', () => {
+            const db = window.ALabCore?.db;
+            if (db) {
+                // Initial check or setup
+            }
             document.getElementById('statResidents').innerText = '142';
             document.getElementById('statProjects').innerText = '28';
             document.getElementById('statAstra').innerText = '1.2M';
