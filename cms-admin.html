@@ -1821,11 +1821,60 @@
         }
 
         async function approveResident(id, contact, name) {
-            if (!confirm(`Одобрить заявку от ${name}?`)) return;
+            if (!confirm(`Одобрить заявку от ${name} и АВТОМАТИЧЕСКИ создать аккаунт резидента?`)) return;
+
+            showToast('⏳ Активация сотрудника...');
+            const tempPass = generateTempPassword();
+            const isEmail = contact.includes('@');
+            let authCreated = false;
+            let alreadyExists = false;
+
+            if (isEmail) {
+                try {
+                    // Используем вспомогательный клиент, чтобы не разлогинить админа
+                    // SUPABASE_URL и SUPABASE_ANON_KEY доступны глобально после supabase-client.js (теперь они var)
+                    const tempSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                        auth: { persistSession: false }
+                    });
+
+                    const { data: authData, error: authErr } = await tempSupabase.auth.signUp({
+                        email: contact,
+                        password: tempPass,
+                        options: {
+                            data: { full_name: name, role: 'resident' }
+                        }
+                    });
+
+                    if (authErr) {
+                        if (authErr.message.includes('already registered')) {
+                            alreadyExists = true;
+                        } else {
+                            throw authErr;
+                        }
+                    } else {
+                        authCreated = true;
+                    }
+                } catch (e) {
+                    console.error('[AUTH_AUTO] Ошибка создания:', e);
+                    showToast('❌ Ошибка Auth: ' + e.message);
+                }
+            } else {
+                showToast('⚠️ Контакт не является email. Аккаунт в Auth не создан.');
+            }
+
             await updateLeadStatus(id, 'contacted');
 
-            const tempPass = generateTempPassword();
-            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: ${tempPass}\nСсылка для входа: https://a-lab-tech.vercel.app/login\n\n⚠️ После входа обязательно смени пароль в настройках профиля.\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
+            let msg;
+            if (authCreated) {
+                msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Аккаунт в системе был создан автоматически.\n\nДанные для входа в кабинет резидента:\nID (Email): ${contact}\nВременный пароль: ${tempPass}\n\nСсылка для входа: https://a-lab-tech.vercel.app/login\n\n⚠️ После первого входа обязательно смени пароль в настройках профиля (раздел Безопасность).\n\n— Служба Безопасности A-LAB`;
+                showToast('🚀 Аккаунт резидента успешно создан!');
+            } else if (alreadyExists) {
+                msg = `Привет, ${name}!\n\nТвоя заявка одобрена. Твой аккаунт в системе был активирован ранее.\n\nСсылка для входа: https://a-lab-tech.vercel.app/login\n\nЕсли ты не помнишь пароль, воспользуйся формой восстановления или обратись к администратору.\n\n— Служба Безопасности A-LAB`;
+                showToast('ℹ️ Учетная запись уже существовала');
+            } else {
+                msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nЕсли будут вопросы, обращайся!\n\n— Администрация A-LAB`;
+            }
+
             openNotifyModal(contact, msg, `ОДОБРЕНИЕ: ${name}`);
         }
 
