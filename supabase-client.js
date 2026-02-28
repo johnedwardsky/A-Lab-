@@ -14,8 +14,10 @@ let _supabaseClient = null;
 function getSupabase() {
     if (!_supabaseClient) {
         if (typeof supabase !== 'undefined' && supabase.createClient) {
+            // Сохраняем доступ к библиотеке, прежде чем переменная supabase будет перезаписана экземпляром клиента
+            window.SupabaseLib = supabase;
             _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            // Expose globally for CMS and legacy compatibility
+            // Expose globally for CMS and legacy compatibility (this name might overlap with library)
             window.supabase = _supabaseClient;
         } else {
             console.warn('[A-LAB] Supabase library not loaded. Using mock mode.');

@@ -1823,6 +1823,12 @@
         async function approveResident(id, contact, name) {
             if (!confirm(`Одобрить заявку от ${name} и АВТОМАТИЧЕСКИ создать аккаунт резидента?`)) return;
 
+            // Защита от пустых данных
+            if (!contact || contact === 'undefined') {
+                showToast('❌ Ошибка: У лида нет контактных данных (Email)');
+                return;
+            }
+
             showToast('⏳ Активация сотрудника...');
             const tempPass = generateTempPassword();
             const isEmail = contact.includes('@');
@@ -1831,9 +1837,10 @@
 
             if (isEmail) {
                 try {
-                    // Используем вспомогательный клиент, чтобы не разлогинить админа
-                    // SUPABASE_URL и SUPABASE_ANON_KEY доступны глобально после supabase-client.js (теперь они var)
-                    const tempSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    // Используем SupabaseLib (библиотеку), а не supabase (экземпляр)
+                    // Эти переменные теперь var в supabase-client.js и доступны глобально
+                    const lib = window.SupabaseLib || window.supabase;
+                    const tempSupabase = lib.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
                         auth: { persistSession: false }
                     });
 
