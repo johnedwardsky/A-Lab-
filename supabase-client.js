@@ -8,16 +8,21 @@
 var SUPABASE_URL = 'https://lvyfuljsvzczuwccktln.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2eWZ1bGpzdnpjenV3Y2NrdGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5OTAwMzEsImV4cCI6MjA4NjU2NjAzMX0.juafzih9bbcIsntrAvku2O_77yz7mnIkOqbY8xencIo';
 
-// Initialize Supabase client (requires CDN script loaded first)
+// Capture library reference immediately if available
+if (typeof supabase !== 'undefined' && supabase.createClient) {
+    window.SupabaseLib = supabase;
+}
+
+// Initialize Supabase client
 let _supabaseClient = null;
 
 function getSupabase() {
     if (!_supabaseClient) {
-        if (typeof supabase !== 'undefined' && supabase.createClient) {
-            // Сохраняем доступ к библиотеке, прежде чем переменная supabase будет перезаписана экземпляром клиента
-            window.SupabaseLib = supabase;
-            _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            // Expose globally for CMS and legacy compatibility (this name might overlap with library)
+        const lib = window.SupabaseLib || (typeof supabase !== 'undefined' ? supabase : null);
+        if (lib && lib.createClient) {
+            window.SupabaseLib = lib;
+            _supabaseClient = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            // Expose globally for CMS and legacy compatibility
             window.supabase = _supabaseClient;
         } else {
             console.warn('[A-LAB] Supabase library not loaded. Using mock mode.');
