@@ -218,12 +218,26 @@
                 errorMsg.innerText = error.message;
                 errorMsg.style.display = 'block';
             } else {
-                const lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
-                const redirectPage = lang === 'en' ? 'resident-admin-en.html' : 'resident-admin-ru.html';
-                // Check if there's a redirect query param
+                // Fetch resident profile to determine routing
+                const db = window.ALabCore?.db || window.supabase;
+                if (!db) {
+                    window.location.href = 'residents/workspace.html';
+                    return;
+                }
+
+                // Check user data
+                const { data: { user } } = await db.auth.getUser();
+                if (user) {
+                    const { data: resData } = await db.from('residents').select('is_admin').eq('user_id', user.id).single();
+                    if (resData && resData.is_admin) {
+                        window.location.href = 'cms-admin.html';
+                        return;
+                    }
+                }
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const next = urlParams.get('redirect');
-                window.location.href = next ? decodeURIComponent(next) : redirectPage;
+                window.location.href = next ? decodeURIComponent(next) : 'residents/workspace.html';
             }
         });
     </script>

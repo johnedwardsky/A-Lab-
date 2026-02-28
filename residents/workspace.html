@@ -1638,24 +1638,66 @@
             </div>
         </div>
 
-        <!-- SETTINGS TAB -->
-        <div class="tab-content no-sidebar" id="settings-tab">
-            <section class="section-card">
-                <div class="section-title">Предпочтения</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                    <div class="form-group">
-                        <label class="form-label">Язык / Language</label>
-                        <select class="form-input">
-                            <option>РУССКИЙ</option>
-                            <option>ENGLISH</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Уведомления</label>
-                        <button class="status-btn active" style="width: 100%;">ВКЛЮЧЕНЫ</button>
+        <!-- ═══════════ BUG REPORTS MODAL ═══════════ -->
+        <div class="modal-overlay" id="bugModal"
+            onclick="if(event.target===this)document.getElementById('bugModal').classList.remove('active')">
+            <div class="modal-box" style="border-color: var(--accent);">
+                <h2>REPORTS_BUG</h2>
+                <div class="form-group">
+                    <label class="form-label">Тип проблемы</label>
+                    <select class="form-input">
+                        <option>ОШИБКА ИНТЕРФЕЙСА</option>
+                        <option>БАГ В ЛОГИКЕ</option>
+                        <option>ДРУГОЕ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <textarea class="form-input" style="height: 100px;font-family: var(--font-code);"></textarea>
+                </div>
+                <button class="btn-pulse" style="background:var(--accent);"
+                    onclick="document.getElementById('bugModal').classList.remove('active');showToast('Отчет отправлен')">ОТПРАВИТЬ
+                    ОТЧЕТ</button>
+            </div>
+        </div>
+
+        <!-- ═══════════ ONBOARDING MODAL ═══════════ -->
+        <div class="modal-overlay" id="onboardModal" style="background: rgba(0, 0, 0, 0.95); z-index: 10000;">
+            <div class="modal-box"
+                style="border: 1px solid var(--tech-blue); box-shadow: 0 0 50px rgba(0, 229, 255, 0.2);">
+                <h2 style="color: var(--tech-blue); margin-bottom: 5px;">A-LAB INITIALIZATION</h2>
+                <p style="font-size: 0.75rem; color: #888; font-family: var(--font-code); margin-bottom: 20px;">
+                    Завершите настройку профиля для активации полного доступа.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Ваше Имя и Фамилия</label>
+                    <input type="text" id="onbdName" class="form-input" placeholder="Ivan Sky" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Resident ID (Ваш логин/Telegram)</label>
+                    <div
+                        style="display: flex; align-items: center; background: #000; border: 1px solid var(--border); border-radius: 12px; padding-left: 15px;">
+                        <span style="color: #555; font-family: var(--font-code); font-size: 0.9rem;">ID.</span>
+                        <input type="text" id="onbdId" class="form-input"
+                            style="border: none !important; background: transparent !important; padding-left: 5px;"
+                            placeholder="IVAN_SKY" required>
                     </div>
                 </div>
-            </section>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">Установите новый постоянный пароль</label>
+                    <input type="password" id="onbdPass1" class="form-input" placeholder="Минимум 6 символов" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Повторите пароль</label>
+                    <input type="password" id="onbdPass2" class="form-input" required>
+                </div>
+
+                <button class="btn-pulse" id="btnFinishOnbd" onclick="finishOnboarding()"
+                    style="margin-top: 15px; width: 100%;">АКТИВИРОВАТЬ ПРОФИЛЬ</button>
+            </div>
         </div>
 
     </div>
@@ -2514,7 +2556,80 @@
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('input', updatePreview);
             });
+
+            // Check for Onboarding on page load
+            setTimeout(checkOnboardingStatus, 1000); // Small delay to let Supabase load
         });
+
+        async function checkOnboardingStatus() {
+            const db = window.ALabCore?.db;
+            if (!db) return;
+            const uid = window.ALabCore?.userId;
+            if (!uid) return;
+
+            try {
+                const { data } = await db.from('residents').select('full_name, links').eq('user_id', uid).single();
+                if (data && data.links && data.links.setup_complete === false) {
+                    if (data.full_name) document.getElementById('onbdName').value = data.full_name;
+                    document.getElementById('onboardModal').classList.add('active');
+                }
+            } catch (e) { console.error('Error checking setup status', e); }
+        }
+
+        async function finishOnboarding() {
+            const name = document.getElementById('onbdName').value.trim();
+            const resId = document.getElementById('onbdId').value.trim();
+            const pass1 = document.getElementById('onbdPass1').value;
+            const pass2 = document.getElementById('onbdPass2').value;
+            const btn = document.getElementById('btnFinishOnbd');
+
+            if (!name || !resId) { return showToast('Заполните Имя и ID'); }
+            if (pass1.length < 6) { return showToast('Пароль минимум 6 символов'); }
+            if (pass1 !== pass2) { return showToast('Пароли не совпадают'); }
+
+            btn.innerText = 'ОБРАБОТКА...';
+            btn.disabled = true;
+
+            const db = window.ALabCore?.db;
+            if (!db) return;
+
+            try {
+                // 1. Update Password
+                const { error: passErr } = await db.auth.updateUser({ password: pass1 });
+                if (passErr) throw passErr;
+
+                // 2. Fetch existing links & update
+                const uid = window.ALabCore?.userId;
+                const { data: current } = await db.from('residents').select('links').eq('user_id', uid).single();
+                let links = current?.links || {};
+                links.setup_complete = true;
+                links.visibility = 'public';
+                links.telegram = resId; // default the telegram to the ID 
+
+                // 3. Update Profile
+                const { error: profileErr } = await db.from('residents').update({
+                    full_name: name,
+                    links: links
+                }).eq('user_id', uid);
+
+                if (profileErr) throw profileErr;
+
+                // Success
+                document.getElementById('profileName').value = name;
+                document.getElementById('profileVisibility').checked = true;
+                saveProfile(); // Sync local storage
+
+                document.getElementById('onboardModal').classList.remove('active');
+                showToast('✅ Профиль успешно активирован!');
+                setTimeout(() => window.location.reload(), 1500);
+
+            } catch (err) {
+                console.error(err);
+                showToast('❌ Ошибка: ' + err.message);
+                btn.innerText = 'АКТИВИРОВАТЬ ПРОФИЛЬ';
+                btn.disabled = false;
+            }
+        }
     </script>
 </body>
 
