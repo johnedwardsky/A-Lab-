@@ -39,5 +39,19 @@ const ALabAuth = {
             window.location.href = 'login.html';
         }
         return user;
+    },
+
+    async resetPassword(email) {
+        const { data, error } = await window.ALabCore.db.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/residents/reset-password.html'
+        });
+        return { data, error };
+    },
+
+    async updatePassword(newPassword) {
+        const { data, error } = await window.ALabCore.db.auth.updateUser({
+            password: newPassword
+        });
+        return { data, error };
     }
 };

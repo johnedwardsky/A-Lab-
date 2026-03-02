@@ -989,6 +989,41 @@
                 display: flex;
             }
         }
+
+        /* --- MODAL SYSTEM --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 4, 7, 0.85);
+            backdrop-filter: blur(15px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            transform: scale(0.95);
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
     </style>
 </head>
 
@@ -1671,13 +1706,18 @@
             </div>
         </div>
 
-        <!-- ═══════════ ONBOARDING MODAL ═══════════ -->
-        <div class="modal-overlay" id="onboardModal" style="background: rgba(0, 0, 0, 0.95); z-index: 10000;">
-            <div class="modal-box"
-                style="border: 1px solid var(--tech-blue); box-shadow: 0 0 50px rgba(0, 229, 255, 0.2);">
-                <h2 style="color: var(--tech-blue); margin-bottom: 5px;">A-LAB INITIALIZATION</h2>
-                <p style="font-size: 0.75rem; color: #888; font-family: var(--font-code); margin-bottom: 20px;">
-                    Завершите настройку профиля для активации полного доступа.</p>
+        <!-- ═══════════ ONBOARDING MODAL (INITIALIZATION) ═══════════ -->
+        <div class="modal-overlay" id="onboardModal">
+            <div class="modal-box" style="border-color: var(--tech-blue); box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);">
+                <div id="onbdStatus"
+                    style="font-family: var(--font-code); font-size: 0.6rem; color: var(--tech-blue); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">
+                    [ STATUS: WAITING_FOR_INPUT ]
+                </div>
+                <h2 style="color: var(--tech-blue); margin-bottom: 5px; font-weight: 800; letter-spacing: -1px;">A-LAB
+                    INITIALIZATION</h2>
+                <p id="onbdDesc"
+                    style="font-size: 0.8rem; color: #888; font-family: var(--font-main); margin-bottom: 25px;">
+                    Обнаружен неактивный профиль. Завершите настройку для активации доступа к экосистеме LAB.</p>
 
                 <div class="form-group">
                     <label class="form-label">Ваше Имя и Фамилия</label>
@@ -2584,7 +2624,8 @@
             // Public profile link 
             const uid = profile.user_id || '';
             const pubLink = document.getElementById('viewPublicProfile');
-            if (pubLink && uid) pubLink.href = `profile.html?id=${uid}`;
+            if (pubLink && uid) pubLink.href = `../profile.html?id=${uid}`;
+
 
             // Stats
             const days = Math.max(1, Math.floor((Date.now() - new Date(profile.created_at)) / 86400000));
@@ -2707,52 +2748,73 @@
             const pass1 = document.getElementById('onbdPass1').value;
             const pass2 = document.getElementById('onbdPass2').value;
             const btn = document.getElementById('btnFinishOnbd');
+            const statusLine = document.getElementById('onbdStatus');
+            const descLine = document.getElementById('onbdDesc');
 
             if (!name || !resId) { return showToast('Заполните Имя и ID'); }
             if (pass1.length < 6) { return showToast('Пароль минимум 6 символов'); }
             if (pass1 !== pass2) { return showToast('Пароли не совпадают'); }
 
-            btn.innerText = 'ОБРАБОТКА...';
             btn.disabled = true;
+            btn.innerText = 'ИНИЦИАЛИЗАЦИЯ...';
 
             const db = window.ALabCore?.db;
             if (!db) return;
 
             try {
-                // 1. Update Password
+                // Step 1: Security Handshake
+                statusLine.innerText = '[ STATUS: SECURITY_HANDSHAKE ]';
+                descLine.innerText = 'Обновление зашифрованных учетных данных...';
                 const { error: passErr } = await db.auth.updateUser({ password: pass1 });
                 if (passErr) throw passErr;
+                await new Promise(r => setTimeout(r, 800));
 
-                // 2. Fetch existing links & update
+                // Step 2: Protocol Sync
+                statusLine.innerText = '[ STATUS: PROTOCOL_SYNC ]';
+                descLine.innerText = 'Синхронизация профиля с ядром системы...';
                 const uid = window.ALabCore?.userId;
                 const { data: current } = await db.from('residents').select('links').eq('user_id', uid).single();
                 let links = current?.links || {};
                 links.setup_complete = true;
                 links.visibility = 'public';
-                links.telegram = resId; // default the telegram to the ID 
+                links.telegram = resId;
 
-                // 3. Update Profile
                 const { error: profileErr } = await db.from('residents').update({
                     full_name: name,
                     links: links
                 }).eq('user_id', uid);
 
                 if (profileErr) throw profileErr;
+                await new Promise(r => setTimeout(r, 800));
+
+                // Step 3: Asset Initialization
+                statusLine.innerText = '[ STATUS: ASSET_INITIALIZATION ]';
+                descLine.innerText = 'Зачисление стартовых ресурсов Astra...';
+                await new Promise(r => setTimeout(r, 1200));
 
                 // Success
-                document.getElementById('profileName').value = name;
-                document.getElementById('profileVisibility').checked = true;
-                saveProfile(); // Sync local storage
-
-                document.getElementById('onboardModal').classList.remove('active');
-                showToast('✅ Профиль успешно активирован!');
-                setTimeout(() => window.location.reload(), 1500);
+                statusLine.innerText = '[ STATUS: INITIALIZATION_COMPLETE ]';
+                statusLine.style.color = '#00FF41';
+                descLine.innerText = 'Доступ активирован. Добро пожаловать, ' + name + '.';
+                btn.innerText = 'ВХОД В СИСТЕМУ';
+                btn.style.background = '#00FF41';
+                btn.disabled = false;
+                btn.onclick = () => {
+                    const modal = document.getElementById('onboardModal');
+                    modal.style.opacity = '0';
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        location.reload(); // Refresh to apply all data
+                    }, 500);
+                };
 
             } catch (err) {
-                console.error(err);
-                showToast('❌ Ошибка: ' + err.message);
-                btn.innerText = 'АКТИВИРОВАТЬ ПРОФИЛЬ';
+                console.error('[ONBOARDING] Error:', err);
+                statusLine.innerText = '[ STATUS: ERROR ]';
+                statusLine.style.color = 'var(--accent)';
+                descLine.innerText = 'Сбой инициализации: ' + (err.message || 'Unknown error');
                 btn.disabled = false;
+                btn.innerText = 'ПОВТОРИТЬ ПОПЫТКУ';
             }
         }
 
@@ -2799,17 +2861,46 @@
         async function loadWalletData() {
             const rpm = window.ResidentProfileManager;
             if (!rpm) return;
-            const result = await rpm.loadWallet();
-            if (!result) return;
+            const db = window.ALabCore?.db;
+            if (!db) return;
 
-            const { wallet, transactions } = result;
-            if (wallet) {
-                const bal = parseFloat(wallet.balance || 0);
-                const balEl = document.getElementById('astraBalanceBig');
-                const usdEl = document.getElementById('astraUsdBig');
-                if (balEl) balEl.textContent = bal.toLocaleString('ru-RU') + ' 💎';
-                if (usdEl) usdEl.textContent = (bal * ASTRA_RATE).toFixed(2);
+            const r = rpm.profile; // Get current resident profile
+            if (!r || !r.id) return;
+
+            // Fetch wallet balance
+            let astraBalance = 0;
+            try {
+                // Table is 'astra_balances'
+                const { data: wallet } = await db
+                    .from('astra_balances')
+                    .select('balance')
+                    .eq('resident_id', r.id)
+                    .single();
+                if (wallet) astraBalance = parseFloat(wallet.balance || 0);
+            } catch (e) {
+                console.error("Error loading wallet balance:", e);
             }
+
+            // Fetch transactions
+            let transactions = [];
+            try {
+                const { data: txs, error: txError } = await db
+                    .from('astra_transactions')
+                    .select('*')
+                    .or(`from_id.eq.${r.id},to_id.eq.${r.id}`)
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+                if (txError) throw txError;
+                transactions = txs;
+            } catch (e) {
+                console.error("Error loading transactions:", e);
+            }
+
+            const balEl = document.getElementById('astraBalanceBig');
+            const usdEl = document.getElementById('astraUsdBig');
+            if (balEl) balEl.textContent = astraBalance.toLocaleString('ru-RU') + ' 💎';
+            if (usdEl) usdEl.textContent = (astraBalance * ASTRA_RATE).toFixed(2);
+
             renderAstraTx(transactions || []);
         }
 
