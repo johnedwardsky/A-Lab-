@@ -210,40 +210,50 @@
         const loginForm = document.getElementById('loginForm');
         const errorMsg = document.getElementById('errorMsg');
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        async function initLogin() {
             const btn = loginForm.querySelector('button');
             const originalText = btn.innerText;
 
-            errorMsg.style.display = 'none';
-            btn.innerText = 'INITIALIZING_SESSION...';
-            btn.disabled = true;
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
 
-            try {
-                if (!window.ALabAuth) {
-                    throw new Error('AUTH_SYSTEM_OFFLINE');
+                errorMsg.style.display = 'none';
+                btn.innerText = 'INITIALIZING_SESSION...';
+                btn.disabled = true;
+
+                try {
+                    if (!window.ALabAuth) {
+                        await new Promise(r => setTimeout(r, 500));
+                        if (!window.ALabAuth) throw new Error('AUTH_SYSTEM_OFFLINE');
+                    }
+
+                    const { data, error } = await window.ALabAuth.signIn(email, password);
+
+                    if (error) {
+                        throw error;
+                    } else {
+                        const redirectPage = 'workspace.html';
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const next = urlParams.get('redirect');
+                        window.location.href = next ? decodeURIComponent(next) : redirectPage;
+                    }
+                } catch (err) {
+                    console.error('Login Error:', err);
+                    errorMsg.innerText = err.message || 'PROTOCOL_ERROR';
+                    errorMsg.style.display = 'block';
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                 }
+            });
+        }
 
-                const { data, error } = await window.ALabAuth.signIn(email, password);
-
-                if (error) {
-                    throw error;
-                } else {
-                    const redirectPage = 'workspace.html';
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const next = urlParams.get('redirect');
-                    window.location.href = next ? decodeURIComponent(next) : redirectPage;
-                }
-            } catch (err) {
-                console.error('Login Error:', err);
-                errorMsg.innerText = err.message || 'PROTOCOL_ERROR';
-                errorMsg.style.display = 'block';
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
-        });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLogin);
+        } else {
+            initLogin();
+        }
     </script>
 </body>
 
