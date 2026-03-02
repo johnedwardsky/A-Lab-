@@ -616,72 +616,106 @@ const MainMenu = (() => {
             modal = document.createElement('div');
             modal.id = 'alab-access-modal';
             modal.style.cssText = `
-                position: fixed; inset: 0; z-index: 99999;
+                position: fixed; inset: 0; z-index: 15000;
                 display: flex; align-items: center; justify-content: center;
-                background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+                background: rgba(3, 4, 7, 0.9); backdrop-filter: blur(20px);
                 animation: fadeIn 0.3s ease;
+                cursor: none;
             `;
             document.body.appendChild(modal);
+
+            // Add background glow like in auth
+            const glow = document.createElement('div');
+            glow.style.cssText = `
+                position: absolute; width: 600px; height: 600px;
+                background: radial-gradient(circle, rgba(255, 42, 42, 0.05) 0%, transparent 70%);
+                top: 50%; left: 50%; transform: translate(-50%, -50%);
+                z-index: -1; filter: blur(100px);
+            `;
+            modal.appendChild(glow);
         }
 
         modal.innerHTML = `
-            <div style="
-                background: #0a0a0a; border: 1px solid #1a1a1a;
-                border-radius: 20px; padding: 50px 45px; max-width: 440px; width: 90%;
-                text-align: center; position: relative;
-                box-shadow: 0 0 80px rgba(255,42,42,0.08), 0 40px 80px rgba(0,0,0,0.8);
+            <div class="auth-container-style" style="
+                width: 400px;
+                background: rgba(11, 13, 20, 0.85);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 30px;
+                padding: 50px 40px;
+                position: relative;
+                z-index: 10;
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+                text-align: center;
                 animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                pointer-events: auto;
             ">
-                <button onclick="document.getElementById('alab-access-modal').remove()" style="
-                    position: absolute; top: 16px; right: 16px;
-                    background: none; border: 1px solid rgba(255,255,255,0.1);
-                    width: 32px; height: 32px; border-radius: 50%;
-                    color: #888; cursor: pointer; font-size: 1rem;
-                    display: flex; align-items: center; justify-content: center;
-                ">✕</button>
-
-                <div style="font-size: 3rem; margin-bottom: 20px; line-height: 1;">📡</div>
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <img src="${residentPrefix}../assets/img/A-lab-logo.svg" alt="A-LAB" style="height: 40px; margin-bottom: 20px;">
+                    <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #00E5FF; letter-spacing: 2px; text-transform: uppercase;">
+                        ${lang === 'en' ? 'RESTRICTED_ACCESS' : 'ДОСТУП_ОГРАНИЧЕН'}
+                    </h2>
+                </div>
 
                 <div style="
                     font-family: 'JetBrains Mono', monospace;
                     color: #FF2A2A; font-size: 0.65rem; letter-spacing: 2px;
                     border: 1px solid rgba(255,42,42,0.3); display: inline-block;
-                    padding: 4px 12px; border-radius: 4px; margin-bottom: 20px;
+                    padding: 6px 16px; border-radius: 6px; margin-bottom: 24px;
                     background: rgba(255,42,42,0.05);
-                ">${lang === 'en' ? 'RESIDENT ZONE' : 'ЗОНА РЕЗИДЕНТОВ'}</div>
+                ">${lang === 'en' ? 'RESIDENT_NODE_ONLY' : 'ТОЛЬКО ДЛЯ РЕЗИДЕНТОВ'}</div>
 
                 <h2 style="
-                    font-family: 'Inter', sans-serif; font-size: 1.6rem;
+                    font-family: 'Inter', sans-serif; font-size: 1.4rem;
                     font-weight: 800; color: white; margin-bottom: 12px; line-height: 1.2;
-                ">${lang === 'en' ? 'Aether is for residents' : 'Эфир — для резидентов'}</h2>
+                ">${lang === 'en' ? 'Aether protocol active' : 'Протокол «Эфир» активен'}</h2>
 
                 <p style="
-                    color: #666; font-size: 0.9rem; line-height: 1.7; margin-bottom: 35px;
+                    color: #666; font-size: 0.85rem; line-height: 1.6; margin-bottom: 35px; font-family: 'Inter', sans-serif;
                 ">${lang === 'en'
-                ? 'The community stream is available exclusively to A-LAB residents. Log in to join the conversation.'
-                : 'Лента сообщества доступна только резидентам A-LAB. Войдите в систему, чтобы присоединиться.'
+                ? 'Authentication required to synchronize with the community stream.'
+                : 'Требуется авторизация для синхронизации с лентой сообщества.'
             }</p>
 
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="${loginUrl}" style="
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <a href="${loginUrl}" class="hover-trigger" style="
                         display: block; text-align: center; text-decoration: none;
-                        padding: 14px 24px; border-radius: 12px;
-                        background: white; color: black;
-                        font-family: 'JetBrains Mono', monospace; font-weight: 700;
-                        font-size: 0.85rem; letter-spacing: 0.5px;
-                        transition: 0.2s;
-                    ">${lang === 'en' ? '→ SIGN IN' : '→ ВОЙТИ В СИСТЕМУ'}</a>
-                    <button onclick="document.getElementById('alab-access-modal').remove()" style="
-                        background: none; border: 1px solid rgba(255,255,255,0.08);
-                        border-radius: 12px; padding: 12px 24px; color: #555;
-                        font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
-                        cursor: pointer; transition: 0.2s;
-                    ">${lang === 'en' ? 'Maybe later' : 'Позже'}</button>
+                        padding: 18px; border-radius: 12px;
+                        background: #FF2A2A; color: black;
+                        font-family: 'Inter', sans-serif; font-weight: 800;
+                        font-size: 0.9rem; text-transform: uppercase;
+                        transition: 0.3s;
+                        pointer-events: auto;
+                    ">${lang === 'en' ? 'Initialize Session' : 'Инициализировать сессию'}</a>
+                    
+                    <div style="margin-top: 10px;">
+                        <a href="javascript:void(0)" onclick="document.getElementById('alab-access-modal').remove()" class="hover-trigger" style="
+                            color: #555; text-decoration: none; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;
+                            text-transform: uppercase; letter-spacing: 1px;
+                        ">/// TERMINATE_ACCESS_REQUEST</a>
+                    </div>
                 </div>
             </div>
-            <style>
-                @keyframes scaleIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-            </style>
+
+            <script>
+                // Local cursor handler for the modal
+                (function() {
+                    const modal = document.getElementById('alab-access-modal');
+                    const cursor = document.querySelector('.cursor');
+                    if (cursor) {
+                        modal.addEventListener('mousemove', (e) => {
+                            cursor.style.left = e.clientX + 'px';
+                            cursor.style.top = e.clientY + 'px';
+                            cursor.style.zIndex = '20001';
+                        });
+                        
+                        modal.querySelectorAll('.hover-trigger').forEach(el => {
+                            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                        });
+                    }
+                })();
+            </script>
         `;
     }
 
