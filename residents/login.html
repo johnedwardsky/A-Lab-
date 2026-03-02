@@ -214,20 +214,34 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const btn = loginForm.querySelector('button');
+            const originalText = btn.innerText;
 
             errorMsg.style.display = 'none';
+            btn.innerText = 'INITIALIZING_SESSION...';
+            btn.disabled = true;
 
-            const { data, error } = await ALabAuth.signIn(email, password);
+            try {
+                if (!window.ALabAuth) {
+                    throw new Error('AUTH_SYSTEM_OFFLINE');
+                }
 
-            if (error) {
-                errorMsg.innerText = error.message;
+                const { data, error } = await window.ALabAuth.signIn(email, password);
+
+                if (error) {
+                    throw error;
+                } else {
+                    const redirectPage = 'workspace.html';
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const next = urlParams.get('redirect');
+                    window.location.href = next ? decodeURIComponent(next) : redirectPage;
+                }
+            } catch (err) {
+                console.error('Login Error:', err);
+                errorMsg.innerText = err.message || 'PROTOCOL_ERROR';
                 errorMsg.style.display = 'block';
-            } else {
-                const redirectPage = 'workspace.html';
-                // Check if there's a redirect query param
-                const urlParams = new URLSearchParams(window.location.search);
-                const next = urlParams.get('redirect');
-                window.location.href = next ? decodeURIComponent(next) : redirectPage;
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
         });
     </script>

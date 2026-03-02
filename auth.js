@@ -3,7 +3,7 @@
  * Handles user authentication via Supabase.
  */
 
-const ALabAuth = {
+window.ALabAuth = {
     async signUp(email, password, metadata) {
         const { data, error } = await window.ALabCore.db.auth.signUp({
             email,
