@@ -107,6 +107,15 @@ const MainMenu = (() => {
                         }
                         return item;
                     });
+
+                    // Ensure Aether is present even if not in DB yet
+                    if (!menuItems.some(i => i.code === 'COMMUNITY_STREAM')) {
+                        const aether = fallbackItems.find(i => i.code === 'COMMUNITY_STREAM');
+                        if (aether) {
+                            // Insert before Residents (last one usually)
+                            menuItems.splice(menuItems.length - 1, 0, aether);
+                        }
+                    }
                     return;
                 }
             }
