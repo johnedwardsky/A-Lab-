@@ -1241,7 +1241,7 @@
             let astraBalance = 300;
             try {
                 const { data: wallet } = await db
-                    .from('astra_wallets')
+                    .from('astra_balances')
                     .select('balance')
                     .eq('resident_id', r.id)
                     .single();
@@ -1303,10 +1303,9 @@
             document.title = `${data.name} • A-LAB CORE`;
 
             // Telegram contact button
-            const tgBtn = document.querySelector('[onclick*="Telegram"]') || document.querySelector('.back-btn[style*="accent"]');
+            const tgBtn = document.querySelector('button[style*="accent"]');
             if (tgBtn && data.telegramHandle) {
                 tgBtn.onclick = () => window.open('https://t.me/' + data.telegramHandle.replace('@', ''), '_blank');
-                tgBtn.innerText = 'Написать в Telegram';
             }
 
             if (data.stats) {
@@ -1439,26 +1438,27 @@
         // --- THEME TOGGLE ---
         function toggleTheme() {
             const body = document.body;
-            const btn = document.getElementById('themeBtn');
+            const btn = document.getElementById('themeToggleBtn');
             body.classList.toggle('light-theme');
             if (body.classList.contains('light-theme')) {
-                btn.innerText = '☀';
+                if (btn) btn.innerText = '☀';
                 localStorage.setItem('theme', 'light');
             } else {
-                btn.innerText = '☽';
+                if (btn) btn.innerText = '☽';
                 localStorage.setItem('theme', 'dark');
             }
         }
 
         if (localStorage.getItem('theme') === 'light') {
             document.body.classList.add('light-theme');
-            document.getElementById('themeBtn').innerText = '☀';
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) btn.innerText = '☀';
         }
     </script>
     <!-- A-LAB Web3 & Identity Integration -->
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="../supabase-client.js"></script>
-    <script defer src="web3-manager.js"></script>
+    <script defer src="../web3-manager.js"></script>
     <script defer src="../search-manager.js"></script>
     <script defer src="../i18n.js"></script>
 </body>
