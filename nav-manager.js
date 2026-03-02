@@ -18,9 +18,20 @@ const ResidentNav = {
         document.body.classList.add('has-resident-nav');
     },
 
-    checkAuth() {
-        const token = localStorage.getItem('sb-yirszunrxtunvzpxwvqz-auth-token') || localStorage.getItem('alab_resident_id');
-        this.userLoggedIn = !!token;
+    async checkAuth() {
+        const db = window.ALabCore?.db;
+        if (db) {
+            const { data: { session } } = await db.auth.getSession();
+            this.userLoggedIn = !!session;
+        } else {
+            // Fallback to searching all localStorage keys for supabase tokens
+            this.userLoggedIn = Object.keys(localStorage).some(k => k.includes('supabase.auth.token'));
+        }
+
+        // Re-render if state changed (though usually init is called once)
+        if (this.userLoggedIn && !document.querySelector('.logout-btn-sidebar')) {
+            this.render();
+        }
     },
 
     render() {
@@ -57,6 +68,11 @@ const ResidentNav = {
                 <button class="nav-item hover-trigger ${currentPage.includes('admin') || currentPage.includes('workspace') ? 'active' : ''}" style="background:none; border:none; width:100%;" onclick="ResidentNav.handleSettingsClick()">
                     <i>${this.userLoggedIn ? '⚙️' : '🔑'}</i> <span>${this.userLoggedIn ? (window.I18n?.t('sidebar.settings') || 'Личный Кабинет') : (window.I18n?.t('auth.login') || 'Войти')}</span>
                 </button>
+                ${this.userLoggedIn ? `
+                <button class="nav-item hover-trigger logout-btn-sidebar" style="background:none; border:none; width:100%; color: var(--accent); opacity: 0.7;" onclick="ResidentNav.logout()">
+                    <i>🔌</i> <span>${window.I18n?.t('nav.logout') || 'Выход'}</span>
+                </button>
+                ` : ''}
             </div>
         `;
 

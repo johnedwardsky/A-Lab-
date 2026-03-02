@@ -62,6 +62,13 @@ const MainMenu = (() => {
             desc_en: 'Contact us directly. Project discussion and partnership.'
         },
         {
+            label_ru: 'Эфир', label_en: 'Aether', url: residentPrefix + 'feed.html',
+            code: 'COMMUNITY_STREAM',
+            desc_ru: 'Прямая трансляция жизни сообщества. Мысли, обновления и инсайды резидентов.',
+            desc_en: 'Live stream of community life. Thoughts, updates, and resident insights.',
+            requiresAuth: true
+        },
+        {
             label_ru: 'Резиденты', label_en: 'Residents', url: residentPrefix + 'index.html',
             code: 'RESIDENT_GRID',
             desc_ru: 'Закрытое сообщество инноваторов. Скоро будет открыто для резидентов A-LAB.',
@@ -133,17 +140,29 @@ const MainMenu = (() => {
     /**
      * Check auth status
      */
-    function checkAuth() {
-        // Updated check for our localized storage keys
-        const token = localStorage.getItem('sb-yirszunrxtunvzpxwvqz-auth-token') || localStorage.getItem('alab_resident_id');
-        userLoggedIn = !!token;
+    async function checkAuth() {
+        if (window.ALabCore?.db) {
+            const { data: { session } } = await window.ALabCore.db.auth.getSession();
+            userLoggedIn = !!session;
+        } else {
+            userLoggedIn = Object.keys(localStorage).some(k => k.includes('supabase.auth.token'));
+        }
+    }
+
+    async function logout() {
+        if (window.ALabCore?.db) {
+            await window.ALabCore.db.auth.signOut();
+        }
+        localStorage.removeItem('sb-yirszunrxtunvzpxwvqz-auth-token'); // Clear legacy if any
+        localStorage.removeItem('alab_resident_id');
+        window.location.reload();
     }
 
     /**
      * Render the menu
      */
-    function render() {
-        checkAuth();
+    async function render() {
+        await checkAuth();
         // Remove existing
         const existing = document.getElementById('alab-main-menu');
         if (existing) existing.remove();
@@ -163,16 +182,23 @@ const MainMenu = (() => {
                         <button class="menu-close hover-trigger" onclick="MainMenu.toggle()">✕</button>
                         
                         <div class="menu-nav-list" style="margin-top: auto; margin-bottom: auto;">
-                            ${menuItems.map((item, index) => `
-                                <a href="${getURL(item)}" 
-                                   class="nav-link hover-trigger ${getURL(item).includes(currentPage) ? 'active' : ''}"
+                            ${menuItems.map((item, index) => {
+            const isLocked = item.requiresAuth && !userLoggedIn;
+            const itemUrl = isLocked ? '#' : getURL(item);
+            const onclickAttr = isLocked
+                ? `onclick="event.preventDefault(); MainMenu.showAccessModal()"`
+                : (item.onclick ? `onclick="event.preventDefault(); MainMenu.toggle(); ${item.onclick}"` : '');
+            return `
+                                <a href="${itemUrl}" 
+                                   class="nav-link hover-trigger ${getURL(item).includes(currentPage) ? 'active' : ''} ${isLocked ? 'nav-link--locked' : ''}"
                                    data-index="${String(index + 1).padStart(2, '0')}"
                                    data-target="item-${index}"
-                                   ${item.onclick ? `onclick="event.preventDefault(); MainMenu.toggle(); ${item.onclick}"` : ''}
+                                   ${onclickAttr}
                                    target="${item.target || '_self'}">
                                     ${getLabel(item)}
-                                </a>
-                            `).join('')}
+                                    ${isLocked ? '<span class="nav-link-badge">RESIDENT ONLY</span>' : ''}
+                                </a>`;
+        }).join('')}
                         </div>
 
                         <div class="menu-bottom-controls">
@@ -182,9 +208,16 @@ const MainMenu = (() => {
                                 <button class="lang-btn hover-trigger ${lang === 'en' ? 'active' : ''}" onclick="MainMenu.switchLang('en')">EN</button>
                             </div>
                             
-                            <a href="${userLoggedIn ? dashboardUrl : loginUrl}" class="auth-text-btn hover-trigger">
-                                ${userLoggedIn ? (lang === 'en' ? 'DASHBOARD' : 'КАБИНЕТ') : (lang === 'en' ? 'LOGIN' : 'ВХОД')}
-                            </a>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <a href="${userLoggedIn ? dashboardUrl : loginUrl}" class="auth-text-btn hover-trigger">
+                                    ${userLoggedIn ? (lang === 'en' ? 'DASHBOARD' : 'КАБИНЕТ') : (lang === 'en' ? 'LOGIN' : 'ВХОД')}
+                                </a>
+                                ${userLoggedIn ? `
+                                    <button onclick="MainMenu.logout()" class="hover-trigger" style="background:none; border:none; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; cursor: pointer; opacity: 0.6; padding-left: 10px;">
+                                        ${lang === 'en' ? '[ EXIT ]' : '[ ВЫХОД ]'}
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
 
@@ -534,9 +567,113 @@ const MainMenu = (() => {
                 .menu-top-controls {
                     margin-top: 0;
                 }
+                .nav-link--locked {
+                    opacity: 0.5;
+                    cursor: pointer;
+                }
+                .nav-link--locked:hover {
+                    opacity: 0.85;
+                    color: var(--accent, #FF2A2A);
+                }
+                .nav-link-badge {
+                    display: inline-block;
+                    margin-left: 12px;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 0.55rem;
+                    letter-spacing: 1.5px;
+                    color: #FF2A2A;
+                    border: 1px solid rgba(255,42,42,0.4);
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    vertical-align: middle;
+                    background: rgba(255,42,42,0.06);
+                    transform: translateY(-4px);
+                    position: relative;
+                }
             }
         `;
         document.head.appendChild(style);
+    }
+
+    /**
+     * Show modal for restricted (Resident-only) sections
+     */
+    function showAccessModal() {
+        const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
+        const loginUrl = residentPrefix + 'login.html';
+
+        let modal = document.getElementById('alab-access-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'alab-access-modal';
+            modal.style.cssText = `
+                position: fixed; inset: 0; z-index: 99999;
+                display: flex; align-items: center; justify-content: center;
+                background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+                animation: fadeIn 0.3s ease;
+            `;
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = `
+            <div style="
+                background: #0a0a0a; border: 1px solid #1a1a1a;
+                border-radius: 20px; padding: 50px 45px; max-width: 440px; width: 90%;
+                text-align: center; position: relative;
+                box-shadow: 0 0 80px rgba(255,42,42,0.08), 0 40px 80px rgba(0,0,0,0.8);
+                animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            ">
+                <button onclick="document.getElementById('alab-access-modal').remove()" style="
+                    position: absolute; top: 16px; right: 16px;
+                    background: none; border: 1px solid rgba(255,255,255,0.1);
+                    width: 32px; height: 32px; border-radius: 50%;
+                    color: #888; cursor: pointer; font-size: 1rem;
+                    display: flex; align-items: center; justify-content: center;
+                ">✕</button>
+
+                <div style="font-size: 3rem; margin-bottom: 20px; line-height: 1;">📡</div>
+
+                <div style="
+                    font-family: 'JetBrains Mono', monospace;
+                    color: #FF2A2A; font-size: 0.65rem; letter-spacing: 2px;
+                    border: 1px solid rgba(255,42,42,0.3); display: inline-block;
+                    padding: 4px 12px; border-radius: 4px; margin-bottom: 20px;
+                    background: rgba(255,42,42,0.05);
+                ">${lang === 'en' ? 'RESIDENT ZONE' : 'ЗОНА РЕЗИДЕНТОВ'}</div>
+
+                <h2 style="
+                    font-family: 'Inter', sans-serif; font-size: 1.6rem;
+                    font-weight: 800; color: white; margin-bottom: 12px; line-height: 1.2;
+                ">${lang === 'en' ? 'Aether is for residents' : 'Эфир — для резидентов'}</h2>
+
+                <p style="
+                    color: #666; font-size: 0.9rem; line-height: 1.7; margin-bottom: 35px;
+                ">${lang === 'en'
+                ? 'The community stream is available exclusively to A-LAB residents. Log in to join the conversation.'
+                : 'Лента сообщества доступна только резидентам A-LAB. Войдите в систему, чтобы присоединиться.'
+            }</p>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="${loginUrl}" style="
+                        display: block; text-align: center; text-decoration: none;
+                        padding: 14px 24px; border-radius: 12px;
+                        background: white; color: black;
+                        font-family: 'JetBrains Mono', monospace; font-weight: 700;
+                        font-size: 0.85rem; letter-spacing: 0.5px;
+                        transition: 0.2s;
+                    ">${lang === 'en' ? '→ SIGN IN' : '→ ВОЙТИ В СИСТЕМУ'}</a>
+                    <button onclick="document.getElementById('alab-access-modal').remove()" style="
+                        background: none; border: 1px solid rgba(255,255,255,0.08);
+                        border-radius: 12px; padding: 12px 24px; color: #555;
+                        font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+                        cursor: pointer; transition: 0.2s;
+                    ">${lang === 'en' ? 'Maybe later' : 'Позже'}</button>
+                </div>
+            </div>
+            <style>
+                @keyframes scaleIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+            </style>
+        `;
     }
 
     /**
@@ -597,5 +734,5 @@ const MainMenu = (() => {
         init();
     }
 
-    return { init, toggle, switchLang, render };
+    return { init, toggle, switchLang, render, logout, showAccessModal };
 })();

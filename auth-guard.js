@@ -59,6 +59,12 @@
         // Fire event so other scripts know auth is ready
         document.dispatchEvent(new CustomEvent('alab:auth-ready', { detail: window.ALabAuth }));
 
+        // Expose logout
+        window.ALabAuth.logout = async () => {
+            await db.auth.signOut();
+            window.location.href = 'login.html';
+        };
+
         // Log the visit
         window.ALabCore.log('page_visit', window.location.pathname);
 

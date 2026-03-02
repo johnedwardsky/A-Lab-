@@ -820,7 +820,7 @@
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
                 alt="A-LAB" loading="eager" decoding="async"></a>
-        <div style="display: flex; align-items: center; pointer-events: auto;">
+        <div style="display: flex; align-items: center; pointer-events: auto; gap: 10px;" id="headerActions">
             <button class="theme-toggle hover-trigger" onclick="toggleTheme()" id="themeToggleBtn">🌓</button>
             <a href="residents.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
         </div>
@@ -1400,6 +1400,39 @@
                 trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
                 trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
             });
+
+            // Auth actions in header
+            const checkAuthStatus = async () => {
+                const db = window.ALabCore?.db;
+                if (!db) return;
+                const { data: { session } } = await db.auth.getSession();
+                if (session) {
+                    const actions = document.getElementById('headerActions');
+                    if (actions && !document.getElementById('logoutBtn')) {
+                        const manageBtn = document.createElement('a');
+                        manageBtn.href = 'residents/workspace.html';
+                        manageBtn.className = 'back-btn hover-trigger';
+                        manageBtn.style.borderColor = 'var(--tech-blue)';
+                        manageBtn.style.color = 'var(--tech-blue)';
+                        manageBtn.innerText = '/// DASHBOARD';
+
+                        const logoutBtn = document.createElement('button');
+                        logoutBtn.id = 'logoutBtn';
+                        logoutBtn.className = 'back-btn hover-trigger';
+                        logoutBtn.style.background = 'none';
+                        logoutBtn.style.color = 'var(--accent)';
+                        logoutBtn.innerText = '/// EXIT';
+                        logoutBtn.onclick = async () => {
+                            await db.auth.signOut();
+                            window.location.reload();
+                        };
+
+                        actions.prepend(logoutBtn);
+                        actions.prepend(manageBtn);
+                    }
+                }
+            };
+            checkAuthStatus();
         }
 
         function getIcon(key) {

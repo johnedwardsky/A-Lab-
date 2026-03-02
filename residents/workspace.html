@@ -1052,8 +1052,10 @@
         <div style="margin-top: auto; display: flex; flex-direction: column; gap: 6px; width: 100%;">
             <a href="#" class="nav-item hover-trigger" id="sidebarPinBtn" onclick="toggleSidebarPin()"
                 title="Закрепить меню" style="opacity:0.4; font-size:0.7rem;"><i>📌</i> <span>Закрепить</span></a>
-            <a href="../index.html" class="nav-item hover-trigger" style="color: var(--accent);"><i>🔌</i> <span>На
-                    сайт</span></a>
+            <a href="../index.html" class="nav-item hover-trigger"><i>🔌</i> <span>На сайт</span></a>
+            <a href="#" class="nav-item hover-trigger" onclick="window.ALabAuth?.logout()"
+                style="color: var(--accent); border-top: 1px solid rgba(255,42,42,0.1); margin-top: 5px;"><i>🚪</i>
+                <span>Выйти</span></a>
         </div>
     </aside>
 
@@ -1756,7 +1758,7 @@
     <script src="../supabase-client.js"></script>
     <script src="../i18n.js"></script>
     <script src="../toast.js"></script>
-    <script src="auth-guard.js"></script>
+    <script src="../auth-guard.js"></script>
     <script src="../resident-profile-manager.js"></script>
 
     <script>
