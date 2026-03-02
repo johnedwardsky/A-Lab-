@@ -1,473 +1,540 @@
 /**
- * A-LAB: RESIDENT PROFILE MANAGER
+ * A-LAB: RESIDENT PROFILE MANAGER v3
  * ============================================================
- * Handles: loading profile, saving changes, avatar upload, skill tags.
+ * Single source of truth for all resident data in workspace.html.
+ * Handles: profile CRUD, avatar upload, Astra wallet,
+ *          private project management, password change.
  * Depends on: supabase-client.js, auth-guard.js, toast.js
  */
 
 (function () {
     'use strict';
 
-    const ProfileManager = {
+    const ResidentProfileManager = {
         profile: null,
+        wallet: null,
         residentId: null,
-        isDirty: false,
+        userId: null,
 
-        /**
-         * Initialize — call after auth is ready
-         */
-        async init() {
-            document.addEventListener('alab:auth-ready', async (e) => {
-                const auth = e.detail;
-                if (auth.mockMode) {
-                    console.log('[PROFILE] Running in mock mode — no data loading.');
-                    this._bindUI();
-                    return;
-                }
-                if (auth.profile) {
-                    this.profile = auth.profile;
-                    this.residentId = auth.profile.id;
-                    this._populateForm(auth.profile);
-                }
-                this._bindUI();
-            });
-        },
-
-        /**
-         * Populate form fields from profile data
-         */
-        _populateForm(p) {
-            // Name & Role
-            const nameInput = document.querySelector('#profileName');
-            const roleInput = document.querySelector('#profileRole');
-            const bioTextarea = document.querySelector('#profileBio');
-
-            if (nameInput) nameInput.value = p.full_name || '';
-            if (roleInput) roleInput.value = p.role || '';
-            if (bioTextarea) bioTextarea.value = p.bio || '';
-
-            // Avatar
-            const avatarImg = document.querySelector('#avatarPreview');
-            if (avatarImg && p.avatar_url) {
-                avatarImg.src = p.avatar_url;
-            }
-
-            // Links
-            const links = p.links || {};
-            const portfolioInput = document.querySelector('#profilePortfolio');
-            const githubInput = document.querySelector('#profileGithub');
-            const telegramInput = document.querySelector('#profileTelegram');
-            const twitterInput = document.querySelector('#profileTwitter');
-
-            if (portfolioInput) portfolioInput.value = links.portfolio || '';
-            if (githubInput) githubInput.value = links.github || '';
-            if (telegramInput) telegramInput.value = links.telegram || '';
-            if (twitterInput) twitterInput.value = links.twitter || '';
-
-            // Skills/tags
-            const skills = p.skills || [];
-            this._renderSkillTags(skills);
-
-            // Status
-            const status = p.status || 'open';
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.classList.contains(status)) {
-                    btn.classList.add('active');
-                }
-            });
-
-            // Preview card
-            this._updatePreview(p);
-
-            // Settings tab (Detailed)
-            const s = p.settings || {};
-            const langSelect = document.querySelector('#settingLang');
-            const visibilitySelect = document.querySelector('#settingVisibility');
-            const onlineCheck = document.querySelector('#settingOnlineStatus');
-            const emailCheck = document.querySelector('#settingEmailNotifs');
-            const pushCheck = document.querySelector('#settingPushNotifs');
-            const weeklyCheck = document.querySelector('#settingWeeklyDigest');
-            const notifsBtn = document.querySelector('#settingNotifs');
-
-            if (langSelect) langSelect.value = s.language || 'ru';
-            if (visibilitySelect) visibilitySelect.value = s.visibility || 'public';
-            if (onlineCheck) onlineCheck.checked = s.online_status !== 'hide';
-
-            if (s.notifications) {
-                if (emailCheck) emailCheck.checked = s.notifications.email !== false;
-                if (pushCheck) pushCheck.checked = s.notifications.push !== false;
-                if (weeklyCheck) weeklyCheck.checked = s.notifications.weekly_digest === true;
-            }
-
-            if (notifsBtn) {
-                const areNotifsEnabled = s.notifications?.push !== false;
-                notifsBtn.innerText = areNotifsEnabled ? 'ВКЛЮЧЕНЫ' : 'ВЫКЛЮЧЕНЫ';
-                notifsBtn.classList.toggle('active', areNotifsEnabled);
-                notifsBtn.classList.toggle('open', areNotifsEnabled);
-            }
-            // Achievements/Badges
-            const badges = p.achievements || [
-                { id: 'early_adopter', icon: '🚀', title: 'Early Adopter', on_chain: false },
-                { id: 'top_contributor', icon: '💎', title: 'Top Contributor', on_chain: true },
-                { id: 'beta_tester', icon: '🛠️', title: 'Beta Tester', on_chain: false }
-            ];
-            this._renderBadges(badges);
-        },
-
-        /**
-         * Render achievement badges
-         */
-        _renderBadges(badges) {
-            const container = document.querySelector('#achievementList');
-            if (!container) return;
-
-            container.innerHTML = badges.map(b => `
-                <div class="badge hover-trigger ${b.on_chain ? 'verified' : ''}" data-title="${b.title}">
-                    ${b.icon}
-                    ${!b.on_chain ? `<button class="badge-mint-btn" onclick="ProfileManager.mintBadge('${b.id}')">MINT_NFT</button>` : ''}
-                </div>
-            `).join('');
-        },
-
-        /**
-         * Mint Badge as NFT
-         */
-        async mintBadge(id) {
-            const wallet = typeof Web3Manager !== 'undefined' ? Web3Manager.getAccount() : null;
-            if (!wallet) {
-                if (typeof ALABToast !== 'undefined') ALABToast.info('Подключите кошелек для минта NFT');
+        /* =========================================================
+         * INIT
+         * ========================================================= */
+        async init(auth) {
+            if (!auth || !auth.userId) {
+                console.warn('[RPM] No auth — skipping init');
                 return;
             }
+            this.userId = auth.userId;
+            this.residentId = auth.residentId || null;
+            this.profile = auth.profile || null;
 
-            try {
-                if (typeof ALABToast !== 'undefined') ALABToast.info('Подготовка транзакции минта...');
-
-                // Simulate minting delay
-                await new Promise(r => setTimeout(r, 1500));
-
-                if (typeof ALABToast !== 'undefined') ALABToast.success('Achievement minted as NFT! 🎉');
-
-                // Mock local update (in real app, this would refresh from DB after event)
-                const badges = this._getCurrentBadges();
-                const b = badges.find(x => x.id === id);
-                if (b) b.on_chain = true;
-                this._renderBadges(badges);
-
-                // Log to Supabase
-                window.ALabCore?.log('nft_mint', `Badge ${id} minted as NFT`, { wallet, badge_id: id });
-
-            } catch (err) {
-                console.error('[PROFILE] Mint error:', err);
-                ALabToast.error('Ошибка минта: ' + err.message);
-            }
+            await this.loadProfile();
+            await this.loadWallet();
         },
 
-        _getCurrentBadges() {
-            // Mocking retrieval since we don't have a full schema yet
-            return [
-                { id: 'early_adopter', icon: '🚀', title: 'Early Adopter', on_chain: false },
-                { id: 'top_contributor', icon: '💎', title: 'Top Contributor', on_chain: true },
-                { id: 'beta_tester', icon: '🛠️', title: 'Beta Tester', on_chain: false }
-            ];
-        },
-
-        /**
-         * Render skill tags
-         */
-        _renderSkillTags(skills) {
-            const container = document.querySelector('#skillTagsContainer');
-            if (!container) return;
-
-            container.innerHTML = '';
-            skills.forEach(skill => {
-                const tag = document.createElement('span');
-                tag.className = 'interactive-tag hover-trigger';
-                tag.style.cssText = 'background: var(--tech-blue); color: black; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-code);';
-                tag.innerHTML = `${skill} <span style="cursor: pointer; opacity: 0.5;" onclick="ProfileManager.removeSkill('${skill}')">×</span>`;
-                container.appendChild(tag);
-            });
-
-            // Add button
-            const addBtn = document.createElement('span');
-            addBtn.className = 'interactive-tag hover-trigger';
-            addBtn.style.cssText = 'border: 1px dashed var(--tech-blue); color: var(--tech-blue); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-code); cursor: pointer;';
-            addBtn.textContent = '+ ДОБАВИТЬ';
-            addBtn.onclick = () => this.addSkillPrompt();
-            container.appendChild(addBtn);
-        },
-
-        /**
-         * Add a new skill tag
-         */
-        addSkillPrompt() {
-            const skill = prompt('Введите навык (например: AI_ENGINEERING):');
-            if (!skill || !skill.trim()) return;
-
-            const skills = this._getCurrentSkills();
-            const normalized = skill.trim().toUpperCase().replace(/\s+/g, '_');
-            if (skills.includes(normalized)) {
-                ALabToast.info('Навык уже добавлен');
-                return;
-            }
-            skills.push(normalized);
-            this._renderSkillTags(skills);
-            this.isDirty = true;
-        },
-
-        /**
-         * Remove a skill tag
-         */
-        removeSkill(skill) {
-            const skills = this._getCurrentSkills().filter(s => s !== skill);
-            this._renderSkillTags(skills);
-            this.isDirty = true;
-        },
-
-        /**
-         * Get skills from DOM
-         */
-        _getCurrentSkills() {
-            const container = document.querySelector('#skillTagsContainer');
-            if (!container) return [];
-            return Array.from(container.querySelectorAll('.interactive-tag'))
-                .map(tag => tag.textContent.replace('×', '').trim())
-                .filter(t => t && t !== '+ ДОБАВИТЬ');
-        },
-
-        /**
-         * Update the preview card
-         */
-        _updatePreview(p) {
-            const previewName = document.querySelector('.preview-mini .chat-name');
-            const previewRole = document.querySelector('.preview-mini [style*="font-size: 0.5rem"]');
-            if (previewName) previewName.textContent = p.full_name || 'Имя';
-            if (previewRole) previewRole.textContent = (p.role || 'РОЛЬ').toUpperCase();
-        },
-
-        /**
-         * Bind UI events
-         */
-        _bindUI() {
-            // Status buttons
-            document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    this.isDirty = true;
-                });
-            });
-
-            // Track changes in inputs
-            document.querySelectorAll('#profileName, #profileRole, #profileBio, #profilePortfolio, #profileGithub, #profileTelegram, #profileTwitter, #settingLang, #settingVisibility').forEach(input => {
-                if (input) {
-                    input.addEventListener('input', () => {
-                        this.isDirty = true;
-                        // Live preview update
-                        const name = document.querySelector('#profileName')?.value;
-                        const role = document.querySelector('#profileRole')?.value;
-                        if (name || role) this._updatePreview({ full_name: name, role: role });
-                    });
-                }
-            });
-
-            // Checkboxes
-            document.querySelectorAll('#settingOnlineStatus, #settingEmailNotifs, #settingPushNotifs, #settingWeeklyDigest').forEach(check => {
-                if (check) {
-                    check.addEventListener('change', () => { this.isDirty = true; });
-                }
-            });
-
-            // Notification button toggle (admin panel)
-            const notifsBtn = document.querySelector('#settingNotifs');
-            if (notifsBtn) {
-                notifsBtn.addEventListener('click', () => {
-                    const active = notifsBtn.classList.toggle('active');
-                    notifsBtn.classList.toggle('open', active);
-                    notifsBtn.innerText = active ? 'ВКЛЮЧЕНЫ' : 'ВЫКЛЮЧЕНЫ';
-                    this.isDirty = true;
-                });
-            }
-
-            // Save button
-            const saveBtn = document.querySelector('#saveProfileBtn');
-            if (saveBtn) {
-                saveBtn.addEventListener('click', () => this.save());
-            }
-
-            // Avatar upload
-            const avatarUploadBtn = document.querySelector('#avatarUploadBtn');
-            const avatarFileInput = document.querySelector('#avatarFileInput');
-            if (avatarUploadBtn && avatarFileInput) {
-                avatarUploadBtn.addEventListener('click', () => avatarFileInput.click());
-                avatarFileInput.addEventListener('change', (e) => {
-                    if (e.target.files[0]) this.uploadAvatar(e.target.files[0]);
-                });
-            }
-
-            // Also make the "СМЕНИТЬ" overlay clickable
-            const changeOverlay = document.querySelector('.avatar-upload-box .hover-trigger');
-            if (changeOverlay && avatarFileInput) {
-                changeOverlay.addEventListener('click', () => avatarFileInput.click());
-            }
-        },
-
-        /**
-         * Get selected status
-         */
-        _getSelectedStatus() {
-            const active = document.querySelector('.status-btn.active');
-            if (!active) return 'open';
-            if (active.classList.contains('open')) return 'open';
-            if (active.classList.contains('busy')) return 'busy';
-            if (active.classList.contains('away')) return 'away';
-            return 'open';
-        },
-
-        /**
-         * Save profile to Supabase
-         */
-        async save() {
+        /* =========================================================
+         * PROFILE — LOAD
+         * ========================================================= */
+        async loadProfile() {
             const db = window.ALabCore?.db;
-            const auth = window.ALabAuth;
-
-            if (!db || auth?.mockMode) {
-                ALabToast.info('Работает в режиме демо — данные не сохраняются.');
-                return;
-            }
-
-            const saveBtn = document.querySelector('#saveProfileBtn');
-            if (saveBtn) {
-                saveBtn.disabled = true;
-                saveBtn.textContent = 'СОХРАНЕНИЕ...';
-            }
+            if (!db || !this.userId) return;
 
             try {
-                const updates = {
-                    full_name: document.querySelector('#profileName')?.value || '',
-                    role: document.querySelector('#profileRole')?.value || '',
-                    bio: document.querySelector('#profileBio')?.value || '',
-                    status: this._getSelectedStatus(),
-                    links: {
-                        portfolio: document.querySelector('#profilePortfolio')?.value || '',
-                        github: document.querySelector('#profileGithub')?.value || '',
-                        telegram: document.querySelector('#profileTelegram')?.value || '',
-                        twitter: document.querySelector('#profileTwitter')?.value || ''
-                    },
-                    skills: this._getCurrentSkills(),
-                    settings: {
-                        language: document.querySelector('#settingLang')?.value || 'ru',
-                        visibility: document.querySelector('#settingVisibility')?.value || 'public',
-                        online_status: document.querySelector('#settingOnlineStatus')?.checked ? 'show' : 'hide',
-                        notifications: {
-                            email: document.querySelector('#settingEmailNotifs')?.checked ?? true,
-                            push: document.querySelector('#settingPushNotifs')?.checked ?? (document.querySelector('#settingNotifs')?.classList.contains('active') ?? true),
-                            weekly_digest: document.querySelector('#settingWeeklyDigest')?.checked ?? false
-                        }
-                    }
-                };
-
-                const { error } = await db
+                const { data, error } = await db
                     .from('residents')
-                    .update(updates)
-                    .eq('user_id', auth.userId);
+                    .select('*')
+                    .eq('user_id', this.userId)
+                    .single();
 
                 if (error) throw error;
 
-                this.isDirty = false;
-                ALabToast.success('Профиль обновлен!');
-                window.ALabCore.log('profile_update', 'Profile saved', { fields: Object.keys(updates) });
+                this.profile = data;
+                this.residentId = data.id;
 
+                document.dispatchEvent(new CustomEvent('rpm:profile-loaded', { detail: data }));
+                return data;
             } catch (err) {
-                console.error('[PROFILE] Save error:', err);
-                ALabToast.error('Ошибка сохранения: ' + (err.message || 'Неизвестная ошибка'));
-            } finally {
-                if (saveBtn) {
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = 'СОХРАНИТЬ ИЗМЕНЕНИЯ // SYNC';
-                }
+                console.error('[RPM] loadProfile error:', err);
             }
         },
 
-        /**
-         * Upload avatar to Supabase Storage
-         */
-        async uploadAvatar(file) {
+        /* =========================================================
+         * PROFILE — SAVE (identity + bio + visibility)
+         * ========================================================= */
+        async saveProfile({ fullName, role, bio, visible }) {
             const db = window.ALabCore?.db;
-            const auth = window.ALabAuth;
+            if (!db || !this.residentId) return { error: 'not_ready' };
 
-            if (!db || auth?.mockMode) {
-                // Just show local preview
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.querySelector('#avatarPreview');
-                    if (img) img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-                ALabToast.info('Демо-режим: аватар отображается локально');
-                return;
-            }
-
-            // Validate file
-            if (file.size > 5 * 1024 * 1024) {
-                ALabToast.error('Файл слишком большой (макс. 5MB)');
-                return;
-            }
-            if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-                ALabToast.error('Допустимые форматы: JPG, PNG, WebP');
-                return;
-            }
-
-            ALabToast.info('Загрузка аватара...');
+            const links = { ...(this.profile?.links || {}), visibility: visible ? 'public' : 'hidden' };
 
             try {
-                const ext = file.name.split('.').pop();
-                const fileName = `${auth.userId}-${Date.now()}.${ext}`;
+                const { data, error } = await db
+                    .from('residents')
+                    .update({ full_name: fullName, role, bio, links })
+                    .eq('id', this.residentId)
+                    .select()
+                    .single();
 
-                // Upload to storage
-                const { data: uploadData, error: uploadError } = await db.storage
+                if (error) throw error;
+                this.profile = data;
+                document.dispatchEvent(new CustomEvent('rpm:profile-saved', { detail: data }));
+                return { data };
+            } catch (err) {
+                console.error('[RPM] saveProfile error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * PROFILE — SAVE SKILLS
+         * ========================================================= */
+        async saveSkills(skillsArray) {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return { error: 'not_ready' };
+
+            try {
+                const { data, error } = await db
+                    .from('residents')
+                    .update({ skills: skillsArray })
+                    .eq('id', this.residentId)
+                    .select()
+                    .single();
+
+                if (error) throw error;
+                this.profile = data;
+                return { data };
+            } catch (err) {
+                console.error('[RPM] saveSkills error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * PROFILE — SAVE LINKS
+         * ========================================================= */
+        async saveLinks({ website, telegram, github, behance, linkedin }) {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return { error: 'not_ready' };
+
+            const existingLinks = this.profile?.links || {};
+            const links = {
+                ...existingLinks,
+                portfolio: website || existingLinks.portfolio || null,
+                telegram: telegram || existingLinks.telegram || null,
+                github: github || existingLinks.github || null,
+                behance: behance || existingLinks.behance || null,
+                linkedin: linkedin || existingLinks.linkedin || null,
+            };
+
+            try {
+                const { data, error } = await db
+                    .from('residents')
+                    .update({ links })
+                    .eq('id', this.residentId)
+                    .select()
+                    .single();
+
+                if (error) throw error;
+                this.profile = data;
+                return { data };
+            } catch (err) {
+                console.error('[RPM] saveLinks error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * AVATAR — UPLOAD via Supabase Storage
+         * ========================================================= */
+        async uploadAvatar(file) {
+            const db = window.ALabCore?.db;
+            if (!db || !this.userId) return { error: 'not_ready' };
+
+            const ext = file.name.split('.').pop();
+            const fileName = `${this.userId}/avatar.${ext}`;
+
+            try {
+                const { error: uploadError } = await db.storage
                     .from('avatars')
-                    .upload(fileName, file, { upsert: true });
+                    .upload(fileName, file, { upsert: true, contentType: file.type });
 
                 if (uploadError) throw uploadError;
 
-                // Get public URL
-                const { data: { publicUrl } } = db.storage
+                const { data: urlData } = db.storage
                     .from('avatars')
                     .getPublicUrl(fileName);
 
-                // Update profile in DB
-                const { error: updateError } = await db
+                const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
+
+                const { data, error: updateError } = await db
                     .from('residents')
-                    .update({ avatar_url: publicUrl })
-                    .eq('user_id', auth.userId);
+                    .update({ avatar_url: avatarUrl })
+                    .eq('id', this.residentId)
+                    .select()
+                    .single();
 
                 if (updateError) throw updateError;
-
-                // Update UI
-                const img = document.querySelector('#avatarPreview');
-                if (img) img.src = publicUrl;
-
-                // Also update preview card
-                const previewImg = document.querySelector('.preview-mini img');
-                if (previewImg) previewImg.src = publicUrl;
-
-                ALabToast.success('Аватар обновлен!');
+                this.profile = data;
+                return { url: avatarUrl };
 
             } catch (err) {
-                console.error('[PROFILE] Avatar upload error:', err);
-                ALabToast.error('Ошибка загрузки: ' + (err.message || 'Неизвестная ошибка'));
+                console.error('[RPM] uploadAvatar error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * STATUS — UPDATE (online / busy / away)
+         * ========================================================= */
+        async setStatus(status) {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return;
+
+            try {
+                await db
+                    .from('residents')
+                    .update({ status })
+                    .eq('id', this.residentId);
+
+                if (this.profile) this.profile.status = status;
+            } catch (err) {
+                console.error('[RPM] setStatus error:', err);
+            }
+        },
+
+        /* =========================================================
+         * PASSWORD — CHANGE (Supabase Auth — fully secure)
+         * ========================================================= */
+        async changePassword(currentPassword, newPassword) {
+            const db = window.ALabCore?.db;
+            if (!db) return { error: 'not_connected' };
+
+            // Verify current password by re-authenticating
+            const { data: { user } } = await db.auth.getUser();
+            if (!user?.email) return { error: 'no_user' };
+
+            // Re-sign-in to validate current password
+            const { error: signInError } = await db.auth.signInWithPassword({
+                email: user.email,
+                password: currentPassword
+            });
+
+            if (signInError) {
+                return { error: 'wrong_current_password' };
+            }
+
+            // Update to new password
+            const { error: updateError } = await db.auth.updateUser({
+                password: newPassword
+            });
+
+            if (updateError) {
+                return { error: updateError.message };
+            }
+
+            return { success: true };
+        },
+
+        /* =========================================================
+         * ASTRA WALLET — LOAD balance + recent transactions
+         * ========================================================= */
+        async loadWallet() {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return;
+
+            try {
+                const { data: walletData, error: walletError } = await db
+                    .from('astra_balances')
+                    .select('*')
+                    .eq('resident_id', this.residentId)
+                    .single();
+
+                if (walletError) throw walletError;
+                this.wallet = walletData;
+
+                // Load last 20 transactions using real column names: from_id / to_id
+                const { data: txData, error: txError } = await db
+                    .from('astra_transactions')
+                    .select('*')
+                    .or(`from_id.eq.${this.residentId},to_id.eq.${this.residentId}`)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (txError) console.warn('[RPM] tx load warn:', txError);
+
+                document.dispatchEvent(new CustomEvent('rpm:wallet-loaded', {
+                    detail: { wallet: walletData, transactions: txData || [] }
+                }));
+
+                return { wallet: walletData, transactions: txData || [] };
+            } catch (err) {
+                console.error('[RPM] loadWallet error:', err);
+            }
+        },
+
+        /* =========================================================
+         * ASTRA WALLET — SEND tokens to another resident
+         * ========================================================= */
+        async sendAstra(recipientUserId, amount, description = '') {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return { error: 'not_ready' };
+
+            const numAmount = parseFloat(amount);
+            if (isNaN(numAmount) || numAmount <= 0) return { error: 'invalid_amount' };
+
+            // Read fresh balance to avoid stale cache
+            const { data: freshWallet } = await db
+                .from('astra_balances')
+                .select('balance')
+                .eq('resident_id', this.residentId)
+                .single();
+
+            const currentBalance = parseFloat(freshWallet?.balance || 0);
+            if (currentBalance < numAmount) return { error: 'insufficient_funds' };
+
+            try {
+                // Get recipient resident record
+                const { data: recipientData, error: recipientError } = await db
+                    .from('residents')
+                    .select('id')
+                    .eq('user_id', recipientUserId)
+                    .single();
+
+                if (recipientError || !recipientData) return { error: 'recipient_not_found' };
+                const recipientResidentId = recipientData.id;
+
+                // Debit sender
+                const { error: debitError } = await db
+                    .from('astra_balances')
+                    .update({ balance: currentBalance - numAmount })
+                    .eq('resident_id', this.residentId);
+
+                if (debitError) throw debitError;
+
+                // Credit receiver
+                const { data: receiverWallet, error: receiverError } = await db
+                    .from('astra_balances')
+                    .select('balance')
+                    .eq('resident_id', recipientResidentId)
+                    .single();
+
+                if (receiverError) throw receiverError;
+
+                await db
+                    .from('astra_balances')
+                    .update({ balance: parseFloat(receiverWallet.balance) + numAmount })
+                    .eq('resident_id', recipientResidentId);
+
+                // Log transaction — real columns: from_id, to_id, type, reason
+                await db.from('astra_transactions').insert({
+                    from_id: this.residentId,
+                    to_id: recipientResidentId,
+                    amount: numAmount,
+                    type: 'transfer',
+                    reason: description || 'Перевод Astra'
+                });
+
+                await this.loadWallet();
+                return { success: true };
+
+            } catch (err) {
+                console.error('[RPM] sendAstra error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * PROJECTS — LOAD (my projects)
+         * ========================================================= */
+        async loadMyProjects() {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return [];
+
+            try {
+                const { data, error } = await db
+                    .from('resident_projects')
+                    .select('*')
+                    .eq('owner_id', this.residentId)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                return data || [];
+            } catch (err) {
+                console.error('[RPM] loadMyProjects error:', err);
+                return [];
+            }
+        },
+
+        /* =========================================================
+         * PROJECTS — CREATE
+         * ========================================================= */
+        async createProject({ title, description, category, budget, status = 'active' }) {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return { error: 'not_ready' };
+
+            try {
+                const { data, error } = await db
+                    .from('resident_projects')
+                    .insert({
+                        owner_id: this.residentId,
+                        title,
+                        description,
+                        category: category || 'other',
+                        astra_budget: parseFloat(budget) || 0,
+                        status
+                    })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+                document.dispatchEvent(new CustomEvent('rpm:project-created', { detail: data }));
+                return { data };
+            } catch (err) {
+                console.error('[RPM] createProject error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * PROJECTS — DELETE
+         * ========================================================= */
+        async deleteProject(projectId) {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return { error: 'not_ready' };
+
+            try {
+                const { error } = await db
+                    .from('resident_projects')
+                    .delete()
+                    .eq('id', projectId)
+                    .eq('owner_id', this.residentId); // safety: only owner can delete
+
+                if (error) throw error;
+                return { success: true };
+            } catch (err) {
+                console.error('[RPM] deleteProject error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * PUBLIC PROFILE — fetch any resident by user_id or slug
+         * ========================================================= */
+        async fetchPublicProfile(identifier) {
+            const db = window.ALabCore?.db;
+            if (!db) return null;
+
+            try {
+                // Try user_id (UUID) first
+                const isUUID = /^[0-9a-f-]{36}$/.test(identifier);
+                let query = db.from('residents').select('*');
+
+                if (isUUID) {
+                    query = query.eq('user_id', identifier);
+                } else {
+                    // Fallback: match by full_name slug (legacy static pages)
+                    const name = identifier.replace(/-/g, ' ');
+                    query = query.ilike('full_name', name);
+                }
+
+                const { data, error } = await query.single();
+                if (error) throw error;
+                return data;
+            } catch (err) {
+                console.error('[RPM] fetchPublicProfile error:', err);
+                return null;
+            }
+        },
+
+        /* =========================================================
+         * FEED — load resident activity feed
+         * ========================================================= */
+        async loadFeed() {
+            const db = window.ALabCore?.db;
+            if (!db) return [];
+
+            try {
+                // Table is 'posts' (not feed_posts)
+                const { data, error } = await db
+                    .from('posts')
+                    .select(`
+                        *,
+                        author:residents!author_id(full_name, avatar_url, role)
+                    `)
+                    .order('created_at', { ascending: false })
+                    .limit(30);
+
+                if (error) throw error;
+                // Normalize: support both 'content' and 'body' columns
+                return (data || []).map(p => ({
+                    ...p,
+                    content: p.content || p.body || p.text || ''
+                }));
+            } catch (err) {
+                console.error('[RPM] loadFeed error:', err);
+                return [];
+            }
+        },
+
+        /* =========================================================
+         * FEED — post a new update
+         * ========================================================= */
+        async postFeedItem(content) {
+            const db = window.ALabCore?.db;
+            if (!db || !this.residentId) return { error: 'not_ready' };
+
+            try {
+                // Table is 'posts' (matches existing schema)
+                const { data, error } = await db
+                    .from('posts')
+                    .insert({ author_id: this.residentId, content })
+                    .select()
+                    .single();
+
+                if (error) throw error;
+                return { data };
+            } catch (err) {
+                console.error('[RPM] postFeedItem error:', err);
+                return { error: err.message };
+            }
+        },
+
+        /* =========================================================
+         * RESIDENTS — list all visible (for send-to / message-to)
+         * ========================================================= */
+        async fetchAllResidents() {
+            const db = window.ALabCore?.db;
+            if (!db) return [];
+
+            try {
+                const { data, error } = await db
+                    .from('residents')
+                    .select('id, user_id, full_name, avatar_url, role, status')
+                    .neq('links->>visibility', 'hidden')
+                    .order('full_name');
+
+                if (error) throw error;
+                return data || [];
+            } catch (err) {
+                console.error('[RPM] fetchAllResidents error:', err);
+                return [];
             }
         }
     };
 
-    // Make globally accessible
-    window.ProfileManager = ProfileManager;
+    window.ResidentProfileManager = ResidentProfileManager;
 
-    // Auto-init when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => ProfileManager.init());
-    } else {
-        ProfileManager.init();
+    // Auto-init when auth is ready
+    document.addEventListener('alab:auth-ready', async (e) => {
+        const auth = e.detail;
+        if (auth && !auth.mockMode) {
+            await ResidentProfileManager.init(auth);
+        }
+    });
+
+    // If auth already fired before this script loaded
+    if (window.ALabAuth && !window.ALabAuth.mockMode) {
+        ResidentProfileManager.init(window.ALabAuth);
     }
+
 })();

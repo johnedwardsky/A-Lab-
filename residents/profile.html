@@ -818,7 +818,8 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="../assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="../assets/img/A-lab-logo.svg"
+                alt="A-LAB" loading="eager" decoding="async"></a>
         <div style="display: flex; align-items: center; pointer-events: auto;">
             <button class="theme-toggle hover-trigger" onclick="toggleTheme()" id="themeToggleBtn">🌓</button>
             <a href="residents.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
@@ -1175,16 +1176,18 @@
 
         async function initProfile() {
             const urlParams = new URLSearchParams(window.location.search);
-            const residentId = urlParams.get('id') || 'ivan-lakshinsky';
+            const identifier = urlParams.get('id') || 'ivan-lakshinsky';
 
-            // Check if it's a UUID
-            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(residentId);
+            // UUID? → fetch from DB. Slug → try DB first, then static fallback.
+            const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
 
             let data;
             if (isUuid) {
-                data = await fetchFromDB(residentId);
+                data = await fetchFromDB(identifier);
             } else {
-                data = residentsData[residentId] || residentsData['ivan-lakshinsky'];
+                // Try DB by slug first
+                data = await fetchFromDBBySlug(identifier);
+                if (!data) data = residentsData[identifier] || residentsData['ivan-lakshinsky'];
             }
 
             if (data) populatePage(data);
@@ -1193,48 +1196,118 @@
         async function fetchFromDB(uuid) {
             const db = window.ALabCore?.db;
             if (!db) return null;
-
             try {
                 const { data: r, error } = await db
                     .from('residents')
                     .select('*')
                     .eq('user_id', uuid)
                     .single();
-
                 if (error) throw error;
-
-                // Fetch portfolio items
-                const { data: portfolio, error: pError } = await db
-                    .from('portfolio_items')
-                    .select('*')
-                    .eq('resident_id', uuid)
-                    .order('created_at', { ascending: false });
-
-                if (pError) console.warn('[PROFILE] Portfolio load error:', pError);
-
-                // Map DB schema to UI data structure
-                return {
-                    name: r.full_name,
-                    role: r.role || 'RESIDENT',
-                    img: r.avatar_url || 'maya_neural.png',
-                    bio: r.bio || '',
-                    tokens: 300,
-                    stats: r.settings?.stats || { projects: 0, exhibitions: 0, exp: 0 },
-                    skills: r.skills || [],
-                    links: r.links || {},
-                    works: portfolio || []
-                };
+                return await buildProfileData(r, db);
             } catch (e) {
-                console.error('[PROFILE] DB Fetch error:', e);
+                console.error('[PROFILE] DB fetch error:', e);
                 return null;
             }
         }
+
+        async function fetchFromDBBySlug(slug) {
+            const db = window.ALabCore?.db;
+            if (!db) return null;
+            try {
+                // Convert slug to name: 'ivan-lakshinsky' → 'Ivan Lakshinsky'
+                const name = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                const { data: r, error } = await db
+                    .from('residents')
+                    .select('*')
+                    .ilike('full_name', '%' + name.split(' ')[0] + '%')
+                    .single();
+                if (error) return null;
+                return await buildProfileData(r, db);
+            } catch {
+                return null;
+            }
+        }
+
+        async function buildProfileData(r, db) {
+            // Fetch portfolio
+            const { data: portfolio } = await db
+                .from('portfolio_items')
+                .select('*')
+                .eq('resident_id', r.id)
+                .order('created_at', { ascending: false })
+                .limit(6);
+
+            // Fetch wallet balance
+            let astraBalance = 300;
+            try {
+                const { data: wallet } = await db
+                    .from('astra_wallets')
+                    .select('balance')
+                    .eq('resident_id', r.id)
+                    .single();
+                if (wallet) astraBalance = parseFloat(wallet.balance || 0);
+            } catch { }
+
+            // Fetch project count
+            let projectCount = 0;
+            try {
+                const { count } = await db
+                    .from('resident_projects')
+                    .select('id', { count: 'exact', head: true })
+                    .eq('owner_id', r.id)
+                    .eq('is_public', true);
+                projectCount = count || 0;
+            } catch { }
+
+            const links = r.links || {};
+            return {
+                name: r.full_name,
+                role: r.role || 'RESIDENT',
+                img: r.avatar_url || null,
+                bio: r.bio || '',
+                tokens: astraBalance,
+                userId: r.user_id,
+                stats: { projects: projectCount, exhibitions: r.settings?.exhibitions || 0, exp: r.settings?.exp || 0 },
+                skills: r.skills || [],
+                links: {
+                    ...(links.portfolio ? { portfolio: links.portfolio } : {}),
+                    ...(links.telegram ? { telegram: '@' + links.telegram } : {}),
+                    ...(links.github ? { github: links.github } : {}),
+                    ...(links.behance ? { behance: links.behance } : {}),
+                    ...(links.linkedin ? { linkedin: links.linkedin } : {})
+                },
+                works: portfolio || [],
+                telegramHandle: links.telegram || null
+            };
+        }
+
 
         function populatePage(data) {
             document.getElementById('profileName').innerText = data.name;
             document.getElementById('profileRole').innerText = (data.role || 'RESIDENT').toUpperCase();
             document.getElementById('profileBio').innerText = data.bio;
-            document.getElementById('profileImg').src = data.img;
+
+            // Avatar
+            const imgEl = document.getElementById('profileImg');
+            if (imgEl) {
+                if (data.img) {
+                    imgEl.src = data.img;
+                    imgEl.style.display = 'block';
+                } else {
+                    imgEl.style.display = 'none';
+                    imgEl.closest('.profile-image').innerHTML = '<span style="font-size:3rem;">👤</span>';
+                }
+            }
+
+            // Page title
+            document.title = `${data.name} • A-LAB CORE`;
+
+            // Telegram contact button
+            const tgBtn = document.querySelector('[onclick*="Telegram"]') || document.querySelector('.back-btn[style*="accent"]');
+            if (tgBtn && data.telegramHandle) {
+                tgBtn.onclick = () => window.open('https://t.me/' + data.telegramHandle.replace('@', ''), '_blank');
+                tgBtn.innerText = 'Написать в Telegram';
+            }
 
             if (data.stats) {
                 document.getElementById('statProjects').innerText = data.stats.projects || 0;

@@ -1269,16 +1269,17 @@
         <div class="tab-content" id="feed-tab">
             <div class="left-col" style="grid-column: span 2;">
                 <section class="section-card">
-                    <div class="section-title">Создать Пост</div>
-                    <textarea class="form-textarea" placeholder="Что происходит в вашей лаборатории?"
+                    <div class="section-title">📡 Создать Пост</div>
+                    <textarea class="form-textarea" id="feedPostText"
+                        placeholder="Что происходит в вашей лаборатории? Поделитесь обновлением..."
                         style="height: 80px;"></textarea>
-                    <button class="btn-pulse" style="margin-top: 15px;">Опубликовать в Ленту</button>
+                    <button class="btn-pulse" style="margin-top: 15px;" onclick="postFeed()">Опубликовать в
+                        Ленту</button>
                 </section>
                 <div id="postsList">
-                    <div class="section-card">
-                        <div style="font-size: 0.7rem; color: #555; margin-bottom: 5px;">СЕГОДНЯ // 12:45</div>
-                        <p>Успешно завершен этап обучения модели Vision_V4. Детали доступны в R&D хабе.</p>
-                    </div>
+                    <div
+                        style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">
+                        Загрузка ленты...</div>
                 </div>
             </div>
         </div>
@@ -1391,7 +1392,7 @@
                 </section>
 
             </div>
-            <div class="right-panel" style="">
+            <div class="right-panel">
 
                 <!-- GALLERY -->
                 <section class="section-card" style="height: calc(100vh - 200px); overflow-y: auto;">
@@ -1522,14 +1523,45 @@
         <div class="tab-content" id="astra-tab">
             <div class="left-col">
                 <section class="section-card" style="text-align: center;">
-                    <div class="section-title">Баланс Astra</div>
-                    <div
-                        style="font-size: 3.5rem; font-weight: 800; color: var(--tech-blue); margin: 30px 0; text-shadow: 0 0 20px rgba(0,229,255,0.3);">
-                        1,250 💎</div>
+                    <div class="section-title">💎 Astra Wallet</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--tech-blue); margin: 20px 0; text-shadow: 0 0 20px rgba(0,229,255,0.3);"
+                        id="astraBalanceBig">— 💎</div>
+                    <div style="color:#555;font-family:var(--font-code);font-size:0.75rem;margin-bottom:25px;">≈ $<span
+                            id="astraUsdBig">0.00</span> USD</div>
                     <div style="display: flex; gap: 15px;">
-                        <button class="btn-pulse">Отправить</button>
-                        <button class="status-btn" style="flex: 1;">История</button>
+                        <button class="btn-pulse" onclick="openSendAstraModal()">📤 Отправить</button>
+                        <button class="status-btn" style="flex: 1;" onclick="toggleAstraTx()">📋 История</button>
                     </div>
+                </section>
+
+                <!-- Send Astra form (hidden by default) -->
+                <section class="section-card" id="sendAstraSection" style="display:none;">
+                    <div class="section-title">Перевод Astra</div>
+                    <div class="form-group">
+                        <label class="form-label">Получатель (ID резидента из списка)</label>
+                        <select id="astraSendTo" class="form-input">
+                            <option value="">-- Выберите резидента --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Сумма (ASTRA)</label>
+                        <input type="number" id="astraSendAmount" class="form-input" placeholder="100" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Комментарий (необязательно)</label>
+                        <input type="text" id="astraSendDesc" class="form-input" placeholder="За работу, за проект...">
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn-pulse" onclick="sendAstraTokens()" style="flex:1;">Отправить →</button>
+                        <button class="status-btn"
+                            onclick="document.getElementById('sendAstraSection').style.display='none'">Отмена</button>
+                    </div>
+                </section>
+
+                <!-- Tx history -->
+                <section class="section-card" id="astraTxSection" style="display:none;">
+                    <div class="section-title">История Транзакций</div>
+                    <div id="astraTxList" style="display:flex;flex-direction:column;gap:10px;"></div>
                 </section>
 
                 <!-- DAO VOTING SECTION -->
@@ -1538,8 +1570,7 @@
                     <div id="daoVotesList" style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
                         <div
                             style="text-align:center;padding:30px;color:#333;font-family:var(--font-code);font-size:0.7rem;">
-                            // Нет активных голосований
-                        </div>
+                            // Нет активных голосований</div>
                     </div>
                 </section>
             </div>
@@ -1548,6 +1579,8 @@
                     <div class="section-title">Информация</div>
                     <p style="font-size: 0.8rem; color: #888; line-height: 1.6;">Токены Astra используются для оплаты
                         GPU-вычислений и вознаграждения участников за вклад в проекты R&D.</p>
+                    <p style="font-size:0.75rem;color:#555;margin-top:15px;line-height:1.6;">Курс: <span
+                            style="color:var(--tech-blue);font-family:var(--font-code);">1 ASTRA ≈ $1.50 USD</span></p>
                 </section>
             </div>
         </div>
@@ -1593,30 +1626,7 @@
                     </div>
                     <button class="btn-pulse" onclick="updatePassword()">Обновить Пароль</button>
 
-                    <script>
-                        async function updatePassword() {
-                            const newPass = document.getElementById('newPassword').value;
-                            const confirmPass = document.getElementById('confirmPassword').value;
 
-                            if (!newPass) { showToast('⚠️ Введите новый пароль'); return; }
-                            if (newPass !== confirmPass) { showToast('⚠️ Пароли не совпадают'); return; }
-                            if (newPass.length < 6) { showToast('⚠️ Пароль должен быть не менее 6 символов'); return; }
-
-                            const db = window.ALabCore?.db;
-                            if (!db) return;
-
-                            const { error } = await db.auth.updateUser({ password: newPass });
-
-                            if (error) {
-                                showToast('❌ Ошибка: ' + error.message);
-                            } else {
-                                showToast('✅ Пароль успешно обновлён!');
-                                document.getElementById('newPassword').value = '';
-                                document.getElementById('confirmPassword').value = '';
-                                document.getElementById('oldPassword').value = '';
-                            }
-                        }
-                    </script>
                 </section>
             </div>
             <div class="right-panel">
@@ -1706,6 +1716,8 @@
     <script src="../supabase-client.js"></script>
     <script src="../i18n.js"></script>
     <script src="../toast.js"></script>
+    <script src="auth-guard.js"></script>
+    <script src="../resident-profile-manager.js"></script>
 
     <script>
         // Cursor
@@ -2054,8 +2066,9 @@
         let projects = JSON.parse(localStorage.getItem('alab_projects') || '[]');
         let currentInviteProjectId = null;
 
-        // Astra → USD converter (1 ASTRA = $1.50)
+        // Astra → USD converter — defined once here, referenced throughout
         const ASTRA_RATE = 1.5;
+
 
         document.addEventListener('DOMContentLoaded', () => {
             // Budget live converter
@@ -2455,125 +2468,237 @@
             }
         }
 
-        // Save profile data to localStorage (or Supabase if available)
+        /* ============================
+           PROFILE MANAGEMENT (Real Supabase)
+        ============================ */
+
         async function saveProfile() {
-            const isVisible = document.getElementById('profileVisibility').checked;
-            const profileData = {
-                name: document.getElementById('profileName').value,
-                role: document.getElementById('profileRole').value,
-                bio: document.getElementById('profileBio').value,
-                skills: skills
-            };
-            localStorage.setItem('alab_profile', JSON.stringify(profileData));
+            const rpm = window.ResidentProfileManager;
+            if (!rpm || !rpm.residentId) { showToast('⚠️ Не авторизован'); return; }
 
-            // Try to save to Supabase
-            const db = window.ALabCore?.db;
-            if (db) {
-                try {
-                    // Get current links to keep visibility if it was set by admin
-                    const { data: current } = await db.from('residents').select('links').eq('user_id', window.ALabCore?.userId).single();
-                    const links = current?.links || {};
-                    links.visibility = isVisible ? 'public' : 'hidden';
+            const fullName = document.getElementById('profileName').value.trim();
+            const role = document.getElementById('profileRole').value.trim();
+            const bio = document.getElementById('profileBio').value.trim();
+            const visible = document.getElementById('profileVisibility').checked;
 
-                    const { error } = await db.from('residents').update({
-                        full_name: profileData.name,
-                        role: profileData.role,
-                        bio: profileData.bio,
-                        skills: profileData.skills,
-                        links: links
-                    }).eq('user_id', window.ALabCore?.userId);
-                    if (error) throw error;
-                } catch (e) {
-                    console.warn('[PROFILE] Supabase save error, cached locally:', e.message);
+            if (!fullName) { showToast('⚠️ Укажите имя'); return; }
+
+            // Save skills first if any new ones added
+            await saveSkillsToDb();
+
+            const { data, error } = await rpm.saveProfile({ fullName, role, bio, visible });
+            if (error) { showToast('❌ Ошибка: ' + error); return; }
+
+            // Upload avatar if a new file was selected
+            const avatarFile = document.getElementById('avatarInput').files[0];
+            if (avatarFile) {
+                const { url, error: avatarError } = await rpm.uploadAvatar(avatarFile);
+                if (url) {
+                    document.getElementById('avatarPreview').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+                    document.getElementById('previewAvatar').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                 }
+                if (avatarError) console.warn('[AVATAR]', avatarError);
             }
 
-            showToast('✓ Профиль сохранён');
+            updatePreview();
+            showToast('✅ Профиль сохранён!');
+        }
+
+        async function saveSkillsToDb() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm || !rpm.residentId) return;
+            await rpm.saveSkills(skills);
         }
 
         async function saveLinks() {
-            const links = {
-                website: document.getElementById('linkWebsite').value,
-                telegram: document.getElementById('linkTelegram').value,
-                github: document.getElementById('linkGithub').value,
-                behance: document.getElementById('linkBehance').value,
-                linkedin: document.getElementById('linkLinkedin').value
+            const rpm = window.ResidentProfileManager;
+            if (!rpm || !rpm.residentId) { showToast('⚠️ Не авторизован'); return; }
+
+            const payload = {
+                website: document.getElementById('linkWebsite').value.trim(),
+                telegram: document.getElementById('linkTelegram').value.trim(),
+                github: document.getElementById('linkGithub').value.trim(),
+                behance: document.getElementById('linkBehance').value.trim(),
+                linkedin: document.getElementById('linkLinkedin').value.trim()
             };
-            localStorage.setItem('alab_links', JSON.stringify(links));
-            showToast('✓ Ссылки сохранены');
+
+            const { error } = await rpm.saveLinks(payload);
+            if (error) { showToast('❌ Ошибка сохранения ссылок'); return; }
+            showToast('✅ Ссылки сохранены!');
         }
 
-        function setStatus(statusId, btn) {
+        async function setStatus(statusId, btn) {
             document.querySelectorAll('[id^="status"]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            localStorage.setItem('alab_status', statusId);
-            showToast(`● Статус обновлён`);
+            const rpm = window.ResidentProfileManager;
+            if (rpm && rpm.residentId) await rpm.setStatus(statusId);
+            showToast(`● Статус: ${statusId.toUpperCase()}`);
         }
 
         function showToast(msg) {
-            // Use toast.js if available
             if (window.Toast) { window.Toast.show(msg); return; }
-            // Fallback
             const t = document.createElement('div');
             t.innerText = msg;
-            t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#00E5FF;color:black;padding:10px 20px;border-radius:30px;font-family:var(--font-code);font-size:0.75rem;font-weight:700;z-index:9999;animation:fadeIn 0.2s ease-out;';
+            t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#00E5FF;color:black;padding:10px 20px;border-radius:30px;font-family:var(--font-code);font-size:0.75rem;font-weight:700;z-index:9999;';
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 2500);
         }
 
-        // Load saved profile data on page load
-        function loadProfileData() {
-            try {
-                const saved = JSON.parse(localStorage.getItem('alab_profile') || '{}');
-                if (saved.name) document.getElementById('profileName').value = saved.name;
-                if (saved.role) document.getElementById('profileRole').value = saved.role;
-                if (saved.bio) document.getElementById('profileBio').value = saved.bio;
-                if (saved.skills) { skills = saved.skills; renderSkillTags(); }
+        // Populate form fields from real Supabase profile
+        function loadProfileData(profile) {
+            if (!profile) return;
 
-                // Visibility fallback from local or remote links
-                const savedLinks = JSON.parse(localStorage.getItem('alab_links') || '{}');
-                document.getElementById('profileVisibility').checked = savedLinks.visibility !== 'hidden';
+            if (profile.full_name) document.getElementById('profileName').value = profile.full_name;
+            if (profile.role) document.getElementById('profileRole').value = profile.role;
+            if (profile.bio) document.getElementById('profileBio').value = profile.bio;
 
-                if (savedLinks.website) document.getElementById('linkWebsite').value = savedLinks.website;
-                if (savedLinks.telegram) document.getElementById('linkTelegram').value = savedLinks.telegram;
-                if (savedLinks.github) document.getElementById('linkGithub').value = savedLinks.github;
-                if (savedLinks.behance) document.getElementById('linkBehance').value = savedLinks.behance;
-                if (savedLinks.linkedin) document.getElementById('linkLinkedin').value = savedLinks.linkedin;
+            // Skills
+            if (profile.skills && Array.isArray(profile.skills)) {
+                skills = profile.skills;
+                renderSkillTags();
+            }
 
-                const savedStatus = localStorage.getItem('alab_status') || 'online';
-                document.querySelectorAll('[id^="status"]').forEach(b => b.classList.remove('active'));
-                const activeBtn = document.getElementById('status' + savedStatus.charAt(0).toUpperCase() + savedStatus.slice(1));
-                if (activeBtn) activeBtn.classList.add('active');
+            // Links
+            const links = profile.links || {};
+            document.getElementById('profileVisibility').checked = links.visibility !== 'hidden';
+            if (links.portfolio) document.getElementById('linkWebsite').value = links.portfolio;
+            if (links.telegram) document.getElementById('linkTelegram').value = links.telegram;
+            if (links.github) document.getElementById('linkGithub').value = links.github;
+            if (links.behance) document.getElementById('linkBehance').value = links.behance;
+            if (links.linkedin) document.getElementById('linkLinkedin').value = links.linkedin;
 
-            } catch (e) { console.warn('[PROFILE] Load error:', e); }
+            // Status
+            const statusMap = { online: 'Online', busy: 'Busy', away: 'Away', offline: 'Away' };
+            const btnId = 'status' + (statusMap[profile.status] || 'Online');
+            document.querySelectorAll('[id^="status"]').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById(btnId);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // Avatar
+            if (profile.avatar_url) {
+                const imgHtml = `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;">`;
+                document.getElementById('avatarPreview').innerHTML = imgHtml;
+                document.getElementById('previewAvatar').innerHTML = `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            }
+
+            // Public profile link 
+            const uid = profile.user_id || '';
+            const pubLink = document.getElementById('viewPublicProfile');
+            if (pubLink && uid) pubLink.href = `profile.html?id=${uid}`;
+
+            // Stats
+            const days = Math.max(1, Math.floor((Date.now() - new Date(profile.created_at)) / 86400000));
+            const daysEl = document.getElementById('statDaysDisplay');
+            if (daysEl) daysEl.innerText = days;
+
+            // Public ID display
+            const publicIdEl = document.getElementById('residentPublicId');
+            if (publicIdEl) publicIdEl.innerText = 'ID.' + (profile.full_name || '').toUpperCase().replace(/\s+/g, '_');
+
             updatePreview();
         }
 
-        // Bind live preview to inputs
+        // Bind live preview to inputs + listen for real profile data
         document.addEventListener('DOMContentLoaded', () => {
-            loadProfileData();
             ['profileName', 'profileRole', 'profileBio'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('input', updatePreview);
             });
-
-            // Check for Onboarding on page load
-            setTimeout(checkOnboardingStatus, 1000); // Small delay to let Supabase load
         });
 
-        async function checkOnboardingStatus() {
-            const db = window.ALabCore?.db;
-            if (!db) return;
-            const uid = window.ALabCore?.userId;
-            if (!uid) return;
+        // When ResidentProfileManager fires profile loaded
+        document.addEventListener('rpm:profile-loaded', (e) => {
+            loadProfileData(e.detail);
+            renderProjectsFromDB();
+            loadWalletData();
+            loadFeedData();
+            loadResidentsForMessenger();
+            // Check onboarding
+            if (e.detail?.links?.setup_complete === false) {
+                const nameEl = document.getElementById('onbdName');
+                if (nameEl && e.detail.full_name) nameEl.value = e.detail.full_name;
+                document.getElementById('onboardModal').classList.add('active');
+            }
+        });
 
-            try {
-                const { data } = await db.from('residents').select('full_name, links').eq('user_id', uid).single();
-                if (data && data.links && data.links.setup_complete === false) {
-                    if (data.full_name) document.getElementById('onbdName').value = data.full_name;
-                    document.getElementById('onboardModal').classList.add('active');
-                }
-            } catch (e) { console.error('Error checking setup status', e); }
+        // Also check if RPM already loaded (race condition)
+        if (window.ResidentProfileManager?.profile) {
+            loadProfileData(window.ResidentProfileManager.profile);
+        }
+
+        /* ============================
+           REAL PROJECTS (Supabase)
+        ============================ */
+        async function renderProjectsFromDB() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+            const myProjects = await rpm.loadMyProjects();
+
+            // Merge with localStorage projects for backward compatibility
+            const localProjects = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+            const allProjects = [...myProjects.map(p => ({
+                id: p.id,
+                title: p.title,
+                category: p.category,
+                desc: p.description,
+                budget: p.astra_budget || 0,
+                status: p.status,
+                createdAt: p.created_at,
+                isDB: true
+            })), ...localProjects];
+
+            projects = allProjects;
+            renderProjects();
+
+            // Update stat
+            const el = document.getElementById('statProjectsDisplay');
+            if (el) el.innerText = myProjects.length;
+        }
+
+        async function createProject() {
+            const title = document.getElementById('projTitle').value.trim();
+            const category = document.getElementById('projCategory').value;
+            const desc = document.getElementById('projDesc').value.trim();
+            const budget = parseInt(document.getElementById('projBudget').value) || 0;
+
+            if (!title) { showToast('⚠️ Укажите название проекта'); return; }
+            if (!desc) { showToast('⚠️ Добавьте описание проекта'); return; }
+
+            const rpm = window.ResidentProfileManager;
+            if (rpm && rpm.residentId) {
+                const { data, error } = await rpm.createProject({ title, description: desc, category, budget });
+                if (error) { showToast('❌ Ошибка: ' + error); return; }
+                showToast('✅ Проект «' + title + '» создан!');
+                ['projTitle', 'projDesc', 'projSkillsNeeded', 'projDeadline'].forEach(id => {
+                    const el = document.getElementById(id); if (el) el.value = '';
+                });
+                document.getElementById('projBudget').value = '';
+                document.getElementById('projBudgetUsd').innerText = '$0.00';
+                await renderProjectsFromDB();
+            } else {
+                // Fallback: save locally
+                const project = { id: 'proj_' + Date.now(), title, category, desc, budget, status: 'active', createdAt: new Date().toISOString() };
+                projects.unshift(project);
+                localStorage.setItem('alab_projects', JSON.stringify(projects));
+                renderProjects();
+                showToast('✓ Проект создан (локально)');
+            }
+        }
+
+        async function deleteProject(idx) {
+            const p = projects[idx];
+            if (!p) return;
+            const rpm = window.ResidentProfileManager;
+            if (p.isDB && rpm) {
+                const { error } = await rpm.deleteProject(p.id);
+                if (error) { showToast('❌ Ошибка удаления'); return; }
+            } else {
+                const local = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+                local.splice(local.findIndex(x => x.id === p.id), 1);
+                localStorage.setItem('alab_projects', JSON.stringify(local));
+            }
+            await renderProjectsFromDB();
+            showToast('🗑 Проект удалён');
         }
 
         async function finishOnboarding() {
@@ -2629,6 +2754,216 @@
                 btn.innerText = 'АКТИВИРОВАТЬ ПРОФИЛЬ';
                 btn.disabled = false;
             }
+        }
+
+        /* ============================
+           PASSWORD CHANGE (Secure — verifies current password first)
+        ============================ */
+        async function updatePassword() {
+            const currentPass = document.getElementById('oldPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (!currentPass) { showToast('⚠️ Введите текущий пароль'); return; }
+            if (!newPass) { showToast('⚠️ Введите новый пароль'); return; }
+            if (newPass !== confirmPass) { showToast('⚠️ Пароли не совпадают'); return; }
+            if (newPass.length < 6) { showToast('⚠️ Минимум 6 символов'); return; }
+            if (newPass === currentPass) { showToast('⚠️ Новый пароль совпадает с текущим'); return; }
+
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) { showToast('⚠️ Нет подключения'); return; }
+
+            const btn = document.querySelector('[onclick="updatePassword()"]');
+            if (btn) { btn.innerText = 'ПРОВЕРКА...'; btn.disabled = true; }
+
+            const { success, error } = await rpm.changePassword(currentPass, newPass);
+
+            if (btn) { btn.innerText = 'Обновить Пароль'; btn.disabled = false; }
+
+            if (error === 'wrong_current_password') {
+                showToast('❌ Текущий пароль неверный');
+            } else if (error) {
+                showToast('❌ Ошибка: ' + error);
+            } else {
+                showToast('✅ Пароль успешно изменён!');
+                document.getElementById('oldPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+        }
+
+        /* ============================
+           ASTRA WALLET (Real Supabase)
+        ============================ */
+
+        async function loadWalletData() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+            const result = await rpm.loadWallet();
+            if (!result) return;
+
+            const { wallet, transactions } = result;
+            if (wallet) {
+                const bal = parseFloat(wallet.balance || 0);
+                const balEl = document.getElementById('astraBalanceBig');
+                const usdEl = document.getElementById('astraUsdBig');
+                if (balEl) balEl.textContent = bal.toLocaleString('ru-RU') + ' 💎';
+                if (usdEl) usdEl.textContent = (bal * ASTRA_RATE).toFixed(2);
+            }
+            renderAstraTx(transactions || []);
+        }
+
+        function renderAstraTx(txs) {
+            const el = document.getElementById('astraTxList');
+            if (!el) return;
+            const myId = window.ResidentProfileManager?.residentId;
+
+            if (!txs || !txs.length) {
+                el.innerHTML = '<div style="text-align:center;padding:20px;color:#333;font-family:var(--font-code);font-size:0.7rem;">// История пуста</div>';
+                return;
+            }
+
+            el.innerHTML = txs.map(tx => {
+                // Real column names: from_id / to_id / type / reason
+                const isSender = tx.from_id === myId;
+                const sign = isSender ? '-' : '+';
+                const color = isSender ? 'var(--accent)' : '#00FF41';
+                const label = isSender ? '→ Перевод' : '← Получено';
+                const reason = tx.reason || tx.type || 'Транзакция';
+                const date = new Date(tx.created_at).toLocaleDateString('ru-RU', {
+                    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                });
+                return `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+                    <div>
+                        <div style="font-size:0.85rem;font-weight:700;">${label}</div>
+                        <div style="font-family:var(--font-code);font-size:0.6rem;color:#444;margin-top:3px;">${date}${reason ? ' · ' + reason : ''}</div>
+                    </div>
+                    <div style="font-family:var(--font-code);font-size:1rem;font-weight:800;color:${color};">${sign}${parseFloat(tx.amount).toLocaleString('ru-RU')} 💎</div>
+                </div>`;
+            }).join('');
+        }
+
+        function openSendAstraModal() {
+            document.getElementById('sendAstraSection').style.display = 'block';
+            document.getElementById('sendAstraSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAstraTx() {
+            const el = document.getElementById('astraTxSection');
+            if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function sendAstraTokens() {
+            const recipientUserId = document.getElementById('astraSendTo').value;
+            const amount = document.getElementById('astraSendAmount').value;
+            const desc = document.getElementById('astraSendDesc').value.trim();
+
+            if (!recipientUserId) { showToast('⚠️ Выберите получателя'); return; }
+            if (!amount || parseFloat(amount) <= 0) { showToast('⚠️ Укажите сумму'); return; }
+
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+
+            const result = await rpm.sendAstra(recipientUserId, amount, desc);
+
+            if (result.error === 'insufficient_funds') { showToast('❌ Недостаточно Astra'); return; }
+            if (result.error === 'recipient_not_found') { showToast('❌ Резидент не найден'); return; }
+            if (result.error) { showToast('❌ Ошибка: ' + result.error); return; }
+
+            showToast('✅ ' + amount + ' ASTRA отправлено!');
+            document.getElementById('astraSendAmount').value = '';
+            document.getElementById('astraSendDesc').value = '';
+            document.getElementById('sendAstraSection').style.display = 'none';
+            await loadWalletData();
+        }
+
+        /* ============================
+           FEED (Real Supabase)
+        ============================ */
+        async function loadFeedData() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+            const posts = await rpm.loadFeed();
+            renderFeed(posts);
+        }
+
+        function renderFeed(posts) {
+            const el = document.getElementById('postsList');
+            if (!el) return;
+            if (!posts.length) {
+                el.innerHTML = '<div style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">// Лента пуста — опубликуйте первый пост!</div>';
+                return;
+            }
+            el.innerHTML = posts.map(p => {
+                const d = new Date(p.created_at);
+                const timeStr = d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' }) + ' // ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                const avatar = p.author?.avatar_url ? `<img src="${p.author.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : '👤';
+                return `
+                <div class="section-card" style="margin-bottom:15px;">
+                    <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+                        <div style="width:38px;height:38px;border-radius:50%;border:1px solid var(--tech-blue);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">${avatar}</div>
+                        <div>
+                            <div style="font-weight:700;font-size:0.9rem;">${p.author?.full_name || 'Резидент'}</div>
+                            <div style="font-family:var(--font-code);font-size:0.6rem;color:#444;">${timeStr}</div>
+                        </div>
+                    </div>
+                    <p style="font-size:0.88rem;color:#ccc;line-height:1.6;">${escTg(p.content)}</p>
+                </div>`;
+            }).join('');
+        }
+
+        async function postFeed() {
+            const content = document.getElementById('feedPostText')?.value.trim();
+            if (!content) { showToast('⚠️ Напишите что-нибудь'); return; }
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+
+            const { error } = await rpm.postFeedItem(content);
+            if (error) { showToast('❌ Ошибка публикации'); return; }
+
+            document.getElementById('feedPostText').value = '';
+            showToast('✅ Пост опубликован!');
+            await loadFeedData();
+        }
+
+        /* ============================
+           RESIDENTS SELECTOR (for Astra send + Invite)
+        ============================ */
+        async function loadResidentsForMessenger() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+
+            const residents = await rpm.fetchAllResidents();
+            const myId = rpm.userId;
+
+            // Populate Astra send dropdown
+            const select = document.getElementById('astraSendTo');
+            if (select) {
+                select.innerHTML = '<option value="">-- Выберите резидента --</option>' +
+                    residents
+                        .filter(r => r.user_id !== myId)
+                        .map(r => `<option value="${r.user_id}">${r.full_name}${r.role ? ' · ' + r.role : ''}</option>`)
+                        .join('');
+            }
+
+            // Populate real chat list with residents (in addition to system chats)
+            const realChats = residents
+                .filter(r => r.user_id !== myId)
+                .map(r => ({
+                    id: 'resident_' + r.user_id,
+                    name: r.full_name,
+                    avatar: r.avatar_url ? `<img src="${r.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : '👤',
+                    status: r.status || 'offline',
+                    preview: 'Резидент A-LAB',
+                    time: '',
+                    unread: 0,
+                    userId: r.user_id
+                }));
+
+            // Merge with system chats at top
+            const combined = [...TG_CHATS, ...realChats];
+            renderChatList(combined);
         }
     </script>
 </body>
