@@ -7,7 +7,6 @@
  */
 
 const MainMenu = (() => {
-    // Determine prefix based on location
     const isSubfolder = window.location.pathname.includes('/residents/');
     const prefix = isSubfolder ? '../' : '';
     const residentPrefix = isSubfolder ? '' : 'residents/';
@@ -464,7 +463,7 @@ const MainMenu = (() => {
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: url('https://grainy-gradients.vercel.app/noise.svg');
+                background: url('${prefix}assets/img/noise.svg');
                 opacity: 0.05;
                 pointer-events: none;
             }

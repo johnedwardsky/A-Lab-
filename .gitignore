@@ -1,40 +1,38 @@
-# Media
-# *.mp4 (Unignored for Vercel deployment)
-# *.mov
-# *.avi
-# *.wmv
-# *.flv
-# *.m4v
+# UI & APIs (Recursive)
+**/node_modules/
+**/api/
+**/env/
+**/venv/
+**/backups/
+**/.git/
+**/.vercel/
+**/.notebooklm-mcp/
+**/chrome-profile/
 
-# Large archives
-*.zip
-*.tar
-*.gz
-*.rar
-
-# Folders to ignore
-node_modules/
-spirograph-pro/
-release/
-backups/
+# Project Specific (Root)
 amuse-web/
+spirograph-pro/
 project-zero-countdown/
+python/
+bin/
+Earlier/
+drive/
+cache/
 
-# OS files
-.DS_Store
-Thumbs.db
-.vercel
-.env*.local
-
-# Python utility scripts
-*.py
-__pycache__/
+# Media & Heavy Files
+*.mp4
+*.mov
+*.zip
+*.tar.gz
 *.pyc
+*.safetensors
+*.ckpt
+*.bin
+*.onnx
+*.weights
+__pycache__/
 
-# NotebookLM MCP chrome profile
-.notebooklm-mcp/
-
-# Debug / context dump files
-*_context.txt
-*_hash.txt
-debug_page.html
+# OS
+.DS_Store
+.env*.local
+*.log

@@ -23,7 +23,7 @@
             --green: #00FF41;
             --yellow: #FFB800;
             --border: rgba(255, 255, 255, 0.08);
-            --font-main: 'Inter', sans-serif;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --font-code: 'JetBrains Mono', monospace;
         }
 
@@ -115,7 +115,7 @@
             pointer-events: none;
             z-index: 1000;
             opacity: 0.04;
-            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            background: url('assets/img/noise.svg');
         }
 
         .cursor {
@@ -1825,7 +1825,7 @@
             await updateLeadStatus(id, 'contacted');
 
             const tempPass = generateTempPassword();
-            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: ${tempPass}\nСсылка для входа: https://a-lab-tech.vercel.app/login\n\n⚠️ После входа обязательно смени пароль в настройках профиля.\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
+            const msg = `Привет, ${name}!\n\nТвоя заявка на присоединение к A-LAB успешно одобрена. Добро пожаловать в команду!\n\nТвой пароль для первого входа: ${tempPass}\nСсылка для входа: https://a-lab.tech/residents/login.html\n\n⚠️ После входа обязательно смени пароль в настройках профиля.\n\nЕсли будут вопросы, обращайся!\n\n— Служба Безопасности A-LAB`;
             openNotifyModal(contact, msg, `ОДОБРЕНИЕ: ${name}`);
         }
 
@@ -2454,7 +2454,7 @@
     </script>
 
     <!-- A-LAB Integration -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="i18n.js"></script>
     <script defer src="toast.js"></script>

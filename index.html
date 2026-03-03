@@ -5,16 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARTIFACT LAB | СИСТЕМА V.4</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://vscvfflshclpnmwshjrr.supabase.co">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
-        rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
-            rel="stylesheet">
-    </noscript>
+        rel="stylesheet">
 
     <style>
         :root {
@@ -31,7 +25,7 @@
 
             --border: rgba(255, 255, 255, 0.08);
 
-            --font-main: 'Inter', sans-serif;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --font-code: 'JetBrains Mono', monospace;
         }
 
@@ -83,7 +77,7 @@
             pointer-events: none;
             z-index: 900;
             opacity: 0.07;
-            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            background: url('assets/img/noise.svg');
         }
 
         /* --- HEADER --- */
@@ -650,16 +644,18 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager"
-                decoding="async"></a>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
+                alt="A-LAB" loading="eager" decoding="async"></a>
         <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">
             /// МЕНЮ
         </button>
     </header>
 
     <section class="hero">
-        <video class="video-background" autoplay muted loop playsinline preload="metadata" poster="assets/img/m01_model.png">
-            <source src="assets/video/m01_ad.mp4" type="video/mp4">
+        <video class="video-background" autoplay muted loop playsinline preload="metadata"
+            poster="assets/img/m01_model.png">
+            <source src="https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/public-assets/Zastavka.mp4"
+                type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
         <div class="tag" data-i18n="page_index.system_tag"
@@ -906,7 +902,7 @@
     </script>
 
     <!-- A-LAB Integration -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="i18n.js"></script>
     <script defer src="main-menu.js"></script>
