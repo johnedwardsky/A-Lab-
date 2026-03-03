@@ -171,9 +171,13 @@ const MainMenu = (() => {
      */
     async function render() {
         await checkAuth();
-        // Remove existing
-        const existing = document.getElementById('alab-main-menu');
-        if (existing) existing.remove();
+
+        let container = document.getElementById('alab-main-menu');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'alab-main-menu';
+            document.body.appendChild(container);
+        }
 
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
@@ -181,8 +185,6 @@ const MainMenu = (() => {
         const dashboardUrl = residentPrefix + 'workspace.html';
         const loginUrl = residentPrefix + 'login.html';
 
-        const container = document.createElement('div');
-        container.id = 'alab-main-menu';
         container.innerHTML = `
             <nav class="menu-overlay ${isOpen ? 'open' : ''}">
                 <div class="menu-container">
@@ -236,6 +238,7 @@ const MainMenu = (() => {
                         </div>
                         ${menuItems.map((item, index) => `
                             <div class="preview-box" id="preview-item-${index}">
+                                <!--- PREVIEW CONTENT --->
                                 <h2>${item.code || 'SYS_MODULE'}</h2>
                                 <p>${lang === 'en' ? (item.desc_en || item.label_en || item.label_ru) : (item.desc_ru || item.desc_en || item.label_ru)}</p>
                                 ${item.is_upcoming ? `
@@ -250,8 +253,8 @@ const MainMenu = (() => {
             </nav>
         `;
 
-        document.body.appendChild(container);
         injectStyles();
+        attachEvents();
     }
 
     /**
@@ -261,9 +264,39 @@ const MainMenu = (() => {
         isOpen = !isOpen;
         const overlay = document.querySelector('.menu-overlay');
         const hamburger = document.querySelector('.menu-hamburger');
-        if (overlay) overlay.classList.toggle('open', isOpen);
+
+        if (!overlay) {
+            // First time click, render and then open
+            render().then(() => {
+                const newOverlay = document.querySelector('.menu-overlay');
+                if (newOverlay) {
+                    newOverlay.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+            return;
+        }
+
+        if (isOpen) {
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            // Sync auth state in background without blocking
+            checkAuth().then(() => {
+                const authBtn = document.querySelector('.auth-text-btn');
+                if (authBtn) {
+                    const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
+                    const dashboardUrl = residentPrefix + 'workspace.html';
+                    const loginUrl = residentPrefix + 'login.html';
+                    authBtn.href = userLoggedIn ? dashboardUrl : loginUrl;
+                    authBtn.innerText = userLoggedIn ? (lang === 'en' ? 'DASHBOARD' : 'КАБИНЕТ') : (lang === 'en' ? 'LOGIN' : 'ВХОД');
+                }
+            });
+        } else {
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
         if (hamburger) hamburger.classList.toggle('active', isOpen);
-        document.body.style.overflow = isOpen ? 'hidden' : '';
     }
 
     /**
