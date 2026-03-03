@@ -635,7 +635,8 @@
     <div class="cursor"></div>
 
     <header>
-        <a href="index-en.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
+        <a href="index-en.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
+                alt="A-LAB" loading="eager" decoding="async"></a>
         <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn"
             style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; cursor: pointer; font-family: var(--font-code); font-size: 0.8rem;">
             /// MENU
@@ -643,6 +644,12 @@
     </header>
 
     <section class="hero">
+        <video class="video-background" autoplay muted loop playsinline preload="metadata"
+            poster="assets/img/m01_model.png">
+            <source src="https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/public-assets/Zastavka.mp4"
+                type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
         <div class="tag" data-i18n="page_index.system_tag"
             style="color: var(--accent); border-color: var(--accent); background: rgba(255, 42, 42, 0.05);">/// SYSTEM
             V.2025</div>
