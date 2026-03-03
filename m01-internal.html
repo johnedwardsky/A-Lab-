@@ -29,6 +29,7 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
+        a, button, input, select, textarea { cursor: pointer; }
         * {
             margin: 0;
             padding: 0;
@@ -134,10 +135,11 @@
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 20000;
-            transition: width 0.3s, height 0.3s, background 0.2s;
+            transition: width 0.1s, height 0.1s, background 0.1s;
             mix-blend-mode: difference;
         }
 
+        .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
             width: 60px;
             height: 60px;
@@ -1087,6 +1089,11 @@
     <script>
         // Custom Cursor
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
         if (!isMobile && cursor) {

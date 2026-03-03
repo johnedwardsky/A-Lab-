@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>A-LAB.CORE | СОЦИАЛЬНАЯ СЕТЬ</title>
+    <!-- Redirect to integrated feed in workspace -->
+    <meta http-equiv="refresh" content="0; url=workspace.html#feed">
+    <title>A-LAB.CORE | СОЦИАЛЬНАЯ СЕТЬ → Workspace</title>
+    <script>window.location.replace('workspace.html#feed');</script>
     <link rel="stylesheet" href="../resident-nav.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
@@ -105,6 +108,14 @@
             color: var(--accent);
         }
 
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -179,6 +190,10 @@
             transition: width 0.1s, height 0.1s, background 0.1s;
             mix-blend-mode: normal;
             will-change: left, top;
+        }
+
+        .cursor.hidden {
+            opacity: 0 !important;
         }
 
         .cursor.hovered {
@@ -1201,22 +1216,8 @@
     <aside class="right-panel">
         <div class="section-header" data-i18n="residents.online">В СЕТИ // ONLINE</div>
 
-        <div class="resident-item">
-            <div class="resident-meta">
-                <div class="avatar" style="width:35px; height:35px;"><img decoding="async"
-                        src="../assets/img/viktor_code.png"></div>
-                <div style="font-size: 0.85rem; font-weight: 600;">Ivan_Fix</div>
-            </div>
-            <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
-        </div>
-
-        <div class="resident-item">
-            <div class="resident-meta">
-                <div class="avatar" style="width:35px; height:35px;"><img decoding="async"
-                        src="../assets/img/max_neural.png"></div>
-                <div style="font-size: 0.85rem; font-weight: 600;">Neo_D</div>
-            </div>
-            <button class="add-friend hover-trigger">+ ДОБАВИТЬ</button>
+        <div id="onlineResidentsList">
+            <!-- Dynamically populated by feed-manager.js -->
         </div>
 
         <div class="comms-box">
@@ -1270,6 +1271,11 @@
 
     <script>
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+
         let mouseX = 0, mouseY = 0;
         let cursorX = 0, cursorY = 0;
         document.addEventListener('mousemove', (e) => {

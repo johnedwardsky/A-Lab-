@@ -127,6 +127,7 @@
             align-items: center;
         }
 
+        a, button, input, select, textarea { cursor: pointer; }
         * {
             margin: 0;
             padding: 0;
@@ -151,11 +152,12 @@
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s, border-color 0.1s;
+            transition: width 0.1s, height 0.1s, background 0.1s;
             mix-blend-mode: normal;
             will-change: left, top;
         }
 
+        .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
             width: 50px;
             height: 50px;
@@ -980,9 +982,12 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 50px;">
-                    <button class="back-btn hover-trigger"
-                        style="background: var(--accent); border-color: var(--accent); color: black; font-weight: 800; font-size: 1rem; padding: 15px 40px;">Связаться
+                <div style="margin-top: 50px; display: flex; gap: 15px;">
+                    <a id="startChatBtn" href="messages.html" class="back-btn hover-trigger"
+                        style="background: var(--tech-blue); border-color: var(--tech-blue); color: black; font-weight: 800; font-size: 1rem; padding: 15px 40px; text-decoration: none;">💬
+                        Написать</a>
+                    <button id="tgBtn" class="back-btn hover-trigger"
+                        style="display: none; background: var(--accent); border-color: var(--accent); color: black; font-weight: 800; font-size: 1rem; padding: 15px 40px;">Связаться
                         в Telegram</button>
                 </div>
             </div>
@@ -996,6 +1001,11 @@
 
     <script>
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
         const triggers = document.querySelectorAll('.hover-trigger');
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
@@ -1267,6 +1277,7 @@
                 bio: r.bio || '',
                 tokens: astraBalance,
                 userId: r.user_id,
+                residentId: r.id,
                 stats: { projects: projectCount, exhibitions: r.settings?.exhibitions || 0, exp: r.settings?.exp || 0 },
                 skills: r.skills || [],
                 links: {
@@ -1302,10 +1313,20 @@
             // Page title
             document.title = `${data.name} • A-LAB CORE`;
 
-            // Telegram contact button
-            const tgBtn = document.querySelector('button[style*="accent"]');
+            // Chat and Telegram buttons
+            const tgBtn = document.getElementById('tgBtn');
             if (tgBtn && data.telegramHandle) {
+                tgBtn.style.display = 'inline-block';
                 tgBtn.onclick = () => window.open('https://t.me/' + data.telegramHandle.replace('@', ''), '_blank');
+            } else if (tgBtn) {
+                tgBtn.style.display = 'none';
+            }
+
+            const chatBtn = document.getElementById('startChatBtn');
+            if (chatBtn && data.residentId) {
+                chatBtn.href = 'messages.html?recipient=' + data.residentId;
+            } else if (chatBtn && data.userId) { // fallback
+                chatBtn.href = 'messages.html';
             }
 
             if (data.stats) {

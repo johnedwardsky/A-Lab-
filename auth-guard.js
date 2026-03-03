@@ -59,6 +59,20 @@
         // Fire event so other scripts know auth is ready
         document.dispatchEvent(new CustomEvent('alab:auth-ready', { detail: window.ALabAuth }));
 
+        // Heartbeat: update last_seen for online tracking
+        if (window.ALabAuth.profile) {
+            try {
+                // Initial ping
+                db.rpc('update_last_seen').catch(e => console.error('[AUTH] last_seen initial update failed', e));
+                // Ping every 5 minutes
+                setInterval(() => {
+                    db.rpc('update_last_seen').catch(() => { });
+                }, 5 * 60 * 1000);
+            } catch (err) {
+                console.warn('[AUTH] Could not setup last_seen heartbeat', err);
+            }
+        }
+
         // Expose logout
         window.ALabAuth.logout = async () => {
             await db.auth.signOut();

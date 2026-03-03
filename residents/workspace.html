@@ -25,6 +25,14 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -48,7 +56,11 @@
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 20000;
-            transition: width 0.3s, height 0.3s, background 0.3s;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+        }
+
+        .cursor.hidden {
+            opacity: 0 !important;
         }
 
         .cursor.hovered {
@@ -1024,6 +1036,412 @@
         .modal-overlay.active .modal-box {
             transform: scale(1);
         }
+
+        /* ====== FEED TAB — INTEGRATED STYLES ====== */
+        #feed-tab {
+            display: flex;
+            height: calc(100vh - 130px);
+            gap: 0;
+            overflow: hidden;
+            margin: -20px -50px;
+        }
+
+        .feed-scroll-area {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .feed-right-panel {
+            width: 310px;
+            flex-shrink: 0;
+            background: rgba(5, 5, 5, 0.8);
+            border-left: 1px solid var(--border);
+            padding: 30px 25px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .feed-section-header {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #444;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .create-post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 35px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .create-post-card:focus-within {
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .theme-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .theme-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .theme-chip {
+            padding: 7px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: #777;
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .theme-chip:hover {
+            border-color: var(--tech-blue);
+            color: white;
+        }
+
+        .theme-chip.active {
+            background: var(--tech-blue);
+            border-color: var(--tech-blue);
+            color: black;
+            font-weight: 800;
+        }
+
+        .post-input-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .post-textarea-premium {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            padding: 10px 0;
+            min-height: 60px;
+        }
+
+        .post-textarea-premium::placeholder {
+            color: #444;
+        }
+
+        .post-actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .icon-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0, 229, 255, 0.05);
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        .btn-publish-premium {
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 10px;
+            font-family: var(--font-code);
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-publish-premium:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        .feed-post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+
+        .feed-post-card:hover {
+            border-color: rgba(0, 229, 255, 0.2);
+        }
+
+        .feed-post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .feed-user-block {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .feed-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #222;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .feed-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .feed-user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .feed-user-role {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: var(--tech-blue);
+        }
+
+        .feed-post-time {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #444;
+        }
+
+        .feed-post-content {
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .feed-post-footer {
+            display: flex;
+            gap: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .feed-action-btn {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .feed-action-btn:hover {
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .feed-action-btn.voted {
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.1);
+            font-weight: 800;
+        }
+
+        .feed-resident-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .feed-resident-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feed-tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 25px;
+        }
+
+        .feed-tag-item {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .feed-tag-item:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        .feed-theme-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.82rem;
+            padding: 7px 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+            margin-bottom: 6px;
+        }
+
+        .feed-theme-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--border);
+        }
+
+        .feed-theme-link .count {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #444;
+        }
+
+        /* Share modal for feed */
+        #feedShareModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 20001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #feedShareModal.active {
+            display: flex;
+        }
+
+        .feed-share-modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 400px;
+            padding: 30px;
+        }
+
+        .feed-share-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feed-share-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.65rem;
+            font-family: var(--font-code);
+        }
+
+        .feed-share-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .feed-share-item:hover .feed-share-icon {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        @media (max-width: 1100px) {
+            .feed-right-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #feed-tab {
+                margin: -20px -20px;
+                height: calc(100vh - 120px);
+            }
+
+            .feed-scroll-area {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 
@@ -1302,21 +1720,142 @@
             </div>
         </div>
 
-        <!-- FEED TAB -->
+        <!-- FEED TAB — FULL INTEGRATION -->
         <div class="tab-content" id="feed-tab">
-            <div class="left-col" style="grid-column: span 2;">
-                <section class="section-card">
-                    <div class="section-title">📡 Создать Пост</div>
-                    <textarea class="form-textarea" id="feedPostText"
-                        placeholder="Что происходит в вашей лаборатории? Поделитесь обновлением..."
-                        style="height: 80px;"></textarea>
-                    <button class="btn-pulse" style="margin-top: 15px;" onclick="postFeed()">Опубликовать в
-                        Ленту</button>
-                </section>
-                <div id="postsList">
+
+            <!-- LEFT: Post creation + Feed stream -->
+            <div class="feed-scroll-area">
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px;">NEWS_PULSE</h2>
+                    <div style="font-family: var(--font-code); color: #444; font-size: 0.65rem; margin-top: 4px;">ОБЩАЯ
+                        ЛЕНТА СООБЩЕСТВА</div>
+                </div>
+
+                <!-- Premium Post Creation -->
+                <div class="create-post-card hover-trigger" id="createPostForm">
+                    <div class="theme-chips" id="themeChips">
+                        <div class="theme-chip hover-trigger" data-theme="Development">Development</div>
+                        <div class="theme-chip hover-trigger" data-theme="Neural Art">Neural Art</div>
+                        <div class="theme-chip hover-trigger" data-theme="Cyber Security">Cyber Security</div>
+                        <div class="theme-chip hover-trigger" data-theme="R&D Updates">R&D Updates</div>
+                        <div class="theme-chip hover-trigger" data-theme="Community">Community</div>
+                    </div>
+
+                    <div class="post-input-row">
+                        <div class="feed-avatar" id="feedAuthorAvatar"
+                            style="width:42px;height:42px;border:2px solid var(--tech-blue);flex-shrink:0;"><span
+                                style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:1.2rem;">👤</span>
+                        </div>
+                        <textarea class="post-textarea-premium" id="postContent"
+                            placeholder="Что нового в вашей лаборатории сегодня?"></textarea>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="feedImagePreview" style="display:none; margin: 15px 0 0 62px; position: relative;">
+                        <div style="position: relative; display: inline-block;">
+                            <img src="" id="feedPreviewImg"
+                                style="max-width: 100%; max-height: 250px; border-radius: 14px; border: 1px solid var(--border);">
+                            <button onclick="removeFeedPreview()"
+                                style="position:absolute;top:-8px;right:-8px;background:var(--accent);border:none;color:white;width:24px;height:24px;border-radius:50%;cursor:pointer;font-weight:bold;border:2px solid var(--surface);">×</button>
+                        </div>
+                    </div>
+
+                    <div class="post-actions-bar">
+                        <div class="icon-btn-group">
+                            <input type="file" id="feedImageInput" style="display:none;" accept="image/*"
+                                onchange="handleFeedImageSelect(this)">
+                            <button class="icon-btn hover-trigger"
+                                onclick="document.getElementById('feedImageInput').click()"
+                                title="Прикрепить фото">🖼️</button>
+                            <button class="icon-btn hover-trigger" onclick="addFeedLink()"
+                                title="Добавить ссылку">🔗</button>
+                        </div>
+                        <button class="btn-publish-premium hover-trigger"
+                            onclick="publishFeedPost()">Опубликовать</button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Feed -->
+                <div id="feedContainer">
                     <div
-                        style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">
-                        Загрузка ленты...</div>
+                        style="text-align:center;padding:40px;color:#555;font-family:var(--font-code);font-size:0.75rem;">
+                        INITIALIZING_DATA_STREAM...</div>
+                </div>
+                <!-- Legacy postsList fallback -->
+                <div id="postsList" style="display:none;"></div>
+            </div>
+
+            <!-- RIGHT PANEL: Online residents + Tags -->
+            <aside class="feed-right-panel">
+                <div class="feed-section-header">В СЕТИ // ONLINE</div>
+                <div id="onlineResidentsList">
+                    <!-- Dynamically populated by feed-manager.js -->
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <div class="feed-section-header">ТЕМЫ // THEMES</div>
+                    <div>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>Development</span><span
+                                class="count">24</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>Neural Art</span><span
+                                class="count">18</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>Cyber Security</span><span
+                                class="count">7</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>R&D Updates</span><span
+                                class="count">12</span></a>
+                    </div>
+
+                    <div class="feed-section-header" style="margin-top: 25px;">ТЕГИ // TAGS</div>
+                    <div class="feed-tag-cloud">
+                        <a href="#" class="feed-tag-item hover-trigger">#AI</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Web3</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Cyberpunk</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Neural</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Code</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#UX</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Matrix</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Supabase</a>
+                    </div>
+
+                    <div class="feed-section-header">СВЯЗЬ // CHANNELS</div>
+                    <a href="#" class="feed-theme-link hover-trigger">
+                        <div>Discord Server</div><span class="count">JOIN</span>
+                    </a>
+                    <a href="#" class="feed-theme-link hover-trigger">
+                        <div>Telegram Group</div><span class="count">JOIN</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Share Modal -->
+            <div id="feedShareModal">
+                <div class="feed-share-modal">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <h3 style="font-family:var(--font-code);font-size:0.85rem;">SHARE_POST</h3>
+                        <button onclick="closeFeedShareModal()"
+                            style="background:transparent;border:none;color:#555;cursor:pointer;font-family:var(--font-code);">[X]</button>
+                    </div>
+                    <div class="feed-share-grid">
+                        <a class="feed-share-item hover-trigger" id="feedShareTg" href="#" target="_blank">
+                            <div class="feed-share-icon">✈️</div><span>Telegram</span>
+                        </a>
+                        <a class="feed-share-item hover-trigger" id="feedShareWa" href="#" target="_blank">
+                            <div class="feed-share-icon">💬</div><span>WhatsApp</span>
+                        </a>
+                        <a class="feed-share-item hover-trigger" id="feedShareTw" href="#" target="_blank">
+                            <div class="feed-share-icon">✖️</div><span>Twitter</span>
+                        </a>
+                        <a class="feed-share-item hover-trigger" onclick="shareFeedToDM(event)">
+                            <div class="feed-share-icon">📥</div><span>DM</span>
+                        </a>
+                    </div>
+                    <div
+                        style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;">
+                        <span id="feedShareUrl"
+                            style="font-family:var(--font-code);font-size:0.75rem;color:#888;">https://a-lab.tech</span>
+                        <button onclick="copyFeedLink()" class="status-btn hover-trigger" id="feedCopyBtn"
+                            style="padding:5px 10px;">COPY</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1760,10 +2299,16 @@
     <script src="../toast.js"></script>
     <script src="../auth-guard.js"></script>
     <script src="../resident-profile-manager.js"></script>
+    <script defer src="../feed-manager.js"></script>
 
     <script>
         // Cursor
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
@@ -1818,6 +2363,152 @@
             // Close bottom sheet if open
             closeBottomSheet();
         }
+
+        /* ========== FEED TAB HELPERS ========== */
+        let _feedSelectedTheme = null;
+
+        function _initFeedTab() {
+            // Wire theme chips
+            const chips = document.querySelectorAll('#themeChips .theme-chip');
+            chips.forEach(chip => {
+                if (!chip.dataset.feedWired) {
+                    chip.addEventListener('click', () => {
+                        chips.forEach(c => c.classList.remove('active'));
+                        chip.classList.add('active');
+                        _feedSelectedTheme = chip.dataset.theme;
+                    });
+                    chip.dataset.feedWired = '1';
+                }
+            });
+
+            // Sync FeedManager resident data from ProfileManager
+            const rpm = window.ResidentProfileManager;
+            if (rpm?.residentId && window.FeedManager) {
+                window.FeedManager.residentId = rpm.residentId;
+                window.FeedManager.residentData = rpm.profile || null;
+            }
+
+            // Set author avatar from profile data
+            if (rpm?.profile?.avatar_url) {
+                const av = document.getElementById('feedAuthorAvatar');
+                if (av) av.innerHTML = `<img src="${rpm.profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            }
+
+            // Auto-grow textarea
+            const ta = document.getElementById('postContent');
+            if (ta && !ta.dataset.wired) {
+                ta.addEventListener('input', function () { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
+                ta.dataset.wired = '1';
+            }
+
+            // Load feed via FeedManager
+            if (window.FeedManager) {
+                window.FeedManager.loadPosts();
+                window.FeedManager.loadOnlineResidents();
+            }
+        }
+
+        let _feedPendingImageFile = null;
+
+        async function publishFeedPost() {
+            const content = document.getElementById('postContent')?.value?.trim();
+
+            if (!_feedSelectedTheme) { showToast('⚠️ Выберите тему (кнопка выше)'); return; }
+            if (!content) { showToast('⚠️ Введите текст поста'); return; }
+
+            const btn = document.querySelector('.btn-publish-premium');
+            if (btn) { btn.disabled = true; btn.textContent = 'ПУБЛИКАЦИЯ...'; }
+
+            try {
+                const ok = await (window.FeedManager?.publishPost(content, [_feedSelectedTheme], _feedPendingImageFile));
+                if (ok !== false) {
+                    document.getElementById('postContent').value = '';
+                    document.getElementById('postContent').style.height = 'auto';
+                    document.querySelectorAll('#themeChips .theme-chip').forEach(c => c.classList.remove('active'));
+                    _feedSelectedTheme = null;
+                    _feedPendingImageFile = null;
+                    removeFeedPreview();
+                }
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Опубликовать'; }
+            }
+        }
+
+        function handleFeedImageSelect(input) {
+            if (input.files && input.files[0]) {
+                _feedPendingImageFile = input.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('feedImagePreview');
+                    document.getElementById('feedPreviewImg').src = e.target.result;
+                    if (preview) preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeFeedPreview() {
+            const preview = document.getElementById('feedImagePreview');
+            if (preview) preview.style.display = 'none';
+            const input = document.getElementById('feedImageInput');
+            if (input) input.value = '';
+        }
+
+        function addFeedLink() {
+            const url = prompt('Введите URL:');
+            const ta = document.getElementById('postContent');
+            if (url && ta) {
+                ta.value += (ta.value ? '\n' : '') + url;
+                ta.dispatchEvent(new Event('input'));
+            }
+        }
+
+        let _feedSharePostId = null;
+        function openFeedShareModal(postId) {
+            _feedSharePostId = postId;
+            const url = `https://a-lab.tech/post/${postId || 'latest'}`;
+            document.getElementById('feedShareUrl').innerText = url;
+            document.getElementById('feedShareTg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=A-LAB Post`;
+            document.getElementById('feedShareWa').href = `https://wa.me/?text=${encodeURIComponent(url)}`;
+            document.getElementById('feedShareTw').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`;
+            document.getElementById('feedShareModal').classList.add('active');
+        }
+        function closeFeedShareModal() {
+            document.getElementById('feedShareModal').classList.remove('active');
+        }
+        function copyFeedLink() {
+            const url = document.getElementById('feedShareUrl').innerText;
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('feedCopyBtn');
+                btn.innerText = 'COPIED!';
+                setTimeout(() => btn.innerText = 'COPY', 2000);
+                showToast('🔗 Ссылка скопирована!');
+            });
+        }
+        function shareFeedToDM(e) {
+            e.preventDefault();
+            copyFeedLink();
+            closeFeedShareModal();
+            switchTab('messages');
+        }
+
+        // Hook: init feed + portfolio tabs when activated
+        (function () {
+            const _orig = switchTab;
+            switchTab = function (tabId) {
+                _orig(tabId);
+                if (tabId === 'feed') setTimeout(_initFeedTab, 60);
+                if (tabId === 'portfolio') setTimeout(loadPortfolioFromDB, 60);
+            };
+            window.switchTab = switchTab;
+        })();
+
+        // Auto init on deep-link or on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.location.hash === '#feed') switchTab('feed');
+            if (window.location.hash === '#portfolio') switchTab('portfolio');
+            setTimeout(loadPortfolioFromDB, 1500);
+        });
 
         // Sidebar pin toggle
         function toggleSidebarPin() {
@@ -2105,8 +2796,39 @@
         /* ==============================
            PROJECTS MODULE
         ============================== */
-        let projects = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+        let projects = [];
         let currentInviteProjectId = null;
+
+        async function fetchProjects() {
+            const db = window.ALabCore?.db;
+            if (!db || !window.ALabCore.isConnected) {
+                projects = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+                renderProjects();
+                return;
+            }
+            try {
+                const { data, error } = await db
+                    .from('resident_projects')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                if (data) {
+                    projects = data.map(p => ({
+                        id: p.id,
+                        title: p.title,
+                        category: p.category,
+                        desc: p.description,
+                        budget: p.astra_budget,
+                        skills: (p.tags || []).join(', '),
+                        deadline: p.deadline || null,
+                        status: p.status,
+                        createdAt: p.created_at,
+                        owner_id: p.owner_id
+                    }));
+                }
+            } catch (e) { console.error('[PROJECTS] fetch error', e); }
+            renderProjects();
+        }
 
         // Astra → USD converter — defined once here, referenced throughout
         const ASTRA_RATE = 1.5;
@@ -2121,7 +2843,7 @@
                     document.getElementById('projBudgetUsd').innerText = '$' + (v * ASTRA_RATE).toFixed(2);
                 });
             }
-            renderProjects();
+            fetchProjects();
             renderPortfolio();
             renderDaoVotes();
         });
@@ -2191,7 +2913,7 @@
 
 
 
-        function createProject() {
+        async function createProject() {
             const title = document.getElementById('projTitle').value.trim();
             const category = document.getElementById('projCategory').value;
             const desc = document.getElementById('projDesc').value.trim();
@@ -2202,40 +2924,47 @@
             if (!title) { showToast('⚠️ Укажите название проекта'); return; }
             if (!desc) { showToast('⚠️ Добавьте описание проекта'); return; }
 
-            const project = {
-                id: 'proj_' + Date.now(),
-                title, category, desc, budget, skills, deadline,
-                status: 'active',
-                createdAt: new Date().toISOString(),
-                collaborators: []
-            };
-
-            projects.unshift(project);
-            localStorage.setItem('alab_projects', JSON.stringify(projects));
-
-            // Reset form
-            ['projTitle', 'projDesc', 'projSkillsNeeded', 'projDeadline'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
-            });
-            document.getElementById('projBudget').value = '';
-            document.getElementById('projBudgetUsd').innerText = '$0.00';
-
-            renderProjects();
-            showToast('✓ Проект «' + title + '» создан!');
-
-            // Try save to Supabase
             const db = window.ALabCore?.db;
-            if (db) {
-                db.from('projects').insert([{
-                    title, category, description: desc,
-                    astra_budget: budget, skills_needed: skills,
-                    deadline_date: deadline || null,
-                    owner_id: window.ALabCore?.userId,
+            if (!db || !window.ALabCore.isConnected) {
+                const project = { id: 'proj_' + Date.now(), title, category, desc, budget, skills, deadline, status: 'active', createdAt: new Date().toISOString() };
+                projects.unshift(project);
+                localStorage.setItem('alab_projects', JSON.stringify(projects));
+                renderProjects();
+                showToast('✓ Проект «' + title + '» создан (Local Mode)!');
+                return;
+            }
+
+            try {
+                const residentId = window.ALabAuth?.residentId || window.ALabAuth?.profile?.id;
+                if (!residentId) throw new Error('Resident ID not found. Are you logged in?');
+
+                const tagsArray = skills ? skills.split(',').map(s => s.trim()) : [];
+
+                const { error } = await db.from('resident_projects').insert([{
+                    title,
+                    category,
+                    description: desc,
+                    astra_budget: budget,
+                    tags: tagsArray,
+                    owner_id: residentId,
                     status: 'active'
-                }]).then(({ error }) => {
-                    if (error) console.warn('[PROJECTS] Supabase save error:', error.message);
+                }]);
+
+                if (error) throw error;
+
+                showToast('✓ Проект «' + title + '» создан!');
+                fetchProjects();
+
+                // Reset form
+                ['projTitle', 'projDesc', 'projSkillsNeeded', 'projDeadline'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
                 });
+                document.getElementById('projBudget').value = '';
+                document.getElementById('projBudgetUsd').innerText = '$0.00';
+            } catch (e) {
+                showToast('Ошибка: ' + e.message);
+                console.error(e);
             }
         }
 
@@ -2248,7 +2977,14 @@
             if (!list) return;
 
             if (projects.length === 0) {
-                list.innerHTML = '<div style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">[PROJECTS_EMPTY] // Создайте первый проект</div>';
+                list.innerHTML = `
+                    <div style="text-align:center;padding:40px;color:#555;font-family:var(--font-code);font-size:0.8rem;border:1px dashed var(--border);border-radius:16px;">
+                        <span style="font-size:2rem;display:block;margin-bottom:10px;color:rgba(255,42,42,0.5);">🚀</span>
+                        [PROJECTS_EMPTY] // У вас пока нет проектов
+                        <div style="margin-top:15px;">
+                            <button onclick="document.querySelector('#projTitle').focus()" class="btn-pulse hover-trigger" style="font-size:0.7rem;padding:8px 15px;">СОЗДАТЬ ПЕРВЫЙ ПРОЕКТ</button>
+                        </div>
+                    </div>`;
                 if (count) count.innerText = '0';
                 return;
             }
@@ -2280,11 +3016,23 @@
             `).join('');
         }
 
-        function deleteProject(idx) {
+        async function deleteProject(idx) {
+            const p = projects[idx];
+            const db = window.ALabCore?.db;
+            if (db && window.ALabCore.isConnected && !p.id.startsWith('proj_')) {
+                if (!confirm('Вы уверены, что хотите удалить этот проект?')) return;
+                try {
+                    await db.from('resident_projects').delete().eq('id', p.id);
+                    fetchProjects();
+                    showToast('🗑 Проект удалён');
+                    return;
+                } catch (e) { console.error('Delete error', e); }
+            }
+
             projects.splice(idx, 1);
             localStorage.setItem('alab_projects', JSON.stringify(projects));
             renderProjects();
-            showToast('🗑 Проект удалён');
+            showToast('🗑 Проект удалён (Local Mode)');
         }
 
         function openInviteModal(projectId) {
@@ -2335,13 +3083,47 @@
         }
 
         /* ==============================
-           PORTFOLIO MODULE
+           PORTFOLIO MODULE — Supabase
         ============================== */
-        let portfolioWorks = JSON.parse(localStorage.getItem('alab_portfolio') || '[]');
+        let portfolioWorks = [];
         let portfolioCurrentImg = null;
+        let portfolioCurrentFile = null;
+
+        async function loadPortfolioFromDB() {
+            const db = window.ALabCore?.db;
+            const rpm = window.ResidentProfileManager;
+            if (!db || !rpm?.residentId) {
+                // Fallback to localStorage
+                portfolioWorks = JSON.parse(localStorage.getItem('alab_portfolio') || '[]');
+                renderPortfolio();
+                return;
+            }
+            try {
+                const { data, error } = await db
+                    .from('resident_portfolio')
+                    .select('*')
+                    .eq('resident_id', rpm.residentId)
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                portfolioWorks = (data || []).map(w => ({
+                    id: w.id,
+                    title: w.title,
+                    desc: w.description,
+                    url: w.link_url,
+                    category: w.category,
+                    img: w.image_url
+                }));
+                renderPortfolio();
+            } catch (e) {
+                console.warn('[Portfolio] DB load failed, using localStorage:', e);
+                portfolioWorks = JSON.parse(localStorage.getItem('alab_portfolio') || '[]');
+                renderPortfolio();
+            }
+        }
 
         function loadPortfolioImg(input) {
             if (!input.files || !input.files[0]) return;
+            portfolioCurrentFile = input.files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
                 portfolioCurrentImg = e.target.result;
@@ -2350,20 +3132,20 @@
                 document.getElementById('portfolioDropLabel').style.display = 'none';
                 document.getElementById('portfolioDropZone').style.borderColor = 'var(--tech-blue)';
             };
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(portfolioCurrentFile);
         }
 
         function handlePortfolioDrop(e) {
             e.preventDefault();
             const file = e.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
-                const fakeInput = { files: [file] };
-                loadPortfolioImg(fakeInput);
+                portfolioCurrentFile = file;
+                loadPortfolioImg({ files: [file] });
             }
             document.getElementById('portfolioDropZone').style.borderColor = 'rgba(0,229,255,0.3)';
         }
 
-        function addPortfolioWork() {
+        async function addPortfolioWork() {
             const title = document.getElementById('portfolioTitle').value.trim();
             const desc = document.getElementById('portfolioDesc').value.trim();
             const url = document.getElementById('portfolioUrl').value.trim();
@@ -2371,30 +3153,72 @@
 
             if (!title) { showToast('⚠️ Укажите название работы'); return; }
 
-            const work = {
-                id: 'work_' + Date.now(),
-                title, desc, url, category,
-                img: portfolioCurrentImg || null,
-                createdAt: new Date().toISOString()
-            };
+            const addBtn = document.querySelector('[onclick="addPortfolioWork()"]');
+            if (addBtn) { addBtn.disabled = true; addBtn.textContent = 'СОХРАНЕНИЕ...'; }
 
-            portfolioWorks.unshift(work);
-            // Store without base64 img to keep localStorage lean
-            const toStore = portfolioWorks.map(w => ({ ...w, img: w.img ? '[IMAGE]' : null }));
-            try { localStorage.setItem('alab_portfolio_meta', JSON.stringify(toStore)); } catch (e) { }
+            const db = window.ALabCore?.db;
+            const rpm = window.ResidentProfileManager;
+
+            let imageUrl = portfolioCurrentImg; // base64 fallback
+
+            // Upload image to Supabase Storage if we have a file and connection
+            if (portfolioCurrentFile && db && window.ALabCore.isConnected) {
+                try {
+                    const ext = portfolioCurrentFile.name.split('.').pop();
+                    const path = `portfolio/${rpm?.residentId || 'anon'}/${Date.now()}.${ext}`;
+                    const { error: upErr } = await db.storage
+                        .from('portfolio-images')
+                        .upload(path, portfolioCurrentFile, { contentType: portfolioCurrentFile.type });
+                    if (!upErr) {
+                        const { data: urlData } = db.storage.from('portfolio-images').getPublicUrl(path);
+                        imageUrl = urlData?.publicUrl || imageUrl;
+                    }
+                } catch (e) { console.warn('[Portfolio] Image upload failed:', e); }
+            }
+
+            // Save to Supabase if connected
+            if (db && rpm?.residentId && window.ALabCore.isConnected) {
+                try {
+                    const { data, error } = await db
+                        .from('resident_portfolio')
+                        .insert({
+                            resident_id: rpm.residentId,
+                            title,
+                            description: desc,
+                            link_url: url,
+                            category,
+                            image_url: typeof imageUrl === 'string' && imageUrl.startsWith('http') ? imageUrl : null
+                        })
+                        .select()
+                        .single();
+                    if (error) throw error;
+                    portfolioWorks.unshift({ id: data.id, title, desc, url, category, img: imageUrl });
+                } catch (e) {
+                    console.error('[Portfolio] Save error:', e);
+                    showToast('⚠️ Ошибка сохранения в БД, сохранено локально');
+                    portfolioWorks.unshift({ id: 'local_' + Date.now(), title, desc, url, category, img: imageUrl });
+                    try { localStorage.setItem('alab_portfolio', JSON.stringify(portfolioWorks)); } catch (_) { }
+                }
+            } else {
+                // Local fallback
+                portfolioWorks.unshift({ id: 'local_' + Date.now(), title, desc, url, category, img: imageUrl });
+                try { localStorage.setItem('alab_portfolio', JSON.stringify(portfolioWorks)); } catch (_) { }
+            }
 
             // Reset form
             ['portfolioTitle', 'portfolioDesc', 'portfolioUrl'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.value = '';
             });
             portfolioCurrentImg = null;
+            portfolioCurrentFile = null;
             document.getElementById('portfolioImgPreview').style.display = 'none';
             document.getElementById('portfolioDropLabel').style.display = 'block';
             document.getElementById('portfolioDropZone').style.borderColor = 'rgba(0,229,255,0.3)';
             document.getElementById('portfolioImgInput').value = '';
 
+            if (addBtn) { addBtn.disabled = false; addBtn.textContent = 'Добавить в Портфолио'; }
             renderPortfolio();
-            showToast('✓ Работа «' + title + '» добавлена!');
+            showToast('✅ Работа «' + title + '» добавлена!');
         }
 
         const catPortIcons = { design: '🎨', dev: '💻', ai: '🤖', motion: '🎬', web3: '🔗', other: '📌' };
@@ -2405,24 +3229,29 @@
             if (!gallery) return;
 
             if (portfolioWorks.length === 0) {
-                gallery.innerHTML = '<div style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">[PORTFOLIO_EMPTY] // Добавьте первую работу</div>';
+                gallery.innerHTML = `
+                    <div style="text-align:center;padding:50px 20px;color:#333;font-family:var(--font-code);font-size:0.75rem;border:1px dashed rgba(255,255,255,0.05);border-radius:16px;">
+                        <div style="font-size:2.5rem;margin-bottom:12px;">🖼️</div>
+                        PORTFOLIO_EMPTY<br>
+                        <span style="color:#444;font-size:0.65rem;display:block;margin-top:8px;">Добавьте свою первую работу используя форму слева</span>
+                    </div>`;
                 if (count) count.innerText = '0';
                 return;
             }
             if (count) count.innerText = portfolioWorks.length;
 
-            gallery.innerHTML = portfolioWorks.map((w, idx) => `
+            gallery.innerHTML = portfolioWorks.map((w) => `
                 <div style="display:flex;gap:15px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:16px;padding:15px;transition:0.3s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.2)'" onmouseout="this.style.borderColor='var(--border)'">
                     <div style="flex-shrink:0;width:90px;height:90px;border-radius:12px;overflow:hidden;background:#111;border:1px solid #222;display:flex;align-items:center;justify-content:center;font-size:2rem;">
-                        ${w.img ? `<img src="${w.img}" style="width:100%;height:100%;object-fit:cover;">` : (catPortIcons[w.category] || '📌')}
+                        ${w.img ? `<img src="${w.img}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">` : (catPortIcons[w.category] || '📌')}
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                             <div>
-                                <div style="font-size:0.6rem;font-family:var(--font-code);color:#555;margin-bottom:4px;">${catPortIcons[w.category] || '📌'} ${w.category.toUpperCase()}</div>
+                                <div style="font-size:0.6rem;font-family:var(--font-code);color:#555;margin-bottom:4px;">${catPortIcons[w.category] || '📌'} ${(w.category || 'other').toUpperCase()}</div>
                                 <div style="font-weight:800;font-size:0.95rem;">${w.title}</div>
                             </div>
-                            <button onclick="deleteWork(${idx})" style="background:transparent;border:1px solid #222;color:#555;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.8rem;flex-shrink:0;">×</button>
+                            <button onclick="deleteWork('${w.id}')" style="background:transparent;border:1px solid #222;color:#555;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.8rem;flex-shrink:0;" title="Удалить">×</button>
                         </div>
                         ${w.desc ? `<p style="font-size:0.75rem;color:#888;line-height:1.4;margin-top:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${w.desc}</p>` : ''}
                         ${w.url ? `<a href="${w.url}" target="_blank" style="font-family:var(--font-code);font-size:0.65rem;color:var(--tech-blue);text-decoration:none;margin-top:8px;display:inline-block;">🔗 Открыть работу →</a>` : ''}
@@ -2431,8 +3260,20 @@
             `).join('');
         }
 
-        function deleteWork(idx) {
-            portfolioWorks.splice(idx, 1);
+        async function deleteWork(workId) {
+            if (!confirm('Удалить эту работу?')) return;
+
+            const db = window.ALabCore?.db;
+            if (db && window.ALabCore.isConnected && !String(workId).startsWith('local_')) {
+                try {
+                    const { error } = await db.from('resident_portfolio').delete().eq('id', workId);
+                    if (error) throw error;
+                } catch (e) {
+                    console.warn('[Portfolio] Delete from DB failed:', e);
+                }
+            }
+            portfolioWorks = portfolioWorks.filter(w => String(w.id) !== String(workId));
+            try { localStorage.setItem('alab_portfolio', JSON.stringify(portfolioWorks)); } catch (_) { }
             renderPortfolio();
             showToast('🗑 Работа удалена');
         }

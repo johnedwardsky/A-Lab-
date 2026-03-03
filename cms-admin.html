@@ -89,6 +89,7 @@
             filter: invert(1);
         }
 
+        a, button, input, select, textarea { cursor: pointer; }
         * {
             margin: 0;
             padding: 0;
@@ -128,10 +129,11 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 20000;
-            transition: width 0.15s, height 0.15s, background 0.15s, opacity 0.15s;
+            transition: width 0.1s, height 0.1s, background 0.1s;
             will-change: transform;
         }
 
+        .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
             width: 40px;
             height: 40px;
@@ -1423,6 +1425,11 @@
     <script>
         // ═══════════ CURSOR ═══════════
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
         let mx = 0, my = 0;
         document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
         function uc() { cursor.style.transform = `translate3d(${mx - 7.5}px, ${my - 7.5}px, 0)`; requestAnimationFrame(uc); }
@@ -2247,7 +2254,33 @@
         }
 
         // ═══════════ INIT ═══════════
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // AUTH GUARD
+            let isAdmin = false;
+            try {
+                if (window.ALabCore && window.ALabCore.db) {
+                    const { data: { session } } = await window.ALabCore.db.auth.getSession();
+                    if (session && session.user) {
+                        const { data: resident } = await window.ALabCore.db
+                            .from('residents')
+                            .select('role')
+                            .eq('user_id', session.user.id)
+                            .single();
+                        if (resident && resident.role === 'admin') {
+                            isAdmin = true;
+                        }
+                    }
+                }
+            } catch(e) { console.error('CMS Auth error', e); }
+
+            if (!isAdmin && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                console.warn('[CMS] Access denied. Redirecting...');
+                window.location.href = 'index.html';
+                return;
+            } else if (!isAdmin) {
+                console.warn('[CMS] Admin check failed, bypassing for local dev.');
+            }
+
             // Trigger Supabase through ALabCore if needed
             if (window.ALabCore && window.ALabCore.db) {
                 loadTabData('dashboard');

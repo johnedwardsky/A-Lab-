@@ -22,6 +22,7 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
+        a, button, input, select, textarea { cursor: pointer; }
         * {
             margin: 0;
             padding: 0;
@@ -51,10 +52,11 @@
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 20000;
-            transition: width 0.3s, height 0.3s, background 0.3s;
+            transition: width 0.1s, height 0.1s, background 0.1s;
             mix-blend-mode: exclusion;
         }
 
+        .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
             width: 50px;
             height: 50px;
@@ -492,6 +494,11 @@
 
     <script>
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';

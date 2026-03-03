@@ -29,6 +29,7 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
+        a, button, input, select, textarea { cursor: pointer; }
         * {
             margin: 0;
             padding: 0;
@@ -57,10 +58,11 @@
             mix-blend-mode: difference;
             /* Use translate3d for hardware acceleration */
             transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
-            transition: width 0.2s ease-out, height 0.2s ease-out;
+            transition: width 0.1s, height 0.1s, background 0.1s;
             will-change: transform, width, height;
         }
 
+        .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
             width: 80px;
             height: 80px;
@@ -880,6 +882,11 @@
 
     <script>
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
         const triggers = document.querySelectorAll('.hover-trigger');
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
 

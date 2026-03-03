@@ -303,27 +303,14 @@
                 if (recipientError || !recipientData) return { error: 'recipient_not_found' };
                 const recipientResidentId = recipientData.id;
 
-                // Debit sender
-                const { error: debitError } = await db
-                    .from('astra_balances')
-                    .update({ balance: currentBalance - numAmount })
-                    .eq('resident_id', this.residentId);
+                // SECURE SERVER-SIDE TRANSFER
+                const { data: rpcResult, error: rpcError } = await db.rpc('transfer_astra', {
+                    p_receiver_id: recipientResidentId,
+                    p_amount: numAmount
+                });
 
-                if (debitError) throw debitError;
-
-                // Credit receiver
-                const { data: receiverWallet, error: receiverError } = await db
-                    .from('astra_balances')
-                    .select('balance')
-                    .eq('resident_id', recipientResidentId)
-                    .single();
-
-                if (receiverError) throw receiverError;
-
-                await db
-                    .from('astra_balances')
-                    .update({ balance: parseFloat(receiverWallet.balance) + numAmount })
-                    .eq('resident_id', recipientResidentId);
+                if (rpcError) throw rpcError;
+                if (!rpcResult.success) throw new Error(rpcResult.error || 'Transfer failed');
 
                 // Log transaction — real columns: from_id, to_id, type, reason
                 await db.from('astra_transactions').insert({

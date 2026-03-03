@@ -102,6 +102,7 @@
             border-color: rgba(0, 0, 0, 0.1);
         }
 
+        a, button, input, select, textarea { cursor: pointer; }
         * {
             margin: 0;
             padding: 0;
@@ -129,10 +130,11 @@
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 20000;
-            transition: width 0.3s, height 0.3s, background 0.3s;
+            transition: width 0.1s, height 0.1s, background 0.1s;
             mix-blend-mode: normal;
         }
 
+        .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
             width: 40px;
             height: 40px;
@@ -466,6 +468,11 @@
 
     <script>
         const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
         let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
