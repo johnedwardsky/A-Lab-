@@ -8,15 +8,32 @@
 const SUPABASE_URL = 'https://lvyfuljsvzczuwccktln.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2eWZ1bGpzdnpjenV3Y2NrdGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5OTAwMzEsImV4cCI6MjA4NjU2NjAzMX0.juafzih9bbcIsntrAvku2O_77yz7mnIkOqbY8xencIo';
 
+// ── Custom lock: replaces navigator.locks to avoid "Lock not released" AbortErrors
+// Happens when multiple tabs or zombie sessions compete for the same auth lock.
+// A simple promise-chain lock is safe for single-origin SPA usage.
+let _lockQueue = Promise.resolve();
+function _customLock(name, acquireTimeout, fn) {
+    const run = () => { _lockQueue = _lockQueue.then(() => fn(), () => fn()); return _lockQueue; };
+    return run();
+}
+
 // Initialize Supabase client (requires CDN script loaded first)
 let _supabaseClient = null;
 
 function getSupabase() {
     if (!_supabaseClient) {
         if (typeof supabase !== 'undefined' && supabase.createClient) {
-            _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: {
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true,
+                    lock: _customLock   // bypass navigator.locks conflicts
+                }
+            });
             // Expose globally for CMS and legacy compatibility
             window.supabase = _supabaseClient;
+            console.log('[A-LAB] Supabase client ready (custom lock)');
         } else {
             console.warn('[A-LAB] Supabase library not loaded. Using mock mode.');
             return null;
