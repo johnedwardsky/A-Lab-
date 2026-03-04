@@ -3960,22 +3960,25 @@
 
             // Direct query fallback
             let astraBalance = 0;
-            const { data: wallet, error: walletError } = await db
-                .from('astra_balances')
-                .select('balance')
-                .eq('resident_id', r.id)
-                .single();
 
-            if (walletError) {
-                console.warn('[Wallet] Balance not found, creating row:', walletError.message);
-                // Auto-create balance row if missing (UPSERT)
-                await db.from('astra_balances').upsert({
-                    resident_id: r.id,
-                    balance: 0
-                }, { onConflict: 'resident_id' });
+            // Use SECURITY DEFINER RPC — bypasses RLS issues with uid() resolution
+            const { data: rpcBal, error: rpcError } = await db.rpc('get_my_astra_balance');
+            if (rpcError) {
+                console.warn('[Wallet] RPC error:', rpcError.message, '— falling back to direct query');
+                // Fallback: direct table query
+                const { data: wallet, error: walletError } = await db
+                    .from('astra_balances')
+                    .select('balance')
+                    .eq('resident_id', r.id)
+                    .single();
+                if (!walletError && wallet) {
+                    astraBalance = parseFloat(wallet.balance || 0);
+                } else {
+                    console.warn('[Wallet] Direct query also failed:', walletError?.code, walletError?.message);
+                }
             } else {
-                astraBalance = parseFloat(wallet?.balance || 0);
-                console.log('[Wallet] Direct query balance:', astraBalance);
+                astraBalance = parseFloat(rpcBal || 0);
+                console.log('[Wallet] RPC balance:', astraBalance);
             }
 
             // Fetch transactions
@@ -3990,6 +3993,8 @@
 
             _applyWalletUI(astraBalance, txs || []);
         }
+
+
 
 
         function renderAstraTx(txs) {
