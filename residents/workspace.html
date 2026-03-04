@@ -3911,51 +3911,86 @@
            ASTRA WALLET (Real Supabase)
         ============================ */
 
+        function _applyWalletUI(balance, transactions) {
+            const balEl = document.getElementById('astraBalanceBig');
+            const usdEl = document.getElementById('astraUsdBig');
+            if (balEl) balEl.textContent = balance.toLocaleString('ru-RU') + ' 💎';
+            if (usdEl) usdEl.textContent = (balance * ASTRA_RATE).toFixed(2);
+            renderAstraTx(transactions || []);
+        }
+
+        // Listen to RPM wallet-loaded event (fires after profile-loaded)
+        document.addEventListener('rpm:wallet-loaded', (e) => {
+            const { wallet, transactions } = e.detail || {};
+            const bal = parseFloat(wallet?.balance || 0);
+            console.log('[Wallet] rpm:wallet-loaded — balance:', bal);
+            _applyWalletUI(bal, transactions || []);
+        });
+
         async function loadWalletData() {
             const rpm = window.ResidentProfileManager;
             if (!rpm) return;
             const db = window.ALabCore?.db;
             if (!db) return;
 
-            const r = rpm.profile; // Get current resident profile
-            if (!r || !r.id) return;
+            // If RPM already has wallet cached, use it immediately
+            if (rpm.wallet) {
+                const bal = parseFloat(rpm.wallet.balance || 0);
+                console.log('[Wallet] Using cached RPM wallet, balance:', bal);
+                _applyWalletUI(bal, []);
+                // Still fetch transactions
+                const residentId = rpm.residentId;
+                if (residentId) {
+                    const { data: txs } = await db
+                        .from('astra_transactions')
+                        .select('*')
+                        .or(`from_id.eq.${residentId},to_id.eq.${residentId}`)
+                        .order('created_at', { ascending: false })
+                        .limit(10);
+                    renderAstraTx(txs || []);
+                }
+                return;
+            }
 
-            // Fetch wallet balance
+            const r = rpm.profile;
+            if (!r || !r.id) {
+                console.warn('[Wallet] No resident profile yet — will wait for rpm:wallet-loaded');
+                return;
+            }
+
+            // Direct query fallback
             let astraBalance = 0;
-            try {
-                // Table is 'astra_balances'
-                const { data: wallet } = await db
-                    .from('astra_balances')
-                    .select('balance')
-                    .eq('resident_id', r.id)
-                    .single();
-                if (wallet) astraBalance = parseFloat(wallet.balance || 0);
-            } catch (e) {
-                console.error("Error loading wallet balance:", e);
+            const { data: wallet, error: walletError } = await db
+                .from('astra_balances')
+                .select('balance')
+                .eq('resident_id', r.id)
+                .single();
+
+            if (walletError) {
+                console.warn('[Wallet] Balance not found, creating row:', walletError.message);
+                // Auto-create balance row if missing (UPSERT)
+                await db.from('astra_balances').upsert({
+                    resident_id: r.id,
+                    balance: 0
+                }, { onConflict: 'resident_id' });
+            } else {
+                astraBalance = parseFloat(wallet?.balance || 0);
+                console.log('[Wallet] Direct query balance:', astraBalance);
             }
 
             // Fetch transactions
-            let transactions = [];
-            try {
-                const { data: txs, error: txError } = await db
-                    .from('astra_transactions')
-                    .select('*')
-                    .or(`from_id.eq.${r.id},to_id.eq.${r.id}`)
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-                if (txError) throw txError;
-                transactions = txs;
-            } catch (e) {
-                console.error("Error loading transactions:", e);
-            }
+            const { data: txs, error: txError } = await db
+                .from('astra_transactions')
+                .select('*')
+                .or(`from_id.eq.${r.id},to_id.eq.${r.id}`)
+                .order('created_at', { ascending: false })
+                .limit(10);
 
-            const balEl = document.getElementById('astraBalanceBig');
-            const usdEl = document.getElementById('astraUsdBig');
-            if (balEl) balEl.textContent = astraBalance.toLocaleString('ru-RU') + ' 💎';
-            if (usdEl) usdEl.textContent = (astraBalance * ASTRA_RATE).toFixed(2);
+            if (txError) console.warn('[Wallet] Tx query warning:', txError.message);
 
-            renderAstraTx(transactions || []);
+            _applyWalletUI(astraBalance, txs || []);
         }
+
 
         function renderAstraTx(txs) {
             const el = document.getElementById('astraTxList');
