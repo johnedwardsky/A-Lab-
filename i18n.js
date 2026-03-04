@@ -180,16 +180,16 @@ const I18n = (() => {
 
         // 1. Primary check: Geo-IP (Targeting non-RF users)
         try {
-            // Using a lightweight, free API for geo-detection
-            const response = await fetch('https://freeipapi.com/api/json', { signal: AbortSignal.timeout(2000) });
-            const data = await response.json();
-
-            if (data.countryCode && data.countryCode !== 'RU') {
-                console.log('[i18n] Non-RU Geo detected:', data.countryCode);
-                return 'en';
+            const response = await fetch('https://ipapi.co/json/', { mode: 'cors' });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.country_code && data.country_code !== 'RU') {
+                    console.log('[i18n] Non-RU Geo detected:', data.country_code);
+                    return 'en';
+                }
             }
         } catch (e) {
-            console.warn('[i18n] Geo-IP detection trace:', e.message);
+            // Silently skip geo-detection if API blocked
         }
 
         // 2. Secondary check: Browser Language

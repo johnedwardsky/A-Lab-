@@ -29,7 +29,14 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -62,7 +69,10 @@
             will-change: transform, width, height;
         }
 
-        .cursor.hidden { opacity: 0 !important; }
+        .cursor.hidden {
+            opacity: 0 !important;
+        }
+
         .cursor.hovered {
             width: 80px;
             height: 80px;
@@ -909,7 +919,7 @@
     </script>
 
     <!-- A-LAB Integration -->
-    <script defer src="assets/js/supabase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="i18n.js"></script>
     <script defer src="main-menu.js"></script>
