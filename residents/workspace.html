@@ -1037,7 +1037,45 @@
             transform: scale(1);
         }
 
+        /* ====== SETTINGS TOGGLE ====== */
+        .settings-toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .settings-toggle.active {
+            background: rgba(0, 229, 255, 0.2);
+            border-color: var(--tech-blue);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .settings-toggle-knob {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #444;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .settings-toggle.active .settings-toggle-knob {
+            background: var(--tech-blue);
+            left: 23px;
+            box-shadow: 0 0 8px var(--tech-blue);
+        }
+
         /* ====== FEED TAB — INTEGRATED STYLES ====== */
+
         #feed-tab {
             display: flex;
             height: calc(100vh - 130px);
@@ -2183,7 +2221,140 @@
             </div>
         </div>
 
+        <!-- SETTINGS TAB -->
+        <div class="tab-content" id="settings-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Уведомления</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;margin-top:5px;">
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Новые сообщения</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Push, email уведомления</div>
+                            </div>
+                            <div class="settings-toggle" onclick="toggleSetting(this,'notify_messages')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Новые посты в ленте</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Когда резиденты публикуют</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_feed')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Реакции на мои посты</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Лайки и emoji от резидентов</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_reactions')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Комментарии</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">К
+                                    моим публикациям</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_comments')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Новости A-LAB</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Системные объявления</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_system')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="section-card" style="margin-top:20px;">
+                    <div class="section-title">Интерфейс</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;margin-top:5px;">
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Анимации и эффекты</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Частицы, hover-эффекты</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'ui_animations')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Кастомный курсор</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Эффект следования курсора</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'ui_cursor')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <div style="margin-top:4px;">
+                            <div style="font-size:0.85rem;font-weight:600;margin-bottom:10px;">Язык интерфейса</div>
+                            <div style="display:flex;gap:8px;">
+                                <button onclick="setLang('ru')" id="langBtn_ru"
+                                    style="font-family:var(--font-code);font-size:0.7rem;padding:7px 18px;border-radius:8px;border:1px solid var(--tech-blue);color:var(--tech-blue);background:rgba(0,229,255,0.08);cursor:pointer;">🇷🇺
+                                    RU</button>
+                                <button onclick="setLang('en')" id="langBtn_en"
+                                    style="font-family:var(--font-code);font-size:0.7rem;padding:7px 18px;border-radius:8px;border:1px solid var(--border);color:#555;background:transparent;cursor:pointer;">🇬🇧
+                                    EN</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Аккаунт</div>
+                    <div style="display:flex;flex-direction:column;gap:12px;margin-top:5px;">
+                        <div style="font-size:0.75rem;color:#666;line-height:1.6;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                                <span style="color:#555;font-family:var(--font-code);font-size:0.65rem;">ПЛАН</span>
+                                <span style="color:var(--tech-blue);font-weight:700;font-size:0.8rem;">RESIDENT</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                                <span style="color:#555;font-family:var(--font-code);font-size:0.65rem;">СТАТУС</span>
+                                <span style="color:#00e676;font-size:0.8rem;">● АКТИВЕН</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;">
+                                <span style="color:#555;font-family:var(--font-code);font-size:0.65rem;">ВЕРСИЯ</span>
+                                <span style="font-size:0.75rem;">A-LAB v2.1</span>
+                            </div>
+                        </div>
+                        <div style="height:1px;background:rgba(255,255,255,0.04);margin:4px 0;"></div>
+                        <button onclick="switchTab('security')"
+                            style="width:100%;background:transparent;border:1px solid var(--border);color:#888;font-family:var(--font-code);font-size:0.7rem;padding:10px;border-radius:10px;cursor:pointer;transition:0.3s;text-align:left;"
+                            onmouseover="this.style.borderColor='var(--tech-blue)';this.style.color='var(--tech-blue)'"
+                            onmouseout="this.style.borderColor='var(--border)';this.style.color='#888'">🔒 Безопасность
+                            и пароль →</button>
+                        <button
+                            onclick="if(confirm('Удалить аккаунт? Это необратимо.'))showToast('Запрос отправлен на review')"
+                            style="width:100%;background:transparent;border:1px solid rgba(255,42,42,0.2);color:rgba(255,42,42,0.6);font-family:var(--font-code);font-size:0.65rem;padding:10px;border-radius:10px;cursor:pointer;transition:0.3s;"
+                            onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+                            onmouseout="this.style.borderColor='rgba(255,42,42,0.2)';this.style.color='rgba(255,42,42,0.6)'">🗑
+                            Удалить аккаунт</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+
         <!-- SECURITY TAB -->
+
         <div class="tab-content" id="security-tab">
             <div class="left-col">
                 <section class="section-card">
@@ -2508,6 +2679,7 @@
             if (window.location.hash === '#feed') switchTab('feed');
             if (window.location.hash === '#portfolio') switchTab('portfolio');
             setTimeout(loadPortfolioFromDB, 1500);
+            setTimeout(_restoreSettings, 200);
         });
 
         // Sidebar pin toggle
@@ -2520,6 +2692,44 @@
             btn.title = isPinned ? 'Открепить меню' : 'Закрепить меню';
             localStorage.setItem('sidebar_pinned', isPinned ? '1' : '0');
         }
+
+        /* ============================
+           SETTINGS TAB FUNCTIONS
+        ============================ */
+        function toggleSetting(el, key) {
+            el.classList.toggle('active');
+            const isOn = el.classList.contains('active');
+            localStorage.setItem('alab_setting_' + key, isOn ? '1' : '0');
+            showToast(isOn ? '✅ Включено' : '⭕ Выключено');
+        }
+
+        function setLang(lang) {
+            localStorage.setItem('alab_lang', lang);
+            document.getElementById('langBtn_ru').style.borderColor = lang === 'ru' ? 'var(--tech-blue)' : 'var(--border)';
+            document.getElementById('langBtn_ru').style.color = lang === 'ru' ? 'var(--tech-blue)' : '#555';
+            document.getElementById('langBtn_ru').style.background = lang === 'ru' ? 'rgba(0,229,255,0.08)' : 'transparent';
+            document.getElementById('langBtn_en').style.borderColor = lang === 'en' ? 'var(--tech-blue)' : 'var(--border)';
+            document.getElementById('langBtn_en').style.color = lang === 'en' ? 'var(--tech-blue)' : '#555';
+            document.getElementById('langBtn_en').style.background = lang === 'en' ? 'rgba(0,229,255,0.08)' : 'transparent';
+            showToast(lang === 'ru' ? '🇷🇺 Язык: Русский' : '🇬🇧 Language: English');
+        }
+
+        // Restore settings toggles on load
+        function _restoreSettings() {
+            document.querySelectorAll('[onclick^="toggleSetting"]').forEach(el => {
+                const match = el.getAttribute('onclick').match(/'([^']+)'\)/);
+                if (!match) return;
+                const key = match[1];
+                const saved = localStorage.getItem('alab_setting_' + key);
+                if (saved === '0') el.classList.remove('active');
+                if (saved === '1') el.classList.add('active');
+            });
+            const lang = localStorage.getItem('alab_lang') || 'ru';
+            const ru = document.getElementById('langBtn_ru');
+            const en = document.getElementById('langBtn_en');
+            if (ru && en) setLang(lang);
+        }
+
 
         // Restore pin state on load
         document.addEventListener('DOMContentLoaded', () => {
