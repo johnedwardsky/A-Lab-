@@ -526,7 +526,7 @@
             if (typeof openFeedShareModal === 'function') {
                 openFeedShareModal(postId);
             } else {
-                const url = `https://a-lab.tech/post/${postId}`;
+                const url = `${window.location.origin}/post/${postId}`;
                 if (navigator.share) {
                     navigator.share({ title: 'A-LAB Post', url }).catch(() => { });
                 } else {
