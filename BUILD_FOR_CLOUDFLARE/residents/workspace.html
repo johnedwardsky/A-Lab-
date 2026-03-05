@@ -1,0 +1,4155 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>A-LAB.CORE | РАБОЧАЯ СТАНЦИЯ РЕЗИДЕНТА</title>
+    <link rel="stylesheet" href="../resident-nav.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --panel: #0d111a;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            min-height: 100vh;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--tech-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+        }
+
+        .cursor.hidden {
+            opacity: 0 !important;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--tech-blue);
+            opacity: 0.5;
+        }
+
+        .main-container {
+            margin-left: 80px;
+            /* collapsed sidebar width */
+            padding: 40px 50px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+            height: 100vh;
+            /* scroll happens inside this container */
+            /* Max width: optimal reading width */
+            max-width: calc(1440px + 80px);
+            width: 100%;
+            transition: margin-left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* Push content when sidebar is hovered OR pinned */
+        .sidebar:hover~.main-container,
+        body:has(.sidebar:hover) .main-container,
+        body:has(.sidebar.pinned) .main-container,
+        .sidebar.pinned~.main-container {
+            margin-left: 220px;
+        }
+
+        /* Sidebar pinned state */
+        .sidebar.pinned {
+            width: 220px;
+        }
+
+        .sidebar.pinned .nav-item span,
+        .sidebar.pinned .join-btn-sidebar span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Sidebar toggle pin button */
+        .sidebar-pin-btn {
+            position: absolute;
+            top: 20px;
+            right: -14px;
+            width: 28px;
+            height: 28px;
+            background: var(--surface, #0b0d14);
+            border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.65rem;
+            color: #555;
+            transition: 0.3s;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar:hover .sidebar-pin-btn,
+        .sidebar.pinned .sidebar-pin-btn {
+            opacity: 1;
+        }
+
+        .sidebar-pin-btn:hover,
+        .sidebar.pinned .sidebar-pin-btn {
+            color: var(--tech-blue, #00E5FF);
+            border-color: var(--tech-blue, #00E5FF);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-top h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .mode-badge {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: var(--tech-blue);
+            border: 1px solid var(--tech-blue);
+            padding: 4px 12px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .tab-content {
+            display: none !important;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: grid !important;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            align-items: start;
+            max-width: 1360px;
+            /* cap inner content width */
+        }
+
+        .tab-content.no-sidebar {
+            grid-template-columns: 1fr;
+            max-width: 1360px;
+        }
+
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '>';
+            color: var(--tech-blue);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--tech-blue);
+        }
+
+        .status-btn {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: #888;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .status-btn:hover,
+        .status-btn.active {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .btn-pulse {
+            width: 100%;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: var(--font-code);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-pulse:hover {
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        /* Messenger Styles */
+        /* ========== MESSENGER (Telegram-UX) ========== */
+        .tg-messenger {
+            display: flex;
+            height: calc(100vh - 180px);
+            min-height: 500px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        /* --- CHAT LIST PANEL --- */
+        .tg-list-panel {
+            width: 300px;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .tg-list-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tg-list-title {
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--tech-blue);
+            letter-spacing: 0.05em;
+        }
+
+        .tg-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #555;
+            transition: color 0.2s;
+            padding: 4px;
+        }
+
+        .tg-icon-btn:hover {
+            color: var(--tech-blue);
+        }
+
+        .tg-search-wrap {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tg-search {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: var(--text);
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .tg-search:focus {
+            border-color: rgba(0, 229, 255, 0.3);
+        }
+
+        .tg-chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Individual chat row */
+        .tg-chat-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.2s;
+        }
+
+        .tg-chat-row:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tg-chat-row.active {
+            background: rgba(0, 229, 255, 0.07);
+            border-left: 2px solid var(--tech-blue);
+        }
+
+        .tg-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #151820;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .tg-chat-row-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tg-chat-row-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 3px;
+        }
+
+        .tg-chat-row-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tg-chat-row-time {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #444;
+            flex-shrink: 0;
+        }
+
+        .tg-chat-row-preview {
+            font-size: 0.72rem;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: var(--font-code);
+        }
+
+        .tg-unread {
+            background: var(--tech-blue);
+            color: black;
+            font-size: 0.6rem;
+            font-weight: 800;
+            font-family: var(--font-code);
+            border-radius: 10px;
+            padding: 2px 7px;
+            flex-shrink: 0;
+        }
+
+        /* --- CHAT VIEW PANEL --- */
+        .tg-chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .tg-chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tg-back-btn {
+            background: none;
+            border: none;
+            color: var(--tech-blue);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            display: none;
+            /* shown only on mobile */
+        }
+
+        .tg-back-btn:hover {
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        .tg-chat-header-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #151820;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .tg-chat-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tg-chat-header-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .tg-chat-header-status {
+            font-family: var(--font-code);
+            font-size: 0.62rem;
+            color: var(--tech-blue);
+        }
+
+        /* Empty state */
+        .tg-empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        /* Messages area */
+        .tg-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            scroll-behavior: smooth;
+        }
+
+        /* Message date separator */
+        .tg-date-sep {
+            text-align: center;
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #333;
+            padding: 10px 0 4px;
+            letter-spacing: 0.08em;
+        }
+
+        /* Message bubble */
+        .tg-bubble {
+            max-width: 70%;
+            padding: 10px 14px 6px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            position: relative;
+            word-break: break-word;
+        }
+
+        .tg-bubble-in {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            color: var(--text);
+        }
+
+        .tg-bubble-out {
+            background: rgba(0, 229, 255, 0.12);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            color: var(--text);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .tg-bubble-time {
+            font-family: var(--font-code);
+            font-size: 0.58rem;
+            color: #444;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .tg-bubble-out .tg-bubble-time {
+            color: rgba(0, 229, 255, 0.5);
+        }
+
+        .tg-bubble-sender {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--tech-blue);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        /* Input area */
+        .tg-input-area {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tg-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            outline: none;
+            resize: none;
+            max-height: 120px;
+            line-height: 1.4;
+            transition: border-color 0.2s;
+        }
+
+        .tg-input:focus {
+            border-color: rgba(0, 229, 255, 0.4);
+        }
+
+        .tg-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 3px 12px rgba(0, 229, 255, 0.3);
+        }
+
+        .tg-send-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 18px rgba(0, 229, 255, 0.5);
+        }
+
+        .tg-send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* --- MOBILE: single-panel view --- */
+        @media (max-width: 768px) {
+            .tg-messenger {
+                height: calc(100vh - 100px);
+                min-height: unset;
+                border-radius: 16px;
+            }
+
+            .tg-list-panel {
+                width: 100%;
+                min-width: unset;
+                border-right: none;
+            }
+
+            .tg-chat-panel {
+                display: none;
+                /* hidden until a chat is opened */
+                position: absolute;
+                inset: 0;
+                z-index: 10;
+                background: var(--surface);
+                border-radius: 16px;
+            }
+
+            .tg-messenger.chat-open .tg-list-panel {
+                display: none;
+            }
+
+            .tg-messenger.chat-open .tg-chat-panel {
+                display: flex;
+            }
+
+            .tg-back-btn {
+                display: flex !important;
+            }
+
+            .tg-bubble {
+                max-width: 85%;
+            }
+        }
+
+
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.03;
+            background: url('../assets/img/noise.svg');
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-container {
+                margin-left: 0 !important;
+                padding: 20px;
+                padding-bottom: 100px;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+
+            .tab-content.active {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+
+            .right-panel {
+                display: none;
+            }
+
+            .bottom-nav {
+                display: flex !important;
+                position: fixed !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+                transform: none !important;
+            }
+
+            .bottom-nav .nav-item-bottom {
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
+
+
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        /* Mid-size tablets: compact sidebar, single column right panel */
+        @media (min-width: 769px) and (max-width: 1100px) {
+            .tab-content.active {
+                grid-template-columns: 1fr 260px;
+            }
+
+            .main-container {
+                padding: 30px 35px;
+            }
+        }
+
+        /* ========== BOTTOM NAV BAR (Mobile) ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 100vw !important;
+            height: 72px;
+            background: rgba(7, 9, 18, 0.92);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            display: none;
+            justify-content: space-evenly;
+            align-items: center;
+            z-index: 3000;
+            padding: 0;
+            margin: 0 !important;
+            box-sizing: border-box;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+
+        .nav-item-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.55rem;
+            font-family: var(--font-code);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            gap: 5px;
+            transition: color 0.25s, transform 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            height: 100%;
+            padding: 10px 5px 8px;
+            position: relative;
+        }
+
+        .nav-item-bottom i {
+            font-size: 1.35rem;
+            font-style: normal;
+            line-height: 1;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-item-bottom.active {
+            color: var(--tech-blue);
+        }
+
+        .nav-item-bottom.active i {
+            transform: translateY(-3px) scale(1.15);
+        }
+
+        .nav-item-bottom.active::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--tech-blue);
+            box-shadow: 0 0 8px var(--tech-blue);
+        }
+
+        /* ========== BOTTOM SHEET ========== */
+        .sheet-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 3500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sheet-backdrop.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            /* explicit viewport width */
+            z-index: 4000;
+            background: linear-gradient(180deg, #0e1120 0%, #080a14 100%);
+            border-top: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 24px 24px 0 0;
+            padding: 0 0 24px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .bottom-sheet.active {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            margin: 12px auto 0;
+        }
+
+        .sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sheet-title {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .sheet-close {
+            background: rgba(255, 255, 255, 0.06);
+            border: none;
+            color: #888;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .sheet-close:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+        }
+
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 16px 20px;
+        }
+
+        .sheet-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
+            padding: 16px;
+            color: #ccc;
+            text-decoration: none;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            text-align: left;
+        }
+
+        .sheet-item:active,
+        .sheet-item:hover {
+            background: rgba(0, 229, 255, 0.08);
+            border-color: rgba(0, 229, 255, 0.25);
+            color: var(--tech-blue);
+        }
+
+        .sheet-item-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            font-style: normal;
+        }
+
+        .sheet-item-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .sheet-exit {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 4px 20px 0;
+            padding: 14px 20px;
+            background: rgba(255, 42, 42, 0.07);
+            border: 1px solid rgba(255, 42, 42, 0.2);
+            border-radius: 16px;
+            color: var(--accent);
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .sheet-exit:active {
+            background: rgba(255, 42, 42, 0.15);
+        }
+
+        /* FAB — quick action button */
+        .fab {
+            position: fixed;
+            bottom: 88px;
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 229, 255, 0.4);
+            z-index: 2500;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            font-weight: 700;
+        }
+
+        .fab:active {
+            transform: scale(0.92);
+        }
+
+        @media (max-width: 768px) {
+            .fab.visible {
+                display: flex;
+            }
+        }
+
+        /* --- MODAL SYSTEM --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 4, 7, 0.85);
+            backdrop-filter: blur(15px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            transform: scale(0.95);
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        /* ====== SETTINGS TOGGLE ====== */
+        .settings-toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .settings-toggle.active {
+            background: rgba(0, 229, 255, 0.2);
+            border-color: var(--tech-blue);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .settings-toggle-knob {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #444;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .settings-toggle.active .settings-toggle-knob {
+            background: var(--tech-blue);
+            left: 23px;
+            box-shadow: 0 0 8px var(--tech-blue);
+        }
+
+        /* ====== FEED TAB — INTEGRATED STYLES ====== */
+
+        #feed-tab.active {
+            display: flex !important;
+            height: calc(100vh - 130px);
+            gap: 0;
+            overflow: hidden;
+            margin: -20px -50px;
+        }
+
+        .feed-scroll-area {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .feed-right-panel {
+            width: 310px;
+            flex-shrink: 0;
+            background: rgba(5, 5, 5, 0.8);
+            border-left: 1px solid var(--border);
+            padding: 30px 25px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .feed-section-header {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #444;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .create-post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 35px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .create-post-card:focus-within {
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .theme-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .theme-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .theme-chip {
+            padding: 7px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: #777;
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .theme-chip:hover {
+            border-color: var(--tech-blue);
+            color: white;
+        }
+
+        .theme-chip.active {
+            background: var(--tech-blue);
+            border-color: var(--tech-blue);
+            color: black;
+            font-weight: 800;
+        }
+
+        .post-input-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .post-textarea-premium {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            padding: 10px 0;
+            min-height: 60px;
+        }
+
+        .post-textarea-premium::placeholder {
+            color: #444;
+        }
+
+        .post-actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .icon-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0, 229, 255, 0.05);
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        .btn-publish-premium {
+            background: var(--tech-blue);
+            color: black;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 10px;
+            font-family: var(--font-code);
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-publish-premium:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        .feed-post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+
+        .feed-post-card:hover {
+            border-color: rgba(0, 229, 255, 0.2);
+        }
+
+        .feed-post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .feed-user-block {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .feed-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #222;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .feed-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .feed-user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .feed-user-role {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: var(--tech-blue);
+        }
+
+        .feed-post-time {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #444;
+        }
+
+        .feed-post-content {
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .feed-post-footer {
+            display: flex;
+            gap: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .feed-action-btn {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .feed-action-btn:hover {
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .feed-action-btn.voted {
+            color: var(--tech-blue);
+            background: rgba(0, 229, 255, 0.1);
+            font-weight: 800;
+        }
+
+        .feed-resident-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .feed-resident-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feed-tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 25px;
+        }
+
+        .feed-tag-item {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #666;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .feed-tag-item:hover {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        .feed-theme-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.82rem;
+            padding: 7px 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+            margin-bottom: 6px;
+        }
+
+        .feed-theme-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--border);
+        }
+
+        .feed-theme-link .count {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #444;
+        }
+
+        /* Share modal for feed */
+        #feedShareModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 20001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #feedShareModal.active {
+            display: flex;
+        }
+
+        .feed-share-modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 400px;
+            padding: 30px;
+        }
+
+        .feed-share-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feed-share-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.65rem;
+            font-family: var(--font-code);
+        }
+
+        .feed-share-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .feed-share-item:hover .feed-share-icon {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+        }
+
+        @media (max-width: 1100px) {
+            .feed-right-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #feed-tab.active {
+                margin: -20px -20px;
+                height: calc(100vh - 120px);
+            }
+
+            .feed-scroll-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body data-no-resident-nav>
+    <div class="noise"></div>
+    <div class="cursor"></div>
+
+    <!-- theme button removed -->
+
+    <aside class="sidebar" id="mainSidebar">
+        <a href="../index.html" class="logo hover-trigger" style="margin-bottom: 20px; padding-left: 5px;">
+            <img src="../assets/img/A-lab-logo.svg" alt="A-LAB" style="width: 35px; height: auto;">
+        </a>
+        <a href="#" class="nav-item active hover-trigger" onclick="switchTab('profile')"><i>👤</i>
+            <span>Профиль</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('feed')"><i>📡</i> <span>Лента</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('messages')"><i>💬</i> <span>Сообщения</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('projects')"><i>🚀</i> <span>Проекты</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('portfolio')"><i>🖼️</i>
+            <span>Портфолио</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('astra')"><i>💎</i> <span>Astra Wallet</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('security')"><i>🔒</i>
+            <span>Безопасность</span></a>
+        <a href="#" class="nav-item hover-trigger" onclick="switchTab('settings')"><i>⚙️</i> <span>Настройки</span></a>
+
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 6px; width: 100%;">
+            <a href="#" class="nav-item hover-trigger" id="sidebarPinBtn" onclick="toggleSidebarPin()"
+                title="Закрепить меню" style="opacity:0.4; font-size:0.7rem;"><i>📌</i> <span>Закрепить</span></a>
+            <a href="../index.html" class="nav-item hover-trigger"><i>🔌</i> <span>На сайт</span></a>
+            <a href="#" class="nav-item hover-trigger" onclick="window.ALabAuth?.logout()"
+                style="color: var(--accent); border-top: 1px solid rgba(255,42,42,0.1); margin-top: 5px;"><i>🚪</i>
+                <span>Выйти</span></a>
+        </div>
+    </aside>
+
+    <!-- Bottom Nav Bar (Mobile) -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item-bottom active" id="bnav-profile" onclick="switchTab('profile')">
+            <i>👤</i><span>Кабинет</span>
+        </button>
+        <button class="nav-item-bottom" id="bnav-feed" onclick="switchTab('feed')">
+            <i>📡</i><span>Лента</span>
+        </button>
+        <button class="nav-item-bottom" id="bnav-projects" onclick="switchTab('projects')">
+            <i>🚀</i><span>Проекты</span>
+        </button>
+        <button class="nav-item-bottom" id="bnav-messages" onclick="switchTab('messages')">
+            <i>💬</i><span>Чат</span>
+        </button>
+        <button class="nav-item-bottom" onclick="toggleBottomSheet()">
+            <i>⋯</i><span>Ещё</span>
+        </button>
+    </nav>
+
+    <!-- Bottom Sheet Backdrop -->
+    <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeBottomSheet()"></div>
+
+    <!-- Bottom Sheet -->
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+            <span class="sheet-title">// навигация</span>
+            <button class="sheet-close" onclick="closeBottomSheet()">✕</button>
+        </div>
+        <div class="sheet-grid">
+            <button class="sheet-item" onclick="switchTab('portfolio'); closeBottomSheet()">
+                <i class="sheet-item-icon">🖼️</i>
+                <span class="sheet-item-label">Портфолио</span>
+            </button>
+            <button class="sheet-item" onclick="switchTab('astra'); closeBottomSheet()">
+                <i class="sheet-item-icon">💎</i>
+                <span class="sheet-item-label">Astra Wallet</span>
+            </button>
+            <button class="sheet-item" onclick="switchTab('security'); closeBottomSheet()">
+                <i class="sheet-item-icon">🔒</i>
+                <span class="sheet-item-label">Безопасность</span>
+            </button>
+            <button class="sheet-item" onclick="switchTab('settings'); closeBottomSheet()">
+                <i class="sheet-item-icon">⚙️</i>
+                <span class="sheet-item-label">Настройки</span>
+            </button>
+        </div>
+        <a href="../index.html" class="sheet-exit">
+            <i style="font-size:1.2rem; font-style:normal;">🔌</i>
+            <span>Вернуться на сайт</span>
+        </a>
+    </div>
+
+    <!-- FAB (Floating Action Button) -->
+    <button class="fab" id="fabBtn" onclick="fabAction()">+</button>
+
+
+    <div class="main-container">
+        <div class="header-top">
+            <div>
+                <h1 id="pageTitle">Рабочая Станция</h1>
+                <p style="color: #888; font-size: 0.8rem; font-family: var(--font-code);">STATUS: AUTHENTICATED //
+                    ACCESS: RESIDENT</p>
+            </div>
+            <div class="mode-badge" id="modeBadge">РЕЖИМ_УПРАВЛЕНИЯ_ПРОФИЛЕМ</div>
+        </div>
+
+        <!-- PROFILE TAB -->
+        <div class="tab-content active" id="profile-tab">
+            <div class="left-col">
+
+                <!-- AVATAR + IDENTITY -->
+                <section class="section-card">
+                    <div class="section-title">Идентичность Резидента</div>
+                    <div
+                        style="display: flex; gap: 25px; align-items: flex-start; margin-bottom: 30px; flex-wrap: wrap;">
+                        <div style="position: relative; flex-shrink: 0;">
+                            <div id="avatarPreview"
+                                style="width: 110px; height: 110px; border-radius: 50%; border: 2px solid var(--tech-blue); overflow: hidden; background: #111; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+                                👤
+                            </div>
+                            <label for="avatarInput"
+                                style="position: absolute; bottom: 0; right: 0; background: var(--tech-blue); color: black; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; font-weight: 800;">+</label>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;"
+                                onchange="previewAvatar(this)">
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div
+                                style="font-family: var(--font-code); font-size: 0.65rem; color: #555; margin-bottom: 8px; text-transform: uppercase;">
+                                Публичный ID резidента</div>
+                            <div style="font-family: var(--font-code); font-size: 1.1rem; color: var(--tech-blue); margin-bottom: 12px;"
+                                id="residentPublicId">ID.РЕЗИДЕНТ</div>
+                            <div style="font-size: 0.7rem; color: #444; line-height: 1.5;">Ваш ID присваивается при
+                                регистрации и не изменяется. Он используется для идентификации в ASTRA Wallet и R&D
+                                системе.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Имя / Псевдоним</label>
+                        <input type="text" id="profileName" class="form-input" placeholder="Ваше имя или псевдоним">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Специализация (роль)</label>
+                        <input type="text" id="profileRole" class="form-input"
+                            placeholder="AI Engineer, Designer, Developer...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">О себе / Биография</label>
+                        <textarea id="profileBio" class="form-textarea" rows="4"
+                            placeholder="Расскажите о себе, своём опыте и проектах..."></textarea>
+                        <div style="font-size: 0.65rem; color: #444; margin-top: 5px; font-family: var(--font-code);">>
+                            Виден в публичном профиле</div>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
+                        <input type="checkbox" id="profileVisibility" checked
+                            style="width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer;">
+                        <label for="profileVisibility" class="form-label"
+                            style="margin: 0; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
+                            Отображать профиль в списках комьюнити
+                            <i title="Если отключено, ваш профиль не будет виден другим на главной странице раздела Резиденты"
+                                style="cursor:help; opacity:0.6; font-style:normal; font-size:0.8rem;">ℹ️</i>
+                        </label>
+                    </div>
+
+                    <button class="btn-pulse" onclick="saveProfile()" style="margin-top: 5px;">Сохранить
+                        Профиль</button>
+                </section>
+
+                <!-- SKILLS STACK -->
+                <section class="section-card">
+                    <div class="section-title">Технологический Стек</div>
+                    <div id="skillTagsContainer"
+                        style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; min-height: 30px;"></div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="newSkillInput" class="form-input" placeholder="React, PyTorch, Figma..."
+                            onkeypress="if(event.key==='Enter')addSkill()">
+                        <button class="status-btn" onclick="addSkill()" style="flex-shrink: 0; padding: 0 15px;">+
+                            Добавить</button>
+                    </div>
+                </section>
+
+                <!-- SOCIAL LINKS -->
+                <section class="section-card">
+                    <div class="section-title">Внешние Каналы</div>
+                    <div class="form-group">
+                        <label class="form-label">🌐 Сайт / Портфолио</label>
+                        <input type="url" id="linkWebsite" class="form-input" placeholder="https://yoursite.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">✈️ Telegram</label>
+                        <div
+                            style="display: flex; align-items: center; gap: 0; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+                            <span
+                                style="padding: 12px 15px; color: #555; font-family: var(--font-code); font-size: 0.85rem; background: rgba(255,255,255,0.03);">@</span>
+                            <input type="text" id="linkTelegram" class="form-input" placeholder="username"
+                                style="border: none; background: transparent;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">💻 GitHub</label>
+                        <input type="text" id="linkGithub" class="form-input" placeholder="github.com/username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bē Behance / Dribbble</label>
+                        <input type="url" id="linkBehance" class="form-input" placeholder="behance.net/username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">💼 LinkedIn</label>
+                        <input type="url" id="linkLinkedin" class="form-input" placeholder="linkedin.com/in/username">
+                    </div>
+                    <button class="btn-pulse" onclick="saveLinks()">Сохранить Ссылки</button>
+                </section>
+
+            </div>
+            <div class="right-panel">
+
+                <!-- STATUS SELECTOR -->
+                <section class="section-card">
+                    <div class="section-title">Статус Онлайн</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="status-btn active" id="statusOnline" onclick="setStatus('online', this)">
+                            <span style="color: #00FF41; margin-right: 8px;">●</span> В СЕТИ
+                        </button>
+                        <button class="status-btn" id="statusBusy" onclick="setStatus('busy', this)">
+                            <span style="color: var(--accent); margin-right: 8px;">●</span> ЗАНЯТ
+                        </button>
+                        <button class="status-btn" id="statusAway" onclick="setStatus('away', this)">
+                            <span style="color: #888; margin-right: 8px;">●</span> ОТСУТСТВУЮ
+                        </button>
+                    </div>
+                </section>
+
+                <!-- PUBLIC PROFILE PREVIEW CARD -->
+                <section class="section-card" style="margin-top: 0;">
+                    <div class="section-title">Предпросмотр Профиля</div>
+                    <div
+                        style="background: rgba(0,0,0,0.3); border-radius: 15px; padding: 20px; border: 1px solid var(--border);">
+                        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                            <div id="previewAvatar"
+                                style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--tech-blue); background: #111; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                👤</div>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.95rem;" id="previewName">Ваше Имя</div>
+                                <div style="font-family: var(--font-code); font-size: 0.65rem; color: var(--tech-blue);"
+                                    id="previewRole">СПЕЦИАЛИЗАЦИЯ</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.75rem; color: #888; line-height: 1.5; margin-bottom: 15px;"
+                            id="previewBio">Ваше описание появится здесь...</p>
+                        <div id="previewSkills" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border);">
+                            <a href="#" id="viewPublicProfile" target="_blank"
+                                style="font-family: var(--font-code); font-size: 0.65rem; color: var(--tech-blue); text-decoration: none;">ОТКРЫТЬ
+                                ПУБЛИЧНЫЙ ПРОФИЛЬ →</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STATS -->
+                <section class="section-card">
+                    <div class="section-title">Статистика</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div
+                            style="text-align: center; padding: 15px; background: rgba(0,229,255,0.05); border-radius: 12px; border: 1px solid rgba(0,229,255,0.1);">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--tech-blue);"
+                                id="statProjectsDisplay">0</div>
+                            <div style="font-size: 0.6rem; color: #555; text-transform: uppercase; margin-top: 4px;">
+                                Проектов</div>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 15px; background: rgba(255,42,42,0.05); border-radius: 12px; border: 1px solid rgba(255,42,42,0.1);">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent);"
+                                id="statDaysDisplay">1</div>
+                            <div style="font-size: 0.6rem; color: #555; text-transform: uppercase; margin-top: 4px;">
+                                Дней в A-LAB</div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- FEED TAB — FULL INTEGRATION -->
+        <div class="tab-content" id="feed-tab">
+
+            <!-- LEFT: Post creation + Feed stream -->
+            <div class="feed-scroll-area">
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px;">NEWS_PULSE</h2>
+                    <div style="font-family: var(--font-code); color: #444; font-size: 0.65rem; margin-top: 4px;">ОБЩАЯ
+                        ЛЕНТА СООБЩЕСТВА</div>
+                </div>
+
+                <!-- Premium Post Creation -->
+                <div class="create-post-card hover-trigger" id="createPostForm">
+                    <div class="theme-chips" id="themeChips">
+                        <div class="theme-chip hover-trigger" data-theme="Development">Development</div>
+                        <div class="theme-chip hover-trigger" data-theme="Neural Art">Neural Art</div>
+                        <div class="theme-chip hover-trigger" data-theme="Cyber Security">Cyber Security</div>
+                        <div class="theme-chip hover-trigger" data-theme="R&D Updates">R&D Updates</div>
+                        <div class="theme-chip hover-trigger" data-theme="Community">Community</div>
+                    </div>
+
+                    <div class="post-input-row">
+                        <div class="feed-avatar" id="feedAuthorAvatar"
+                            style="width:42px;height:42px;border:2px solid var(--tech-blue);flex-shrink:0;"><span
+                                style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:1.2rem;">👤</span>
+                        </div>
+                        <textarea class="post-textarea-premium" id="postContent"
+                            placeholder="Что нового в вашей лаборатории сегодня?"></textarea>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="feedImagePreview" style="display:none; margin: 15px 0 0 62px; position: relative;">
+                        <div style="position: relative; display: inline-block;">
+                            <img src="" id="feedPreviewImg"
+                                style="max-width: 100%; max-height: 250px; border-radius: 14px; border: 1px solid var(--border);">
+                            <button onclick="removeFeedPreview()"
+                                style="position:absolute;top:-8px;right:-8px;background:var(--accent);border:none;color:white;width:24px;height:24px;border-radius:50%;cursor:pointer;font-weight:bold;border:2px solid var(--surface);">×</button>
+                        </div>
+                    </div>
+
+                    <div class="post-actions-bar">
+                        <div class="icon-btn-group">
+                            <input type="file" id="feedImageInput" style="display:none;" accept="image/*"
+                                onchange="handleFeedImageSelect(this)">
+                            <button class="icon-btn hover-trigger"
+                                onclick="document.getElementById('feedImageInput').click()"
+                                title="Прикрепить фото">🖼️</button>
+                            <button class="icon-btn hover-trigger" onclick="addFeedLink()"
+                                title="Добавить ссылку">🔗</button>
+                        </div>
+                        <button class="btn-publish-premium hover-trigger"
+                            onclick="publishFeedPost()">Опубликовать</button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Feed -->
+                <div id="feedContainer">
+                    <div
+                        style="text-align:center;padding:40px;color:#555;font-family:var(--font-code);font-size:0.75rem;">
+                        INITIALIZING_DATA_STREAM...</div>
+                </div>
+                <!-- Legacy postsList fallback -->
+                <div id="postsList" style="display:none;"></div>
+            </div>
+
+            <!-- RIGHT PANEL: Online residents + Tags -->
+            <aside class="feed-right-panel">
+                <div class="feed-section-header">В СЕТИ // ONLINE</div>
+                <div id="onlineResidentsList">
+                    <!-- Dynamically populated by feed-manager.js -->
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <div class="feed-section-header">ТЕМЫ // THEMES</div>
+                    <div>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>Development</span><span
+                                class="count">24</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>Neural Art</span><span
+                                class="count">18</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>Cyber Security</span><span
+                                class="count">7</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger"><span>R&D Updates</span><span
+                                class="count">12</span></a>
+                    </div>
+
+                    <div class="feed-section-header" style="margin-top: 25px;">ТЕГИ // TAGS</div>
+                    <div class="feed-tag-cloud">
+                        <a href="#" class="feed-tag-item hover-trigger">#AI</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Web3</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Cyberpunk</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Neural</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Code</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#UX</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Matrix</a>
+                        <a href="#" class="feed-tag-item hover-trigger">#Supabase</a>
+                    </div>
+
+                    <div class="feed-section-header">СВЯЗЬ // CHANNELS</div>
+                    <a href="#" class="feed-theme-link hover-trigger">
+                        <div>Discord Server</div><span class="count">JOIN</span>
+                    </a>
+                    <a href="#" class="feed-theme-link hover-trigger">
+                        <div>Telegram Group</div><span class="count">JOIN</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Share Modal -->
+            <div id="feedShareModal">
+                <div class="feed-share-modal">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <h3 style="font-family:var(--font-code);font-size:0.85rem;">SHARE_POST</h3>
+                        <button onclick="closeFeedShareModal()"
+                            style="background:transparent;border:none;color:#555;cursor:pointer;font-family:var(--font-code);">[X]</button>
+                    </div>
+                    <div class="feed-share-grid">
+                        <a class="feed-share-item hover-trigger" id="feedShareTg" href="#" target="_blank">
+                            <div class="feed-share-icon">✈️</div><span>Telegram</span>
+                        </a>
+                        <a class="feed-share-item hover-trigger" id="feedShareWa" href="#" target="_blank">
+                            <div class="feed-share-icon">💬</div><span>WhatsApp</span>
+                        </a>
+                        <a class="feed-share-item hover-trigger" id="feedShareTw" href="#" target="_blank">
+                            <div class="feed-share-icon">✖️</div><span>Twitter</span>
+                        </a>
+                        <a class="feed-share-item hover-trigger" onclick="shareFeedToDM(event)">
+                            <div class="feed-share-icon">📥</div><span>DM</span>
+                        </a>
+                    </div>
+                    <div
+                        style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;">
+                        <span id="feedShareUrl"
+                            style="font-family:var(--font-code);font-size:0.75rem;color:#888;">https://a-lab.tech</span>
+                        <button onclick="copyFeedLink()" class="status-btn hover-trigger" id="feedCopyBtn"
+                            style="padding:5px 10px;">COPY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MESSAGES TAB -->
+        <div class="tab-content no-sidebar" id="messages-tab">
+            <div class="tg-messenger" id="tgMessenger">
+
+                <!-- ====== CHAT LIST PANEL ====== -->
+                <div class="tg-list-panel" id="tgListPanel">
+                    <div class="tg-list-header">
+                        <span class="tg-list-title">💬 Сообщения</span>
+                        <button class="tg-icon-btn" title="Новый чат">✏️</button>
+                    </div>
+                    <div class="tg-search-wrap">
+                        <input class="tg-search" type="text" placeholder="Поиск..." oninput="filterChats(this.value)">
+                    </div>
+                    <div class="tg-chat-list" id="tgChatList">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+
+                <!-- ====== CHAT VIEW PANEL ====== -->
+                <div class="tg-chat-panel" id="tgChatPanel">
+                    <!-- Header -->
+                    <div class="tg-chat-header" id="tgChatHeader">
+                        <button class="tg-back-btn" onclick="closeTgChat()" title="Назад">←</button>
+                        <div class="tg-chat-header-avatar" id="tgChatAvatar">👤</div>
+                        <div class="tg-chat-header-info">
+                            <div class="tg-chat-header-name" id="tgChatName">Выберите чат</div>
+                            <div class="tg-chat-header-status" id="tgChatStatus">в сети</div>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div class="tg-empty-state" id="tgEmptyState">
+                        <div style="font-size:3rem; margin-bottom:16px;">💬</div>
+                        <div style="font-family: var(--font-code); color:#444; font-size:0.8rem;">Выберите чат слева
+                        </div>
+                    </div>
+
+                    <!-- Messages area -->
+                    <div class="tg-messages" id="tgMessages" style="display:none;"></div>
+
+                    <!-- Input area -->
+                    <div class="tg-input-area" id="tgInputArea" style="display:none;">
+                        <textarea class="tg-input" id="tgMsgInput" placeholder="Сообщение..." rows="1"
+                            onkeydown="tgKeyDown(event)" oninput="tgAutoResize(this)"></textarea>
+                        <button class="tg-send-btn" onclick="tgSendMsg()" title="Отправить">➤</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- PORTFOLIO TAB -->
+        <div class="tab-content" id="portfolio-tab">
+            <div class="left-col">
+
+                <!-- ADD WORK FORM -->
+                <section class="section-card">
+                    <div class="section-title">Добавить Работу</div>
+
+                    <!-- Image Upload -->
+                    <div id="portfolioDropZone" onclick="document.getElementById('portfolioImgInput').click()"
+                        style="border: 2px dashed rgba(0,229,255,0.3); border-radius: 16px; padding: 30px; text-align: center; cursor: pointer; margin-bottom: 20px; transition: 0.3s; background: rgba(0,229,255,0.02);"
+                        ondragover="event.preventDefault();this.style.borderColor='var(--tech-blue)'"
+                        ondragleave="this.style.borderColor='rgba(0,229,255,0.3)'" ondrop="handlePortfolioDrop(event)">
+                        <div id="portfolioImgPreview" style="display:none; margin-bottom: 10px;">
+                            <img id="portfolioImgTag" src=""
+                                style="max-height: 180px; border-radius: 10px; object-fit: cover;">
+                        </div>
+                        <div id="portfolioDropLabel">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🖼️</div>
+                            <div style="font-family: var(--font-code); font-size: 0.75rem; color: #555;">Перетащите
+                                изображение или кликните для загрузки</div>
+                            <div style="font-size: 0.65rem; color: #333; margin-top: 4px;">JPG, PNG, WEBP — до 5MB</div>
+                        </div>
+                        <input type="file" id="portfolioImgInput" accept="image/*" style="display:none;"
+                            onchange="loadPortfolioImg(this)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Название Работы</label>
+                        <input type="text" id="portfolioTitle" class="form-input"
+                            placeholder="Project Alpha, UI Kit 2.0...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Описание</label>
+                        <textarea id="portfolioDesc" class="form-textarea" rows="3"
+                            placeholder="Что это за работа? Какие технологии? Какой результат?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🔗 Ссылка (GitHub, Behance, сайт)</label>
+                        <input type="url" id="portfolioUrl" class="form-input" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Категория</label>
+                        <select id="portfolioCategory" class="form-input">
+                            <option value="design">🎨 Design / UI-UX</option>
+                            <option value="dev">💻 Development</option>
+                            <option value="ai">🤖 AI / ML</option>
+                            <option value="motion">🎬 Motion / Video</option>
+                            <option value="web3">🔗 Web3 / Blockchain</option>
+                            <option value="other">📌 Другое</option>
+                        </select>
+                    </div>
+                    <button class="btn-pulse" onclick="addPortfolioWork()">Добавить в Портфолио</button>
+                </section>
+
+            </div>
+            <div class="right-panel">
+
+                <!-- GALLERY -->
+                <section class="section-card" style="height: calc(100vh - 200px); overflow-y: auto;">
+                    <div class="section-title">Мои Работы <span id="portfolioCount"
+                            style="color: var(--tech-blue);">0</span></div>
+                    <div id="portfolioGallery" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div
+                            style="text-align: center; padding: 40px; color: #333; font-family: var(--font-code); font-size: 0.7rem;">
+                            [PORTFOLIO_EMPTY] // Добавьте первую работу
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- PROJECTS TAB -->
+        <div class="tab-content" id="projects-tab">
+            <div class="left-col">
+
+                <!-- CREATE PROJECT -->
+                <section class="section-card">
+                    <div class="section-title">Новый Проект</div>
+
+                    <div class="form-group">
+                        <label class="form-label">Название Проекта</label>
+                        <input type="text" id="projTitle" class="form-input" placeholder="Project Nova, AI Engine X...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Категория</label>
+                        <select id="projCategory" class="form-input">
+                            <option value="rd">🧪 R&D / Исследование</option>
+                            <option value="product">📦 Продукт</option>
+                            <option value="design">🎨 Design</option>
+                            <option value="ai">🤖 AI / ML</option>
+                            <option value="startup">🚀 Стартап</option>
+                            <option value="open">🌐 Open Source</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Описание / Цели</label>
+                        <textarea id="projDesc" class="form-textarea" rows="4"
+                            placeholder="Что вы разрабатываете? Какая проблема решается? Ожидаемые результаты..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">💎 Бюджет в Astra Tokens</label>
+                        <div style="position: relative;">
+                            <input type="number" id="projBudget" class="form-input" placeholder="0" min="0"
+                                style="padding-right: 80px;">
+                            <span
+                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-family: var(--font-code); font-size: 0.75rem; color: var(--tech-blue);">ASTRA</span>
+                        </div>
+                        <div style="font-size: 0.65rem; color: #444; margin-top: 6px; font-family: var(--font-code);">≈
+                            <span id="projBudgetUsd">$0.00</span> USD
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Нужны участники со стеком</label>
+                        <input type="text" id="projSkillsNeeded" class="form-input"
+                            placeholder="React, Python, 3D Design... (через запятую)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Срок (дедлайн)</label>
+                        <input type="date" id="projDeadline" class="form-input">
+                    </div>
+                    <button class="btn-pulse" onclick="createProject()">Создать Проект</button>
+                </section>
+
+            </div>
+            <div class="right-panel">
+
+                <!-- MY PROJECTS LIST -->
+                <section class="section-card" style="height: calc(100vh - 200px); overflow-y: auto;">
+                    <div class="section-title">Мои Проекты <span id="projectsCount"
+                            style="color: var(--tech-blue);">0</span></div>
+                    <div id="projectsList" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div
+                            style="text-align: center; padding: 40px; color: #333; font-family: var(--font-code); font-size: 0.7rem;">
+                            [PROJECTS_EMPTY] // Создайте первый проект
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- INVITE MODAL -->
+        <div id="inviteModal"
+            style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:9000; align-items:center; justify-content:center;">
+            <div
+                style="background: var(--surface); border: 1px solid var(--tech-blue); border-radius: 24px; padding: 40px; width: 480px; max-width: 95vw; position: relative;">
+                <button onclick="closeInviteModal()"
+                    style="position:absolute; top:15px; right:15px; background:transparent; border:1px solid #333; color:#888; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1rem;">✕</button>
+                <div
+                    style="font-family: var(--font-code); color: var(--tech-blue); font-size: 0.7rem; margin-bottom: 8px;">
+                    INVITE_PROTOCOL //</div>
+                <h3 style="font-size: 1.4rem; margin-bottom: 5px;" id="inviteProjectTitle">Название Проекта</h3>
+                <p style="color: #555; font-size: 0.8rem; margin-bottom: 25px;">Пригласите резидента принять участие в
+                    проекте</p>
+
+                <div class="form-group">
+                    <label class="form-label">ID Резидента или @Telegram</label>
+                    <input type="text" id="inviteResidentId" class="form-input" placeholder="ID.ARTEM или @username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Сообщение с приглашением</label>
+                    <textarea id="inviteMessage" class="form-textarea" rows="3"
+                        placeholder="Привет! Я работаю над проектом и хотел бы пригласить тебя..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn-pulse" onclick="sendInvite()" style="flex: 1;">Отправить Приглашение 🚀</button>
+                    <button class="status-btn" onclick="closeInviteModal()" style="flex: 0 0 auto;">Отмена</button>
+                </div>
+
+                <!-- Astra budget preview inside modal -->
+                <div
+                    style="margin-top: 20px; padding: 15px; background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.15); border-radius: 12px;">
+                    <div style="font-family: var(--font-code); font-size: 0.65rem; color: #555; margin-bottom: 5px;">
+                        БЮДЖЕТ ПРОЕКТА</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--tech-blue);" id="inviteBudgetDisplay">
+                        0 ASTRA</div>
+                    <div style="font-size: 0.7rem; color: #555; margin-top: 3px;" id="inviteBudgetUsd">≈ $0.00 USD</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASTRA TAB -->
+        <div class="tab-content" id="astra-tab">
+            <div class="left-col">
+                <section class="section-card" style="text-align: center;">
+                    <div class="section-title">💎 Astra Wallet</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--tech-blue); margin: 20px 0; text-shadow: 0 0 20px rgba(0,229,255,0.3);"
+                        id="astraBalanceBig">— 💎</div>
+                    <div style="color:#555;font-family:var(--font-code);font-size:0.75rem;margin-bottom:25px;">≈ $<span
+                            id="astraUsdBig">0.00</span> USD</div>
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn-pulse" onclick="openSendAstraModal()">📤 Отправить</button>
+                        <button class="status-btn" style="flex: 1;" onclick="toggleAstraTx()">📋 История</button>
+                    </div>
+                </section>
+
+                <!-- Send Astra form (hidden by default) -->
+                <section class="section-card" id="sendAstraSection" style="display:none;">
+                    <div class="section-title">Перевод Astra</div>
+                    <div class="form-group">
+                        <label class="form-label">Получатель (ID резидента из списка)</label>
+                        <select id="astraSendTo" class="form-input">
+                            <option value="">-- Выберите резидента --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Сумма (ASTRA)</label>
+                        <input type="number" id="astraSendAmount" class="form-input" placeholder="100" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Комментарий (необязательно)</label>
+                        <input type="text" id="astraSendDesc" class="form-input" placeholder="За работу, за проект...">
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn-pulse" onclick="sendAstraTokens()" style="flex:1;">Отправить →</button>
+                        <button class="status-btn"
+                            onclick="document.getElementById('sendAstraSection').style.display='none'">Отмена</button>
+                    </div>
+                </section>
+
+                <!-- Tx history -->
+                <section class="section-card" id="astraTxSection" style="display:none;">
+                    <div class="section-title">История Транзакций</div>
+                    <div id="astraTxList" style="display:flex;flex-direction:column;gap:10px;"></div>
+                </section>
+
+                <!-- DAO VOTING SECTION -->
+                <section class="section-card" style="margin-top:0;">
+                    <div class="section-title">🗳️ DAO Голосование</div>
+                    <div id="daoVotesList" style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
+                        <div
+                            style="text-align:center;padding:30px;color:#333;font-family:var(--font-code);font-size:0.7rem;">
+                            // Нет активных голосований</div>
+                    </div>
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Информация</div>
+                    <p style="font-size: 0.8rem; color: #888; line-height: 1.6;">Токены Astra используются для оплаты
+                        GPU-вычислений и вознаграждения участников за вклад в проекты R&D.</p>
+                    <p style="font-size:0.75rem;color:#555;margin-top:15px;line-height:1.6;">Курс: <span
+                            style="color:var(--tech-blue);font-family:var(--font-code);">1 ASTRA ≈ $1.50 USD</span></p>
+                </section>
+            </div>
+        </div>
+
+
+
+        <!-- R&D (USER) TAB -->
+        <div class="tab-content" id="rd-tab">
+            <div class="left-col" style="grid-column: span 2;">
+                <section class="section-card">
+                    <div class="section-title">Новый Исследовательский Запрос</div>
+                    <div class="form-group">
+                        <label class="form-label">Суть проекта / Идея</label>
+                        <textarea class="form-textarea" placeholder="Опишите ваш запрос к лаборатории..."></textarea>
+                    </div>
+                    <button class="btn-pulse">Создать Тикет</button>
+                </section>
+                <section class="section-card">
+                    <div class="section-title">Мои Проекты</div>
+                    <div
+                        style="padding: 20px; text-align: center; color: #555; background: rgba(0,0,0,0.1); border-radius: 10px;">
+                        Активных запросов нет</div>
+                </section>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div class="tab-content" id="settings-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Уведомления</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;margin-top:5px;">
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Новые сообщения</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Push, email уведомления</div>
+                            </div>
+                            <div class="settings-toggle" onclick="toggleSetting(this,'notify_messages')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Новые посты в ленте</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Когда резиденты публикуют</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_feed')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Реакции на мои посты</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Лайки и emoji от резидентов</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_reactions')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Комментарии</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">К
+                                    моим публикациям</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_comments')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Новости A-LAB</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Системные объявления</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'notify_system')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="section-card" style="margin-top:20px;">
+                    <div class="section-title">Интерфейс</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;margin-top:5px;">
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Анимации и эффекты</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Частицы, hover-эффекты</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'ui_animations')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <label style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:600;">Кастомный курсор</div>
+                                <div style="font-size:0.65rem;color:#555;font-family:var(--font-code);margin-top:2px;">
+                                    Эффект следования курсора</div>
+                            </div>
+                            <div class="settings-toggle active" onclick="toggleSetting(this,'ui_cursor')">
+                                <div class="settings-toggle-knob"></div>
+                            </div>
+                        </label>
+                        <div style="margin-top:4px;">
+                            <div style="font-size:0.85rem;font-weight:600;margin-bottom:10px;">Язык интерфейса</div>
+                            <div style="display:flex;gap:8px;">
+                                <button onclick="setLang('ru')" id="langBtn_ru"
+                                    style="font-family:var(--font-code);font-size:0.7rem;padding:7px 18px;border-radius:8px;border:1px solid var(--tech-blue);color:var(--tech-blue);background:rgba(0,229,255,0.08);cursor:pointer;">🇷🇺
+                                    RU</button>
+                                <button onclick="setLang('en')" id="langBtn_en"
+                                    style="font-family:var(--font-code);font-size:0.7rem;padding:7px 18px;border-radius:8px;border:1px solid var(--border);color:#555;background:transparent;cursor:pointer;">🇬🇧
+                                    EN</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Аккаунт</div>
+                    <div style="display:flex;flex-direction:column;gap:12px;margin-top:5px;">
+                        <div style="font-size:0.75rem;color:#666;line-height:1.6;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                                <span style="color:#555;font-family:var(--font-code);font-size:0.65rem;">ПЛАН</span>
+                                <span style="color:var(--tech-blue);font-weight:700;font-size:0.8rem;">RESIDENT</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                                <span style="color:#555;font-family:var(--font-code);font-size:0.65rem;">СТАТУС</span>
+                                <span style="color:#00e676;font-size:0.8rem;">● АКТИВЕН</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;">
+                                <span style="color:#555;font-family:var(--font-code);font-size:0.65rem;">ВЕРСИЯ</span>
+                                <span style="font-size:0.75rem;">A-LAB v2.1</span>
+                            </div>
+                        </div>
+                        <div style="height:1px;background:rgba(255,255,255,0.04);margin:4px 0;"></div>
+                        <button onclick="switchTab('security')"
+                            style="width:100%;background:transparent;border:1px solid var(--border);color:#888;font-family:var(--font-code);font-size:0.7rem;padding:10px;border-radius:10px;cursor:pointer;transition:0.3s;text-align:left;"
+                            onmouseover="this.style.borderColor='var(--tech-blue)';this.style.color='var(--tech-blue)'"
+                            onmouseout="this.style.borderColor='var(--border)';this.style.color='#888'">🔒 Безопасность
+                            и пароль →</button>
+                        <button
+                            onclick="if(confirm('Удалить аккаунт? Это необратимо.'))showToast('Запрос отправлен на review')"
+                            style="width:100%;background:transparent;border:1px solid rgba(255,42,42,0.2);color:rgba(255,42,42,0.6);font-family:var(--font-code);font-size:0.65rem;padding:10px;border-radius:10px;cursor:pointer;transition:0.3s;"
+                            onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+                            onmouseout="this.style.borderColor='rgba(255,42,42,0.2)';this.style.color='rgba(255,42,42,0.6)'">🗑
+                            Удалить аккаунт</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- SECURITY TAB -->
+
+        <div class="tab-content" id="security-tab">
+            <div class="left-col">
+                <section class="section-card">
+                    <div class="section-title">Смена Пароля</div>
+                    <div class="form-group">
+                        <label class="form-label">Текущий пароль</label>
+                        <input type="password" id="oldPassword" class="form-input" placeholder="Для подтверждения...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Новый пароль</label>
+                        <input type="password" id="newPassword" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Повторите новый пароль</label>
+                        <input type="password" id="confirmPassword" class="form-input">
+                    </div>
+                    <button class="btn-pulse" onclick="updatePassword()">Обновить Пароль</button>
+
+
+                </section>
+            </div>
+            <div class="right-panel">
+                <section class="section-card">
+                    <div class="section-title">Активные Сессии</div>
+                    <div
+                        style="font-size: 0.75rem; padding: 15px; background: rgba(0,229,255,0.05); border: 1px solid var(--tech-blue); border-radius: 8px;">
+                        <b>Chrome / MacOS</b><br>
+                        <span style="font-size: 0.65rem; opacity: 0.6; display: block; margin-top: 5px;">IP:
+                            192.168.1.1</span>
+                        <span
+                            style="font-size: 0.6rem; color: var(--tech-blue); text-transform: uppercase; margin-top: 5px; display: block;">Текущая
+                            сессия</span>
+                    </div>
+                    <button class="status-btn"
+                        style="width: 100%; margin-top: 15px; border-color: var(--accent); color: var(--accent);">Завершить
+                        остальные</button>
+                </section>
+            </div>
+        </div>
+
+        <!-- ═══════════ BUG REPORTS MODAL ═══════════ -->
+        <div class="modal-overlay" id="bugModal"
+            onclick="if(event.target===this)document.getElementById('bugModal').classList.remove('active')">
+            <div class="modal-box" style="border-color: var(--accent);">
+                <h2>REPORTS_BUG</h2>
+                <div class="form-group">
+                    <label class="form-label">Тип проблемы</label>
+                    <select class="form-input">
+                        <option>ОШИБКА ИНТЕРФЕЙСА</option>
+                        <option>БАГ В ЛОГИКЕ</option>
+                        <option>ДРУГОЕ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <textarea class="form-input" style="height: 100px;font-family: var(--font-code);"></textarea>
+                </div>
+                <button class="btn-pulse" style="background:var(--accent);"
+                    onclick="document.getElementById('bugModal').classList.remove('active');showToast('Отчет отправлен')">ОТПРАВИТЬ
+                    ОТЧЕТ</button>
+            </div>
+        </div>
+
+        <!-- ═══════════ ONBOARDING MODAL (INITIALIZATION) ═══════════ -->
+        <div class="modal-overlay" id="onboardModal">
+            <div class="modal-box" style="border-color: var(--tech-blue); box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);">
+                <div id="onbdStatus"
+                    style="font-family: var(--font-code); font-size: 0.6rem; color: var(--tech-blue); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">
+                    [ STATUS: WAITING_FOR_INPUT ]
+                </div>
+                <h2 style="color: var(--tech-blue); margin-bottom: 5px; font-weight: 800; letter-spacing: -1px;">A-LAB
+                    INITIALIZATION</h2>
+                <p id="onbdDesc"
+                    style="font-size: 0.8rem; color: #888; font-family: var(--font-main); margin-bottom: 25px;">
+                    Обнаружен неактивный профиль. Завершите настройку для активации доступа к экосистеме LAB.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Ваше Имя и Фамилия</label>
+                    <input type="text" id="onbdName" class="form-input" placeholder="Ivan Sky" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Resident ID (Ваш логин/Telegram)</label>
+                    <div
+                        style="display: flex; align-items: center; background: #000; border: 1px solid var(--border); border-radius: 12px; padding-left: 15px;">
+                        <span style="color: #555; font-family: var(--font-code); font-size: 0.9rem;">ID.</span>
+                        <input type="text" id="onbdId" class="form-input"
+                            style="border: none !important; background: transparent !important; padding-left: 5px;"
+                            placeholder="IVAN_SKY" required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">Установите новый постоянный пароль</label>
+                    <input type="password" id="onbdPass1" class="form-input" placeholder="Минимум 6 символов" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Повторите пароль</label>
+                    <input type="password" id="onbdPass2" class="form-input" required>
+                </div>
+
+                <button class="btn-pulse" id="btnFinishOnbd" onclick="finishOnboarding()"
+                    style="margin-top: 15px; width: 100%;">АКТИВИРОВАТЬ ПРОФИЛЬ</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../assets/js/supabase.js"></script>
+    <script src="../supabase-client.js"></script>
+    <script src="../i18n.js"></script>
+    <script src="../toast.js"></script>
+    <script src="../auth-guard.js"></script>
+    <script src="../resident-profile-manager.js"></script>
+    <script defer src="../feed-manager.js"></script>
+
+    <script>
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            const target = document.getElementById(tabId + '-tab');
+            if (target) target.classList.add('active');
+
+            // Sidebar items
+            document.querySelectorAll('.sidebar .nav-item').forEach(i => {
+                i.classList.remove('active');
+                if (i.getAttribute('onclick')?.includes(tabId)) i.classList.add('active');
+            });
+
+            // Bottom Nav items — sync by id
+            const bnavMap = {
+                profile: 'bnav-profile', feed: 'bnav-feed',
+                projects: 'bnav-projects', messages: 'bnav-messages'
+            };
+            document.querySelectorAll('.nav-item-bottom').forEach(i => i.classList.remove('active'));
+            const bnavId = bnavMap[tabId];
+            if (bnavId) {
+                const bnavEl = document.getElementById(bnavId);
+                if (bnavEl) bnavEl.classList.add('active');
+            }
+
+            // FAB visibility — show on projects and portfolio tabs
+            const fab = document.getElementById('fabBtn');
+            if (fab) {
+                if (tabId === 'projects' || tabId === 'portfolio') {
+                    fab.classList.add('visible');
+                } else {
+                    fab.classList.remove('visible');
+                }
+            }
+
+            const titles = {
+                'profile': 'Рабочая Станция',
+                'feed': 'Лента Событий',
+                'portfolio': 'Портфолио',
+                'projects': 'Мои Проекты',
+                'messages': 'Messenger',
+                'astra': 'Astra Wallet',
+                'security': 'Безопасность',
+                'settings': 'Настройки'
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId] || 'Личный Кабинет';
+
+            // Close bottom sheet if open
+            closeBottomSheet();
+        }
+
+        /* ========== FEED TAB HELPERS ========== */
+        let _feedSelectedTheme = null;
+
+        function _initFeedTab() {
+            // Wire theme chips
+            const chips = document.querySelectorAll('#themeChips .theme-chip');
+            chips.forEach(chip => {
+                if (!chip.dataset.feedWired) {
+                    chip.addEventListener('click', () => {
+                        chips.forEach(c => c.classList.remove('active'));
+                        chip.classList.add('active');
+                        _feedSelectedTheme = chip.dataset.theme;
+                    });
+                    chip.dataset.feedWired = '1';
+                }
+            });
+
+            // Sync FeedManager resident data from ProfileManager
+            const rpm = window.ResidentProfileManager;
+            if (rpm?.residentId && window.FeedManager) {
+                window.FeedManager.residentId = rpm.residentId;
+                window.FeedManager.residentData = rpm.profile || null;
+            }
+
+            // Set author avatar from profile data
+            if (rpm?.profile?.avatar_url) {
+                const av = document.getElementById('feedAuthorAvatar');
+                if (av) av.innerHTML = `<img src="${rpm.profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            }
+
+            // Auto-grow textarea
+            const ta = document.getElementById('postContent');
+            if (ta && !ta.dataset.wired) {
+                ta.addEventListener('input', function () { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
+                ta.dataset.wired = '1';
+            }
+
+            // Load feed via FeedManager
+            if (window.FeedManager) {
+                window.FeedManager.loadPosts();
+                window.FeedManager.loadOnlineResidents();
+            }
+        }
+
+        let _feedPendingImageFile = null;
+
+        async function publishFeedPost() {
+            const content = document.getElementById('postContent')?.value?.trim();
+
+            if (!_feedSelectedTheme) { showToast('⚠️ Выберите тему (кнопка выше)'); return; }
+            if (!content) { showToast('⚠️ Введите текст поста'); return; }
+
+            const btn = document.querySelector('.btn-publish-premium');
+            if (btn) { btn.disabled = true; btn.textContent = 'ПУБЛИКАЦИЯ...'; }
+
+            try {
+                const ok = await (window.FeedManager?.publishPost(content, [_feedSelectedTheme], _feedPendingImageFile));
+                if (ok !== false) {
+                    document.getElementById('postContent').value = '';
+                    document.getElementById('postContent').style.height = 'auto';
+                    document.querySelectorAll('#themeChips .theme-chip').forEach(c => c.classList.remove('active'));
+                    _feedSelectedTheme = null;
+                    _feedPendingImageFile = null;
+                    removeFeedPreview();
+                }
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Опубликовать'; }
+            }
+        }
+
+        function handleFeedImageSelect(input) {
+            if (input.files && input.files[0]) {
+                _feedPendingImageFile = input.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('feedImagePreview');
+                    document.getElementById('feedPreviewImg').src = e.target.result;
+                    if (preview) preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeFeedPreview() {
+            const preview = document.getElementById('feedImagePreview');
+            if (preview) preview.style.display = 'none';
+            const input = document.getElementById('feedImageInput');
+            if (input) input.value = '';
+        }
+
+        function addFeedLink() {
+            const url = prompt('Введите URL:');
+            const ta = document.getElementById('postContent');
+            if (url && ta) {
+                ta.value += (ta.value ? '\n' : '') + url;
+                ta.dispatchEvent(new Event('input'));
+            }
+        }
+
+        let _feedSharePostId = null;
+        function openFeedShareModal(postId) {
+            _feedSharePostId = postId;
+            const url = `https://a-lab.tech/post/${postId || 'latest'}`;
+            document.getElementById('feedShareUrl').innerText = url;
+            document.getElementById('feedShareTg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=A-LAB Post`;
+            document.getElementById('feedShareWa').href = `https://wa.me/?text=${encodeURIComponent(url)}`;
+            document.getElementById('feedShareTw').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`;
+            document.getElementById('feedShareModal').classList.add('active');
+        }
+        function closeFeedShareModal() {
+            document.getElementById('feedShareModal').classList.remove('active');
+        }
+        function copyFeedLink() {
+            const url = document.getElementById('feedShareUrl').innerText;
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('feedCopyBtn');
+                btn.innerText = 'COPIED!';
+                setTimeout(() => btn.innerText = 'COPY', 2000);
+                showToast('🔗 Ссылка скопирована!');
+            });
+        }
+        function shareFeedToDM(e) {
+            e.preventDefault();
+            copyFeedLink();
+            closeFeedShareModal();
+            switchTab('messages');
+        }
+
+        // Hook: init feed + portfolio tabs when activated
+        (function () {
+            const _orig = switchTab;
+            switchTab = function (tabId) {
+                _orig(tabId);
+                if (tabId === 'feed') setTimeout(_initFeedTab, 60);
+                if (tabId === 'portfolio') setTimeout(loadPortfolioFromDB, 60);
+            };
+            window.switchTab = switchTab;
+        })();
+
+        // Auto init on deep-link or on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.location.hash === '#feed') switchTab('feed');
+            if (window.location.hash === '#portfolio') switchTab('portfolio');
+            setTimeout(loadPortfolioFromDB, 1500);
+            setTimeout(_restoreSettings, 200);
+        });
+
+        // Sidebar pin toggle
+        function toggleSidebarPin() {
+            const sidebar = document.getElementById('mainSidebar');
+            const btn = document.getElementById('sidebarPinBtn');
+            sidebar.classList.toggle('pinned');
+            const isPinned = sidebar.classList.contains('pinned');
+            btn.innerText = isPinned ? '🔓' : '📌';
+            btn.title = isPinned ? 'Открепить меню' : 'Закрепить меню';
+            localStorage.setItem('sidebar_pinned', isPinned ? '1' : '0');
+        }
+
+        /* ============================
+           SETTINGS TAB FUNCTIONS
+        ============================ */
+        function toggleSetting(el, key) {
+            el.classList.toggle('active');
+            const isOn = el.classList.contains('active');
+            localStorage.setItem('alab_setting_' + key, isOn ? '1' : '0');
+            showToast(isOn ? '✅ Включено' : '⭕ Выключено');
+        }
+
+        function setLang(lang) {
+            localStorage.setItem('alab_lang', lang);
+            document.getElementById('langBtn_ru').style.borderColor = lang === 'ru' ? 'var(--tech-blue)' : 'var(--border)';
+            document.getElementById('langBtn_ru').style.color = lang === 'ru' ? 'var(--tech-blue)' : '#555';
+            document.getElementById('langBtn_ru').style.background = lang === 'ru' ? 'rgba(0,229,255,0.08)' : 'transparent';
+            document.getElementById('langBtn_en').style.borderColor = lang === 'en' ? 'var(--tech-blue)' : 'var(--border)';
+            document.getElementById('langBtn_en').style.color = lang === 'en' ? 'var(--tech-blue)' : '#555';
+            document.getElementById('langBtn_en').style.background = lang === 'en' ? 'rgba(0,229,255,0.08)' : 'transparent';
+            showToast(lang === 'ru' ? '🇷🇺 Язык: Русский' : '🇬🇧 Language: English');
+        }
+
+        // Restore settings toggles on load
+        function _restoreSettings() {
+            document.querySelectorAll('[onclick^="toggleSetting"]').forEach(el => {
+                const match = el.getAttribute('onclick').match(/'([^']+)'\)/);
+                if (!match) return;
+                const key = match[1];
+                const saved = localStorage.getItem('alab_setting_' + key);
+                if (saved === '0') el.classList.remove('active');
+                if (saved === '1') el.classList.add('active');
+            });
+            const lang = localStorage.getItem('alab_lang') || 'ru';
+            const ru = document.getElementById('langBtn_ru');
+            const en = document.getElementById('langBtn_en');
+            if (ru && en) setLang(lang);
+        }
+
+
+        // Restore pin state on load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('sidebar_pinned') === '1') {
+                const sidebar = document.getElementById('mainSidebar');
+                const btn = document.getElementById('sidebarPinBtn');
+                sidebar?.classList.add('pinned');
+                if (btn) { btn.innerText = '🔓'; btn.title = 'Открепить меню'; }
+            }
+        });
+
+
+        // ========== BOTTOM SHEET ==========
+        function toggleBottomSheet() {
+            const sheet = document.getElementById('bottomSheet');
+            const backdrop = document.getElementById('sheetBackdrop');
+            if (!sheet || !backdrop) return;
+            const isOpen = sheet.classList.contains('active');
+            if (isOpen) {
+                closeBottomSheet();
+            } else {
+                backdrop.style.display = 'block';
+                requestAnimationFrame(() => {
+                    backdrop.classList.add('active');
+                    sheet.classList.add('active');
+                });
+            }
+        }
+
+        function closeBottomSheet() {
+            const sheet = document.getElementById('bottomSheet');
+            const backdrop = document.getElementById('sheetBackdrop');
+            if (!sheet || !backdrop) return;
+            sheet.classList.remove('active');
+            backdrop.classList.remove('active');
+            setTimeout(() => { backdrop.style.display = 'none'; }, 320);
+        }
+
+        // FAB action — open relevant form based on active tab
+        function fabAction() {
+            const active = document.querySelector('.tab-content.active');
+            if (!active) return;
+            if (active.id === 'projects-tab') {
+                const el = document.getElementById('projTitle');
+                if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); }
+            } else if (active.id === 'portfolio-tab') {
+                const el = document.getElementById('portTitle');
+                if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); }
+            }
+        }
+
+
+        /* ==============================
+           MESSENGER MODULE
+        ============================== */
+        const TG_CHATS = [
+            {
+                id: 'alab-core',
+                name: 'A-LAB // CORE',
+                avatar: '🏢',
+                status: 'официальный канал',
+                preview: 'Добро пожаловать в A-Lab',
+                time: 'сейчас',
+                unread: 1
+            },
+            {
+                id: 'rd-team',
+                name: 'R&D Команда',
+                avatar: '🔬',
+                status: 'группа · 12 участников',
+                preview: 'Новый проект в работе...',
+                time: '14:30',
+                unread: 3
+            },
+            {
+                id: 'support',
+                name: 'Поддержка',
+                avatar: '⚙️',
+                status: 'техническая поддержка',
+                preview: 'Ваш запрос принят',
+                time: 'вчера',
+                unread: 0
+            },
+            {
+                id: 'dao',
+                name: 'DAO Голосование',
+                avatar: '🗳️',
+                status: 'группа · 47 участников',
+                preview: 'Новое предложение к голосованию',
+                time: 'вчера',
+                unread: 0
+            }
+        ];
+
+        // Default messages per chat
+        const TG_DEFAULT_MSGS = {
+            'alab-core': [
+                { from: 'in', sender: 'A-LAB // CORE', text: 'Добро пожаловать, резидент. Ваш доступ активирован.', time: '10:00' },
+                { from: 'in', sender: 'A-LAB // CORE', text: 'Используйте рабочую станцию для управления проектами и портфолио.', time: '10:01' }
+            ],
+            'rd-team': [
+                { from: 'in', sender: 'R&D', text: 'Привет! Добавляем тебя в команду исследований.', time: '14:28' },
+                { from: 'in', sender: 'R&D', text: 'Новый проект Air Bridges уже в разработке 🚀', time: '14:30' }
+            ],
+            'support': [
+                { from: 'in', sender: 'Поддержка', text: 'Здравствуйте! Ваш запрос #1042 принят в обработку.', time: 'вчера' }
+            ],
+            'dao': [
+                { from: 'in', sender: 'DAO', text: 'Новое предложение: увеличить пул токенов для R&D на 15%.', time: 'вчера' },
+                { from: 'in', sender: 'DAO', text: 'Голосование открыто до 01.03.2026', time: 'вчера' }
+            ]
+        };
+
+        let tgCurrentChat = null;
+
+        function tgInit() {
+            renderChatList(TG_CHATS);
+        }
+
+        function renderChatList(chats) {
+            const list = document.getElementById('tgChatList');
+            if (!list) return;
+            list.innerHTML = chats.map(c => `
+                <div class="tg-chat-row ${tgCurrentChat === c.id ? 'active' : ''}" onclick="openTgChat('${c.id}')">
+                    <div class="tg-avatar">${c.avatar}</div>
+                    <div class="tg-chat-row-info">
+                        <div class="tg-chat-row-top">
+                            <span class="tg-chat-row-name">${c.name}</span>
+                            <span class="tg-chat-row-time">${c.time}</span>
+                        </div>
+                        <div class="tg-chat-row-preview">${c.preview}</div>
+                    </div>
+                    ${c.unread ? `<span class="tg-unread">${c.unread}</span>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function openTgChat(chatId) {
+            tgCurrentChat = chatId;
+            const chat = TG_CHATS.find(c => c.id === chatId);
+            if (!chat) return;
+
+            // Update header
+            document.getElementById('tgChatAvatar').textContent = chat.avatar;
+            document.getElementById('tgChatName').textContent = chat.name;
+            document.getElementById('tgChatStatus').textContent = chat.status;
+
+            // Hide empty state, show messages & input
+            document.getElementById('tgEmptyState').style.display = 'none';
+            document.getElementById('tgMessages').style.display = 'flex';
+            document.getElementById('tgInputArea').style.display = 'flex';
+
+            // Clear unread badge
+            chat.unread = 0;
+
+            // Render messages
+            renderMessages(chatId);
+
+            // On mobile: push to chat view
+            document.getElementById('tgMessenger').classList.add('chat-open');
+
+            // Highlight active in list
+            renderChatList(TG_CHATS);
+        }
+
+        function renderMessages(chatId) {
+            const area = document.getElementById('tgMessages');
+            const stored = JSON.parse(localStorage.getItem('tg_msgs_' + chatId) || 'null');
+            const msgs = stored || TG_DEFAULT_MSGS[chatId] || [];
+
+            if (!stored) localStorage.setItem('tg_msgs_' + chatId, JSON.stringify(msgs));
+
+            area.innerHTML = '';
+
+            // Date separator
+            const sep = document.createElement('div');
+            sep.className = 'tg-date-sep';
+            sep.textContent = '// СЕГОДНЯ';
+            area.appendChild(sep);
+
+            msgs.forEach(m => {
+                const wrap = document.createElement('div');
+                wrap.className = 'tg-bubble ' + (m.from === 'out' ? 'tg-bubble-out' : 'tg-bubble-in');
+                wrap.innerHTML = `
+                    ${m.from === 'in' ? `<div class="tg-bubble-sender">${m.sender}</div>` : ''}
+                    <div>${escTg(m.text)}</div>
+                    <div class="tg-bubble-time">${m.time}</div>
+                `;
+                area.appendChild(wrap);
+            });
+
+            area.scrollTop = area.scrollHeight;
+        }
+
+        function closeTgChat() {
+            document.getElementById('tgMessenger').classList.remove('chat-open');
+        }
+
+        function tgSendMsg() {
+            const input = document.getElementById('tgMsgInput');
+            const text = input.value.trim();
+            if (!text || !tgCurrentChat) return;
+
+            const now = new Date();
+            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            // Save to localStorage
+            const key = 'tg_msgs_' + tgCurrentChat;
+            const msgs = JSON.parse(localStorage.getItem(key) || '[]');
+            msgs.push({ from: 'out', sender: 'Я', text, time });
+            localStorage.setItem(key, JSON.stringify(msgs));
+
+            // Update preview in list
+            const chat = TG_CHATS.find(c => c.id === tgCurrentChat);
+            if (chat) { chat.preview = text; chat.time = time; }
+            renderChatList(TG_CHATS);
+
+            // Render messages
+            renderMessages(tgCurrentChat);
+
+            // Reset input
+            input.value = '';
+            input.style.height = 'auto';
+            input.focus();
+        }
+
+        function tgKeyDown(e) {
+            // Enter sends; Shift+Enter = new line
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                tgSendMsg();
+            }
+        }
+
+        function tgAutoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        }
+
+        function filterChats(q) {
+            const filtered = TG_CHATS.filter(c =>
+                c.name.toLowerCase().includes(q.toLowerCase()) ||
+                c.preview.toLowerCase().includes(q.toLowerCase())
+            );
+            renderChatList(filtered);
+        }
+
+        function escTg(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // Init messenger when messages tab is opened
+        const _origSwitch = window.switchTab;
+        document.addEventListener('DOMContentLoaded', () => {
+            tgInit();
+            // Also re-init when switching to messages tab
+            const oldSwitch = window.switchTab;
+            if (oldSwitch) {
+                window.switchTab = function (tabId) {
+                    oldSwitch(tabId);
+                    if (tabId === 'messages') tgInit();
+                };
+            }
+        });
+
+        // Theme
+        function toggleTheme() {
+
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeBtn').innerText = isLight ? '☀' : '☽';
+        }
+
+        /* ==============================
+           PROJECTS MODULE
+        ============================== */
+        let projects = [];
+        let currentInviteProjectId = null;
+
+        async function fetchProjects() {
+            const db = window.ALabCore?.db;
+            if (!db || !window.ALabCore.isConnected) {
+                projects = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+                renderProjects();
+                return;
+            }
+            try {
+                const { data, error } = await db
+                    .from('resident_projects')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                if (data) {
+                    projects = data.map(p => ({
+                        id: p.id,
+                        title: p.title,
+                        category: p.category,
+                        desc: p.description,
+                        budget: p.astra_budget,
+                        skills: (p.tags || []).join(', '),
+                        deadline: p.deadline || null,
+                        status: p.status,
+                        createdAt: p.created_at,
+                        owner_id: p.owner_id
+                    }));
+                }
+            } catch (e) { console.error('[PROJECTS] fetch error', e); }
+            renderProjects();
+        }
+
+        // Astra → USD converter — defined once here, referenced throughout
+        const ASTRA_RATE = 1.5;
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Budget live converter
+            const budgetInput = document.getElementById('projBudget');
+            if (budgetInput) {
+                budgetInput.addEventListener('input', () => {
+                    const v = parseFloat(budgetInput.value) || 0;
+                    document.getElementById('projBudgetUsd').innerText = '$' + (v * ASTRA_RATE).toFixed(2);
+                });
+            }
+            fetchProjects();
+            renderPortfolio();
+            renderDaoVotes();
+        });
+
+        /* ==============================
+           DAO VOTING (read from admin localStorage)
+        ============================== */
+        function renderDaoVotes() {
+            const el = document.getElementById('daoVotesList');
+            if (!el) return;
+            const votes = JSON.parse(localStorage.getItem('dao_votes') || '[]');
+            if (votes.length === 0) {
+                el.innerHTML = `<div style="text-align:center;padding:30px;color:#333;font-family:var(--font-code);font-size:0.7rem;">// Нет активных голосований</div>`;
+                return;
+            }
+            el.innerHTML = votes.map(v => {
+                const myVote = localStorage.getItem('dao_myvote_' + v.id);
+                const count1 = parseInt(localStorage.getItem('dao_count1_' + v.id) || '0');
+                const count2 = parseInt(localStorage.getItem('dao_count2_' + v.id) || '0');
+                const total = count1 + count2 || 1;
+                return `
+                <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(0,229,255,0.15);border-radius:14px;padding:18px 20px;">
+                    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:1.1rem;">🗳️</span>
+                        <div style="font-weight:700;font-size:0.88rem;">${v.title}</div>
+                    </div>
+                    ${v.desc ? `<div style="font-size:0.75rem;color:#888;margin-bottom:12px;line-height:1.5;">${v.desc}</div>` : ''}
+                    ${v.deadline ? `<div style="font-family:var(--font-code);font-size:0.62rem;color:#555;margin-bottom:12px;">⏰ Дедлайн: ${v.deadline}</div>` : ''}
+                    ${myVote ? `
+                        <div style="margin-bottom:10px;">
+                            <div style="display:flex;gap:8px;margin-bottom:6px;font-family:var(--font-code);font-size:0.65rem;color:#666;">
+                                <span style="color:var(--green);">${v.opt1}</span>
+                                <span>${Math.round(count1 / total * 100)}%</span>
+                            </div>
+                            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;margin-bottom:8px;">
+                                <div style="height:100%;width:${Math.round(count1 / total * 100)}%;background:var(--green);border-radius:3px;transition:width 0.4s;"></div>
+                            </div>
+                            <div style="display:flex;gap:8px;margin-bottom:6px;font-family:var(--font-code);font-size:0.65rem;color:#666;">
+                                <span style="color:var(--accent);">${v.opt2}</span>
+                                <span>${Math.round(count2 / total * 100)}%</span>
+                            </div>
+                            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;">
+                                <div style="height:100%;width:${Math.round(count2 / total * 100)}%;background:var(--accent);border-radius:3px;transition:width 0.4s;"></div>
+                            </div>
+                            <div style="font-family:var(--font-code);font-size:0.6rem;color:#444;margin-top:8px;">// Вы проголосовали: ${myVote}</div>
+                        </div>
+                    ` : `
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <button onclick="castVote('${v.id}','1','${v.opt1.replace(/'/g, "&#39;")}')"
+                                style="padding:8px 18px;border-radius:8px;cursor:pointer;border:1px solid rgba(0,255,65,0.3);background:rgba(0,255,65,0.08);color:var(--green);font-family:var(--font-code);font-size:0.72rem;font-weight:700;transition:0.2s;"
+                                onmouseover="this.style.background='rgba(0,255,65,0.18)'" onmouseout="this.style.background='rgba(0,255,65,0.08)'">${v.opt1}</button>
+                            <button onclick="castVote('${v.id}','2','${v.opt2.replace(/'/g, "&#39;")}')"
+                                style="padding:8px 18px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,42,42,0.3);background:rgba(255,42,42,0.08);color:var(--accent);font-family:var(--font-code);font-size:0.72rem;font-weight:700;transition:0.2s;"
+                                onmouseover="this.style.background='rgba(255,42,42,0.18)'" onmouseout="this.style.background='rgba(255,42,42,0.08)'">${v.opt2}</button>
+                        </div>
+                    `}
+                </div>`;
+            }).join('');
+        }
+
+        function castVote(voteId, option, label) {
+            localStorage.setItem('dao_myvote_' + voteId, label);
+            const key = 'dao_count' + option + '_' + voteId;
+            localStorage.setItem(key, (parseInt(localStorage.getItem(key) || '0') + 1).toString());
+            renderDaoVotes();
+        }
+
+
+
+        async function createProject() {
+            const title = document.getElementById('projTitle').value.trim();
+            const category = document.getElementById('projCategory').value;
+            const desc = document.getElementById('projDesc').value.trim();
+            const budget = parseInt(document.getElementById('projBudget').value) || 0;
+            const skills = document.getElementById('projSkillsNeeded').value.trim();
+            const deadline = document.getElementById('projDeadline').value;
+
+            if (!title) { showToast('⚠️ Укажите название проекта'); return; }
+            if (!desc) { showToast('⚠️ Добавьте описание проекта'); return; }
+
+            const db = window.ALabCore?.db;
+            if (!db || !window.ALabCore.isConnected) {
+                const project = { id: 'proj_' + Date.now(), title, category, desc, budget, skills, deadline, status: 'active', createdAt: new Date().toISOString() };
+                projects.unshift(project);
+                localStorage.setItem('alab_projects', JSON.stringify(projects));
+                renderProjects();
+                showToast('✓ Проект «' + title + '» создан (Local Mode)!');
+                return;
+            }
+
+            try {
+                const residentId = window.ALabAuth?.residentId || window.ALabAuth?.profile?.id;
+                if (!residentId) throw new Error('Resident ID not found. Are you logged in?');
+
+                const tagsArray = skills ? skills.split(',').map(s => s.trim()) : [];
+
+                const { error } = await db.from('resident_projects').insert([{
+                    title,
+                    category,
+                    description: desc,
+                    astra_budget: budget,
+                    tags: tagsArray,
+                    owner_id: residentId,
+                    status: 'active'
+                }]);
+
+                if (error) throw error;
+
+                showToast('✓ Проект «' + title + '» создан!');
+                fetchProjects();
+
+                // Reset form
+                ['projTitle', 'projDesc', 'projSkillsNeeded', 'projDeadline'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                document.getElementById('projBudget').value = '';
+                document.getElementById('projBudgetUsd').innerText = '$0.00';
+            } catch (e) {
+                showToast('Ошибка: ' + e.message);
+                console.error(e);
+            }
+        }
+
+        const categoryIcons = { rd: '🧪', product: '📦', design: '🎨', ai: '🤖', startup: '🚀', open: '🌐' };
+        const statusColors = { active: '#00FF41', pause: '#ffa500', done: '#888' };
+
+        function renderProjects() {
+            const list = document.getElementById('projectsList');
+            const count = document.getElementById('projectsCount');
+            if (!list) return;
+
+            if (projects.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align:center;padding:40px;color:#555;font-family:var(--font-code);font-size:0.8rem;border:1px dashed var(--border);border-radius:16px;">
+                        <span style="font-size:2rem;display:block;margin-bottom:10px;color:rgba(255,42,42,0.5);">🚀</span>
+                        [PROJECTS_EMPTY] // У вас пока нет проектов
+                        <div style="margin-top:15px;">
+                            <button onclick="document.querySelector('#projTitle').focus()" class="btn-pulse hover-trigger" style="font-size:0.7rem;padding:8px 15px;">СОЗДАТЬ ПЕРВЫЙ ПРОЕКТ</button>
+                        </div>
+                    </div>`;
+                if (count) count.innerText = '0';
+                return;
+            }
+            if (count) count.innerText = projects.length;
+
+            list.innerHTML = projects.map((p, idx) => `
+                <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:16px;padding:20px;transition:0.3s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                        <div>
+                            <span style="font-size:0.7rem;font-family:var(--font-code);color:#555;">${categoryIcons[p.category] || '📌'} ${p.category.toUpperCase()}</span>
+                            <div style="font-weight:800;font-size:1rem;margin-top:4px;">${p.title}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <span style="width:8px;height:8px;border-radius:50%;background:${statusColors[p.status] || '#888'};display:inline-block;"></span>
+                            <span style="font-family:var(--font-code);font-size:0.6rem;color:#555;">${p.status.toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <p style="font-size:0.8rem;color:#888;line-height:1.5;margin-bottom:15px;">${p.desc.length > 150 ? p.desc.substring(0, 150) + '...' : p.desc}</p>
+                    ${p.skills ? `<div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:5px;">${p.skills.split(',').map(s => `<span style="font-size:0.6rem;font-family:var(--font-code);border:1px solid #333;padding:2px 8px;border-radius:5px;color:#666;">${s.trim()}</span>`).join('')}</div>` : ''}
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border);">
+                        <div style="font-family:var(--font-code);font-size:0.75rem;color:var(--tech-blue);">💎 ${p.budget.toLocaleString()} ASTRA <span style="color:#555;font-size:0.65rem;">≈ $${(p.budget * ASTRA_RATE).toFixed(0)}</span></div>
+                        <div style="display:flex;gap:8px;">
+                            <button onclick="openInviteModal('${p.id}')" style="font-family:var(--font-code);font-size:0.65rem;border:1px solid rgba(0,229,255,0.3);background:rgba(0,229,255,0.05);color:var(--tech-blue);padding:6px 12px;border-radius:8px;cursor:pointer;transition:0.3s;">✉️ Пригласить</button>
+                            <button onclick="deleteProject(${idx})" style="font-family:var(--font-code);font-size:0.65rem;border:1px solid #222;background:transparent;color:#555;padding:6px 10px;border-radius:8px;cursor:pointer;">×</button>
+                        </div>
+                    </div>
+                    ${p.deadline ? `<div style="font-size:0.6rem;color:#444;font-family:var(--font-code);margin-top:8px;">DEADLINE: ${new Date(p.deadline).toLocaleDateString('ru-RU')}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        async function deleteProject(idx) {
+            const p = projects[idx];
+            const db = window.ALabCore?.db;
+            if (db && window.ALabCore.isConnected && !p.id.startsWith('proj_')) {
+                if (!confirm('Вы уверены, что хотите удалить этот проект?')) return;
+                try {
+                    await db.from('resident_projects').delete().eq('id', p.id);
+                    fetchProjects();
+                    showToast('🗑 Проект удалён');
+                    return;
+                } catch (e) { console.error('Delete error', e); }
+            }
+
+            projects.splice(idx, 1);
+            localStorage.setItem('alab_projects', JSON.stringify(projects));
+            renderProjects();
+            showToast('🗑 Проект удалён (Local Mode)');
+        }
+
+        function openInviteModal(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            currentInviteProjectId = projectId;
+            document.getElementById('inviteProjectTitle').innerText = p.title;
+            document.getElementById('inviteBudgetDisplay').innerText = p.budget.toLocaleString() + ' ASTRA';
+            document.getElementById('inviteBudgetUsd').innerText = '≈ $' + (p.budget * ASTRA_RATE).toFixed(2) + ' USD';
+            document.getElementById('inviteResidentId').value = '';
+            document.getElementById('inviteMessage').value = `Привет! Работаю над проектом «${p.title}» и хотел бы пригласить тебя в команду. Бюджет проекта: ${p.budget} ASTRA.`;
+            const modal = document.getElementById('inviteModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeInviteModal() {
+            document.getElementById('inviteModal').style.display = 'none';
+            currentInviteProjectId = null;
+        }
+
+        async function sendInvite() {
+            const recipientId = document.getElementById('inviteResidentId').value.trim();
+            const message = document.getElementById('inviteMessage').value.trim();
+            const p = projects.find(x => x.id === currentInviteProjectId);
+
+            if (!recipientId) { showToast('⚠️ Укажите ID резидента'); return; }
+            if (!message) { showToast('⚠️ Напишите сообщение'); return; }
+
+            const db = window.ALabCore?.db;
+            if (db) {
+                try {
+                    await db.from('project_invites').insert([{
+                        project_id: p?.id,
+                        project_title: p?.title,
+                        recipient_identifier: recipientId,
+                        message,
+                        astra_budget: p?.budget || 0,
+                        sender_id: window.ALabCore?.userId,
+                        status: 'pending'
+                    }]);
+                } catch (e) {
+                    console.warn('[INVITE] DB error:', e.message);
+                }
+            }
+
+            showToast('🚀 Приглашение отправлено!');
+            closeInviteModal();
+        }
+
+        /* ==============================
+           PORTFOLIO MODULE — Supabase
+        ============================== */
+        let portfolioWorks = [];
+        let portfolioCurrentImg = null;
+        let portfolioCurrentFile = null;
+
+        async function loadPortfolioFromDB() {
+            const db = window.ALabCore?.db;
+            const rpm = window.ResidentProfileManager;
+            if (!db || !rpm?.residentId) {
+                // Fallback to localStorage
+                portfolioWorks = JSON.parse(localStorage.getItem('alab_portfolio') || '[]');
+                renderPortfolio();
+                return;
+            }
+            try {
+                const { data, error } = await db
+                    .from('resident_portfolio')
+                    .select('*')
+                    .eq('resident_id', rpm.residentId)
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                portfolioWorks = (data || []).map(w => ({
+                    id: w.id,
+                    title: w.title,
+                    desc: w.description,
+                    url: w.link_url,
+                    category: w.category,
+                    img: w.image_url
+                }));
+                renderPortfolio();
+            } catch (e) {
+                console.warn('[Portfolio] DB load failed, using localStorage:', e);
+                portfolioWorks = JSON.parse(localStorage.getItem('alab_portfolio') || '[]');
+                renderPortfolio();
+            }
+        }
+
+        function loadPortfolioImg(input) {
+            if (!input.files || !input.files[0]) return;
+            portfolioCurrentFile = input.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                portfolioCurrentImg = e.target.result;
+                document.getElementById('portfolioImgTag').src = portfolioCurrentImg;
+                document.getElementById('portfolioImgPreview').style.display = 'block';
+                document.getElementById('portfolioDropLabel').style.display = 'none';
+                document.getElementById('portfolioDropZone').style.borderColor = 'var(--tech-blue)';
+            };
+            reader.readAsDataURL(portfolioCurrentFile);
+        }
+
+        function handlePortfolioDrop(e) {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                portfolioCurrentFile = file;
+                loadPortfolioImg({ files: [file] });
+            }
+            document.getElementById('portfolioDropZone').style.borderColor = 'rgba(0,229,255,0.3)';
+        }
+
+        async function addPortfolioWork() {
+            const title = document.getElementById('portfolioTitle').value.trim();
+            const desc = document.getElementById('portfolioDesc').value.trim();
+            const url = document.getElementById('portfolioUrl').value.trim();
+            const category = document.getElementById('portfolioCategory').value;
+
+            if (!title) { showToast('⚠️ Укажите название работы'); return; }
+
+            const addBtn = document.querySelector('[onclick="addPortfolioWork()"]');
+            if (addBtn) { addBtn.disabled = true; addBtn.textContent = 'СОХРАНЕНИЕ...'; }
+
+            const db = window.ALabCore?.db;
+            const rpm = window.ResidentProfileManager;
+
+            let imageUrl = portfolioCurrentImg; // base64 fallback
+
+            // Upload image to Supabase Storage if we have a file and connection
+            if (portfolioCurrentFile && db && window.ALabCore.isConnected) {
+                try {
+                    const ext = portfolioCurrentFile.name.split('.').pop();
+                    const path = `portfolio/${rpm?.residentId || 'anon'}/${Date.now()}.${ext}`;
+                    const { error: upErr } = await db.storage
+                        .from('portfolio-images')
+                        .upload(path, portfolioCurrentFile, { contentType: portfolioCurrentFile.type });
+                    if (!upErr) {
+                        const { data: urlData } = db.storage.from('portfolio-images').getPublicUrl(path);
+                        imageUrl = urlData?.publicUrl || imageUrl;
+                    }
+                } catch (e) { console.warn('[Portfolio] Image upload failed:', e); }
+            }
+
+            // Save to Supabase if connected
+            if (db && rpm?.residentId && window.ALabCore.isConnected) {
+                try {
+                    const { data, error } = await db
+                        .from('resident_portfolio')
+                        .insert({
+                            resident_id: rpm.residentId,
+                            title,
+                            description: desc,
+                            link_url: url,
+                            category,
+                            image_url: typeof imageUrl === 'string' && imageUrl.startsWith('http') ? imageUrl : null
+                        })
+                        .select()
+                        .single();
+                    if (error) throw error;
+                    portfolioWorks.unshift({ id: data.id, title, desc, url, category, img: imageUrl });
+                } catch (e) {
+                    console.error('[Portfolio] Save error:', e);
+                    showToast('⚠️ Ошибка сохранения в БД, сохранено локально');
+                    portfolioWorks.unshift({ id: 'local_' + Date.now(), title, desc, url, category, img: imageUrl });
+                    try { localStorage.setItem('alab_portfolio', JSON.stringify(portfolioWorks)); } catch (_) { }
+                }
+            } else {
+                // Local fallback
+                portfolioWorks.unshift({ id: 'local_' + Date.now(), title, desc, url, category, img: imageUrl });
+                try { localStorage.setItem('alab_portfolio', JSON.stringify(portfolioWorks)); } catch (_) { }
+            }
+
+            // Reset form
+            ['portfolioTitle', 'portfolioDesc', 'portfolioUrl'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.value = '';
+            });
+            portfolioCurrentImg = null;
+            portfolioCurrentFile = null;
+            document.getElementById('portfolioImgPreview').style.display = 'none';
+            document.getElementById('portfolioDropLabel').style.display = 'block';
+            document.getElementById('portfolioDropZone').style.borderColor = 'rgba(0,229,255,0.3)';
+            document.getElementById('portfolioImgInput').value = '';
+
+            if (addBtn) { addBtn.disabled = false; addBtn.textContent = 'Добавить в Портфолио'; }
+            renderPortfolio();
+            showToast('✅ Работа «' + title + '» добавлена!');
+        }
+
+        const catPortIcons = { design: '🎨', dev: '💻', ai: '🤖', motion: '🎬', web3: '🔗', other: '📌' };
+
+        function renderPortfolio() {
+            const gallery = document.getElementById('portfolioGallery');
+            const count = document.getElementById('portfolioCount');
+            if (!gallery) return;
+
+            if (portfolioWorks.length === 0) {
+                gallery.innerHTML = `
+                    <div style="text-align:center;padding:50px 20px;color:#333;font-family:var(--font-code);font-size:0.75rem;border:1px dashed rgba(255,255,255,0.05);border-radius:16px;">
+                        <div style="font-size:2.5rem;margin-bottom:12px;">🖼️</div>
+                        PORTFOLIO_EMPTY<br>
+                        <span style="color:#444;font-size:0.65rem;display:block;margin-top:8px;">Добавьте свою первую работу используя форму слева</span>
+                    </div>`;
+                if (count) count.innerText = '0';
+                return;
+            }
+            if (count) count.innerText = portfolioWorks.length;
+
+            gallery.innerHTML = portfolioWorks.map((w) => `
+                <div style="display:flex;gap:15px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:16px;padding:15px;transition:0.3s;" onmouseover="this.style.borderColor='rgba(0,229,255,0.2)'" onmouseout="this.style.borderColor='var(--border)'">
+                    <div style="flex-shrink:0;width:90px;height:90px;border-radius:12px;overflow:hidden;background:#111;border:1px solid #222;display:flex;align-items:center;justify-content:center;font-size:2rem;">
+                        ${w.img ? `<img src="${w.img}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">` : (catPortIcons[w.category] || '📌')}
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div>
+                                <div style="font-size:0.6rem;font-family:var(--font-code);color:#555;margin-bottom:4px;">${catPortIcons[w.category] || '📌'} ${(w.category || 'other').toUpperCase()}</div>
+                                <div style="font-weight:800;font-size:0.95rem;">${w.title}</div>
+                            </div>
+                            <button onclick="deleteWork('${w.id}')" style="background:transparent;border:1px solid #222;color:#555;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.8rem;flex-shrink:0;" title="Удалить">×</button>
+                        </div>
+                        ${w.desc ? `<p style="font-size:0.75rem;color:#888;line-height:1.4;margin-top:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${w.desc}</p>` : ''}
+                        ${w.url ? `<a href="${w.url}" target="_blank" style="font-family:var(--font-code);font-size:0.65rem;color:var(--tech-blue);text-decoration:none;margin-top:8px;display:inline-block;">🔗 Открыть работу →</a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteWork(workId) {
+            if (!confirm('Удалить эту работу?')) return;
+
+            const db = window.ALabCore?.db;
+            if (db && window.ALabCore.isConnected && !String(workId).startsWith('local_')) {
+                try {
+                    const { error } = await db.from('resident_portfolio').delete().eq('id', workId);
+                    if (error) throw error;
+                } catch (e) {
+                    console.warn('[Portfolio] Delete from DB failed:', e);
+                }
+            }
+            portfolioWorks = portfolioWorks.filter(w => String(w.id) !== String(workId));
+            try { localStorage.setItem('alab_portfolio', JSON.stringify(portfolioWorks)); } catch (_) { }
+            renderPortfolio();
+            showToast('🗑 Работа удалена');
+        }
+
+        // Close invite modal on backdrop click
+        document.getElementById('inviteModal')?.addEventListener('click', function (e) {
+            if (e.target === this) closeInviteModal();
+        });
+
+        /* ============================
+           PROFILE MANAGEMENT
+        ============================ */
+
+        let skills = [];
+
+        // Avatar preview
+        function previewAvatar(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewEl = document.getElementById('avatarPreview');
+                const previewSmall = document.getElementById('previewAvatar');
+                const img = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                previewEl.innerHTML = img;
+                previewSmall.innerHTML = img;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // Skills management
+        function addSkill() {
+            const input = document.getElementById('newSkillInput');
+            const val = input.value.trim();
+            if (!val || skills.includes(val)) { input.value = ''; return; }
+            skills.push(val);
+            input.value = '';
+            renderSkillTags();
+            updatePreview();
+        }
+
+        function removeSkill(skill) {
+            skills = skills.filter(s => s !== skill);
+            renderSkillTags();
+            updatePreview();
+        }
+
+        function renderSkillTags() {
+            const container = document.getElementById('skillTagsContainer');
+            container.innerHTML = skills.map(s => `
+                <div style="display:flex;align-items:center;gap:6px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);padding:6px 12px;border-radius:8px;font-family:var(--font-code);font-size:0.72rem;color:var(--tech-blue);">
+                    ${s}
+                    <span onclick="removeSkill('${s}')" style="cursor:pointer;color:#555;font-size:0.8rem;margin-left:2px;transition:0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='#555'">✕</span>
+                </div>
+            `).join('');
+        }
+
+        // Live preview update
+        function updatePreview() {
+            const name = document.getElementById('profileName')?.value || 'Ваше Имя';
+            const role = document.getElementById('profileRole')?.value || 'СПЕЦИАЛИЗАЦИЯ';
+            const bio = document.getElementById('profileBio')?.value || 'Ваше описание появится здесь...';
+
+            const nameEl = document.getElementById('previewName');
+            const roleEl = document.getElementById('previewRole');
+            const bioEl = document.getElementById('previewBio');
+            const skillsEl = document.getElementById('previewSkills');
+
+            if (nameEl) nameEl.innerText = name;
+            if (roleEl) roleEl.innerText = role.toUpperCase();
+            if (bioEl) bioEl.innerText = bio.length > 120 ? bio.substring(0, 120) + '...' : bio;
+            if (skillsEl) {
+                skillsEl.innerHTML = skills.slice(0, 5).map(s =>
+                    `<span style="font-size:0.6rem;font-family:var(--font-code);border:1px solid #333;padding:3px 8px;border-radius:5px;color:#888;">${s}</span>`
+                ).join('');
+            }
+        }
+
+        /* ============================
+           PROFILE MANAGEMENT (Real Supabase)
+        ============================ */
+
+        async function saveProfile() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm || !rpm.residentId) { showToast('⚠️ Не авторизован'); return; }
+
+            const fullName = document.getElementById('profileName').value.trim();
+            const role = document.getElementById('profileRole').value.trim();
+            const bio = document.getElementById('profileBio').value.trim();
+            const visible = document.getElementById('profileVisibility').checked;
+
+            if (!fullName) { showToast('⚠️ Укажите имя'); return; }
+
+            // Save skills first if any new ones added
+            await saveSkillsToDb();
+
+            const { data, error } = await rpm.saveProfile({ fullName, role, bio, visible });
+            if (error) { showToast('❌ Ошибка: ' + error); return; }
+
+            // Upload avatar if a new file was selected
+            const avatarFile = document.getElementById('avatarInput').files[0];
+            if (avatarFile) {
+                const { url, error: avatarError } = await rpm.uploadAvatar(avatarFile);
+                if (url) {
+                    document.getElementById('avatarPreview').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+                    document.getElementById('previewAvatar').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                }
+                if (avatarError) console.warn('[AVATAR]', avatarError);
+            }
+
+            updatePreview();
+            showToast('✅ Профиль сохранён!');
+        }
+
+        async function saveSkillsToDb() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm || !rpm.residentId) return;
+            await rpm.saveSkills(skills);
+        }
+
+        async function saveLinks() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm || !rpm.residentId) { showToast('⚠️ Не авторизован'); return; }
+
+            const payload = {
+                website: document.getElementById('linkWebsite').value.trim(),
+                telegram: document.getElementById('linkTelegram').value.trim(),
+                github: document.getElementById('linkGithub').value.trim(),
+                behance: document.getElementById('linkBehance').value.trim(),
+                linkedin: document.getElementById('linkLinkedin').value.trim()
+            };
+
+            const { error } = await rpm.saveLinks(payload);
+            if (error) { showToast('❌ Ошибка сохранения ссылок'); return; }
+            showToast('✅ Ссылки сохранены!');
+        }
+
+        async function setStatus(statusId, btn) {
+            document.querySelectorAll('[id^="status"]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const rpm = window.ResidentProfileManager;
+            if (rpm && rpm.residentId) await rpm.setStatus(statusId);
+            showToast(`● Статус: ${statusId.toUpperCase()}`);
+        }
+
+        function showToast(msg) {
+            if (window.Toast) { window.Toast.show(msg); return; }
+            const t = document.createElement('div');
+            t.innerText = msg;
+            t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#00E5FF;color:black;padding:10px 20px;border-radius:30px;font-family:var(--font-code);font-size:0.75rem;font-weight:700;z-index:9999;';
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        // Populate form fields from real Supabase profile
+        function loadProfileData(profile) {
+            if (!profile) return;
+
+            if (profile.full_name) document.getElementById('profileName').value = profile.full_name;
+            if (profile.role) document.getElementById('profileRole').value = profile.role;
+            if (profile.bio) document.getElementById('profileBio').value = profile.bio;
+
+            // Skills
+            if (profile.skills && Array.isArray(profile.skills)) {
+                skills = profile.skills;
+                renderSkillTags();
+            }
+
+            // Links
+            const links = profile.links || {};
+            document.getElementById('profileVisibility').checked = links.visibility !== 'hidden';
+            if (links.portfolio) document.getElementById('linkWebsite').value = links.portfolio;
+            if (links.telegram) document.getElementById('linkTelegram').value = links.telegram;
+            if (links.github) document.getElementById('linkGithub').value = links.github;
+            if (links.behance) document.getElementById('linkBehance').value = links.behance;
+            if (links.linkedin) document.getElementById('linkLinkedin').value = links.linkedin;
+
+            // Status
+            const statusMap = { online: 'Online', busy: 'Busy', away: 'Away', offline: 'Away' };
+            const btnId = 'status' + (statusMap[profile.status] || 'Online');
+            document.querySelectorAll('[id^="status"]').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById(btnId);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // Avatar
+            if (profile.avatar_url) {
+                const imgHtml = `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;">`;
+                document.getElementById('avatarPreview').innerHTML = imgHtml;
+                document.getElementById('previewAvatar').innerHTML = `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            }
+
+            // Public profile link 
+            const uid = profile.user_id || '';
+            const pubLink = document.getElementById('viewPublicProfile');
+            if (pubLink && uid) pubLink.href = `../profile.html?id=${uid}`;
+
+
+            // Stats
+            const days = Math.max(1, Math.floor((Date.now() - new Date(profile.created_at)) / 86400000));
+            const daysEl = document.getElementById('statDaysDisplay');
+            if (daysEl) daysEl.innerText = days;
+
+            // Public ID display
+            const publicIdEl = document.getElementById('residentPublicId');
+            if (publicIdEl) publicIdEl.innerText = 'ID.' + (profile.full_name || '').toUpperCase().replace(/\s+/g, '_');
+
+            updatePreview();
+        }
+
+        // Bind live preview to inputs + listen for real profile data
+        document.addEventListener('DOMContentLoaded', () => {
+            ['profileName', 'profileRole', 'profileBio'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', updatePreview);
+            });
+        });
+
+        // When ResidentProfileManager fires profile loaded
+        document.addEventListener('rpm:profile-loaded', (e) => {
+            loadProfileData(e.detail);
+            renderProjectsFromDB();
+            loadWalletData();
+            loadFeedData();
+            loadResidentsForMessenger();
+            // Check onboarding
+            if (e.detail?.links?.setup_complete === false) {
+                const nameEl = document.getElementById('onbdName');
+                if (nameEl && e.detail.full_name) nameEl.value = e.detail.full_name;
+                document.getElementById('onboardModal').classList.add('active');
+            }
+        });
+
+        // Also check if RPM already loaded (race condition)
+        if (window.ResidentProfileManager?.profile) {
+            loadProfileData(window.ResidentProfileManager.profile);
+        }
+
+        /* ============================
+           REAL PROJECTS (Supabase)
+        ============================ */
+        async function renderProjectsFromDB() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+            const myProjects = await rpm.loadMyProjects();
+
+            // Merge with localStorage projects for backward compatibility
+            const localProjects = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+            const allProjects = [...myProjects.map(p => ({
+                id: p.id,
+                title: p.title,
+                category: p.category,
+                desc: p.description,
+                budget: p.astra_budget || 0,
+                status: p.status,
+                createdAt: p.created_at,
+                isDB: true
+            })), ...localProjects];
+
+            projects = allProjects;
+            renderProjects();
+
+            // Update stat
+            const el = document.getElementById('statProjectsDisplay');
+            if (el) el.innerText = myProjects.length;
+        }
+
+        async function createProject() {
+            const title = document.getElementById('projTitle').value.trim();
+            const category = document.getElementById('projCategory').value;
+            const desc = document.getElementById('projDesc').value.trim();
+            const budget = parseInt(document.getElementById('projBudget').value) || 0;
+
+            if (!title) { showToast('⚠️ Укажите название проекта'); return; }
+            if (!desc) { showToast('⚠️ Добавьте описание проекта'); return; }
+
+            const rpm = window.ResidentProfileManager;
+            if (rpm && rpm.residentId) {
+                const { data, error } = await rpm.createProject({ title, description: desc, category, budget });
+                if (error) { showToast('❌ Ошибка: ' + error); return; }
+                showToast('✅ Проект «' + title + '» создан!');
+                ['projTitle', 'projDesc', 'projSkillsNeeded', 'projDeadline'].forEach(id => {
+                    const el = document.getElementById(id); if (el) el.value = '';
+                });
+                document.getElementById('projBudget').value = '';
+                document.getElementById('projBudgetUsd').innerText = '$0.00';
+                await renderProjectsFromDB();
+            } else {
+                // Fallback: save locally
+                const project = { id: 'proj_' + Date.now(), title, category, desc, budget, status: 'active', createdAt: new Date().toISOString() };
+                projects.unshift(project);
+                localStorage.setItem('alab_projects', JSON.stringify(projects));
+                renderProjects();
+                showToast('✓ Проект создан (локально)');
+            }
+        }
+
+        async function deleteProject(idx) {
+            const p = projects[idx];
+            if (!p) return;
+            const rpm = window.ResidentProfileManager;
+            if (p.isDB && rpm) {
+                const { error } = await rpm.deleteProject(p.id);
+                if (error) { showToast('❌ Ошибка удаления'); return; }
+            } else {
+                const local = JSON.parse(localStorage.getItem('alab_projects') || '[]');
+                local.splice(local.findIndex(x => x.id === p.id), 1);
+                localStorage.setItem('alab_projects', JSON.stringify(local));
+            }
+            await renderProjectsFromDB();
+            showToast('🗑 Проект удалён');
+        }
+
+        async function finishOnboarding() {
+            const name = document.getElementById('onbdName').value.trim();
+            const resId = document.getElementById('onbdId').value.trim();
+            const pass1 = document.getElementById('onbdPass1').value;
+            const pass2 = document.getElementById('onbdPass2').value;
+            const btn = document.getElementById('btnFinishOnbd');
+            const statusLine = document.getElementById('onbdStatus');
+            const descLine = document.getElementById('onbdDesc');
+
+            if (!name || !resId) { return showToast('Заполните Имя и ID'); }
+            if (pass1.length < 6) { return showToast('Пароль минимум 6 символов'); }
+            if (pass1 !== pass2) { return showToast('Пароли не совпадают'); }
+
+            btn.disabled = true;
+            btn.innerText = 'ИНИЦИАЛИЗАЦИЯ...';
+
+            const db = window.ALabCore?.db;
+            if (!db) return;
+
+            try {
+                // Step 1: Security Handshake
+                statusLine.innerText = '[ STATUS: SECURITY_HANDSHAKE ]';
+                descLine.innerText = 'Обновление зашифрованных учетных данных...';
+                const { error: passErr } = await db.auth.updateUser({ password: pass1 });
+                if (passErr) throw passErr;
+                await new Promise(r => setTimeout(r, 800));
+
+                // Step 2: Protocol Sync
+                statusLine.innerText = '[ STATUS: PROTOCOL_SYNC ]';
+                descLine.innerText = 'Синхронизация профиля с ядром системы...';
+                const uid = window.ALabCore?.userId;
+                const { data: current } = await db.from('residents').select('links').eq('user_id', uid).single();
+                let links = current?.links || {};
+                links.setup_complete = true;
+                links.visibility = 'public';
+                links.telegram = resId;
+
+                const { error: profileErr } = await db.from('residents').update({
+                    full_name: name,
+                    links: links
+                }).eq('user_id', uid);
+
+                if (profileErr) throw profileErr;
+                await new Promise(r => setTimeout(r, 800));
+
+                // Step 3: Asset Initialization
+                statusLine.innerText = '[ STATUS: ASSET_INITIALIZATION ]';
+                descLine.innerText = 'Зачисление стартовых ресурсов Astra...';
+                await new Promise(r => setTimeout(r, 1200));
+
+                // Success
+                statusLine.innerText = '[ STATUS: INITIALIZATION_COMPLETE ]';
+                statusLine.style.color = '#00FF41';
+                descLine.innerText = 'Доступ активирован. Добро пожаловать, ' + name + '.';
+                btn.innerText = 'ВХОД В СИСТЕМУ';
+                btn.style.background = '#00FF41';
+                btn.disabled = false;
+                btn.onclick = () => {
+                    const modal = document.getElementById('onboardModal');
+                    modal.style.opacity = '0';
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        location.reload(); // Refresh to apply all data
+                    }, 500);
+                };
+
+            } catch (err) {
+                console.error('[ONBOARDING] Error:', err);
+                statusLine.innerText = '[ STATUS: ERROR ]';
+                statusLine.style.color = 'var(--accent)';
+                descLine.innerText = 'Сбой инициализации: ' + (err.message || 'Unknown error');
+                btn.disabled = false;
+                btn.innerText = 'ПОВТОРИТЬ ПОПЫТКУ';
+            }
+        }
+
+        /* ============================
+           PASSWORD CHANGE (Secure — verifies current password first)
+        ============================ */
+        async function updatePassword() {
+            const currentPass = document.getElementById('oldPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (!currentPass) { showToast('⚠️ Введите текущий пароль'); return; }
+            if (!newPass) { showToast('⚠️ Введите новый пароль'); return; }
+            if (newPass !== confirmPass) { showToast('⚠️ Пароли не совпадают'); return; }
+            if (newPass.length < 6) { showToast('⚠️ Минимум 6 символов'); return; }
+            if (newPass === currentPass) { showToast('⚠️ Новый пароль совпадает с текущим'); return; }
+
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) { showToast('⚠️ Нет подключения'); return; }
+
+            const btn = document.querySelector('[onclick="updatePassword()"]');
+            if (btn) { btn.innerText = 'ПРОВЕРКА...'; btn.disabled = true; }
+
+            const { success, error } = await rpm.changePassword(currentPass, newPass);
+
+            if (btn) { btn.innerText = 'Обновить Пароль'; btn.disabled = false; }
+
+            if (error === 'wrong_current_password') {
+                showToast('❌ Текущий пароль неверный');
+            } else if (error) {
+                showToast('❌ Ошибка: ' + error);
+            } else {
+                showToast('✅ Пароль успешно изменён!');
+                document.getElementById('oldPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+        }
+
+        /* ============================
+           ASTRA WALLET (Real Supabase)
+        ============================ */
+
+        function _applyWalletUI(balance, transactions) {
+            const balEl = document.getElementById('astraBalanceBig');
+            const usdEl = document.getElementById('astraUsdBig');
+            if (balEl) balEl.textContent = balance.toLocaleString('ru-RU') + ' 💎';
+            if (usdEl) usdEl.textContent = (balance * ASTRA_RATE).toFixed(2);
+            renderAstraTx(transactions || []);
+        }
+
+        // Listen to RPM wallet-loaded event (fires after profile-loaded)
+        document.addEventListener('rpm:wallet-loaded', (e) => {
+            const { wallet, transactions } = e.detail || {};
+            const bal = parseFloat(wallet?.balance || 0);
+            console.log('[Wallet] rpm:wallet-loaded — balance:', bal);
+            _applyWalletUI(bal, transactions || []);
+        });
+
+        async function loadWalletData() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+            const db = window.ALabCore?.db;
+            if (!db) return;
+
+            // If RPM already has wallet cached, use it immediately
+            if (rpm.wallet) {
+                const bal = parseFloat(rpm.wallet.balance || 0);
+                console.log('[Wallet] Using cached RPM wallet, balance:', bal);
+                _applyWalletUI(bal, []);
+                // Still fetch transactions
+                const residentId = rpm.residentId;
+                if (residentId) {
+                    const { data: txs } = await db
+                        .from('astra_transactions')
+                        .select('*')
+                        .or(`from_id.eq.${residentId},to_id.eq.${residentId}`)
+                        .order('created_at', { ascending: false })
+                        .limit(10);
+                    renderAstraTx(txs || []);
+                }
+                return;
+            }
+
+            const r = rpm.profile;
+            if (!r || !r.id) {
+                console.warn('[Wallet] No resident profile yet — will wait for rpm:wallet-loaded');
+                return;
+            }
+
+            // Direct query fallback
+            let astraBalance = 0;
+
+            // Use SECURITY DEFINER RPC — bypasses RLS issues with uid() resolution
+            const { data: rpcBal, error: rpcError } = await db.rpc('get_my_astra_balance');
+            if (rpcError) {
+                console.warn('[Wallet] RPC error:', rpcError.message, '— falling back to direct query');
+                // Fallback: direct table query
+                const { data: wallet, error: walletError } = await db
+                    .from('astra_balances')
+                    .select('balance')
+                    .eq('resident_id', r.id)
+                    .single();
+                if (!walletError && wallet) {
+                    astraBalance = parseFloat(wallet.balance || 0);
+                } else {
+                    console.warn('[Wallet] Direct query also failed:', walletError?.code, walletError?.message);
+                }
+            } else {
+                astraBalance = parseFloat(rpcBal || 0);
+                console.log('[Wallet] RPC balance:', astraBalance);
+            }
+
+            // Fetch transactions
+            const { data: txs, error: txError } = await db
+                .from('astra_transactions')
+                .select('*')
+                .or(`from_id.eq.${r.id},to_id.eq.${r.id}`)
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            if (txError) console.warn('[Wallet] Tx query warning:', txError.message);
+
+            _applyWalletUI(astraBalance, txs || []);
+        }
+
+
+
+
+        function renderAstraTx(txs) {
+            const el = document.getElementById('astraTxList');
+            if (!el) return;
+            const myId = window.ResidentProfileManager?.residentId;
+
+            if (!txs || !txs.length) {
+                el.innerHTML = '<div style="text-align:center;padding:20px;color:#333;font-family:var(--font-code);font-size:0.7rem;">// История пуста</div>';
+                return;
+            }
+
+            el.innerHTML = txs.map(tx => {
+                // Real column names: from_id / to_id / type / reason
+                const isSender = tx.from_id === myId;
+                const sign = isSender ? '-' : '+';
+                const color = isSender ? 'var(--accent)' : '#00FF41';
+                const label = isSender ? '→ Перевод' : '← Получено';
+                const reason = tx.reason || tx.type || 'Транзакция';
+                const date = new Date(tx.created_at).toLocaleDateString('ru-RU', {
+                    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                });
+                return `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+                    <div>
+                        <div style="font-size:0.85rem;font-weight:700;">${label}</div>
+                        <div style="font-family:var(--font-code);font-size:0.6rem;color:#444;margin-top:3px;">${date}${reason ? ' · ' + reason : ''}</div>
+                    </div>
+                    <div style="font-family:var(--font-code);font-size:1rem;font-weight:800;color:${color};">${sign}${parseFloat(tx.amount).toLocaleString('ru-RU')} 💎</div>
+                </div>`;
+            }).join('');
+        }
+
+        function openSendAstraModal() {
+            document.getElementById('sendAstraSection').style.display = 'block';
+            document.getElementById('sendAstraSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAstraTx() {
+            const el = document.getElementById('astraTxSection');
+            if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function sendAstraTokens() {
+            const recipientUserId = document.getElementById('astraSendTo').value;
+            const amount = document.getElementById('astraSendAmount').value;
+            const desc = document.getElementById('astraSendDesc').value.trim();
+
+            if (!recipientUserId) { showToast('⚠️ Выберите получателя'); return; }
+            if (!amount || parseFloat(amount) <= 0) { showToast('⚠️ Укажите сумму'); return; }
+
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+
+            const result = await rpm.sendAstra(recipientUserId, amount, desc);
+
+            if (result.error === 'insufficient_funds') { showToast('❌ Недостаточно Astra'); return; }
+            if (result.error === 'recipient_not_found') { showToast('❌ Резидент не найден'); return; }
+            if (result.error) { showToast('❌ Ошибка: ' + result.error); return; }
+
+            showToast('✅ ' + amount + ' ASTRA отправлено!');
+            document.getElementById('astraSendAmount').value = '';
+            document.getElementById('astraSendDesc').value = '';
+            document.getElementById('sendAstraSection').style.display = 'none';
+            await loadWalletData();
+        }
+
+        /* ============================
+           FEED (Real Supabase)
+        ============================ */
+        async function loadFeedData() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+            const posts = await rpm.loadFeed();
+            renderFeed(posts);
+        }
+
+        function renderFeed(posts) {
+            const el = document.getElementById('postsList');
+            if (!el) return;
+            if (!posts.length) {
+                el.innerHTML = '<div style="text-align:center;padding:40px;color:#333;font-family:var(--font-code);font-size:0.7rem;">// Лента пуста — опубликуйте первый пост!</div>';
+                return;
+            }
+            el.innerHTML = posts.map(p => {
+                const d = new Date(p.created_at);
+                const timeStr = d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' }) + ' // ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                const avatar = p.author?.avatar_url ? `<img src="${p.author.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : '👤';
+                return `
+                <div class="section-card" style="margin-bottom:15px;">
+                    <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+                        <div style="width:38px;height:38px;border-radius:50%;border:1px solid var(--tech-blue);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">${avatar}</div>
+                        <div>
+                            <div style="font-weight:700;font-size:0.9rem;">${p.author?.full_name || 'Резидент'}</div>
+                            <div style="font-family:var(--font-code);font-size:0.6rem;color:#444;">${timeStr}</div>
+                        </div>
+                    </div>
+                    <p style="font-size:0.88rem;color:#ccc;line-height:1.6;">${escTg(p.content)}</p>
+                </div>`;
+            }).join('');
+        }
+
+        async function postFeed() {
+            const content = document.getElementById('feedPostText')?.value.trim();
+            if (!content) { showToast('⚠️ Напишите что-нибудь'); return; }
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+
+            const { error } = await rpm.postFeedItem(content);
+            if (error) { showToast('❌ Ошибка публикации'); return; }
+
+            document.getElementById('feedPostText').value = '';
+            showToast('✅ Пост опубликован!');
+            await loadFeedData();
+        }
+
+        /* ============================
+           RESIDENTS SELECTOR (for Astra send + Invite)
+        ============================ */
+        async function loadResidentsForMessenger() {
+            const rpm = window.ResidentProfileManager;
+            if (!rpm) return;
+
+            const residents = await rpm.fetchAllResidents();
+            const myId = rpm.userId;
+
+            // Populate Astra send dropdown
+            const select = document.getElementById('astraSendTo');
+            if (select) {
+                select.innerHTML = '<option value="">-- Выберите резидента --</option>' +
+                    residents
+                        .filter(r => r.user_id !== myId)
+                        .map(r => `<option value="${r.user_id}">${r.full_name}${r.role ? ' · ' + r.role : ''}</option>`)
+                        .join('');
+            }
+
+            // Populate real chat list with residents (in addition to system chats)
+            const realChats = residents
+                .filter(r => r.user_id !== myId)
+                .map(r => ({
+                    id: 'resident_' + r.user_id,
+                    name: r.full_name,
+                    avatar: r.avatar_url ? `<img src="${r.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : '👤',
+                    status: r.status || 'offline',
+                    preview: 'Резидент A-LAB',
+                    time: '',
+                    unread: 0,
+                    userId: r.user_id
+                }));
+
+            // Merge with system chats at top
+            const combined = [...TG_CHATS, ...realChats];
+            renderChatList(combined);
+        }
+    </script>
+</body>
+
+</html>

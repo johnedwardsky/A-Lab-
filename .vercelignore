@@ -1,4 +1,4 @@
-# Игнорируем всё, кроме файлов сайта
+# Игнорируем тяжелые папки с прототипами и инструментами
 api/
 bin/
 python/
@@ -8,17 +8,27 @@ pipconfig
 venv/
 env/
 Earlier/
+Earlier-backup/
+Earlier-old/
+AMUSE/
 amuse-web/
 spirograph-pro/
 project-zero-countdown/
 .notebooklm-mcp/
 chrome-profile/
+
+# Игнорируем ВСЕ крупные медиа-файлы (они должны быть в Supabase)
 *.mp4
 *.mov
 *.zip
 *.tar.gz
+*.iso
+*.dmg
+
+# Игнорируем исходники и логи
 *.py
 *.pyc
+*.ipynb
 __pycache__/
 logs/
 cache/
@@ -29,10 +39,26 @@ checkpoints/
 
 # Секреты и системные файлы
 .env*
+.git
+.gitignore
 .DS_Store
 Thumbs.db
 .npm/
 .cacache/
+node_modules/
 
-# Разрешаем видео из ассетов, если оно там есть (но мы его убрали в Supabase)
-!assets/video/Zastavka.mp4
+# Разрешаем только папки основного сайта
+!assets/
+!residents/
+!lang/
+!css/
+!js/
+!*.html
+!*.js
+!*.css
+!*.json
+!*.svg
+!*.png
+!*.jpg
+!*.webp
+!*.ico

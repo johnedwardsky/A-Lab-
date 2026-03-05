@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="menu.consulting">A-LAB.TECH | TECH CONSULTING</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        a, button, input, select, textarea { cursor: pointer; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hidden { opacity: 0 !important; }
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        /* --- HEADER (Standardized) --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 100;
+            pointer-events: none;
+            backdrop-filter: none;
+        }
+
+        .header-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+            z-index: 1100;
+            align-items: center;
+        }
+
+        .logo {
+            pointer-events: auto;
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, 0.85);
+                backdrop-filter: blur(15px);
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                z-index: 1200;
+                pointer-events: auto;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .logo {
+                position: static !important;
+                display: flex;
+                align-items: center;
+            }
+
+            .logo img {
+                height: 24px;
+            }
+
+            .header-controls {
+                position: static;
+                display: flex;
+                gap: 8px;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 6px 12px !important;
+                font-size: 0.6rem !important;
+                white-space: nowrap;
+                letter-spacing: 0.5px;
+            }
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .menu-btn,
+        .back-btn {
+            pointer-events: auto;
+            position: relative;
+
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn:hover,
+        .back-btn:hover {
+            background: transparent;
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 150px 40px 100px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 120px 20px 60px;
+            }
+
+            h1 {
+                font-size: clamp(1.8rem, 8.5vw, 3.5rem);
+                line-height: 1.05;
+                word-break: break-word;
+            }
+
+            .hero-tag {
+                font-size: 0.75rem;
+            }
+
+            .hero-desc {
+                font-size: 0.9rem;
+            }
+        }
+
+        .hero-section {
+            margin-bottom: 100px;
+        }
+
+        .hero-tag {
+            font-family: var(--font-code);
+            color: var(--accent);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        .hero-desc {
+            font-size: 1.4rem;
+            color: #888;
+            max-width: 900px;
+            line-height: 1.4;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 150px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+        }
+
+        .stat-label {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #555;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 800;
+            color: var(--tech-blue);
+            margin-bottom: 10px;
+        }
+
+        .stat-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .niches-section {
+            margin-bottom: 150px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .niche-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .niche-card {
+            background: #07090e;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 50px;
+            transition: 0.4s;
+        }
+
+        .niche-card:hover {
+            border-color: var(--tech-blue);
+            transform: translateY(-5px);
+        }
+
+        .niche-icon {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .niche-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .niche-card p {
+            color: #888;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Chart Placeholder styling */
+        .market-analysis {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            margin-bottom: 150px;
+        }
+
+        .chart-box {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 40px;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            height: 200px;
+            margin-top: 50px;
+        }
+
+        .bar {
+            background: var(--tech-blue);
+            border-radius: 4px 4px 0 0;
+            transition: height 1.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            width: 40px;
+            height: 0;
+            /* Start at 0 for animation */
+        }
+
+        .lead-form-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+        }
+
+        .form-info h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .form-info p {
+            color: #999;
+            font-family: var(--font-code);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: #000;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 18px;
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--tech-blue);
+        }
+
+        .submit-btn {
+            background: var(--accent);
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 22px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            background: #ff4444;
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 42, 42, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+
+            .stats-grid,
+            .niche-grid,
+            .market-analysis,
+            .lead-form-section {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+                margin-bottom: 40px;
+            }
+
+            .stat-card {
+                padding: 30px;
+            }
+
+            .niche-card {
+                padding: 30px;
+            }
+
+            .lead-form-section {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .lead-form-section {
+                padding: 30px 20px;
+                gap: 40px;
+                border-radius: 20px;
+            }
+
+            .form-info h2 {
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+
+            .form-info p {
+                font-size: 0.9rem;
+            }
+
+            .market-analysis {
+                gap: 20px;
+                margin-bottom: 80px;
+            }
+
+            .chart-box {
+                padding: 30px 20px;
+                min-height: auto;
+                border-radius: 20px;
+            }
+
+            .chart-box h3 {
+                font-size: 1.5rem !important;
+            }
+
+            .bar-chart {
+                gap: 8px;
+                height: 150px;
+                margin-top: 30px;
+            }
+
+            .bar {
+                width: 100%;
+            }
+
+            .stat-label {
+                font-size: 0.6rem;
+            }
+
+            input,
+            select,
+            textarea {
+                padding: 14px;
+                font-size: 0.95rem;
+                border-radius: 8px;
+            }
+
+            .submit-btn {
+                padding: 16px;
+                font-size: 0.95rem;
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
+        <div class="header-controls">
+            <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
+            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+                МЕНЮ</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero-section">
+            <div class="hero-tag" data-i18n="page_consulting.hero_tag">// STRATEGIC_CONSULTING_CORE</div>
+            <h1><span data-i18n="page_consulting.hero_title_line1">Будущее</span> <br> <span
+                    data-i18n="page_consulting.hero_title_line2">вашего бизнеса</span> <br> <span
+                    data-i18n="page_consulting.hero_title_line3">цифровое</span>.</h1>
+            <p class="hero-desc" data-i18n="page_consulting.hero_desc">Мы помогаем лидерам рынка внедрять технологии
+                искусственного интеллекта не просто как
+                тренд, а как фундаментальный инструмент роста и эффективности.</p>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">MARKET_POTENTIAL_2030</div>
+                <div class="stat-value">$<span class="counter" data-target="15.7" data-suffix="T"
+                        data-decimals="1">0</span>T</div>
+                <div class="stat-desc" data-i18n="page_consulting.stat1_desc">Потенциальный вклад AI в мировую экономику
+                    к 2030 году согласно прогнозам PwC.
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">EFFICIENCY_BOOST</div>
+                <div class="stat-value">+<span class="counter" data-target="40" data-suffix="%">0</span>%</div>
+                <div class="stat-desc" data-i18n="page_consulting.stat2_desc">Средний рост операционной эффективности
+                    при глубокой автоматизации процессов.
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">ADOPTION_RATE</div>
+                <div class="stat-value"><span class="counter" data-target="72" data-suffix="%">0</span>%</div>
+                <div class="stat-desc" data-i18n="page_consulting.stat3_desc">Компаний из списка Fortune 500 уже
+                    интегрировали AI в свои основные
+                    бизнес-функции.</div>
+            </div>
+        </div>
+
+        <section class="niches-section">
+            <h2 class="section-title" data-i18n="page_consulting.niches_title">Востребованные ниши</h2>
+            <div class="niche-grid">
+                <div class="niche-card hover-trigger">
+                    <div class="niche-icon">🏦</div>
+                    <h3 data-i18n="page_consulting.fintech_title">Fintech & Banking</h3>
+                    <p data-i18n="page_consulting.fintech_desc">Анализ рисков в реальном времени, персонализированные
+                        предложения и автоматизация комплаенса. AI
+                        сокращает время принятия решений до миллисекунд.</p>
+                </div>
+                <div class="niche-card hover-trigger">
+                    <div class="niche-icon">🏭</div>
+                    <h3 data-i18n="page_consulting.industry_title">Industry 4.0</h3>
+                    <p data-i18n="page_consulting.industry_desc">Предиктивное обслуживание оборудования, оптимизация
+                        логистических цепочек и нейросетевой контроль
+                        качества на производстве.</p>
+                </div>
+                <div class="niche-card hover-trigger">
+                    <div class="niche-icon">🏠</div>
+                    <h3 data-i18n="page_consulting.realty_title">Real Estate</h3>
+                    <p data-i18n="page_consulting.realty_desc">Автоматизация обработки лидов (K8 Smart Agent),
+                        предиктивный анализ стоимости и генерация
+                        маркетингового контента для объектов.</p>
+                </div>
+                <div class="niche-card hover-trigger">
+                    <div class="niche-icon">🛒</div>
+                    <h3 data-i18n="page_consulting.ecommerce_title">E-commerce</h3>
+                    <p data-i18n="page_consulting.ecommerce_desc">Гипер-персонализация витрины, умные системы
+                        рекомендаций и автоматическое управление товарными
+                        запасами на основе прогнозов спроса.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="market-analysis">
+            <div class="chart-box">
+                <div class="stat-label">// MARKET_VOLATILITY_ANALYSIS</div>
+                <h3 style="font-size: 2rem; margin-top: 10px;" data-i18n-html="page_consulting.chart_title">Динамика
+                    роста <br> AI-адаптации</h3>
+                <div class="bar-chart" id="barChart">
+                    <div class="bar" data-height="20%"></div>
+                    <div class="bar" data-height="45%"></div>
+                    <div class="bar" data-height="35%"></div>
+                    <div class="bar" data-height="70%"></div>
+                    <div class="bar" data-height="55%"></div>
+                    <div class="bar" data-height="90%"></div>
+                </div>
+                <div
+                    style="display:flex; justify-content:space-between; margin-top:15px; font-family:var(--font-code); color:#444; font-size:0.7rem;">
+                    <span>2020</span><span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025*</span>
+                </div>
+            </div>
+            <div class="chart-box"
+                style="display: flex; flex-direction: column; justify-content: center; text-align: center;">
+                <div class="stat-label">// CORE_INSIGHT</div>
+                <div style="font-size: 4rem; font-weight: 800; color: var(--accent);"><span class="counter"
+                        data-target="5.2" data-suffix="x" data-decimals="1">0</span>x</div>
+                <p style="color: #aaa;" data-i18n-html="page_consulting.chart_insight_desc">Рост объема данных <br> в
+                    корпоративном секторе <br> за последние 18 месяцев.
+                </p>
+            </div>
+        </section>
+
+        <section class="lead-form-section">
+            <div class="form-info">
+                <h2 data-i18n-html="page_consulting.form_title">Начнем <br> трансформацию.</h2>
+                <p data-i18n-html="page_consulting.form_subtitle">// ОСТАВЬТЕ ЗАЯВКУ НА ПЕРВИЧНЫЙ <br> ТЕХНОЛОГИЧЕСКИЙ
+                    АУДИТ.</p>
+                <div style="margin-top: 40px; color: #ccc; font-size: 1rem; line-height: 1.6;"
+                    data-i18n="page_consulting.form_desc">Мы изучим ваш текущий
+                    стек технологий и определим точки, где внедрение нейросетей даст максимальный финансовый эффект.
+                </div>
+            </div>
+            <div class="form-container">
+                <form id="consultForm">
+                    <div class="input-group">
+                        <label data-i18n="page_consulting.form_name">Ваше имя</label>
+                        <input type="text" placeholder="Иван Иванов" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="page_consulting.form_company">Компания / Проект</label>
+                        <input type="text" placeholder="Artifact Lab" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="page_consulting.form_telegram">Ваш Telegram</label>
+                        <input type="text" placeholder="@username" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="page_consulting.form_task">Опишите задачу</label>
+                        <textarea style="height: 120px;" placeholder="Какие процессы вы хотите автоматизировать?"
+                            data-i18n-placeholder="page_consulting.form_task_placeholder"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn hover-trigger"
+                        data-i18n="page_consulting.form_submit">Запросить аудит</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursorX = mouseX;
+            cursorY = mouseY;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        document.getElementById('consultForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Заявка зафиксирована в системе. Мы свяжемся с Вами в Telegram для планирования аудита.');
+            e.target.reset();
+        });
+
+        // Bar Chart Animation Logic
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.bar');
+                    bars.forEach((bar, index) => {
+                        setTimeout(() => {
+                            bar.style.height = bar.getAttribute('data-height');
+                        }, index * 100); // Staggered animation
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        observer.observe(document.getElementById('barChart'));
+
+        // Counter Animation Logic
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseFloat(counter.getAttribute('data-target'));
+                    const decimals = parseInt(counter.getAttribute('data-decimals')) || 0;
+                    const duration = 2000; // 2 seconds
+                    const startTime = performance.now();
+
+                    const updateCounter = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+
+                        // Ease out quad
+                        const easeProgress = progress * (2 - progress);
+
+                        const currentValue = (easeProgress * target).toFixed(decimals);
+                        counter.innerText = currentValue;
+
+                        if (progress < 1) {
+                            requestAnimationFrame(updateCounter);
+                        }
+                    };
+
+                    requestAnimationFrame(updateCounter);
+                    counterObserver.unobserve(counter);
+                }
+            });
+        }, { threshold: 1 });
+
+        document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+    </script>
+    <!-- A-LAB Integration -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="supabase-client.js"></script>
+    <script defer src="i18n.js"></script>
+    <script defer src="nda-manager.js"></script>
+    <script defer src="main-menu.js"></script>
+</body>
+
+</html>
