@@ -30,6 +30,7 @@ const ResidentNav = {
 
         // Re-render if state changed (though usually init is called once)
         if (this.userLoggedIn && !document.querySelector('.logout-btn-sidebar')) {
+            if (document.body.hasAttribute('data-no-resident-nav')) return;
             this.render();
         }
     },
