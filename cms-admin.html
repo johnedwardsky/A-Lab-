@@ -2269,19 +2269,39 @@
             let isAdmin = false;
             try {
                 if (window.ALabCore && window.ALabCore.db) {
-                    const { data: { session } } = await window.ALabCore.db.auth.getSession();
+                    const db = window.ALabCore.db;
+                    const { data: { session } } = await db.auth.getSession();
+
                     if (session && session.user) {
-                        const { data: resident } = await window.ALabCore.db
+                        console.log('[CMS] Session found for user:', session.user.email);
+                        const { data: resident, error: profileError } = await db
                             .from('residents')
-                            .select('is_admin')
+                            .select('is_admin, full_name, role')
                             .eq('user_id', session.user.id)
-                            .single();
-                        if (resident && resident.is_admin) {
-                            isAdmin = true;
+                            .maybeSingle();
+
+                        if (profileError) {
+                            console.error('[CMS] Profile fetch error:', profileError);
+                        } else if (!resident) {
+                            console.warn('[CMS] No resident profile found for user_id:', session.user.id);
+                        } else {
+                            console.log('[CMS] Resident profile:', resident);
+                            if (resident.is_admin === true || resident.role === 'admin') {
+                                isAdmin = true;
+                                console.log('[CMS] Admin access granted.');
+                            } else {
+                                console.warn('[CMS] User is not an admin. is_admin:', resident.is_admin, 'role:', resident.role);
+                            }
                         }
+                    } else {
+                        console.warn('[CMS] No active session found.');
                     }
+                } else {
+                    console.error('[CMS] Supabase Core or DB not initialized.');
                 }
-            } catch (e) { console.error('CMS Auth error', e); }
+            } catch (e) {
+                console.error('[CMS] Critical Auth error:', e);
+            }
 
             if (!isAdmin && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
                 console.warn('[CMS] Access denied. Redirecting...');
@@ -2502,7 +2522,6 @@
     <script defer src="i18n.js"></script>
     <script defer src="toast.js"></script>
     <script defer src="auth.js"></script>
-    <script defer src="auth-guard.js"></script>
 </body>
 
 </html>
