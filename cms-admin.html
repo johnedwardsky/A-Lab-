@@ -89,7 +89,14 @@
             filter: invert(1);
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -133,7 +140,10 @@
             will-change: transform;
         }
 
-        .cursor.hidden { opacity: 0 !important; }
+        .cursor.hidden {
+            opacity: 0 !important;
+        }
+
         .cursor.hovered {
             width: 40px;
             height: 40px;
@@ -1429,7 +1439,7 @@
             el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
             el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
         });
-            
+
         let mx = 0, my = 0;
         document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
         function uc() { cursor.style.transform = `translate3d(${mx - 7.5}px, ${my - 7.5}px, 0)`; requestAnimationFrame(uc); }
@@ -2263,15 +2273,15 @@
                     if (session && session.user) {
                         const { data: resident } = await window.ALabCore.db
                             .from('residents')
-                            .select('role')
+                            .select('is_admin')
                             .eq('user_id', session.user.id)
                             .single();
-                        if (resident && resident.role === 'admin') {
+                        if (resident && resident.is_admin) {
                             isAdmin = true;
                         }
                     }
                 }
-            } catch(e) { console.error('CMS Auth error', e); }
+            } catch (e) { console.error('CMS Auth error', e); }
 
             if (!isAdmin && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
                 console.warn('[CMS] Access denied. Redirecting...');
