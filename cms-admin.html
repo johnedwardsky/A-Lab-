@@ -241,6 +241,39 @@
             margin: 8px 5px;
         }
 
+        /* --- HEADER NAVIGATION BUTTONS --- */
+        .nav-std-btn {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-std-btn:hover {
+            background: transparent;
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 42, 42, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-std-btn {
+                padding: 6px 12px;
+                font-size: 0.6rem;
+            }
+        }
+
         /* --- MAIN --- */
         .main-content {
             margin-left: 80px;
@@ -922,7 +955,10 @@
                 <h1 id="pageTitle">CMS Dashboard</h1>
                 <div class="subtitle">A-LAB.TECH // CONTENT MANAGEMENT SYSTEM</div>
             </div>
-            <div class="header-actions">
+            <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
+                <a href="index.html" class="nav-std-btn hover-trigger">/// НАЗАД</a>
+                <button class="nav-std-btn hover-trigger" onclick="if(window.MainMenu) MainMenu.toggle()">///
+                    МЕНЮ</button>
                 <div class="search-bar" style="width:280px; margin-bottom:0;">
                     <input type="text" id="globalSearch" placeholder="🔍 Поиск по данным..."
                         oninput="globalSearchHandler(this.value)">
@@ -2522,6 +2558,7 @@
     <script defer src="i18n.js"></script>
     <script defer src="toast.js"></script>
     <script defer src="auth.js"></script>
+    <script defer src="main-menu.js"></script>
 </body>
 
 </html>
