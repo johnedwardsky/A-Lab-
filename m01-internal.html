@@ -832,11 +832,10 @@
             }
         }
     </style>
+            <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
-
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
                 alt="A-LAB" loading="eager" decoding="async"></a>
@@ -1088,7 +1087,7 @@
 
     <script>
         // Custom Cursor
-        const cursor = document.querySelector('.cursor');
+        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
         document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
             el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
@@ -1098,8 +1097,8 @@
 
         if (!isMobile && cursor) {
             document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
+                /* cursor left disabled */
+                /* cursor top disabled */
             });
 
             document.querySelectorAll('a, button, .hover-trigger').forEach(b => {
@@ -1222,6 +1221,7 @@
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
+            <script defer src="cursor.js"></script>
 </body>
 
 </html>

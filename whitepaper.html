@@ -402,11 +402,10 @@
             color: #555;
         }
     </style>
+            <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
-
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
                 alt="A-LAB" loading="eager" decoding="async"></a>
@@ -585,15 +584,15 @@
     </footer>
 
     <script>
-        const cursor = document.querySelector('.cursor');
+        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
         document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
             el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
         });
 
         document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+            /* cursor left disabled */
+            /* cursor top disabled */
         });
         document.querySelectorAll('.hover-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
@@ -602,6 +601,7 @@
     </script>
     <script defer src="i18n.js"></script>
     <script defer src="main-menu.js"></script>
+            <script defer src="cursor.js"></script>
 </body>
 
 </html>

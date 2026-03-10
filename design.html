@@ -550,10 +550,10 @@
             }
         }
     </style>
+            <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
     <div class="bg-grid"></div>
     <div class="bg-glow"></div>
     <div class="scanline"></div>
@@ -635,7 +635,7 @@
     </footer>
 
     <script>
-        const cursor = document.querySelector('.cursor');
+        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
         document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
             el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
@@ -702,6 +702,7 @@
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
+            <script defer src="cursor.js"></script>
 </body>
 
 </html>

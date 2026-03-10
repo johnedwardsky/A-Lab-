@@ -263,12 +263,11 @@
             background: #fff;
         }
     </style>
+            <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body data-no-resident-nav>
     <div class="noise"></div>
-    <div class="cursor"></div>
-
     <header style="position: fixed; top: 30px; right: 40px; z-index: 1001; display: flex; gap: 15px;">
         <button class="status-btn hover-trigger" onclick="toggleTheme()" id="themeBtn">☽</button>
     </header>
@@ -465,15 +464,15 @@
 
     <script>
         // Cursor Logic
-        const cursor = document.querySelector('.cursor');
+        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
         document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
             el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
         });
             
         document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+            /* cursor left disabled */
+            /* cursor top disabled */
         });
 
         // Tab Switching
@@ -515,6 +514,7 @@
             document.getElementById('statLeads').innerText = '12';
         });
     </script>
+            <script defer src="cursor.js"></script>
 </body>
 
 </html>

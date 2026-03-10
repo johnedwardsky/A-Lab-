@@ -383,13 +383,12 @@
             background: url('https://grainy-gradients.vercel.app/noise.svg');
         }
     </style>
+            <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
 
     <div class="noise"></div>
-    <div class="cursor"></div>
-
     <header style="position: fixed; top: 30px; right: 40px; z-index: 1001; display: flex; gap: 15px;">
         <div class="notif-bell hover-trigger" onclick="switchTab('notifications')"
             style="position: relative; background: var(--surface); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: none;">
@@ -878,15 +877,15 @@
     </div>
 
     <script>
-        const cursor = document.querySelector('.cursor');
+        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
         document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
             el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
         });
             
         document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+            /* cursor left disabled */
+            /* cursor top disabled */
         });
 
         function updateTriggers() {
@@ -1043,6 +1042,7 @@
     <script defer src="resident-manager.js"></script>
     <script defer src="admin-nda.js"></script>
     <script defer src="nav-manager.js"></script>
+            <script defer src="cursor.js"></script>
 </body>
 
 </html>
