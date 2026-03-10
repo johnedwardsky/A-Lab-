@@ -22,7 +22,14 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -172,27 +179,27 @@
     <div class="auth-container">
         <div class="auth-logo">
             <img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async">
-            <h2>ACCESS_PROTOCOL</h2>
+            <h2 data-i18n="auth.access_protocol">ACCESS_PROTOCOL</h2>
         </div>
 
         <div id="errorMsg" class="error-msg"></div>
 
         <form id="loginForm">
             <div class="form-group">
-                <label class="form-label">IDENTIFIER (email)</label>
+                <label class="form-label" data-i18n="auth.identifier">IDENTIFIER (email)</label>
                 <input type="email" id="email" class="form-input" placeholder="core@a-lab.tech" required>
             </div>
             <div class="form-group">
-                <label class="form-label">ENCRYPTION_KEY (password)</label>
+                <label class="form-label" data-i18n="auth.encryption_key">ENCRYPTION_KEY (password)</label>
                 <input type="password" id="password" class="form-input" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="btn-login">Initialize Session</button>
+            <button type="submit" class="btn-login" data-i18n="auth.initialize_session">Initialize Session</button>
         </form>
 
         <div class="auth-footer">
             <span data-i18n="auth.no_id">У вас еще нет ID?</span> <a href="register-resident.html"
                 data-i18n="auth.register">Пройти регистрацию</a><br><br>
-            Unauthorized access is strictly prohibited.<br>
+            <span data-i18n="auth.unauthorized_warning">Unauthorized access is strictly prohibited.</span><br>
             <a href="index.html" data-i18n="auth.terminate">/// TERMINATE_SESSION</a>
         </div>
     </div>
@@ -200,6 +207,7 @@
     <!-- SUPABASE & AUTH -->
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="supabase-client.js"></script>
+    <script defer src="i18n.js"></script>
     <script defer src="auth.js"></script>
 
     <script>

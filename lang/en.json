@@ -69,7 +69,26 @@
         "nda_title": "Non-Disclosure Agreement",
         "nda_accept": "I accept the NDA terms",
         "nda_submit": "Sign and Continue",
-        "register_prompt": "Register to post and comment"
+        "register_prompt": "Register to post and comment",
+        "no_id": "Don't have an ID yet?",
+        "terminate": "/// TERMINATE_SESSION",
+        "access_protocol": "ACCESS_PROTOCOL",
+        "identifier": "IDENTIFIER (email)",
+        "encryption_key": "ENCRYPTION_KEY (password)",
+        "initialize_session": "Initialize Session",
+        "unauthorized_warning": "Unauthorized access is strictly prohibited.",
+        "registration_protocol": "REGISTRATION_PROTOCOL",
+        "form_email": "Email // Electronic Mail",
+        "form_name": "Full Name // First & Last Name",
+        "form_resident_id": "Desired Resident ID (Login)",
+        "send_application": "Send Application",
+        "application_sent": "APPLICATION_SENT",
+        "apply_processing": "The application process is complete. Data has been submitted for moderation. You will receive a password at the specified email after review.",
+        "back_home": "Return to Home",
+        "already_has_id": "Already have an official ID?",
+        "auth_link": "Authorized Login",
+        "security_service": "Security Service",
+        "problems_reg": "Problems with registration?"
     },
     "profile": {
         "title": "Profile",
@@ -212,10 +231,10 @@
         "next": "Next",
         "search": "Search",
         "no_results": "No results found",
-        "copyright": "© 2025 ARTIFACT LAB"
+        "copyright": "© 2026 A-LAB.TECH"
     },
     "page_index": {
-        "system_tag": "/// SYSTEM V.2025",
+        "system_tag": "/// SYSTEM V.2026",
         "hero_line1": "Architecture",
         "hero_line2": "of the Future",
         "hero_line3": "Technology Lab &",

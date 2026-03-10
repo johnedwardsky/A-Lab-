@@ -69,7 +69,26 @@
         "nda_title": "Соглашение о неразглашении",
         "nda_accept": "Я принимаю условия NDA",
         "nda_submit": "Подписать и продолжить",
-        "register_prompt": "Зарегистрируйтесь, чтобы оставлять посты и комментарии"
+        "register_prompt": "Зарегистрируйтесь, чтобы оставлять посты и комментарии",
+        "no_id": "У вас еще нет ID?",
+        "terminate": "/// TERMINATE_SESSION",
+        "access_protocol": "ACCESS_PROTOCOL",
+        "identifier": "IDENTIFIER (email)",
+        "encryption_key": "ENCRYPTION_KEY (password)",
+        "initialize_session": "Initialize Session",
+        "unauthorized_warning": "Unauthorized access is strictly prohibited.",
+        "registration_protocol": "REGISTRATION_PROTOCOL",
+        "form_email": "Email // Электронная почта",
+        "form_name": "Full Name // Имя и Фамилия",
+        "form_resident_id": "Desired Resident ID (Login)",
+        "send_application": "Send Application",
+        "application_sent": "APPLICATION_SENT",
+        "apply_processing": "Протокол подачи заявки завершен. Данные переданы на модерацию. После проверки вы получите пароль для входа на указанную почту.",
+        "back_home": "Вернуться на главную",
+        "already_has_id": "Уже есть официальный ID?",
+        "auth_link": "Авторизоваться",
+        "security_service": "Служба Безопасности",
+        "problems_reg": "Проблемы с регистрацией?"
     },
     "profile": {
         "title": "Профиль",
@@ -212,10 +231,10 @@
         "next": "Далее",
         "search": "Поиск",
         "no_results": "Ничего не найдено",
-        "copyright": "© 2025 ARTIFACT LAB"
+        "copyright": "© 2026 A-LAB.TECH"
     },
     "page_index": {
-        "system_tag": "/// СИСТЕМА V.2025",
+        "system_tag": "/// СИСТЕМА V.2026",
         "hero_line1": "Архитектура",
         "hero_line2": "Будущего",
         "hero_line3": "Лаборатория Технологий и",

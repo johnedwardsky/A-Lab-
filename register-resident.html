@@ -22,7 +22,14 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -189,22 +196,22 @@
         <div id="registerFormView">
             <div class="auth-logo">
                 <img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async">
-                <h2>REGISTRATION_PROTOCOL</h2>
+                <h2 data-i18n="auth.registration_protocol">REGISTRATION_PROTOCOL</h2>
             </div>
 
             <form id="regForm" onsubmit="handleRegister(event)">
                 <div class="form-group">
-                    <label class="form-label">Email // Электронная почта</label>
+                    <label class="form-label" data-i18n="auth.form_email">Email // Электронная почта</label>
                     <input type="email" id="email" class="form-input" placeholder="core@a-lab.tech" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Full Name // Имя и Фамилия</label>
+                    <label class="form-label" data-i18n="auth.form_name">Full Name // Имя и Фамилия</label>
                     <input type="text" id="fullName" class="form-input" placeholder="Артем Квантум" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Desired Resident ID (Login)</label>
+                    <label class="form-label" data-i18n="auth.form_resident_id">Desired Resident ID (Login)</label>
                     <div
                         style="display: flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 10px; padding-left: 15px;">
                         <span style="color: #555; font-family: var(--font-code); font-size: 0.9rem;">ID.</span>
@@ -214,30 +221,36 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-register" id="submitBtn">Send Application</button>
+                <button type="submit" class="btn-register" id="submitBtn" data-i18n="auth.send_application">Send
+                    Application</button>
             </form>
         </div>
 
         <div id="successView">
             <div class="success-icon">✔️</div>
-            <h2 style="font-family: var(--font-code); color: var(--tech-blue); margin-bottom: 15px;">APPLICATION_SENT
+            <h2 style="font-family: var(--font-code); color: var(--tech-blue); margin-bottom: 15px;"
+                data-i18n="auth.application_sent">APPLICATION_SENT
             </h2>
-            <p style="font-size: 0.9rem; color: #888; margin-bottom: 30px; line-height: 1.5;">Протокол подачи заявки
+            <p style="font-size: 0.9rem; color: #888; margin-bottom: 30px; line-height: 1.5;"
+                data-i18n="auth.apply_processing">Протокол подачи заявки
                 завершен. <br>Данные переданы на модерацию. После проверки вы получите пароль для входа на указанную
                 почту.</p>
-            <a href="index.html" class="btn-register"
-                style="display: block; text-decoration: none; text-align: center;">Вернуться на главную</a>
+            <a href="index.html" class="btn-register" style="display: block; text-decoration: none; text-align: center;"
+                data-i18n="auth.back_home">Вернуться на главную</a>
         </div>
 
         <div class="auth-footer">
-            Уже есть официальный ID? <a href="login.html">Авторизоваться</a><br><br>
-            Проблемы с регистрацией? <a href="#">Служба Безопасности</a>
+            <span data-i18n="auth.already_has_id">Уже есть официальный ID?</span> <a href="login.html"
+                data-i18n="auth.auth_link">Авторизоваться</a><br><br>
+            <span data-i18n="auth.problems_reg">Проблемы с регистрацией?</span> <a href="#"
+                data-i18n="auth.security_service">Служба Безопасности</a>
         </div>
     </div>
 
     <!-- SUPABASE & AUTH -->
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="supabase-client.js"></script>
+    <script defer src="i18n.js"></script>
     <script defer src="auth.js"></script>
 
 

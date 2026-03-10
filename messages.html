@@ -102,7 +102,14 @@
             border-color: rgba(0, 0, 0, 0.1);
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -134,7 +141,10 @@
             mix-blend-mode: normal;
         }
 
-        .cursor.hidden { opacity: 0 !important; }
+        .cursor.hidden {
+            opacity: 0 !important;
+        }
+
         .cursor.hovered {
             width: 40px;
             height: 40px;
@@ -472,7 +482,7 @@
             el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
             el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
         });
-            
+
         let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
@@ -595,6 +605,7 @@
         }
 
     </script>
+    <script defer src="i18n.js"></script>
     <script defer src="nav-manager.js"></script>
 </body>
 
