@@ -139,11 +139,14 @@ const MainMenu = (() => {
         const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
         let url = item.url;
         if (lang === 'en') {
-            if (url.endsWith('index.html')) url = url.replace('index.html', 'index-en.html');
+            // Only swap root-level index.html → index-en.html, NOT residents/index.html which has no EN copy
+            if ((url === 'index.html' || url === prefix + 'index.html') && !url.includes('residents/')) {
+                url = url.replace('index.html', 'index-en.html');
+            }
             if (url.endsWith('resident-admin-ru.html')) url = url.replace('resident-admin-ru.html', 'resident-admin-en.html');
             if (url.endsWith('resident-workspace-ru.html')) url = url.replace('resident-workspace-ru.html', 'resident-workspace-en.html');
         } else if (lang === 'ru') {
-            if (url.endsWith('index-en.html')) url = url.replace('index-en.html', 'index.html');
+            if (url.endsWith('index-en.html') && !url.includes('residents/')) url = url.replace('index-en.html', 'index.html');
             if (url.endsWith('resident-admin-en.html')) url = url.replace('resident-admin-en.html', 'resident-admin-ru.html');
             if (url.endsWith('resident-workspace-en.html')) url = url.replace('resident-workspace-en.html', 'resident-workspace-ru.html');
         }
