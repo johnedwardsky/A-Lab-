@@ -203,9 +203,16 @@ const MainMenu = (() => {
             const onclickAttr = isLocked
                 ? `onclick="event.preventDefault(); MainMenu.showAccessModal()"`
                 : (item.onclick ? `onclick="event.preventDefault(); MainMenu.toggle(); ${item.onclick}"` : '');
+
+            let isActive = false;
+            try {
+                const linkPath = new URL(getURL(item), window.location.href).pathname;
+                isActive = (linkPath === window.location.pathname);
+            } catch (e) { }
+
             return `
                                 <a href="${itemUrl}" 
-                                   class="nav-link hover-trigger ${getURL(item).includes(currentPage) ? 'active' : ''} ${isLocked ? 'nav-link--locked' : ''}"
+                                   class="nav-link hover-trigger ${isActive ? 'active' : ''} ${isLocked ? 'nav-link--locked' : ''}"
                                    data-index="${String(index + 1).padStart(2, '0')}"
                                    data-target="item-${index}"
                                    ${onclickAttr}
