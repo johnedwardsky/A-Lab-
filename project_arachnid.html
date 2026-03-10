@@ -1406,9 +1406,23 @@
 
         // ── INIT ────────────────────────────────────────
 
-        window.addEventListener('resize', () => { cancelAnimationFrame(animFrame); resize(); loop(); });
-        resize();
-        loop();
+        window.addEventListener('resize', () => {
+            cancelAnimationFrame(animFrame);
+            resize();
+            loop();
+        });
+
+        // Delay init until layout is fully computed
+        function init() {
+            resize();
+            loop();
+        }
+
+        if (document.readyState === 'complete') {
+            init();
+        } else {
+            window.addEventListener('load', init);
+        }
 
         return { reset };
     })();
