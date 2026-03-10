@@ -140,7 +140,12 @@ const MainMenu = (() => {
         let url = item.url;
         if (lang === 'en') {
             if (url.endsWith('index.html')) url = url.replace('index.html', 'index-en.html');
-            // Add other localized page mapping here if needed
+            if (url.endsWith('resident-admin-ru.html')) url = url.replace('resident-admin-ru.html', 'resident-admin-en.html');
+            if (url.endsWith('resident-workspace-ru.html')) url = url.replace('resident-workspace-ru.html', 'resident-workspace-en.html');
+        } else if (lang === 'ru') {
+            if (url.endsWith('index-en.html')) url = url.replace('index-en.html', 'index.html');
+            if (url.endsWith('resident-admin-en.html')) url = url.replace('resident-admin-en.html', 'resident-admin-ru.html');
+            if (url.endsWith('resident-workspace-en.html')) url = url.replace('resident-workspace-en.html', 'resident-workspace-ru.html');
         }
         return url;
     }

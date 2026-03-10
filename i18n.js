@@ -17,10 +17,14 @@ const I18n = (() => {
     // Mapping for pages that have dedicated versions instead of just in-place translation
     const pageMapping = {
         'ru': {
-            'index-en.html': 'index.html'
+            'index-en.html': 'index.html',
+            'resident-admin-en.html': 'resident-admin-ru.html',
+            'resident-workspace-en.html': 'resident-workspace-ru.html'
         },
         'en': {
-            'index.html': 'index-en.html'
+            'index.html': 'index-en.html',
+            'resident-admin-ru.html': 'resident-admin-en.html',
+            'resident-workspace-ru.html': 'resident-workspace-en.html'
         }
     };
 
@@ -45,6 +49,8 @@ const I18n = (() => {
                 .then(resp => resp.ok ? resp.json() : null)
                 .then(json => {
                     if (json) translations[otherLang] = json;
+                    // Re-apply if other language loaded late (optional, but good for completeness)
+                    applyToDOM();
                 })
                 .catch(e => console.warn('[i18n] Background load failed:', e));
 
@@ -57,13 +63,14 @@ const I18n = (() => {
      * Get base path relative to current page
      */
     function getBasePath() {
+        // Try to find script tag first
         const scripts = document.querySelectorAll('script[src*="i18n.js"]');
         if (scripts.length > 0) {
             const src = scripts[0].getAttribute('src');
-            const path = src.replace('i18n.js', '');
-            // If it's a relative path starting with ./ or ../, or an absolute path
-            return path;
+            return src.replace('i18n.js', '');
         }
+        // Fallback for subfolders if script not found via selector
+        if (window.location.pathname.includes('/residents/')) return '../';
         return '';
     }
 
@@ -127,6 +134,26 @@ const I18n = (() => {
                 el.innerHTML = translated;
             }
         });
+
+        // Link (href) rewriting based on mapping
+        const currentMapping = pageMapping[currentLang];
+        if (currentMapping) {
+            document.querySelectorAll('a[href]').forEach(link => {
+                const href = link.getAttribute('href');
+                // Check if the exact href should be mapped
+                if (currentMapping[href]) {
+                    link.setAttribute('href', currentMapping[href]);
+                }
+                // Also check if it's a relative link to one of the mapped pages
+                // (e.g. href="../index.html" should map to "../index-en.html")
+                for (const [key, value] of Object.entries(currentMapping)) {
+                    if (href.endsWith('/' + key) || href === key) {
+                        const newHref = href.replace(key, value);
+                        link.setAttribute('href', newHref);
+                    }
+                }
+            });
+        }
 
         // Update html lang attribute
         document.documentElement.lang = currentLang;
