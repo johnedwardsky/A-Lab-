@@ -25,13 +25,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -42,27 +37,7 @@
             height: 100vh;
         }
 
-        /* --- CURSOR --- */
-        .cursor {
-            position: fixed;
-            width: 15px;
-            height: 15px;
-            border: 1px solid var(--tech-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 40px;
-            height: 40px;
-            background: var(--tech-blue);
-            opacity: 0.5;
-        }
+        
 
         /* --- CONTENT --- */
         .main-container {
@@ -383,12 +358,13 @@
             background: url('https://grainy-gradients.vercel.app/noise.svg');
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
 
     <div class="noise"></div>
-    <div class="cursor"></div>
+    
 
     <header style="position: fixed; top: 30px; right: 40px; z-index: 1001; display: flex; gap: 15px;">
         <div class="notif-bell hover-trigger" onclick="switchTab('notifications')"
@@ -877,156 +853,7 @@
 
     </div>
 
-    <script>
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        function updateTriggers() {
-            document.querySelectorAll('.hover-trigger').forEach(trigger => {
-                trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
-        }
-        updateTriggers();
-
-        // Status buttons toggle
-        document.querySelectorAll('.status-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (btn.innerText.length < 20) {
-                    const parent = btn.parentElement;
-                    parent.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                }
-            });
-        });
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            const targetTab = document.getElementById(tabId + '-tab');
-            if (targetTab) {
-                targetTab.classList.add('active');
-                highlightSideIcon(tabId);
-            }
-        }
-
-        function highlightSideIcon(tabId) {
-            const titles = {
-                'profile': 'Profile Workstation',
-                'feed': 'Social Network Manager',
-                'portfolio': 'Gallery Engine',
-                'rd': 'Intelligence Access',
-                'astra': 'Tokenomics Management',
-                'security': 'Security Protocols',
-                'network': 'Community Management',
-                'admin-auth': 'Access Control',
-                'monitor': 'System Monitoring',
-                'analytics': 'Data Analytics',
-                'applications': 'Applications',
-                'notifications': 'Notification Center',
-                'settings': 'System Settings'
-            };
-            const badges = {
-                'profile': 'IDENTITY_MANAGEMENT_MODE',
-                'feed': 'INTERACTION_MODE',
-                'portfolio': 'VISUAL_ASSET_MODE',
-                'rd': 'RESEARCH_MODE',
-                'astra': 'FINANCIAL_CORE_MODE',
-                'security': 'PROTECTION_MODE',
-                'network': 'SOCIAL_MODE',
-                'admin-auth': 'SUPER_ADMIN_MODE',
-                'monitor': 'OBSERVATION_MODE',
-                'analytics': 'ANALYSIS_MODE',
-                'notifications': 'NOTIFICATION_MODE',
-                'settings': 'CORE_CONFIG_MODE'
-            }
-            const titleEl = document.getElementById('workstationTitle');
-            const badgeEl = document.getElementById('modeBadge');
-            if (titleEl) titleEl.innerText = titles[tabId] || 'Workstation';
-            if (badgeEl) badgeEl.innerText = badges[tabId] || 'UNKNOWN_MODE';
-            updateTriggers();
-        }
-
-        async function startMonitor() {
-            const sb = (typeof supabase !== 'undefined') ? supabase : null;
-            setInterval(async () => {
-                const loadEl = document.getElementById('loadTime');
-                const userEl = document.getElementById('userCount');
-                if (loadEl) loadEl.innerText = (450 + Math.floor(Math.random() * 50)) + 'ms';
-                if (userEl && sb) {
-                    const { count } = await sb.from('residents').select('*', { count: 'exact', head: true });
-                    userEl.innerText = count || 0;
-                }
-                const logs = document.getElementById('consoleOutput');
-                if (logs) {
-                    const time = new Date().toLocaleTimeString();
-                    const events = ['DB_SYNC', 'CACHE_RELOAD', 'ACCESS_GRANTED', 'NODE_STABLE'];
-                    const event = events[Math.floor(Math.random() * events.length)];
-                    logs.innerHTML = `[${time}] ${event}: OK<br>` + logs.innerHTML.split('<br>').slice(0, 4).join('<br>');
-                }
-            }, 5000);
-        }
-        startMonitor();
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            const btn = document.getElementById('themeBtn');
-            if (btn) btn.innerText = isLight ? '☀' : '☽';
-        }
-
-        async function loadNotifications() {
-            const container = document.getElementById('notificationsContainer');
-            if (!container || typeof supabase === 'undefined') return;
-            const { data, error } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(20);
-            if (error || !data) return;
-            container.innerHTML = data.map(n => `
-                <div style="display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 15px;">
-                    <div style="font-size: 1.5rem;">${n.type === 'broadcast' ? '📣' : '🔔'}</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 800; font-size: 0.9rem;">${n.title}</div>
-                        <div style="font-size: 0.8rem; color: #888;">${n.message}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function createNotification() {
-            const title = document.getElementById('broadcastTitle').value;
-            const message = document.getElementById('broadcastMessage').value;
-            const type = document.getElementById('broadcastType').value;
-            if (!title || !message || typeof supabase === 'undefined') return;
-            const { error } = await supabase.from('notifications').insert({ title, message, type });
-            if (!error) {
-                alert('Broadcast transmitted!');
-                loadNotifications();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.ResidentNav) {
-                ResidentNav.config.moreItems = [
-                    { text: 'Profile', icon: '👤', onclick: "switchTab('profile'); toggleMoreMenu()" },
-                    { text: 'Portfolio', icon: '💿', onclick: "switchTab('portfolio'); toggleMoreMenu()" },
-                    { text: 'Events', icon: '📣', onclick: "switchTab('notifications'); toggleMoreMenu()" },
-                    { text: 'Astra', icon: '💎', onclick: "switchTab('astra'); toggleMoreMenu()" },
-                    { text: 'R&D Hub', icon: '🧪', onclick: "switchTab('rd'); toggleMoreMenu()" },
-                    { text: 'Residents', icon: '👥', onclick: "window.location.href='residents.html'" }
-                ];
-                ResidentNav.config.showLogout = true;
-                ResidentNav.render();
-            }
-            if (localStorage.getItem('theme') === 'light') toggleTheme();
-        });
-    </script>
+    
 
     <!-- Scripts -->
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1043,6 +870,7 @@
     <script defer src="resident-manager.js"></script>
     <script defer src="admin-nda.js"></script>
     <script defer src="nav-manager.js"></script>
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

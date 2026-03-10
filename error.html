@@ -21,13 +21,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -41,26 +36,7 @@
             position: relative;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            opacity: 0.5;
-        }
+        
 
         /* Background effect */
         .bg-glow {
@@ -267,10 +243,11 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
+    
     <div class="bg-glow"></div>
 
     <div class="error-container">
@@ -318,27 +295,8 @@
         </div>
     </div>
 
-    <script>
-        // Cursor
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        document.querySelectorAll('.hover-trigger').forEach(t => {
-            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-
-        // Timestamp
-        document.getElementById('timestamp').innerText = new Date().toISOString();
-    </script>
+    
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

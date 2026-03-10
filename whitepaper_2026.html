@@ -9,6 +9,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="cursor.css">
     <style>
         :root {
             --bg: #030407;
@@ -21,62 +22,12 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a,
-        button,
-        input,
-        select,
-        textarea {
-            cursor: pointer;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
-
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: var(--font-main);
             overflow-x: hidden;
             line-height: 1.6;
-        }
-
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-        }
-
-        .cursor.hidden {
-            opacity: 0 !important;
-        }
-
-        .cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background: var(--tech-blue);
-            border-color: var(--tech-blue);
-            opacity: 0.5;
-        }
-
-        @media (max-width: 768px) {
-            .cursor {
-                display: none !important;
-            }
-
-            * {
-                cursor: auto !important;
-            }
         }
 
         /* HEADER */
@@ -498,7 +449,7 @@
 </head>
 
 <body>
-    <div class="cursor"></div>
+    
 
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
@@ -715,22 +666,7 @@
         <p>© 2026 A-LAB.TECH // FORECAST ANALYTICS DEPT.</p>
     </footer>
 
-    <script>
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-        document.querySelectorAll('.hover-trigger, a, button').forEach(t => {
-            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-    </script>
+    <script defer src="cursor.js"></script>
     <script src="i18n.js"></script>
     <script defer src="main-menu.js"></script>
 </body>

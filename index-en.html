@@ -14,6 +14,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
 
+    <link rel="stylesheet" href="cursor.css">
     <style>
         :root {
             /* DEEP TECH BACKGROUNDS */
@@ -33,53 +34,11 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a,
-        button,
-        input,
-        select,
-        textarea {
-            cursor: pointer;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
-
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: var(--font-main);
             overflow-x: hidden;
-        }
-
-        /* --- CUSTOM CURSOR --- */
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: left, top, width, height;
-        }
-
-        .cursor.hidden {
-            opacity: 0 !important;
-        }
-
-        .cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background: var(--accent);
-            opacity: 0.8;
-            box-shadow: 0 0 20px var(--accent);
         }
 
         /* Noise Background Effect */
@@ -670,7 +629,7 @@
 <body>
 
     <div class="noise-overlay"></div>
-    <div class="cursor"></div>
+    
 
     <header>
         <a href="index-en.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
@@ -916,50 +875,15 @@
     </footer>
 
     <script>
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-
-        const triggers = document.querySelectorAll('.hover-trigger');
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-        // Только для десктопа включаем курсор
-        if (!isMobile) {
-            let mouseX = 0, mouseY = 0;
-            let cursorX = 0, cursorY = 0;
-
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-
-            function updateCursor() {
-                cursorX = mouseX;
-                cursorY = mouseY;
-                cursor.style.left = cursorX + 'px';
-                cursor.style.top = cursorY + 'px';
-                requestAnimationFrame(updateCursor);
-            }
-            updateCursor();
-
-            triggers.forEach(trigger => {
-                trigger.addEventListener('mouseenter', () => {
-                    cursor.classList.add('hovered');
-                });
-                trigger.addEventListener('mouseleave', () => {
-                    cursor.classList.remove('hovered');
-                });
-            });
-        }
-
         // Анимация текста в терминале
         const codeBlock = document.querySelector('.code-block');
-        setInterval(() => {
-            codeBlock.style.opacity = Math.random() > 0.5 ? 1 : 0.85;
-        }, 100);
+        if (codeBlock) {
+            setInterval(() => {
+                codeBlock.style.opacity = Math.random() > 0.5 ? 1 : 0.85;
+            }, 100);
+        }
     </script>
+    <script defer src="cursor.js"></script>
 
     <!-- A-LAB Integration -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

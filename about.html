@@ -28,13 +28,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -43,27 +38,7 @@
             overflow-x: hidden;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: left, top;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background: var(--accent);
-            opacity: 0.8;
-        }
+        
 
         @media (max-width: 768px) {
             .cursor {
@@ -422,10 +397,11 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body data-no-resident-nav>
-    <div class="cursor"></div>
+    
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager"
                 decoding="async"></a>
@@ -494,37 +470,7 @@
         <div>A-LAB.TECH</div>
     </footer>
 
-    <script>
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-        if (!isMobile && cursor) {
-            let mouseX = 0, mouseY = 0;
-            let cursorX = 0, cursorY = 0;
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-
-            function updateCursor() {
-                cursorX = mouseX;
-                cursorY = mouseY;
-                cursor.style.left = cursorX + 'px';
-                cursor.style.top = cursorY + 'px';
-                requestAnimationFrame(updateCursor);
-            }
-            updateCursor();
-            document.querySelectorAll('.hover-trigger').forEach(t => {
-                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
-        }
-    </script>
+    
     <!-- A-LAB Integration -->
     <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
@@ -532,6 +478,7 @@
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
     <script defer src="nav-manager.js"></script>
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

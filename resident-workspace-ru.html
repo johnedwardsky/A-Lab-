@@ -25,13 +25,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -42,25 +37,7 @@
             height: 100vh;
         }
 
-        .cursor {
-            position: fixed;
-            width: 15px;
-            height: 15px;
-            border: 1px solid var(--tech-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 40px;
-            height: 40px;
-            background: var(--tech-blue);
-            opacity: 0.5;
-        }
+        
 
         .main-container {
             flex-grow: 1;
@@ -283,11 +260,12 @@
             --tech-blue: #008fa4;
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body data-no-resident-nav>
     <div class="noise"></div>
-    <div class="cursor"></div>
+    
 
     <header style="position: fixed; top: 30px; right: 40px; z-index: 1001; display: flex; gap: 15px;">
         <button class="status-btn hover-trigger" onclick="toggleTheme()" id="themeBtn">☽</button>
@@ -540,48 +518,8 @@
     <script src="i18n.js"></script>
     <script src="toast.js"></script>
 
-    <script>
-        // Cursor
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
-        // Tabs
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            const target = document.getElementById(tabId + '-tab');
-            if (target) target.classList.add('active');
-
-            document.querySelectorAll('.nav-item').forEach(i => {
-                i.classList.remove('active');
-                if (i.getAttribute('onclick').includes(tabId)) i.classList.add('active');
-            });
-
-            const titles = {
-                'profile': 'Рабочая Станция',
-                'feed': 'Лента Событий',
-                'portfolio': 'Витрина Проектов',
-                'messages': 'Messenger',
-                'astra': 'Astra Wallet',
-                'rd': 'Мои Проекты',
-                'security': 'Безопасность',
-                'settings': 'Настройки'
-            };
-            document.getElementById('pageTitle').innerText = titles[tabId] || 'Личный Кабинет';
-        }
-
-        // Theme
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-        }
-    </script>
+    
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

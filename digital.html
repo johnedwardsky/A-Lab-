@@ -21,13 +21,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -36,28 +31,7 @@
             overflow-x: hidden;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: left, top;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background: var(--tech-blue);
-            border-color: var(--tech-blue);
-            opacity: 0.5;
-        }
+        
 
         /* --- HEADER (Standardized) --- */
         header {
@@ -499,10 +473,11 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
+    
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
                 alt="A-LAB" loading="eager" decoding="async"></a>
@@ -577,44 +552,7 @@
             </div>
         </section>
     </main>
-    <script>
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
-        document.querySelectorAll('.hover-trigger').forEach(t => { t.addEventListener('mouseenter', () => cursor.classList.add('hovered')); t.addEventListener('mouseleave', () => cursor.classList.remove('hovered')); });
-        document.getElementById('leadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const form = e.target;
-            const btn = form.querySelector('button');
-            const name = form.querySelector('input').value;
-            const solution = form.querySelector('select').value;
-            const message = form.querySelector('textarea').value;
-
-            btn.innerText = 'SENDING...';
-            btn.disabled = true;
-
-            const { success, error } = await window.ALabCore.submitLead({
-                name: name,
-                contact: 'Solution: ' + solution,
-                message: message,
-                source: 'digital',
-                source_detail: 'Digital Page Form'
-            });
-
-            if (success) {
-                alert('Система зафиксировала запрос. Специалист IT-отдела свяжется с Вами в Telegram.');
-                form.reset();
-            } else {
-                alert('Ошибка отправки: ' + (error?.message || 'Поторите позже'));
-            }
-            btn.innerText = 'Получить консультацию';
-            btn.disabled = false;
-        });
-    </script>
+    
     <!-- A-LAB Integration -->
     <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
@@ -622,6 +560,7 @@
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

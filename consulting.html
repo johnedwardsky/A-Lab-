@@ -21,13 +21,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -36,27 +31,7 @@
             overflow-x: hidden;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: left, top;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            opacity: 0.5;
-        }
+        
 
         @media (max-width: 768px) {
             .cursor {
@@ -525,10 +500,11 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
+    
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager" decoding="async"></a>
         <div class="header-controls">
@@ -673,99 +649,14 @@
         </section>
     </main>
 
-    <script>
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        function updateCursor() {
-            cursorX = mouseX;
-            cursorY = mouseY;
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            requestAnimationFrame(updateCursor);
-        }
-        updateCursor();
-        document.querySelectorAll('.hover-trigger').forEach(t => {
-            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-
-        document.getElementById('consultForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Заявка зафиксирована в системе. Мы свяжемся с Вами в Telegram для планирования аудита.');
-            e.target.reset();
-        });
-
-        // Bar Chart Animation Logic
-        const observerOptions = {
-            threshold: 0.5
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const bars = entry.target.querySelectorAll('.bar');
-                    bars.forEach((bar, index) => {
-                        setTimeout(() => {
-                            bar.style.height = bar.getAttribute('data-height');
-                        }, index * 100); // Staggered animation
-                    });
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        observer.observe(document.getElementById('barChart'));
-
-        // Counter Animation Logic
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const counter = entry.target;
-                    const target = parseFloat(counter.getAttribute('data-target'));
-                    const decimals = parseInt(counter.getAttribute('data-decimals')) || 0;
-                    const duration = 2000; // 2 seconds
-                    const startTime = performance.now();
-
-                    const updateCounter = (currentTime) => {
-                        const elapsed = currentTime - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-
-                        // Ease out quad
-                        const easeProgress = progress * (2 - progress);
-
-                        const currentValue = (easeProgress * target).toFixed(decimals);
-                        counter.innerText = currentValue;
-
-                        if (progress < 1) {
-                            requestAnimationFrame(updateCounter);
-                        }
-                    };
-
-                    requestAnimationFrame(updateCounter);
-                    counterObserver.unobserve(counter);
-                }
-            });
-        }, { threshold: 1 });
-
-        document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
-    </script>
+    
     <!-- A-LAB Integration -->
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

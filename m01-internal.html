@@ -29,13 +29,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -126,27 +121,7 @@
             animation-delay: 0.6s;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: difference;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 42, 42, 0.8);
-            border-color: transparent;
-            mix-blend-mode: normal;
-        }
+        
 
         /* --- SCROLL ANIMATIONS --- */
         .hidden {
@@ -832,10 +807,11 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
+    
 
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
@@ -1086,142 +1062,11 @@
         <div>DATA ENCRYPTED // END-TO-END SYSTEM</div>
     </footer>
 
-    <script>
-        // Custom Cursor
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-        if (!isMobile && cursor) {
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-            });
-
-            document.querySelectorAll('a, button, .hover-trigger').forEach(b => {
-                b.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                b.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
-        }
-
-        // Intersection Observer for Animation
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    entry.target.classList.remove('hidden'); // Ensure hidden class is removed
-
-                    // Trigger number animation if it's a stat item
-                    if (entry.target.classList.contains('stat-item')) {
-                        const valElement = entry.target.querySelector('.stat-val');
-                        if (valElement && !valElement.dataset.animated) {
-                            animateValue(valElement);
-                            valElement.dataset.animated = "true";
-                        }
-                    }
-                    observer.unobserve(entry.target); // Animate only once
-                }
-            });
-        }, observerOptions);
-
-        // Targeted elements for animation
-        const animatedElements = document.querySelectorAll('section, .tech-card, .stat-item, .r-item, .r-step');
-        animatedElements.forEach(el => {
-            el.classList.add('hidden');
-            observer.observe(el);
-        });
-
-        // Number Animation Function
-        function animateValue(obj) {
-            const valueStr = obj.textContent;
-            // Extract numeric part
-            const match = valueStr.match(/([\d\.]+)/);
-            if (!match) return;
-
-            const numericValue = parseFloat(match[0]);
-            const start = 0;
-            const duration = 2000;
-            let startTimestamp = null;
-
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-
-                // Ease out quart
-                const ease = 1 - Math.pow(1 - progress, 4);
-
-                const currentVal = Math.floor(ease * (numericValue - start) + start);
-
-                // Replace the numeric part in the original string (to keep $ or % or B+)
-                obj.innerHTML = valueStr.replace(match[0], currentVal);
-
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                } else {
-                    obj.innerHTML = valueStr;
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-        // Form Handling
-        const form = document.getElementById('contact-form');
-        if (form) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const btn = form.querySelector('button');
-                const originalText = btn.innerText;
-                btn.innerText = 'TRANSMITTING...';
-
-                setTimeout(() => {
-                    btn.innerText = 'INQUIRY SENT';
-                    btn.style.color = '#00FF94';
-                    btn.style.borderColor = '#00FF94';
-                    alert('Strategic inquiry received. Our relations officer will contact you.');
-                    form.reset();
-                    setTimeout(() => {
-                        btn.innerText = originalText;
-                        btn.style.color = '';
-                        btn.style.borderColor = '';
-                    }, 3000);
-                }, 1500);
-            });
-        }
-        // Video Optimization
-        const video = document.getElementById('hero-video');
-        if (video) {
-            video.addEventListener('loadeddata', () => {
-                video.style.opacity = '1';
-                // Only autoplay on desktop/larger screens or if not in battery saver mode
-                if (window.innerWidth > 768) {
-                    video.play().catch(e => console.log("Autoplay prevented"));
-                }
-            });
-
-            // Intersection observer to play/pause video when in/out of view
-            const videoObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        if (window.innerWidth > 768) video.play().catch(() => { });
-                    } else {
-                        video.pause();
-                    }
-                });
-            }, { threshold: 0.1 });
-            videoObserver.observe(video);
-        }
-    </script>
+    
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

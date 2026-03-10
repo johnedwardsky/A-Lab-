@@ -30,12 +30,7 @@
             cursor: pointer;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
 
         body {
             background-color: var(--bg);
@@ -49,29 +44,7 @@
             background-size: 40px 40px;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--text);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: exclusion;
-        }
-
-        .cursor.hidden {
-            opacity: 0 !important;
-        }
-
-        .cursor.hovered {
-            width: 50px;
-            height: 50px;
-            background: var(--text);
-            mix-blend-mode: difference;
-        }
+        
 
         @media (max-width: 768px) {
             .cursor {
@@ -399,10 +372,11 @@
             text-align: center;
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
+    
 
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
@@ -598,43 +572,8 @@
 
     <script defer src="i18n.js"></script>
     <script defer src="main-menu.js"></script>
-    <script>
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-        document.querySelectorAll('.hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-
-        // Simple scroll spy logic for active link highlighting
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('.doc-section');
-            const links = document.querySelectorAll('.doc-link');
-
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 200) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            links.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').includes(current)) {
-                    link.classList.add('active');
-                }
-            });
-        });
-    </script>
+    
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>

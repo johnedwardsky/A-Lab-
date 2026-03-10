@@ -21,13 +21,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
+        
+        
 
         body {
             background-color: var(--bg);
@@ -36,28 +31,7 @@
             overflow-x: hidden;
         }
 
-        /* --- CUSTOM CURSOR --- */
-        .cursor {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 20px;
-            height: 20px;
-            background: #fff;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 20000;
-            mix-blend-mode: difference;
-            transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            will-change: transform, width, height;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 80px;
-            height: 80px;
-        }
+        
 
         @media (max-width: 768px) {
             .cursor {
@@ -398,10 +372,11 @@
             z-index: 1000;
         }
     </style>
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    <div class="cursor"></div>
+    
     <div class="noise-overlay"></div>
 
     <header>
@@ -486,64 +461,8 @@
     <script defer src="main-menu.js"></script>
     <script defer src="i18n.js"></script>
 
-    <script>
-        // --- CURSOR LOGIC ---
-        const cursor = document.querySelector('.cursor');
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
-        });
-
-        const initHoverTriggers = () => {
-            document.querySelectorAll('.hover-trigger').forEach(t => {
-                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
-        };
-        initHoverTriggers();
-
-        // --- FORM LOGIC ---
-        document.getElementById('contactForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const data = {
-                name: document.getElementById('contactName').value,
-                contact: document.getElementById('contactLink').value,
-                subject: document.getElementById('contactSubject').value,
-                message: document.getElementById('contactMsg').value,
-                source: 'contacts_page'
-            };
-
-            btn.innerText = 'SENDING...';
-            btn.disabled = true;
-
-            try {
-                const { success, error } = await window.ALabCore.submitLead({
-                    name: data.name,
-                    contact: data.contact,
-                    message: `[Subject: ${data.subject}] ${data.message}`,
-                    source: 'contacts',
-                    source_detail: 'Contacts Page Form'
-                });
-
-                if (success) {
-                    alert('Запрос успешно отправлен в систему A-LAB. Мы свяжемся с вами в ближайшее время.');
-                    e.target.reset();
-                } else {
-                    throw error;
-                }
-            } catch (err) {
-                alert('Ошибка при отправке: ' + (err.message || 'Повторите позже'));
-            } finally {
-                btn.innerText = 'Отправить запрос';
-                btn.disabled = false;
-            }
-        });
-    </script>
+    
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>
