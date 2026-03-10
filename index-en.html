@@ -205,6 +205,24 @@
             text-shadow: 0 0 40px rgba(0, 229, 255, 0.4);
         }
 
+        .hero-tag {
+            margin-bottom: 10px !important;
+            margin-top: -20px;
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .hero-meta {
             margin-top: 40px;
             display: flex;
@@ -558,6 +576,12 @@
                 font-size: 0.75rem;
             }
 
+            .hero-tag {
+                margin-top: 0 !important;
+                margin-bottom: 5px !important;
+                font-size: 0.6rem !important;
+            }
+
             /* Marquee */
             .marquee-item {
                 font-size: 1rem;
@@ -623,7 +647,7 @@
                 text-align: left;
             }
         }
-    
+
         /* --- UNIFIED HEADER STANDARD --- */
         header {
             position: fixed !important;
@@ -664,7 +688,9 @@
             z-index: 10001 !important;
         }
 
-        .menu-btn, .back-btn, .lang-btn {
+        .menu-btn,
+        .back-btn,
+        .lang-btn {
             pointer-events: auto !important;
             position: relative !important;
             top: auto !important;
@@ -681,73 +707,74 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
             }
         }
-    
-    
-    /* --- UNIFIED HEADER NAVIGATION STANDARD --- */
-    header {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        padding: 40px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        z-index: 10000 !important;
-        pointer-events: none !important;
-        box-sizing: border-box !important;
-        background: transparent !important;
-        backdrop-filter: none !important;
-    }
 
-    .logo {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        z-index: 10002 !important;
-    }
 
-    .header-controls {
-        pointer-events: auto !important;
-        display: flex !important;
-        gap: 15px !important;
-        align-items: center !important;
-        margin-left: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        z-index: 10002 !important;
-    }
-
-    .menu-btn, .back-btn, .lang-btn {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        margin: 0 !important;
-        z-index: 10002 !important;
-    }
-
-    @media (max-width: 768px) {
+        /* --- UNIFIED HEADER NAVIGATION STANDARD --- */
         header {
-            padding: 15px 20px !important;
-            background: rgba(3, 4, 7, 0.9) !important;
-            backdrop-filter: blur(15px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            padding: 40px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            z-index: 10000 !important;
+            pointer-events: none !important;
+            box-sizing: border-box !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
         }
-    }
 
+        .logo {
+            pointer-events: auto !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            z-index: 10002 !important;
+        }
+
+        .header-controls {
+            pointer-events: auto !important;
+            display: flex !important;
+            gap: 15px !important;
+            align-items: center !important;
+            margin-left: auto !important;
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            z-index: 10002 !important;
+        }
+
+        .menu-btn,
+        .back-btn,
+        .lang-btn {
+            pointer-events: auto !important;
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            margin: 0 !important;
+            z-index: 10002 !important;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px !important;
+                background: rgba(3, 4, 7, 0.9) !important;
+                backdrop-filter: blur(15px) !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <div class="noise-overlay"></div>
-    
+
 
     <header>
         <a href="index-en.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
@@ -765,9 +792,9 @@
                 type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
-        <div class="tag" data-i18n="page_index.system_tag"
+        <div class="tag hero-tag" data-i18n="page_index.system_tag"
             style="color: var(--accent); border-color: var(--accent); background: rgba(255, 42, 42, 0.05);">/// SYSTEM
-            V.2025</div>
+            V.2026</div>
         <h1>
             <span data-i18n="page_index.hero_line1">Architecture</span> <br>
             <span class="outline hover-trigger" data-i18n="page_index.hero_line2">of the Future</span>: <br>
@@ -987,7 +1014,7 @@
         </div>
         <div
             style="display: flex; justify-content: space-between; width: 100%; color: #555; font-family: var(--font-code); font-size: 0.8rem;">
-            <div data-i18n="common.copyright">© 2025 ARTIFACT LAB</div>
+            <div data-i18n="common.copyright">© 2026 A-LAB.TECH</div>
             <div>A-LAB.TECH</div>
         </div>
     </footer>
