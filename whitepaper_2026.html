@@ -9,7 +9,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="cursor.css">
     <style>
         :root {
             --bg: #030407;
@@ -22,12 +21,62 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            cursor: pointer;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: var(--font-main);
             overflow-x: hidden;
             line-height: 1.6;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hidden {
+            opacity: 0 !important;
+        }
+
+        .cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background: var(--tech-blue);
+            border-color: var(--tech-blue);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .cursor {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
         }
 
         /* HEADER */
@@ -445,129 +494,11 @@
             color: #555;
             margin-top: 100px;
         }
-    
-        /* --- UNIFIED HEADER STANDARD --- */
-        header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            padding: 40px !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            z-index: 10000 !important;
-            pointer-events: none !important;
-            box-sizing: border-box !important;
-            background: transparent !important;
-            backdrop-filter: none !important;
-        }
-
-        .logo {
-            pointer-events: auto !important;
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            margin: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            z-index: 10001 !important;
-        }
-
-        .header-controls {
-            pointer-events: auto !important;
-            display: flex !important;
-            gap: 15px !important;
-            align-items: center !important;
-            margin-left: auto !important;
-            position: relative !important;
-            top: auto !important;
-            right: auto !important;
-            z-index: 10001 !important;
-        }
-
-        .menu-btn, .back-btn, .lang-btn {
-            pointer-events: auto !important;
-            position: relative !important;
-            top: auto !important;
-            right: auto !important;
-            margin: 0 !important;
-            z-index: 10001 !important;
-        }
-
-        @media (max-width: 768px) {
-            header {
-                padding: 15px 20px !important;
-                background: rgba(3, 4, 7, 0.9) !important;
-                backdrop-filter: blur(15px) !important;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-            }
-        }
-    
-    
-    /* --- UNIFIED HEADER NAVIGATION STANDARD --- */
-    header {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        padding: 40px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        z-index: 10000 !important;
-        pointer-events: none !important;
-        box-sizing: border-box !important;
-        background: transparent !important;
-        backdrop-filter: none !important;
-    }
-
-    .logo {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        z-index: 10002 !important;
-    }
-
-    .header-controls {
-        pointer-events: auto !important;
-        display: flex !important;
-        gap: 15px !important;
-        align-items: center !important;
-        margin-left: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        z-index: 10002 !important;
-    }
-
-    .menu-btn, .back-btn, .lang-btn {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        margin: 0 !important;
-        z-index: 10002 !important;
-    }
-
-    @media (max-width: 768px) {
-        header {
-            padding: 15px 20px !important;
-            background: rgba(3, 4, 7, 0.9) !important;
-            backdrop-filter: blur(15px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-    }
-
     </style>
 </head>
 
 <body>
-    
+    <div class="cursor"></div>
 
     <header>
         <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
@@ -784,7 +715,22 @@
         <p>© 2026 A-LAB.TECH // FORECAST ANALYTICS DEPT.</p>
     </footer>
 
-    <script defer src="cursor.js"></script>
+    <script>
+        const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('.hover-trigger, a, button').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+    </script>
     <script src="i18n.js"></script>
     <script defer src="main-menu.js"></script>
 </body>

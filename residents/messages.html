@@ -110,7 +110,12 @@
             cursor: pointer;
         }
 
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
 
         body {
             background-color: var(--bg);
@@ -122,7 +127,30 @@
             transition: background 0.3s;
         }
 
-        
+        /* --- CURSOR --- */
+        .cursor {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+        }
+
+        .cursor.hidden {
+            opacity: 0 !important;
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
 
         @media (max-width: 768px) {
             .cursor {
@@ -391,71 +419,11 @@
                 margin-left: 0 !important;
             }
         }
-    
-    /* --- UNIFIED HEADER NAVIGATION STANDARD --- */
-    header {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        padding: 40px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        z-index: 10000 !important;
-        pointer-events: none !important;
-        box-sizing: border-box !important;
-        background: transparent !important;
-        backdrop-filter: none !important;
-    }
-
-    .logo {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        z-index: 10002 !important;
-    }
-
-    .header-controls {
-        pointer-events: auto !important;
-        display: flex !important;
-        gap: 15px !important;
-        align-items: center !important;
-        margin-left: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        z-index: 10002 !important;
-    }
-
-    .menu-btn, .back-btn, .lang-btn {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        margin: 0 !important;
-        z-index: 10002 !important;
-    }
-
-    @media (max-width: 768px) {
-        header {
-            padding: 15px 20px !important;
-            background: rgba(3, 4, 7, 0.9) !important;
-            backdrop-filter: blur(15px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-    }
-
     </style>
-    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    
+    <div class="cursor"></div>
 
     <!-- Navigation is injected by nav-manager.js -->
 
@@ -508,10 +476,137 @@
     <script defer src="../auth-guard.js"></script>
     <script defer src="message-manager.js"></script>
 
-    
+    <script>
+        const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        function bindHover() {
+            document.querySelectorAll('.hover-trigger').forEach(t => {
+                if (t.dataset.hoverBound) return;
+                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                t.dataset.hoverBound = "true";
+            });
+        }
+        bindHover();
+
+        // Messenger UI Logic
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const recipientId = window.MessageManager.currentRecipientId;
+
+            if (!recipientId) {
+                alert("Выберите получателя");
+                return;
+            }
+
+            if (input.value.trim() !== "") {
+                const content = input.value.trim();
+                input.value = ""; // Clear immediately for snappiness
+                await window.MessageManager.sendMessage(recipientId, content);
+            }
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Event Listeners for MessageManager
+        document.addEventListener('alab:chats-loaded', (e) => {
+            const chatList = document.getElementById('chatList');
+            const chats = e.detail;
+
+            if (chats.length === 0) {
+                chatList.innerHTML = '<div style="padding: 20px; text-align: center; color: #555; font-size: 0.8rem;">Активных чатов пока нет</div>';
+                return;
+            }
+
+            chatList.innerHTML = chats.map(chat => `
+                <a href="#" class="chat-item hover-trigger ${window.MessageManager.currentRecipientId === chat.id ? 'active' : ''}" 
+                   onclick="selectChat('${chat.id}', '${chat.full_name}', '${chat.avatar_url || 'maya_neural.png'}')">
+                    <div class="chat-avatar">
+                        <img decoding="async" src="${chat.avatar_url || 'maya_neural.png'}">
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-header-meta">
+                            <div class="chat-name">${chat.full_name}</div>
+                            <div class="chat-time">...</div>
+                        </div>
+                        <div class="last-msg">Нажмите, чтобы открыть переписку</div>
+                    </div>
+                </a>
+            `).join('');
+            bindHover();
+        });
+
+        document.addEventListener('alab:messages-loaded', (e) => renderMessages(e.detail));
+        document.addEventListener('alab:messages-updated', (e) => renderMessages(e.detail));
+
+        function selectChat(id, name, avatar) {
+            // Update Header
+            document.querySelector('.active-user .chat-name').innerText = name;
+            document.querySelector('.active-user img').src = avatar;
+
+            // Mark active in sidebar
+            document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+            const activeItem = Array.from(document.querySelectorAll('.chat-item')).find(item => item.onclick.toString().includes(id));
+            if (activeItem) activeItem.classList.add('active');
+
+            // Load messages
+            window.MessageManager.loadMessages(id);
+        }
+
+        function renderMessages(messages) {
+            const history = document.getElementById('msgHistory');
+            const currentUserId = window.ALabAuth.residentId;
+
+            if (messages.length === 0) {
+                history.innerHTML = '<div style="text-align: center; padding: 50px; color: #555; font-size: 0.85rem;">Нет сообщений. Начните общение первым!</div>';
+                return;
+            }
+
+            history.innerHTML = messages.map(msg => `
+                <div class="msg-bubble ${msg.sender_id === currentUserId ? 'sent' : 'received'}">
+                    ${msg.content}
+                    <span class="msg-time">${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+            `).join('');
+
+            history.scrollTop = history.scrollHeight;
+        }
+
+        // Theme handled by nav-manager.js
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-theme');
+        }
+
+        // Auth Init
+        document.addEventListener('alab:auth-ready', (e) => {
+            const auth = e.detail;
+            if (auth.residentId) {
+                window.MessageManager.init(auth.residentId);
+            }
+        });
+
+        // If auth is already ready
+        if (window.ALabAuth && window.ALabAuth.residentId) {
+            window.MessageManager.init(window.ALabAuth.residentId);
+        }
+
+    </script>
     <script defer src="../i18n.js"></script>
     <script defer src="../nav-manager.js"></script>
-    <script defer src="cursor.js"></script>
 </body>
 
 </html>

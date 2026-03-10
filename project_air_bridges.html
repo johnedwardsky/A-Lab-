@@ -22,8 +22,13 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        
-        
+        a, button, input, select, textarea { cursor: pointer; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
 
         body {
             background-color: var(--bg);
@@ -37,7 +42,25 @@
         }
 
         /* --- UI ELEMENTS --- */
-        
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+        }
+
+        .cursor.hidden { opacity: 0 !important; }
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 42, 42, 0.2);
+            border-color: var(--accent);
+        }
 
         /* --- HEADER (Standardized) --- */
         header {
@@ -970,7 +993,485 @@
                 display: none !important;
             }
 
-            );
+            * {
+                cursor: auto !important;
+            }
+
+            header {
+                padding: 12px 15px;
+                background: rgba(3, 4, 7, 0.85);
+                backdrop-filter: blur(15px);
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                z-index: 1200;
+                pointer-events: auto;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .logo {
+                position: static !important;
+                display: flex;
+                align-items: center;
+            }
+
+            .logo img {
+                height: 24px !important;
+            }
+
+            .header-controls {
+                position: static;
+                display: flex;
+                gap: 8px;
+            }
+
+            .menu-btn,
+            .back-btn {
+                padding: 6px 12px !important;
+                font-size: 0.6rem !important;
+                white-space: nowrap;
+                letter-spacing: 0.5px;
+            }
+
+            .contact-card {
+                padding: 30px 20px;
+            }
+
+            .contact-card h2 {
+                font-size: 1.5rem !important;
+                line-height: 1.2;
+            }
+
+            .contact-section {
+                margin-bottom: 80px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .grid-span-2 {
+                grid-column: span 1;
+            }
+
+            .form-input,
+            .form-textarea {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .vr-container {
+                display: flex;
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .vr-hud-view {
+                order: -1;
+                height: auto;
+                aspect-ratio: 16/9;
+                max-height: 40vh;
+                margin-bottom: 20px;
+            }
+
+            .vr-info h2 {
+                font-size: clamp(1.4rem, 8vw, 2.5rem);
+                margin-bottom: 15px;
+                word-break: normal;
+            }
+
+            .vr-info p {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+
+            .vr-feature {
+                margin-bottom: 15px;
+            }
+
+            .vr-feature-text p {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor"></div>
+
+    <header>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
+                alt="A-LAB" loading="eager" decoding="async"></a>
+        <div class="header-controls">
+            <a href="rd.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
+            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+                МЕНЮ</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <span class="project-tag" data-i18n="page_rd.air_bridges_tag">PROJECT_ID: AIR_BRIDGES_V1</span>
+            <h1 data-i18n="page_rd.air_bridges_title">ВОЗДУШНЫЕ МОСТЫ</h1>
+            <p class="hero-desc" data-i18n="page_air_bridges.hero_desc">
+                Интеллектуальная сеть автономной логистики. Создаем транспортные коридоры там, где заканчиваются дороги.
+                Революция в доставке критически важных грузов.
+            </p>
+        </section>
+
+        <!-- MAP VIEWPORT -->
+        <div style="position: relative; margin-bottom: clamp(50px, 10vw, 100px);">
+            <div class="map-viewport hover-trigger" id="map-interaction" style="margin-bottom: 0;">
+                <canvas id="cyber-map"></canvas>
+
+                <div class="map-overlay">
+                    <div class="map-status">
+                        > STATUS: ONLINE <br>
+                        > UAV: ACTIVE (DRONE_01) <br>
+                        > DESTINATION: <span id="dest-label">IDLE</span>
+                    </div>
+                </div>
+
+                <!-- DRONE -->
+                <div class="drone-container" id="drone">
+                    <div class="drone-rotor rotor-l"></div>
+                    <div class="drone-rotor rotor-r"></div>
+                    <div class="drone-body"></div>
+                    <div class="cargo" id="cargo"></div>
+                </div>
+            </div>
+
+            <!-- TERRAIN PREVIEW (Moved outside map-viewport) -->
+            <div class="terrain-preview">
+                <div class="preview-header">
+                    <span>VISUAL_SENSORS</span>
+                    <span id="coord-label">0.0, 0.0</span>
+                </div>
+                <div class="preview-content">
+                    <div class="scan-bar-mini"></div>
+
+                    <div class="terrain-viz active" id="viz-default">
+                        <div style="color: #444; font-family: var(--font-code); font-size: 0.5rem;">NO_SIGNAL</div>
+                    </div>
+
+                    <div class="terrain-viz" id="viz-agri">
+                        <img decoding="async" src="assets/img/agri_bangladesh_rice_fields_1771057457856.png"
+                            alt="Bangladesh Rice Fields">
+                        <span class="terrain-label">TOP_DOWN: BGD_RICE_FIELDS</span>
+                    </div>
+
+                    <div class="terrain-viz" id="viz-mountain">
+                        <img decoding="async" src="assets/img/logistic_nepal_mountains_1771057480166.png"
+                            alt="Nepal Mountains">
+                        <span class="terrain-label">TOP_DOWN: NPL_HIGHLANDS</span>
+                    </div>
+
+                    <div class="terrain-viz" id="viz-arctic">
+                        <img decoding="async" src="assets/img/arctic_city_shores_1771057497816.png" alt="Arctic City">
+                        <span class="terrain-label">TOP_DOWN: ARC_BASE_ALPHA</span>
+                    </div>
+
+                    <div class="terrain-viz" id="viz-research">
+                        <img decoding="async" src="assets/img/research_drone_ocean_cable_1771057514945.png"
+                            alt="Ocean Cable Drone">
+                        <span class="terrain-label">TOP_DOWN: OCEAN_LINK_OPS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INTEL ANALYSIS SECTION -->
+        <div class="intel-container" id="intel-view">
+            <div class="intel-image">
+                <img decoding="async" src="assets/img/agri_bangladesh_rice_fields_1771057457856.png" id="intel-img"
+                    alt="Terrain Analysis">
+                <div class="scan-line"></div>
+            </div>
+            <div class="intel-details">
+                <span class="project-tag">SECTOR_INTEL: <span id="intel-sector-id">AGRI_ZONE</span></span>
+                <h2 id="intel-title" data-i18n="page_air_bridges.intel_title">Интеллектуальный анализ местности</h2>
+                <p id="intel-desc" data-i18n="page_air_bridges.intel_desc">Система датчиков дрона анализирует рельеф и
+                    биометрические показатели в реальном
+                    времени. Статус: Сбор данных завершен.</p>
+                <div class="intel-specs">
+                    <div class="intel-spec-item">TEMP: -10°C / +45°C</div>
+                    <div class="intel-spec-item">HUMIDITY: ANALYSIS_READY</div>
+                    <div class="intel-spec-item">SIGNAL: STABLE</div>
+                    <div class="intel-spec-item">THREAT_LEVEL: LOW</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VR TELEPRESENCE SECTION -->
+        <section class="vr-control-section hover-trigger" id="vr-interface">
+            <div class="vr-container">
+                <div class="vr-info">
+                    <span class="project-tag">INTERFACE: VR_LINK_v4</span>
+                    <h2 data-i18n="page_air_bridges.vr_title">VR ТЕЛЕПРИСУТСТВИЕ</h2>
+                    <p style="color: #aaa; margin-bottom: 30px;" data-i18n="page_air_bridges.vr_desc">Система
+                        дистанционного пилотирования позволяет
+                        оператору находиться в кабине дрона, находясь за тысячи километров. Полное погружение и
+                        нейро-обратная связь.</p>
+
+                    <div class="vr-feature">
+                        <div class="vr-feature-icon">👁️</div>
+                        <div class="vr-feature-text">
+                            <h4>Бинокулярное зрение 8K</h4>
+                            <p>Потоковая трансляция с минимальной задержкой (< 20мс) через спутниковую сеть A-LAB.</p>
+                        </div>
+                    </div>
+
+                    <div class="vr-feature">
+                        <div class="vr-feature-icon">🧠</div>
+                        <div class="vr-feature-text">
+                            <h4>Нейронный интерфейс</h4>
+                            <p>Прямое управление вектором тяги через мозговые импульсы для мгновенной реакции.</p>
+                        </div>
+                    </div>
+
+                    <div class="vr-feature">
+                        <div class="vr-feature-icon">🧤</div>
+                        <div class="vr-feature-text">
+                            <h4>Тактильная отдача</h4>
+                            <p>Оператор чувствует сопротивление ветра и вибрацию двигателей через костюм обратной связи.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="neural-link-active">
+                        <div class="pulse-dot"></div> NEURAL_LINK: STABLE [SYNCHRONIZED]
+                    </div>
+                </div>
+
+                <div class="vr-hud-view" id="vr-hud">
+                    <!-- Artificial Horizon Layer -->
+                    <div id="hud-horizon-bg"
+                        style="position: absolute; top: 50%; left: 50%; width: 400%; height: 400%; transform: translate(-50%, -50%); pointer-events: none; z-index: 0; background: linear-gradient(180deg, #1e3a8a 0%, #3b82f6 49.5%, #10b981 50.5%, #064e3b 100%); opacity: 0.6;">
+                    </div>
+
+                    <!-- Camera Feed Removed -->
+                    <div class="hud-vignette" style="z-index: 2;"></div>
+                    <div id="hud-glitch"
+                        style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.05); opacity:0; pointer-events:none; z-index:7;">
+                    </div>
+
+                    <!-- Dynamic Target Locker -->
+                    <div id="hud-locker"
+                        style="position: absolute; width: 60px; height: 60px; border: 1px solid var(--accent); opacity: 0; z-index: 10; pointer-events: none; transition: opacity 0.3s;">
+                        <div
+                            style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); color: var(--accent); font-family: var(--font-code); font-size: 0.5rem;">
+                            LOCKING...</div>
+                        <div
+                            style="position: absolute; top: 0; left: 0; width: 10px; height: 10px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent);">
+                        </div>
+                        <div
+                            style="position: absolute; top: 0; right: 0; width: 10px; height: 10px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent);">
+                        </div>
+                        <div
+                            style="position: absolute; bottom: 0; left: 0; width: 10px; height: 10px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent);">
+                        </div>
+                        <div
+                            style="position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent);">
+                        </div>
+                    </div>
+
+                    <div class="hud-overlay">
+                        <div class="hud-top">
+                            <span>MODE: <span id="vr-mode">MANUAL_OVERRIDE</span></span>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div id="hud-compass"
+                                    style="width: 200px; height: 20px; border-bottom: 1px solid var(--tech-blue); position: relative; overflow: hidden;">
+                                    <div id="compass-strip"
+                                        style="position: absolute; white-space: nowrap; font-family: var(--font-code); font-size: 0.6rem; transition: transform 0.1s;">
+                                        NW . . . 300 . . . 330 . . . N . . . 030 . . . 060 . . . NE . . . 120 . . . 150
+                                        . . . S . . . 210 . . . 240 . . . SW . . . 300
+                                    </div>
+                                    <div
+                                        style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid var(--tech-blue);">
+                                    </div>
+                                </div>
+                                <span id="vr-hdg" style="font-size: 0.6rem; margin-top: 5px;">HDG: 285° [W]</span>
+                            </div>
+                            <span id="vr-alt">ALT: 2,500m</span>
+                        </div>
+
+                        <div class="hud-center">
+                            <div class="hud-pitch-ladder" id="pitch-ladder">
+                                <div class="pitch-line"></div>
+                                <div class="pitch-line" style="width: 80%; margin-left: 10%;"></div>
+                                <div class="pitch-line"></div>
+                                <div class="pitch-line" style="width: 80%; margin-left: 10%;"></div>
+                                <div class="pitch-line"></div>
+                            </div>
+                            <div class="hud-reticle"></div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                            <div class="hud-side-bar">
+                                <div>SPD</div>
+                                <div style="font-size: 1.2rem; font-weight: 800;" id="vr-spd">350</div>
+                                <div>KM/H</div>
+                            </div>
+                            <div id="hud-status-msg"
+                                style="font-family: var(--font-code); font-size: 0.6rem; color: #00FF41; text-align: right; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 4px;">
+                                SYSTEM: READY<br>
+                                LINK: ENCRYPTED<br>
+                                BATTERY: 88%
+                            </div>
+                            <div class="hud-side-bar">
+                                <div>PWR</div>
+                                <div style="font-size: 1.2rem; font-weight: 800;" id="vr-pwr">72%</div>
+                                <div>THRUST</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTORS -->
+        <div class="grid">
+            <div class="sector-card hover-trigger">
+                <span class="sector-icon"><img src="assets/img/icon_agri.png" alt="Agri"></span>
+                <h3 data-i18n="page_air_bridges.sector_agri_title">Аграрный сектор</h3>
+                <p data-i18n="page_air_bridges.sector_agri_desc">Мониторинг посевов, точечная доставка удобрений и сбор
+                    образцов почвы в труднодоступных районах.</p>
+            </div>
+            <div class="sector-card hover-trigger">
+                <span class="sector-icon"><img src="assets/img/icon_logistics.png" alt="Logistics"></span>
+                <h3 data-i18n="page_air_bridges.sector_logistics_title">Логистический</h3>
+                <p data-i18n="page_air_bridges.sector_logistics_desc">Сверхбыстрая доставка "последней мили" в условиях
+                    сложного рельефа и островных территорий.</p>
+            </div>
+            <div class="sector-card hover-trigger">
+                <span class="sector-icon"><img src="assets/img/icon_medical.png" alt="Medical"></span>
+                <h3 data-i18n="page_air_bridges.sector_medical_title">Медицинский</h3>
+                <p data-i18n="page_air_bridges.sector_medical_desc">Экстренная доставка медикаментов, крови и органов
+                    для трансплантации со скоростью звука.</p>
+            </div>
+            <div class="sector-card hover-trigger">
+                <span class="sector-icon"><img src="assets/img/icon_rescue.png" alt="Rescue"></span>
+                <h3 data-i18n="page_air_bridges.sector_rescue_title">Спасательный</h3>
+                <p data-i18n="page_air_bridges.sector_rescue_desc">Доставка спасательных комплектов, связи и провизии в
+                    зоны стихийных бедствий.</p>
+            </div>
+            <div class="sector-card hover-trigger">
+                <span class="sector-icon"><img src="assets/img/icon_research.png" alt="Research"></span>
+                <h3 data-i18n="page_air_bridges.sector_research_title">Исследовательский</h3>
+                <p data-i18n="page_air_bridges.sector_research_desc">Автономная разведка территорий, картография и
+                    экологический мониторинг в режиме реального времени.
+                </p>
+            </div>
+            <div class="sector-card hover-trigger">
+                <span class="sector-icon"><img src="assets/img/icon_resilience.png" alt="Resilience"></span>
+                <h3 data-i18n="page_air_bridges.sector_resilience_title">Устойчивость среды</h3>
+                <p data-i18n="page_air_bridges.sector_resilience_desc">Конструкция адаптирована к экстремальным
+                    температурам. Надежная работа в условиях Арктики и
+                    раскаленных пустынь.</p>
+            </div>
+        </div>
+
+        <!-- SPECS -->
+        <div class="specs-bar">
+            <div class="spec">
+                <span class="spec-val">VR</span>
+                <span class="spec-label">УПРАВЛЕНИЕ (ДИСТАНЦИОННО)</span>
+            </div>
+            <div class="spec">
+                <span class="spec-val">500+</span>
+                <span class="spec-label">КГ ГРУЗОПОДЪЕМНОСТЬ</span>
+            </div>
+            <div class="spec">
+                <span class="spec-val">600</span>
+                <span class="spec-label">КМ ДАЛЬНОСТЬ ПОЛЕТА</span>
+            </div>
+            <div class="spec">
+                <span class="spec-val">AI</span>
+                <span class="spec-label">УРОВЕНЬ АВТОНОМНОСТИ</span>
+            </div>
+        </div>
+
+        <!-- Funding Section -->
+        <section class="container" style="padding-top: 0; margin-bottom: 60px;">
+            <div class="contact-card hover-trigger"
+                style="border-left: 4px solid var(--tech-blue); background: linear-gradient(90deg, rgba(0,229,255,0.05), transparent);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap;">
+                    <div>
+                        <h2 style="font-size: 2rem; margin-bottom: 10px;">ПОДДЕРЖАТЬ РАЗРАБОТКУ // FUNDING</h2>
+                        <p style="color: #888; max-width: 600px;">Ваш вклад ускорит создание децентрализованной
+                            логистической сети. Все донаты распределяются через смарт-контракт A-LAB DAO.</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 15px; min-width: 250px;">
+                        <div style="font-family: var(--font-code); font-size: 0.7rem; color: #555;">SELECT_AMOUNT (ETH)
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
+                                onclick="setFundAmount(0.01)">0.01</button>
+                            <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
+                                onclick="setFundAmount(0.1)">0.1</button>
+                            <button class="spec-item hover-trigger" style="padding: 10px 15px; cursor: none;"
+                                onclick="setFundAmount(1.0)">1.0</button>
+                        </div>
+                        <input type="number" id="fundAmount" class="form-input" placeholder="Custom Amount" step="0.01"
+                            style="height: 40px; font-size: 0.8rem;">
+                        <button class="submit-btn hover-trigger"
+                            onclick="FundingManager.open('air_bridges', 'AIR BRIDGES')">ПОДДЕРЖАТЬ ПРОЕКТ //
+                            DONATE</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT / INTEREST FORM -->
+        <section class="contact-section">
+            <div class="contact-card hover-trigger">
+                <div class="section-title"
+                    style="color: var(--tech-blue); font-family: var(--font-code); margin-bottom: 20px;">> ИНИЦИИРОВАТЬ
+                    СОТРУДНИЧЕСТВО // JOIN_PROJECT</div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 30px;">Заинтересованы в реализации?</h2>
+                <p style="color: #888; margin-bottom: 40px; max-width: 600px;">Оставьте запрос, и наш технический отдел
+                    свяжется с вами для обсуждения интеграции системы «Воздушные мосты» в вашу инфраструктуру.</p>
+
+                <form id="interest-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">ВАШЕ ИМЯ // IDENTITY</label>
+                            <input type="text" class="form-input" placeholder="Иван Иванов" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CONTACT_EMAIL</label>
+                            <input type="email" class="form-input" placeholder="corp@example.com" required>
+                        </div>
+                        <div class="form-group grid-span-2">
+                            <label class="form-label">СООБЩЕНИЕ // PAYLOAD</label>
+                            <textarea class="form-textarea" placeholder="Опишите ваш интерес к проекту..."
+                                style="height: 120px;" required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn hover-trigger">ОТПРАВИТЬ ЗАПРОС // SEND_DATA</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // CURSOR
+        const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
             
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
@@ -1501,7 +2002,6 @@
             }
         }
     </script>
-    <script defer src="cursor.js"></script>
 </body>
 
 </html>

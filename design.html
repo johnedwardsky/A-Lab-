@@ -21,8 +21,13 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        
-        
+        a, button, input, select, textarea { cursor: pointer; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
 
         body {
             background-color: var(--bg);
@@ -31,7 +36,27 @@
             overflow-x: hidden;
         }
 
-        
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            transition: width 0.1s, height 0.1s, background 0.1s;
+            mix-blend-mode: normal;
+            will-change: left, top;
+        }
+
+        .cursor.hidden { opacity: 0 !important; }
+        .cursor.hovered {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            opacity: 0.8;
+        }
 
         @media (max-width: 768px) {
             .cursor {
@@ -524,71 +549,11 @@
                 text-align: left;
             }
         }
-    
-    /* --- UNIFIED HEADER NAVIGATION STANDARD --- */
-    header {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        padding: 40px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        z-index: 10000 !important;
-        pointer-events: none !important;
-        box-sizing: border-box !important;
-        background: transparent !important;
-        backdrop-filter: none !important;
-    }
-
-    .logo {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        z-index: 10002 !important;
-    }
-
-    .header-controls {
-        pointer-events: auto !important;
-        display: flex !important;
-        gap: 15px !important;
-        align-items: center !important;
-        margin-left: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        z-index: 10002 !important;
-    }
-
-    .menu-btn, .back-btn, .lang-btn {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        margin: 0 !important;
-        z-index: 10002 !important;
-    }
-
-    @media (max-width: 768px) {
-        header {
-            padding: 15px 20px !important;
-            background: rgba(3, 4, 7, 0.9) !important;
-            backdrop-filter: blur(15px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-    }
-
     </style>
-    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body>
-    
+    <div class="cursor"></div>
     <div class="bg-grid"></div>
     <div class="bg-glow"></div>
     <div class="scanline"></div>
@@ -669,7 +634,62 @@
         <div>BEHANCE</div>
     </footer>
 
-    
+    <script>
+        const cursor = document.querySelector('.cursor');
+        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
+            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
+        });
+            
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function updateCursor() {
+            cursorX = mouseX;
+            cursorY = mouseY;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+        document.querySelectorAll('.hover-trigger').forEach(t => {
+            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        document.getElementById('leadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button');
+            const name = form.querySelector('input[type="text"]').value;
+            const company = form.querySelectorAll('input[type="text"]')[1].value;
+            const task = form.querySelector('textarea').value;
+
+            btn.innerText = 'ОТПРАВКА...';
+            btn.disabled = true;
+
+            const { success, error } = await window.ALabCore.submitLead({
+                name: name,
+                contact: company, // Using company as contact for now or adding field
+                message: task,
+                source: 'design',
+                source_detail: 'Design Page Form'
+            });
+
+            if (success) {
+                alert('Запрос зашифрован и официально зарегистрирован в A-LAB. Наш арт-директор свяжется с вами в течение 4-х часов.');
+                form.reset();
+            } else {
+                alert('Ошибка отправки: ' + (error?.message || 'Повторите позже'));
+            }
+            btn.innerText = 'Отправить запрос';
+            btn.disabled = false;
+        });
+    </script>
     <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="cases-engine.js?v=1.1"></script>
@@ -682,7 +702,6 @@
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
-    <script defer src="cursor.js"></script>
 </body>
 
 </html>
