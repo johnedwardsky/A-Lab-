@@ -28,8 +28,8 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        
-        
+
+
 
         body {
             background-color: var(--bg);
@@ -38,7 +38,7 @@
             overflow-x: hidden;
         }
 
-        
+
 
         @media (max-width: 768px) {
             .cursor {
@@ -336,6 +336,163 @@
             font-weight: 800;
         }
 
+        /* --- EXPERTISE SECTION --- */
+        .expertise-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .expertise-headline {
+            font-family: var(--font-main);
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            color: #fff;
+            margin: 20px 0 15px;
+            line-height: 1.1;
+        }
+
+        .expertise-intro {
+            color: #aaa;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            max-width: 700px;
+            margin-bottom: 60px;
+        }
+
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .expertise-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 30px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expertise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: var(--accent);
+            transition: height 0.4s ease;
+        }
+
+        .expertise-card:hover {
+            border-color: rgba(255, 42, 42, 0.3);
+            transform: translateY(-6px);
+        }
+
+        .expertise-card:hover::before {
+            height: 100%;
+        }
+
+        .expertise-num {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 18px;
+            letter-spacing: 2px;
+        }
+
+        .expertise-card h3 {
+            font-family: var(--font-main);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+            line-height: 1.3;
+        }
+
+        .expertise-card p {
+            color: #888;
+            font-size: 0.92rem;
+            line-height: 1.65;
+        }
+
+        /* --- ADVANTAGE SECTION --- */
+        .advantage-section {
+            border-top: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(11, 13, 20, 0) 0%, rgba(255, 42, 42, 0.04) 50%, rgba(11, 13, 20, 0) 100%);
+        }
+
+        .advantage-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        .advantage-label {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .advantage-quote {
+            font-family: var(--font-main);
+            font-size: clamp(1.4rem, 3vw, 2.2rem);
+            font-weight: 400;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
+            border: none;
+            margin: 0 0 60px;
+            padding: 0;
+            max-width: 900px;
+        }
+
+        .advantage-quote span {
+            color: var(--tech-blue);
+            font-weight: 700;
+        }
+
+        .advantage-stats {
+            display: flex;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .adv-stat-value {
+            font-family: var(--font-code);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .adv-stat-label {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+
+            .expertise-section,
+            .advantage-inner {
+                padding: 50px 20px;
+            }
+
+            .advantage-stats {
+                gap: 30px;
+            }
+        }
+
         footer {
             padding: 80px 40px;
             border-top: 1px solid var(--border);
@@ -396,7 +553,7 @@
                 font-size: 1.5rem;
             }
         }
-    
+
         /* --- UNIFIED HEADER STANDARD --- */
         header {
             position: fixed !important;
@@ -437,7 +594,9 @@
             z-index: 10001 !important;
         }
 
-        .menu-btn, .back-btn, .lang-btn {
+        .menu-btn,
+        .back-btn,
+        .lang-btn {
             pointer-events: auto !important;
             position: relative !important;
             top: auto !important;
@@ -454,75 +613,76 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
             }
         }
-    
-    
-    /* --- UNIFIED HEADER NAVIGATION STANDARD --- */
-    header {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        padding: 40px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        z-index: 10000 !important;
-        pointer-events: none !important;
-        box-sizing: border-box !important;
-        background: transparent !important;
-        backdrop-filter: none !important;
-    }
 
-    .logo {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        margin: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        z-index: 10002 !important;
-    }
 
-    .header-controls {
-        pointer-events: auto !important;
-        display: flex !important;
-        gap: 15px !important;
-        align-items: center !important;
-        margin-left: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        z-index: 10002 !important;
-    }
-
-    .menu-btn, .back-btn, .lang-btn {
-        pointer-events: auto !important;
-        position: relative !important;
-        top: auto !important;
-        right: auto !important;
-        margin: 0 !important;
-        z-index: 10002 !important;
-    }
-
-    @media (max-width: 768px) {
+        /* --- UNIFIED HEADER NAVIGATION STANDARD --- */
         header {
-            padding: 15px 20px !important;
-            background: rgba(3, 4, 7, 0.9) !important;
-            backdrop-filter: blur(15px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            padding: 40px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            z-index: 10000 !important;
+            pointer-events: none !important;
+            box-sizing: border-box !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
         }
-    }
 
+        .logo {
+            pointer-events: auto !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            z-index: 10002 !important;
+        }
+
+        .header-controls {
+            pointer-events: auto !important;
+            display: flex !important;
+            gap: 15px !important;
+            align-items: center !important;
+            margin-left: auto !important;
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            z-index: 10002 !important;
+        }
+
+        .menu-btn,
+        .back-btn,
+        .lang-btn {
+            pointer-events: auto !important;
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            margin: 0 !important;
+            z-index: 10002 !important;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px !important;
+                background: rgba(3, 4, 7, 0.9) !important;
+                backdrop-filter: blur(15px) !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+        }
     </style>
-                <link rel="stylesheet" href="cursor.css">
+    <link rel="stylesheet" href="cursor.css">
 </head>
 
 <body data-no-resident-nav>
-    
+
     <header>
-        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg" alt="A-LAB" loading="eager"
-                decoding="async"></a>
+        <a href="index.html" class="logo hover-trigger"><img decoding="async" src="assets/img/A-lab-logo.svg"
+                alt="A-LAB" loading="eager" decoding="async"></a>
         <div class="header-controls">
             <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
@@ -540,8 +700,8 @@
             <!-- Ivan Lakshinsky -->
             <div class="member-card hover-trigger">
                 <div class="member-portrait">
-                    <img decoding="async" src="assets/img/Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky" style="object-position: top;" loading="lazy"
-                        decoding="async">
+                    <img decoding="async" src="assets/img/Ivan Lakshinsky.jpg" alt="Ivan Lakshinsky"
+                        style="object-position: top;" loading="lazy" decoding="async">
                 </div>
                 <div class="member-info">
                     <div class="member-role" data-i18n="page_about.ivan_role">CEO & FOUNDER</div>
@@ -558,8 +718,8 @@
             <!-- Alexey Pak -->
             <div class="member-card hover-trigger">
                 <div class="member-portrait">
-                    <img decoding="async" src="assets/img/alexey_tech.png" alt="Alexey Pak" style="object-position: top;" loading="lazy"
-                        decoding="async">
+                    <img decoding="async" src="assets/img/alexey_tech.png" alt="Alexey Pak"
+                        style="object-position: top;" loading="lazy" decoding="async">
                 </div>
                 <div class="member-info">
                     <div class="member-role" data-i18n="page_about.alexey_role">Director of Strategic Development</div>
@@ -581,6 +741,66 @@
                 ломая барьеры между невозможным и реализованным.
             </p>
         </section>
+
+        <!-- EXPERTISE SECTION -->
+        <section class="expertise-section">
+            <div class="mission-title" data-i18n="page_about.expertise_tag">// EXPERTISE_CORE</div>
+            <h2 class="expertise-headline" data-i18n="page_about.expertise_title">За пределами IT</h2>
+            <p class="expertise-intro" data-i18n="page_about.expertise_intro">A-LAB обладает обширной экспертизой не
+                только в цифровой среде — мы работаем на стыке технологии и реального производства, автоматизируя
+                процессы там, где это действительно имеет значение.</p>
+            <div class="expertise-grid">
+                <div class="expertise-card hover-trigger">
+                    <div class="expertise-num">01</div>
+                    <h3 data-i18n="page_about.exp1_title">Технологический аудит</h3>
+                    <p data-i18n="page_about.exp1_desc">Мы исследуем нишу и бизнес-процессы клиента в глубину, выявляя
+                        скрытые точки роста и узкие места, которые тормозят масштабирование.</p>
+                </div>
+                <div class="expertise-card hover-trigger">
+                    <div class="expertise-num">02</div>
+                    <h3 data-i18n="page_about.exp2_title">Предвидение трендов</h3>
+                    <p data-i18n="page_about.exp2_desc">Мы отслеживаем технологические реалии на несколько шагов вперед
+                        и помогаем бизнесу адаптироваться до того, как рынок изменится.</p>
+                </div>
+                <div class="expertise-card hover-trigger">
+                    <div class="expertise-num">03</div>
+                    <h3 data-i18n="page_about.exp3_title">Автоматизация и снижение издержек</h3>
+                    <p data-i18n="page_about.exp3_desc">Подбираем и внедряем инструменты, которые сокращают операционные
+                        расходы и высвобождают ресурсы для роста — без избыточных решений.</p>
+                </div>
+                <div class="expertise-card hover-trigger">
+                    <div class="expertise-num">04</div>
+                    <h3 data-i18n="page_about.exp4_title">Технологическая адаптация бизнеса</h3>
+                    <p data-i18n="page_about.exp4_desc">Помогаем компаниям не просто внедрить технологии, а перестроить
+                        мышление и процессы так, чтобы опередить конкурентов в долгосрочной перспективе.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADVANTAGE MANIFESTO -->
+        <section class="advantage-section">
+            <div class="advantage-inner">
+                <div class="advantage-label" data-i18n="page_about.advantage_tag">// WHY_A-LAB</div>
+                <blockquote class="advantage-quote" data-i18n-html="page_about.advantage_quote">
+                    Мы не просто подбираем инструменты — мы <span>диагностируем систему</span>, выявляем корневые
+                    проблемы и рекомендуем решение, которое увеличит прибыль и сократит расходы вашего бизнеса.
+                </blockquote>
+                <div class="advantage-stats">
+                    <div class="adv-stat">
+                        <div class="adv-stat-value">12+</div>
+                        <div class="adv-stat-label" data-i18n="page_about.adv_stat1">лет технической экспертизы</div>
+                    </div>
+                    <div class="adv-stat">
+                        <div class="adv-stat-value">30+</div>
+                        <div class="adv-stat-label" data-i18n="page_about.adv_stat2">отраслей и ниш</div>
+                    </div>
+                    <div class="adv-stat">
+                        <div class="adv-stat-value">360°</div>
+                        <div class="adv-stat-label" data-i18n="page_about.adv_stat3">взгляд на бизнес-процессы</div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -588,7 +808,7 @@
         <div>A-LAB.TECH</div>
     </footer>
 
-    
+
     <!-- A-LAB Integration -->
     <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
@@ -596,7 +816,7 @@
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
     <script defer src="nav-manager.js"></script>
-                <script defer src="cursor.js"></script>
+    <script defer src="cursor.js"></script>
 </body>
 
 </html>
