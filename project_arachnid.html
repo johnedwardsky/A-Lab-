@@ -522,6 +522,19 @@
             max-width: 620px;
             width: 90%;
         }
+
+        /* Mobile / portrait — hide game, show notice */
+        #ship-desktop-notice { display: none; }
+
+        @media (max-width: 1024px), (orientation: portrait) {
+            #ship-game-wrapper { display: none !important; }
+            #ship-desktop-notice { display: flex; }
+        }
+
+        @media (min-width: 1025px) and (orientation: landscape) {
+            #ship-game-wrapper { display: block; }
+            #ship-desktop-notice { display: none; }
+        }
     </style>
             <link rel="stylesheet" href="cursor.css">
 </head>
@@ -638,6 +651,14 @@
                 <div id="ship-tip" style="position:absolute; bottom:18px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.6); border-radius:20px; padding:6px 20px; font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:rgba(255,255,255,0.5); white-space:nowrap; z-index:10; transition:opacity 0.5s;">
                     ▶ Наведите курсор на корпус судна
                 </div>
+            </div>
+
+            <!-- MOBILE NOTICE -->
+            <div id="ship-desktop-notice" style="border:1px solid var(--border); border-radius:8px; padding:50px 30px; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(0,229,255,0.02); gap:20px;">
+                <div style="font-size:3rem; margin-bottom:10px;">🖥️</div>
+                <div style="font-family:'JetBrains Mono',monospace; color:var(--accent); font-size:0.75rem; letter-spacing:3px; margin-bottom:12px;">// DESKTOP_ONLY_FEATURE</div>
+                <h3 style="font-size:1.3rem; font-weight:700; margin-bottom:12px;">Доступно только на десктопе</h3>
+                <p style="color:#666; font-size:0.9rem; line-height:1.6; max-width:380px;">Интерактивный симулятор очистки корпуса судна требует мышь и широкий экран. Откройте страницу на компьютере в горизонтальном режиме.</p>
             </div>
 
             <!-- SUCCESS MODAL -->
