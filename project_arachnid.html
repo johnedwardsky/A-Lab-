@@ -494,6 +494,34 @@
             display: flex;
             justify-content: space-between;
         }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8) translateY(30px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        #ship-success-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 19000;
+            background: rgba(3,4,7,0.95);
+            backdrop-filter: blur(20px);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        #ship-success-modal.active {
+            display: flex;
+        }
+
+        #ship-modal-inner {
+            text-align: center;
+            padding: 20px;
+            animation: scaleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+            max-width: 620px;
+            width: 90%;
+        }
     </style>
             <link rel="stylesheet" href="cursor.css">
 </head>
@@ -613,14 +641,14 @@
             </div>
 
             <!-- SUCCESS MODAL -->
-            <div id="ship-success-modal" style="display:none; position:fixed; inset:0; z-index:19000; background:rgba(3,4,7,0.95); backdrop-filter:blur(20px); align-items:center; justify-content:center; flex-direction:column;">
-                <div style="text-align:center; animation: scaleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275); padding: 20px;">
+            <div id="ship-success-modal">
+                <div id="ship-modal-inner">
                     <div style="font-family:'JetBrains Mono',monospace; color:#00E5FF; font-size:0.8rem; letter-spacing:3px; margin-bottom:20px;">// HULL_CLEANING_COMPLETE</div>
                     <h2 style="font-size:clamp(2rem,5vw,4rem); font-weight:800; margin-bottom:20px; line-height:1.1;">КОРПУС ОЧИЩЕН.<br><span style="color:#00E5FF">ПРОТОКОЛ ЗАВЕРШЁН.</span></h2>
                     <p style="color:#888; max-width:500px; margin:0 auto 40px; font-size:1rem; line-height:1.6;">Именно так работает система «Спрут» — роботы гидроструями сверхвысокого давления очищают днище судна прямо на ходу, без дорогостоящего доккования.</p>
                     <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
-                        <button onclick="document.getElementById('ship-success-modal').style.display='none'; ShipGame.reset();" style="background:transparent; border:1px solid #00E5FF; color:#00E5FF; padding:15px 35px; font-family:'JetBrains Mono',monospace; font-size:0.9rem; cursor:pointer; transition:0.3s;" onmouseover="this.style.background='#00E5FF'; this.style.color='#000'" onmouseout="this.style.background='transparent'; this.style.color='#00E5FF'">ЗАПУСТИТЬ СНОВА</button>
-                        <a href="#contact-form" onclick="document.getElementById('ship-success-modal').style.display='none';" style="background:#00E5FF; color:#000; border:1px solid #00E5FF; padding:15px 35px; font-family:'JetBrains Mono',monospace; font-size:0.9rem; cursor:pointer; text-decoration:none; display:inline-block; font-weight:700;">ЗАПРОСИТЬ СИСТЕМУ</a>
+                        <button onclick="document.getElementById('ship-success-modal').classList.remove('active'); ShipGame.reset();" style="background:transparent; border:1px solid #00E5FF; color:#00E5FF; padding:15px 35px; font-family:'JetBrains Mono',monospace; font-size:0.9rem; cursor:pointer; transition:0.3s;" onmouseover="this.style.background='#00E5FF'; this.style.color='#000'" onmouseout="this.style.background='transparent'; this.style.color='#00E5FF'">ЗАПУСТИТЬ СНОВА</button>
+                        <a href="#contact-form" onclick="document.getElementById('ship-success-modal').classList.remove('active');" style="background:#00E5FF; color:#000; border:1px solid #00E5FF; padding:15px 35px; font-family:'JetBrains Mono',monospace; font-size:0.9rem; cursor:pointer; text-decoration:none; display:inline-block; font-weight:700;">ЗАПРОСИТЬ СИСТЕМУ</a>
                     </div>
                 </div>
             </div>
@@ -831,7 +859,7 @@
             if (pct >= 100 && !completed) {
                 completed = true;
                 setTimeout(() => {
-                    modal.style.display = 'flex';
+                    modal.classList.add('active');
                 }, 600);
             }
         }
@@ -840,6 +868,7 @@
             completed = false;
             particles = [];
             splashDrops = [];
+            modal.classList.remove('active');
             initGrowths();
         }
 
