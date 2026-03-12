@@ -29,11 +29,21 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: var(--font-main);
             overflow-x: hidden;
+            width: 100%;
         }
 
         /* Noise Background Effect */
@@ -520,11 +530,13 @@
 
             .hero {
                 padding: 0 20px;
+                max-width: 100%;
             }
 
             .hero h1 {
                 font-size: clamp(1.5rem, 10vw, 3.5rem);
                 line-height: 1;
+                word-break: break-word;
             }
 
             .hero-meta {
@@ -532,6 +544,7 @@
                 gap: 10px;
                 font-size: 0.65rem;
                 margin-top: 20px;
+                max-width: 100%;
             }
 
             .hero-tag {
@@ -542,27 +555,33 @@
 
             .bento-section {
                 padding: 40px 20px;
+                max-width: 100%;
+                overflow-x: hidden;
             }
 
             .bento-grid {
                 display: flex;
                 flex-direction: column;
                 gap: 15px;
+                width: 100%;
             }
 
             .card,
             .card-lg,
             .card-xl,
             .card-sm {
-                width: 100%;
+                width: 100% !important;
+                max-width: 100% !important;
                 grid-column: auto;
                 grid-row: auto;
-                padding: 25px;
+                padding: 20px;
                 min-height: auto;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
             }
 
             .card-xl {
-                min-height: 450px;
+                min-height: 400px;
                 order: -1;
             }
 
@@ -571,11 +590,30 @@
                 padding-top: 80px;
             }
 
+            /* Marquee fix */
+            .marquee-container {
+                overflow: hidden;
+                max-width: 100%;
+            }
+
+            .marquee-item {
+                font-size: 1rem;
+                padding: 0 20px;
+            }
+
+            /* Footer fix */
             footer {
                 flex-direction: column;
-                padding: 40px 20px;
-                gap: 20px;
+                padding: 30px 20px;
+                gap: 15px;
                 text-align: left;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            footer > div {
+                justify-content: flex-start !important;
+                flex-wrap: wrap;
             }
         }
 

@@ -21,11 +21,19 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         a, button, input, select, textarea { cursor: pointer; }
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
             cursor: none;
         }
 
