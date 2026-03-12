@@ -744,25 +744,7 @@ const MainMenu = (() => {
                 </div>
             </div>
 
-            <script>
-                // Local cursor handler for the modal
-                (function() {
-                    const modal = document.getElementById('alab-access-modal');
-                    const cursor = document.querySelector('.cursor');
-                    if (cursor) {
-                        modal.addEventListener('mousemove', (e) => {
-                            cursor.style.left = e.clientX + 'px';
-                            cursor.style.top = e.clientY + 'px';
-                            cursor.style.zIndex = '20001';
-                        });
-                        
-                        modal.querySelectorAll('.hover-trigger').forEach(el => {
-                            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-                        });
-                    }
-                })();
-            </script>
+            <!-- Cursor handled globally by cursor.js -->
         `;
     }
 

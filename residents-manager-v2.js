@@ -108,17 +108,7 @@
                 container.insertAdjacentHTML('beforeend', `<div class="dynamic-residents-wrapper" style="display: contents;">${html}</div>`);
             }
 
-            // Re-bind cursor triggers for new elements
-            this._rebindCursor();
-        },
-
-        _rebindCursor() {
-            const cursor = document.querySelector('.cursor');
-            if (!cursor) return;
-            document.querySelectorAll('.hover-trigger').forEach(trigger => {
-                trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
+            // Cursor hover is handled globally by cursor.js — no per-element rebinding needed.
         },
 
         _escapeHtml(str) {

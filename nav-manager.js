@@ -159,14 +159,7 @@ const ResidentNav = {
             }
         });
 
-        // Re-bind cursor triggers
-        const cursor = document.querySelector('.cursor');
-        if (cursor) {
-            document.querySelectorAll('.hover-trigger').forEach(t => {
-                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
-        }
+        // Cursor hover handled globally by cursor.js via event delegation — no per-element binding needed.
     },
 
     toggleMoreMenu() {

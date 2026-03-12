@@ -468,15 +468,8 @@ const ALabCases = {
             container.appendChild(card);
         });
 
-        // Re-initialize hover triggers
-        const newTriggers = container.querySelectorAll('.hover-trigger');
-        const cursor = document.querySelector('.cursor');
-        if (cursor) {
-            newTriggers.forEach(t => {
-                t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
-        }
+        // Cursor hover is handled globally via event delegation in cursor.js
+        // No need to re-initialize per-element listeners here.
     }
 };
 
