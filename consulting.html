@@ -715,7 +715,97 @@
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js"></script>
-                <script defer src="cursor.js"></script>
+    <script defer src="cursor.js"></script>
+
+    <script>
+        // === COUNTER ANIMATION via IntersectionObserver ===
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                const target = parseFloat(el.getAttribute('data-target'));
+                const decimals = parseInt(el.getAttribute('data-decimals')) || 0;
+                const duration = 2000;
+                const startTime = performance.now();
+
+                const tick = (now) => {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // ease-out quad
+                    const ease = progress * (2 - progress);
+                    el.textContent = (ease * target).toFixed(decimals);
+                    if (progress < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+                counterObserver.unobserve(el);
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+
+        // === BAR CHART ANIMATION via IntersectionObserver ===
+        const barChart = document.getElementById('barChart');
+        if (barChart) {
+            const barObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    const bars = entry.target.querySelectorAll('.bar');
+                    bars.forEach((bar, i) => {
+                        const targetHeight = bar.getAttribute('data-height') || '50%';
+                        setTimeout(() => {
+                            bar.style.height = targetHeight;
+                        }, i * 120);
+                    });
+                    barObserver.unobserve(entry.target);
+                });
+            }, { threshold: 0.3 });
+            barObserver.observe(barChart);
+        }
+
+        // === FORM SUBMIT ===
+        const consultForm = document.getElementById('consultForm');
+        if (consultForm) {
+            consultForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const btn = form.querySelector('button[type="submit"]');
+                const inputs = form.querySelectorAll('input, textarea');
+
+                const name = inputs[0].value;
+                const company = inputs[1].value;
+                const telegram = inputs[2].value;
+                const task = inputs[3].value;
+
+                btn.textContent = 'SENDING...';
+                btn.disabled = true;
+
+                try {
+                    if (window.ALabCore && window.ALabCore.submitLead) {
+                        const { success, error } = await window.ALabCore.submitLead({
+                            name: name,
+                            contact: telegram,
+                            source: 'consulting',
+                            source_detail: `Company: ${company}\nTask: ${task}`
+                        });
+                        if (success) {
+                            alert('Запрос получен. Наш консалтинг-директор свяжется с вами в Telegram для первичного аудита.');
+                            form.reset();
+                        } else {
+                            alert('Ошибка отправки: ' + (error?.message || 'Повторите позже'));
+                        }
+                    } else {
+                        alert('Сервис временно недоступен. Пожалуйста, напишите нам напрямую.');
+                    }
+                } catch (err) {
+                    alert('Ошибка: ' + err.message);
+                } finally {
+                    const i18nBtn = btn.getAttribute('data-i18n');
+                    btn.textContent = 'Запросить аудит';
+                    btn.disabled = false;
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
