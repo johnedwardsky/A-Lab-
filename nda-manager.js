@@ -110,10 +110,8 @@ const NDAManager = (() => {
                         <span>${window.I18n?.t('nda.submit_btn') || 'SIGN & SEND'}</span>
                     </button>
 
-                    <div style="text-align: center; margin-top: 25px;">
-                        <button class="btn-code-toggle hover-trigger" onclick="NDAManager.toggleView('code')">
-                            ${window.I18n?.t('nda.have_code') || 'Have an access code?'}
-                        </button>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">${window.I18n?.t('nda.have_code') || 'Have an access code?'}</a>
                     </div>
                 </div>
 
@@ -465,29 +463,6 @@ const NDAManager = (() => {
                 opacity: 0.5;
                 cursor: not-allowed;
                 filter: grayscale(1);
-            }
-
-            .btn-code-toggle {
-                background: rgba(0, 0, 0, 0.2);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: #888;
-                padding: 16px 20px;
-                border-radius: 12px;
-                font-size: 0.75rem;
-                font-family: var(--font-code);
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                cursor: pointer;
-                transition: 0.3s;
-                width: 100%;
-                display: block;
-            }
-
-            .btn-code-toggle:hover {
-                background: rgba(255, 255, 255, 0.05);
-                border-color: rgba(255, 255, 255, 0.3);
-                color: #fff;
-                transform: translateY(-1px);
             }
 
             /* Light theme */
