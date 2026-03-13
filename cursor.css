@@ -1,25 +1,14 @@
-/* A-LAB.TECH X-Ray Cursor — High-Performance CSS */
-
-/* Hide native cursor globally */
+/* A-LAB.TECH X-Ray Cursor — Base Styles */
 * { cursor: none !important; }
 
-a,
-button,
-input,
-select,
-textarea,
-[role="button"],
-label,
-.hover-trigger {
+a, button, input, select, textarea, [role="button"], label, .hover-trigger {
     cursor: pointer !important;
 }
 
-/* Base cursor element */
 .cursor {
     position: fixed;
     top: 0;
     left: 0;
-    /* Use a fixed size + scale for hover — avoids layout reflow */
     width: 20px;
     height: 20px;
     background-color: #fff;
@@ -27,55 +16,13 @@ label,
     pointer-events: none;
     z-index: 999999;
     mix-blend-mode: difference;
-
-    /*
-     * Only transition opacity and scale here.
-     * X/Y position is handled by JS via translate3d (GPU layer, zero layout).
-     * Width/height changes are replaced by scale — single compositor-only property.
-     */
-    transition:
-        opacity  0.25s ease,
-        scale    0.25s cubic-bezier(0.19, 1, 0.22, 1);
-
-    /* Promote to own compositor layer */
-    will-change: transform;
-
-    opacity: 1;
-    scale: 1;
-}
-
-/* Hover state — scale up instead of changing width/height */
-.cursor.hovered {
-    scale: 2.5;
-}
-
-/* Click pulse */
-.cursor.click {
-    scale: 0.75;
-    transition:
-        opacity 0.25s ease,
-        scale   0.08s ease;
-}
-
-/* Hidden when mouse leaves window */
-.cursor.hidden {
     opacity: 0;
+    will-change: transform, opacity;
+    /* No transitions here — handled by JS for perfect sync */
 }
 
-/* Mobile: restore native cursor, hide custom one */
 @media (max-width: 768px) {
     .cursor { display: none !important; }
-
     * { cursor: auto !important; }
-
-    a,
-    button,
-    input,
-    select,
-    textarea,
-    [role="button"],
-    label,
-    .hover-trigger {
-        cursor: pointer !important;
-    }
+    a, button, input, select, textarea, .hover-trigger { cursor: pointer !important; }
 }

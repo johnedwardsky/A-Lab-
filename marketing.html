@@ -44,19 +44,7 @@
             overflow-x: hidden;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: left, top;
-        }
+        
 
         .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
@@ -67,9 +55,7 @@
         }
 
         @media (max-width: 768px) {
-            .cursor {
-                display: none !important;
-            }
+            
 
             * {
                 cursor: auto !important;
@@ -726,159 +712,7 @@
             </div>
         </section>
     </main>
-    <script>
-        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-        function updateCursor() {
-            cursorX = mouseX;
-            cursorY = mouseY;
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            requestAnimationFrame(updateCursor);
-        }
-        updateCursor();
-        document.querySelectorAll('.hover-trigger').forEach(t => { t.addEventListener('mouseenter', () => cursor.classList.add('hovered')); t.addEventListener('mouseleave', () => cursor.classList.remove('hovered')); });
-        document.getElementById('leadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const form = e.target;
-            const btn = form.querySelector('button');
-            const inputs = form.querySelectorAll('input, select, textarea');
-
-            const name = inputs[0].value;
-            const telegram = inputs[1].value;
-            const goal = inputs[2].value;
-            const budget = inputs[3].value;
-            const message = inputs[4].value;
-
-            btn.innerText = 'SENDING...';
-            btn.disabled = true;
-
-            const { success, error } = await window.ALabCore.submitLead({
-                name: name,
-                contact: telegram,
-                source: 'marketing',
-                source_detail: `Goal: ${goal}, Budget: ${budget}\nMsg: ${message}`
-            });
-
-            if (success) {
-                alert('Данные приняты. Маркетинг-директор свяжется с вами в Telegram для аудита.');
-                form.reset();
-            } else {
-                alert('Ошибка отправки: ' + (error?.message || 'Поторите позже'));
-            }
-            btn.innerText = 'Обсудить проект';
-            btn.disabled = false;
-        });
-
-        // Counter Animation Logic
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const counter = entry.target;
-                    const target = parseFloat(counter.getAttribute('data-target'));
-                    const decimals = parseInt(counter.getAttribute('data-decimals')) || 0;
-                    const duration = 2000;
-                    const startTime = performance.now();
-
-                    const updateCounter = (currentTime) => {
-                        const elapsed = currentTime - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-                        const easeProgress = progress * (2 - progress);
-                        const currentValue = (easeProgress * target).toFixed(decimals);
-                        counter.innerText = currentValue;
-                        if (progress < 1) requestAnimationFrame(updateCounter);
-                    };
-                    requestAnimationFrame(updateCounter);
-                    counterObserver.unobserve(counter);
-                }
-            });
-        }, { threshold: 0.5 });
-        document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
-
-        // Neural Network Visualization
-        const canvas = document.getElementById('neuralViz');
-        const ctx = canvas.getContext('2d');
-        let width, height, particles;
-        let mouse = { x: -1000, y: -1000 };
-
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            mouse.x = -1000;
-            mouse.y = -1000;
-        });
-
-        function init() {
-            width = canvas.width = canvas.parentElement.offsetWidth;
-            height = canvas.height = canvas.parentElement.offsetHeight;
-            particles = [];
-            for (let i = 0; i < 60; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 1.5,
-                    vy: (Math.random() - 0.5) * 1.5,
-                    r: Math.random() * 2 + 1
-                });
-            }
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#00E5FF';
-            ctx.strokeStyle = 'rgba(0, 229, 255, 0.15)';
-
-            particles.forEach((p, i) => {
-                const dx = mouse.x - p.x;
-                const dy = mouse.y - p.y;
-                const dist = Math.hypot(dx, dy);
-                if (dist < 150) {
-                    const force = (150 - dist) / 1500;
-                    p.vx += dx * force;
-                    p.vy += dy * force;
-                }
-
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vx *= 0.97;
-                p.vy *= 0.97;
-
-                if (p.x < 0 || p.x > width) p.vx *= -1;
-                if (p.y < 0 || p.y > height) p.vy *= -1;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fill();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const d = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (d < 120) {
-                        ctx.lineWidth = 1 - d / 120;
-                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
-                    }
-                }
-            });
-            requestAnimationFrame(draw);
-        }
-
-        window.addEventListener('resize', init);
-        init(); draw();
-    </script>
+    <!-- Old cursor script removed -->
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="cases-engine.js"></script>

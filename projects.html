@@ -120,20 +120,7 @@
         }
 
         /* --- CURSOR --- */
-        .cursor {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 15px;
-            height: 15px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: transform;
-        }
+        
 
         .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
@@ -144,9 +131,7 @@
         }
 
         @media (max-width: 768px) {
-            .cursor {
-                display: none !important;
-            }
+            
 
             * {
                 cursor: auto !important;
@@ -508,35 +493,7 @@
         </div>
     </main>
 
-    <script>
-        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        function updateCursor() {
-            cursor.style.transform = `translate3d(${mouseX - 7.5}px, ${mouseY - 7.5}px, 0)`;
-            requestAnimationFrame(updateCursor);
-        }
-        updateCursor();
-
-        document.querySelectorAll('.hover-trigger').forEach(t => {
-            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-
-        // Theme handled by nav-manager.js
-        if (localStorage.getItem('theme') === 'light') {
-            document.body.classList.add('light-theme');
-        }
-    </script>
+    <!-- Old cursor script removed -->
     <script defer src="i18n.js"></script>
     <script defer src="nav-manager.js"></script>
             <script defer src="cursor.js"></script>

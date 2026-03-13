@@ -50,18 +50,7 @@
         }
 
         /* --- CURSOR --- */
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--tech-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: exclusion;
-        }
+        
 
         .cursor.hidden {
             opacity: 0 !important;
@@ -76,9 +65,7 @@
         }
 
         @media (max-width: 768px) {
-            .cursor {
-                display: none !important;
-            }
+            
 
             * {
                 cursor: auto !important;

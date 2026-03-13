@@ -1,19 +1,11 @@
 /**
- * A-LAB.TECH X-Ray Cursor — High-Performance Build
- * Optimizations:
- *  - rAF only runs while mouse is moving (idle cancellation)
- *  - Dead-zone snapping to stop micro-updates
- *  - Scale-based hover instead of width/height (single composite layer)
- *  - Event-delegation with pointer capture avoidance
- *  - Passive listeners throughout
- *  - Zero layout thrash (no offsetWidth/getBoundingClientRect in loop)
+ * A-LAB.TECH X-Ray Cursor — Ultra-Smooth Pro Build
+ * Position, Scale and Opacity are synced in a single rAF loop.
  */
 (function () {
-    // Skip on mobile/touch devices
     if (window.matchMedia('(max-width: 768px)').matches) return;
     if ('ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches) return;
 
-    // --- Element ---
     let cursor = document.querySelector('.cursor');
     if (!cursor) {
         cursor = document.createElement('div');
@@ -21,95 +13,70 @@
         document.body.appendChild(cursor);
     }
 
-    // --- State ---
-    let mouseX = -200, mouseY = -200;
-    let curX = -200, curY = -200;
+    // State
+    let mouseX = -100, mouseY = -100;
+    let curX = -100, curY = -100;
+    let curScale = 1, targetScale = 1;
+    let curOpacity = 0, targetOpacity = 0;
     let rafId = null;
-    let isHovered = false;
-    let isDown = false;
 
-    // Snapping threshold: stop animating when delta is tiny
-    const SNAP = 0.15;
+    // Snapping & Easing
+    const EASE_POS = 0.3; 
+    const EASE_SCALE = 0.2;
 
-    // --- Render Loop (only while active) ---
     function tick() {
-        const dx = mouseX - curX;
-        const dy = mouseY - curY;
+        // Position easing
+        curX += (mouseX - curX) * EASE_POS;
+        curY += (mouseY - curY) * EASE_POS;
+        
+        // Scale & Opacity easing
+        curScale += (targetScale - curScale) * EASE_SCALE;
+        curOpacity += (targetOpacity - curOpacity) * EASE_SCALE;
 
-        if (Math.abs(dx) < SNAP && Math.abs(dy) < SNAP) {
-            // Close enough — snap exactly and stop loop
-            curX = mouseX;
-            curY = mouseY;
-            cursor.style.transform = buildTransform(curX, curY);
+        cursor.style.transform = `translate3d(${curX}px, ${curY}px, 0) translate(-50%, -50%) scale(${curScale})`;
+        cursor.style.opacity = curOpacity;
+
+        // Auto-stop loop if everything is settled
+        const dPos = Math.abs(mouseX - curX) + Math.abs(mouseY - curY);
+        const dScale = Math.abs(targetScale - curScale);
+        if (dPos < 0.1 && dScale < 0.001 && curOpacity === targetOpacity) {
             rafId = null;
             return;
         }
 
-        // Ease toward target (0.35 = snappy but smooth)
-        curX += dx * 0.35;
-        curY += dy * 0.35;
-        cursor.style.transform = buildTransform(curX, curY);
         rafId = requestAnimationFrame(tick);
     }
 
-    function buildTransform(x, y) {
-        return `translate3d(${x}px,${y}px,0) translate(-50%,-50%)`;
-    }
-
-    function scheduleTick() {
+    function startLoop() {
         if (!rafId) rafId = requestAnimationFrame(tick);
     }
 
-    // --- Mouse Events (passive) ---
     window.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        scheduleTick();
-
-        if (cursor.classList.contains('hidden')) {
-            cursor.classList.remove('hidden');
-        }
+        targetOpacity = 1;
+        startLoop();
     }, { passive: true });
 
-    // --- Hover Detection via Event Delegation ---
-    const HOVER_SELECTOR = 'a, button, input, textarea, select, [role="button"], label, .hover-trigger';
-
+    // Hover delegation
+    const HOVER_SEL = 'a, button, input, textarea, select, [role="button"], label, .hover-trigger';
     window.addEventListener('mouseover', (e) => {
-        if (e.target.closest(HOVER_SELECTOR)) {
-            if (!isHovered) {
-                isHovered = true;
-                cursor.classList.add('hovered');
-            }
-        }
+        if (e.target.closest(HOVER_SEL)) targetScale = 2.5;
     }, { passive: true });
 
     window.addEventListener('mouseout', (e) => {
-        if (e.target.closest(HOVER_SELECTOR)) {
-            // Only remove if we're not entering another trigger immediately
-            // relatedTarget check avoids flicker between nested elements
-            if (!e.relatedTarget || !e.relatedTarget.closest(HOVER_SELECTOR)) {
-                isHovered = false;
-                cursor.classList.remove('hovered');
-            }
+        if (e.target.closest(HOVER_SEL)) {
+            if (!e.relatedTarget || !e.relatedTarget.closest(HOVER_SEL)) targetScale = 1;
         }
     }, { passive: true });
 
-    // --- Click Pulse ---
-    window.addEventListener('mousedown', () => {
-        if (!isDown) { isDown = true; cursor.classList.add('click'); }
-    }, { passive: true });
+    window.addEventListener('mousedown', () => targetScale = 0.8, { passive: true });
+    window.addEventListener('mouseup', () => targetScale = 1, { passive: true });
 
-    window.addEventListener('mouseup', () => {
-        if (isDown) { isDown = false; cursor.classList.remove('click'); }
-    }, { passive: true });
-
-    // --- Visibility ---
-    document.addEventListener('mouseleave', () => cursor.classList.add('hidden'), { passive: true });
-    document.addEventListener('mouseenter', () => cursor.classList.remove('hidden'), { passive: true });
-
-    // --- Custom Events (for other scripts) ---
-    document.addEventListener('alab:cursor-hide', () => cursor.classList.add('hidden'));
-    document.addEventListener('alab:cursor-show', () => cursor.classList.remove('hidden'));
-    document.addEventListener('alab:cursor-hover-on', () => { isHovered = true; cursor.classList.add('hovered'); });
-    document.addEventListener('alab:cursor-hover-off', () => { isHovered = false; cursor.classList.remove('hovered'); });
+    document.addEventListener('mouseleave', () => { targetOpacity = 0; startLoop(); }, { passive: true });
+    document.addEventListener('mouseenter', () => { targetOpacity = 1; startLoop(); }, { passive: true });
+    
+    // Custom Events
+    document.addEventListener('alab:cursor-hide', () => { targetOpacity = 0; startLoop(); });
+    document.addEventListener('alab:cursor-show', () => { targetOpacity = 1; startLoop(); });
 })();

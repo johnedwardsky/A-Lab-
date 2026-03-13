@@ -47,17 +47,7 @@
             min-height: 100vh;
         }
 
-        .cursor {
-            position: fixed;
-            width: 15px;
-            height: 15px;
-            border: 1px solid var(--tech-blue);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-        }
+        
 
         .cursor.hidden {
             opacity: 0 !important;
@@ -730,9 +720,7 @@
             }
 
 
-            .cursor {
-                display: none !important;
-            }
+            
 
             * {
                 cursor: auto !important;

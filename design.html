@@ -42,19 +42,7 @@
             width: 100%;
         }
 
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-            mix-blend-mode: normal;
-            will-change: left, top;
-        }
+        
 
         .cursor.hidden { opacity: 0 !important; }
         .cursor.hovered {
@@ -65,9 +53,7 @@
         }
 
         @media (max-width: 768px) {
-            .cursor {
-                display: none !important;
-            }
+            
 
             * {
                 cursor: auto !important;
@@ -640,62 +626,7 @@
         <div>BEHANCE</div>
     </footer>
 
-    <script>
-        const cursor = (document.querySelector('.cursor-dummy') || { style: {}, classList: { add: ()=>{}, remove: ()=>{}, contains: ()=>false, toggle: ()=>{} } });
-        document.querySelectorAll('a, button, input, textarea, select, .hover-trigger').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor?.classList.add('hidden'));
-            el.addEventListener('mouseleave', () => cursor?.classList.remove('hidden'));
-        });
-            
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        function updateCursor() {
-            cursorX = mouseX;
-            cursorY = mouseY;
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            requestAnimationFrame(updateCursor);
-        }
-        updateCursor();
-        document.querySelectorAll('.hover-trigger').forEach(t => {
-            t.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-            t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-        });
-
-        document.getElementById('leadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const form = e.target;
-            const btn = form.querySelector('button');
-            const name = form.querySelector('input[type="text"]').value;
-            const company = form.querySelectorAll('input[type="text"]')[1].value;
-            const task = form.querySelector('textarea').value;
-
-            btn.innerText = 'ОТПРАВКА...';
-            btn.disabled = true;
-
-            const { success, error } = await window.ALabCore.submitLead({
-                name: name,
-                contact: company, // Using company as contact for now or adding field
-                message: task,
-                source: 'design',
-                source_detail: 'Design Page Form'
-            });
-
-            if (success) {
-                alert('Запрос зашифрован и официально зарегистрирован в A-LAB. Наш арт-директор свяжется с вами в течение 4-х часов.');
-                form.reset();
-            } else {
-                alert('Ошибка отправки: ' + (error?.message || 'Повторите позже'));
-            }
-            btn.innerText = 'Отправить запрос';
-            btn.disabled = false;
-        });
-    </script>
+    <!-- Old cursor script removed -->
     <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="cases-engine.js?v=1.1"></script>
