@@ -38,7 +38,7 @@ __pycache__/
 *.log
 
 # Scout Agent Tools
-scout_agent_session.session
-scout_agent_session.session-journal
+scout_agent_session*
+**/scout_agent_session*
 .agent_session*
-scout_agent_session.session*
+**/.agent_session*
