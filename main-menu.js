@@ -79,7 +79,7 @@ const MainMenu = (() => {
     let menuItems = [];
     let isOpen = false;
     let userLoggedIn = false;
-    let hiderObserver = null; // Smart observer instead of a loop
+    // No more complex observers or intervals needed
 
     /**
      * Load menu items from Supabase or use fallback
@@ -284,57 +284,28 @@ const MainMenu = (() => {
      * Toggle menu open/close
      */
     function hidePageHeader() {
-        if (hiderObserver) hiderObserver.disconnect();
-        
-        const selectors = [
-            'header', '.site-header', '.main-header', 
-            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
-        ];
+        // 'By Command' hiding: Create a force-style that beats everything on the page
+        const styleId = 'alab-menu-hide-force';
+        if (document.getElementById(styleId)) return;
 
-        const applyHide = () => {
-            selectors.forEach(selector => {
-                document.querySelectorAll(selector).forEach(el => {
-                    if (el.style.display !== 'none') {
-                        el.style.setProperty('display', 'none', 'important');
-                        el.style.setProperty('opacity', '0', 'important');
-                        el.style.setProperty('pointer-events', 'none', 'important');
-                    }
-                });
-            });
-        };
-
-        // Hide initially
-        applyHide();
-
-        // Listen for any attempts to show the header and block them
-        hiderObserver = new MutationObserver(() => applyHide());
-        selectors.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => {
-                hiderObserver.observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
-            });
-        });
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            header, .site-header, .main-header, .header-controls, 
+            .logo, .back-btn, .menu-btn, .lang-btn, .resident-nav {
+                display: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+                z-index: -100 !important;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     function showPageHeader() {
-        if (hiderObserver) {
-            hiderObserver.disconnect();
-            hiderObserver = null;
-        }
-
-        const selectors = [
-            'header', '.site-header', '.main-header', 
-            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
-        ];
-        
-        selectors.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => {
-                el.style.removeProperty('display');
-                el.style.removeProperty('opacity');
-                el.style.removeProperty('pointer-events');
-                const old = el.getAttribute('data-menu-old-style');
-                if (old) el.setAttribute('style', old);
-            });
-        });
+        const style = document.getElementById('alab-menu-hide-force');
+        if (style) style.remove();
     }
 
     function toggle() {
