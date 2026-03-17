@@ -194,6 +194,7 @@ const MainMenu = (() => {
         const loginUrl = residentPrefix + 'login.html';
 
         container.innerHTML = `
+            <div id="alab-menu-nav-blocker"></div>
             <nav class="menu-overlay ${isOpen ? 'open' : ''}">
                 <div class="menu-container">
                     <div class="menu-links-section">
@@ -278,8 +279,6 @@ const MainMenu = (() => {
     function toggle() {
         isOpen = !isOpen;
         const overlay = document.querySelector('.menu-overlay');
-        const hamburger = document.querySelector('.menu-hamburger');
-        const mainHeader = document.querySelector('header');
 
         if (!overlay) {
             // First time click, render and then open
@@ -287,11 +286,8 @@ const MainMenu = (() => {
                 const newOverlay = document.querySelector('.menu-overlay');
                 if (newOverlay) {
                     newOverlay.classList.add('open');
+                    document.body.classList.add('menu-active');
                     document.body.style.overflow = 'hidden';
-                    if (mainHeader) {
-                        mainHeader.style.opacity = '0';
-                        mainHeader.style.pointerEvents = 'none';
-                    }
                 }
             });
             return;
@@ -299,11 +295,8 @@ const MainMenu = (() => {
 
         if (isOpen) {
             overlay.classList.add('open');
+            document.body.classList.add('menu-active');
             document.body.style.overflow = 'hidden';
-            if (mainHeader) {
-                mainHeader.style.opacity = '0';
-                mainHeader.style.pointerEvents = 'none';
-            }
             // Sync auth state in background without blocking
             checkAuth().then(() => {
                 const authBtn = document.querySelector('.auth-text-btn');
@@ -317,11 +310,8 @@ const MainMenu = (() => {
             });
         } else {
             overlay.classList.remove('open');
+            document.body.classList.remove('menu-active');
             document.body.style.overflow = '';
-            if (mainHeader) {
-                mainHeader.style.opacity = '1';
-                mainHeader.style.pointerEvents = 'auto';
-            }
         }
     }
 
@@ -367,6 +357,34 @@ const MainMenu = (() => {
             header {
                 transition: opacity 0.4s ease;
             }
+            
+            /* High-priority nav blocker to hide other headers */
+            #alab-menu-nav-blocker {
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100px;
+                background: #030407;
+                z-index: 99999;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+
+            body.menu-active #alab-menu-nav-blocker {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            /* Force hide header even if it has !important */
+            body.menu-active header,
+            body.menu-active .logo,
+            body.menu-active .header-controls,
+            body.menu-active .menu-btn {
+                display: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+            }
+
             /* --- MENU LAYOUT --- */
             .menu-overlay {
                 position: fixed;
@@ -375,7 +393,7 @@ const MainMenu = (() => {
                 width: 100%;
                 height: 100vh;
                 background: #030407;
-                z-index: 10005;
+                z-index: 100000;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.4s ease;
@@ -385,13 +403,6 @@ const MainMenu = (() => {
             .menu-overlay.open {
                 opacity: 1;
                 pointer-events: auto;
-            }
-
-            /* Force hide main site header when menu is open */
-            body:has(.menu-overlay.open) header {
-                opacity: 0 !important;
-                visibility: hidden !important;
-                pointer-events: none !important;
             }
 
             .menu-container {
@@ -429,7 +440,7 @@ const MainMenu = (() => {
                 align-items: center;
                 justify-content: center;
                 transition: 0.3s;
-                z-index: 10006;
+                z-index: 100001;
             }
             
             .menu-close:hover {
