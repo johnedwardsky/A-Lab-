@@ -427,10 +427,14 @@ const MainMenu = (() => {
                 position: fixed;
                 top: 0; left: 0; width: 100%; height: 100px;
                 background: #030407;
-                z-index: 1000000;
+                z-index: 2147483646; 
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
+            }
+            body.menu-active #alab-menu-nav-blocker {
+                opacity: 1;
+                pointer-events: auto;
             }
 
             body.menu-active #alab-menu-nav-blocker {
