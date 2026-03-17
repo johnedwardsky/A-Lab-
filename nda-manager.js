@@ -73,6 +73,13 @@ const NDAManager = (() => {
                     <h2 style="color:var(--text); margin-bottom:10px; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">${window.I18n?.t('nda.title') || 'NDA ACCESS REQUEST'}</h2>
                     <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px;">${window.I18n?.t('nda.desc') || 'Sign an electronic non-disclosure agreement to access private materials.'}</p>
 
+                    <div class="nda-code-hint-box" style="margin-bottom: 30px; padding: 15px; border: 1px solid rgba(0, 229, 255, 0.2); border-radius: 12px; background: rgba(0, 229, 255, 0.03); text-align: center;">
+                        <p style="font-size: 0.65rem; color: #666; margin-bottom: 10px; font-family: var(--font-code); letter-spacing: 1px;">${window.I18n?.t('nda.have_code_hint') || 'ALREADY HAVE AN ACCESS KEY?'}</p>
+                        <button onclick="NDAManager.toggleView('code')" class="hover-trigger" style="background: rgba(0, 229, 255, 0.1); color: var(--tech-blue, #00e5ff); border: 1px solid var(--tech-blue, #00e5ff); padding: 8px 16px; border-radius: 8px; font-family: var(--font-code); font-weight: 700; font-size: 0.75rem; cursor: pointer; text-transform: uppercase; transition: 0.3s;">
+                            ${window.I18n?.t('nda.have_code_btn') || 'ENTER ACCESS CODE'}
+                        </button>
+                    </div>
+
                     <div class="nda-text-block">
                         <p>${window.I18n?.t('nda.commitment') || 'By signing this agreement, you undertake:'}</p>
                         <ul>
@@ -109,10 +116,6 @@ const NDAManager = (() => {
                     <button class="btn-pulse hover-trigger" id="ndaSubmitBtn" onclick="NDAManager.submit('${projectId}', '${redirectUrl}')" disabled style="opacity: 0.5;">
                         <span>${window.I18n?.t('nda.submit_btn') || 'SIGN & SEND'}</span>
                     </button>
-
-                    <div style="text-align: center; margin-top: 30px;">
-                        <a href="#" onclick="event.preventDefault(); NDAManager.toggleView('code')" style="color: #666; font-size: 0.8rem; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.2);">${window.I18n?.t('nda.have_code') || 'Have an access code?'}</a>
-                    </div>
                 </div>
 
                 <div id="nda-code-view" style="display: none;">

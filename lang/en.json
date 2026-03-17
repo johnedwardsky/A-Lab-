@@ -189,6 +189,8 @@
         "accept_checkbox": "I agree to the terms of the electronic NDA and undertake not to disclose the information received.",
         "submit_btn": "SIGN & SEND",
         "have_code": "Have an access code?",
+        "have_code_hint": "ALREADY HAVE AN ACCESS KEY?",
+        "have_code_btn": "ENTER ACCESS CODE",
         "code_title": "Enter Access Code",
         "code_desc": "Insert your access code.",
         "label_code": "Access Code",
