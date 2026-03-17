@@ -79,6 +79,7 @@ const MainMenu = (() => {
     let menuItems = [];
     let isOpen = false;
     let userLoggedIn = false;
+    let hideInterval = null; // Loop to keep things hidden
 
     /**
      * Load menu items from Supabase or use fallback
@@ -280,25 +281,38 @@ const MainMenu = (() => {
      * Toggle menu open/close
      */
     function hidePageHeader() {
-        // Direct inline style always wins over any CSS !important
-        // Target headers AND specific controls that are problematic on Home/About/Contacts
-        const selectors = [
-            'header', '.site-header', '.main-header', 
-            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
-        ];
+        if (hideInterval) clearInterval(hideInterval);
         
-        selectors.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => {
-                el.setAttribute('data-menu-old-style', el.getAttribute('style') || '');
-                el.style.setProperty('display', 'none', 'important');
-                el.style.setProperty('visibility', 'hidden', 'important');
-                el.style.setProperty('opacity', '0', 'important');
-                el.style.setProperty('pointer-events', 'none', 'important');
+        const doHide = () => {
+            const selectors = [
+                'header', '.site-header', '.main-header', 
+                '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
+            ];
+            
+            selectors.forEach(selector => {
+                document.querySelectorAll(selector).forEach(el => {
+                    // Force inline style that beats EVERYTHING
+                    el.style.setProperty('display', 'none', 'important');
+                    el.style.setProperty('visibility', 'hidden', 'important');
+                    el.style.setProperty('opacity', '0', 'important');
+                    el.style.setProperty('pointer-events', 'none', 'important');
+                    el.style.setProperty('z-index', '-1', 'important');
+                });
             });
-        });
+        };
+
+        // Run immediately
+        doHide();
+        // Run repeatedly to fight any other scripts/inline styles
+        hideInterval = setInterval(doHide, 100);
     }
 
     function showPageHeader() {
+        if (hideInterval) {
+            clearInterval(hideInterval);
+            hideInterval = null;
+        }
+
         const selectors = [
             'header', '.site-header', '.main-header', 
             '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
@@ -310,6 +324,7 @@ const MainMenu = (() => {
                 el.style.removeProperty('visibility');
                 el.style.removeProperty('opacity');
                 el.style.removeProperty('pointer-events');
+                el.style.removeProperty('z-index');
                 const old = el.getAttribute('data-menu-old-style');
                 if (old) el.setAttribute('style', old);
             });
