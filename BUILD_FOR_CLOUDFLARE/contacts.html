@@ -53,7 +53,7 @@
             will-change: transform, width, height;
         }
 
-        .cursor.hidden { opacity: 0 !important; }
+        .cursor.hidden { opacity: 0 ; }
         .cursor.hovered {
             width: 80px;
             height: 80px;
@@ -61,11 +61,11 @@
 
         @media (max-width: 768px) {
             .cursor {
-                display: none !important;
+                display: none ;
             }
 
             * {
-                cursor: auto !important;
+                cursor: auto ;
             }
         }
 
@@ -154,7 +154,7 @@
             }
 
             .logo {
-                position: static !important;
+                position: static ;
                 display: flex;
                 align-items: center;
             }
@@ -171,8 +171,8 @@
 
             .menu-btn,
             .back-btn {
-                padding: 6px 12px !important;
-                font-size: 0.6rem !important;
+                padding: 6px 12px ;
+                font-size: 0.6rem ;
                 white-space: nowrap;
                 letter-spacing: 0.5px;
             }

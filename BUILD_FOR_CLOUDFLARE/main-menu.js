@@ -79,6 +79,7 @@ const MainMenu = (() => {
     let menuItems = [];
     let isOpen = false;
     let userLoggedIn = false;
+    let hiderObserver = null; // Smart observer instead of a loop
 
     /**
      * Load menu items from Supabase or use fallback
@@ -139,8 +140,16 @@ const MainMenu = (() => {
         const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
         let url = item.url;
         if (lang === 'en') {
-            if (url.endsWith('index.html')) url = url.replace('index.html', 'index-en.html');
-            // Add other localized page mapping here if needed
+            // Only swap root-level index.html → index-en.html, NOT residents/index.html which has no EN copy
+            if ((url === 'index.html' || url === prefix + 'index.html') && !url.includes('residents/')) {
+                url = url.replace('index.html', 'index-en.html');
+            }
+            if (url.endsWith('resident-admin-ru.html')) url = url.replace('resident-admin-ru.html', 'resident-admin-en.html');
+            if (url.endsWith('resident-workspace-ru.html')) url = url.replace('resident-workspace-ru.html', 'resident-workspace-en.html');
+        } else if (lang === 'ru') {
+            if (url.endsWith('index-en.html') && !url.includes('residents/')) url = url.replace('index-en.html', 'index.html');
+            if (url.endsWith('resident-admin-en.html')) url = url.replace('resident-admin-en.html', 'resident-admin-ru.html');
+            if (url.endsWith('resident-workspace-en.html')) url = url.replace('resident-workspace-en.html', 'resident-workspace-ru.html');
         }
         return url;
     }
@@ -176,6 +185,12 @@ const MainMenu = (() => {
         if (!container) {
             container = document.createElement('div');
             container.id = 'alab-main-menu';
+            // Absolute stacking priority
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100%';
+            container.style.zIndex = '2147483647'; // Max 32-bit z-index
             document.body.appendChild(container);
         }
 
@@ -186,6 +201,7 @@ const MainMenu = (() => {
         const loginUrl = residentPrefix + 'login.html';
 
         container.innerHTML = `
+            <div id="alab-menu-nav-blocker"></div>
             <nav class="menu-overlay ${isOpen ? 'open' : ''}">
                 <div class="menu-container">
                     <div class="menu-links-section">
@@ -198,9 +214,16 @@ const MainMenu = (() => {
             const onclickAttr = isLocked
                 ? `onclick="event.preventDefault(); MainMenu.showAccessModal()"`
                 : (item.onclick ? `onclick="event.preventDefault(); MainMenu.toggle(); ${item.onclick}"` : '');
+
+            let isActive = false;
+            try {
+                const linkPath = new URL(getURL(item), window.location.href).pathname;
+                isActive = (linkPath === window.location.pathname);
+            } catch (e) { }
+
             return `
                                 <a href="${itemUrl}" 
-                                   class="nav-link hover-trigger ${getURL(item).includes(currentPage) ? 'active' : ''} ${isLocked ? 'nav-link--locked' : ''}"
+                                   class="nav-link hover-trigger ${isActive ? 'active' : ''} ${isLocked ? 'nav-link--locked' : ''}"
                                    data-index="${String(index + 1).padStart(2, '0')}"
                                    data-target="item-${index}"
                                    ${onclickAttr}
@@ -260,10 +283,63 @@ const MainMenu = (() => {
     /**
      * Toggle menu open/close
      */
+    function hidePageHeader() {
+        if (hiderObserver) hiderObserver.disconnect();
+        
+        const selectors = [
+            'header', '.site-header', '.main-header', 
+            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
+        ];
+
+        const applyHide = () => {
+            selectors.forEach(selector => {
+                document.querySelectorAll(selector).forEach(el => {
+                    if (el.style.display !== 'none') {
+                        el.style.setProperty('display', 'none', 'important');
+                        el.style.setProperty('opacity', '0', 'important');
+                        el.style.setProperty('pointer-events', 'none', 'important');
+                    }
+                });
+            });
+        };
+
+        // Hide initially
+        applyHide();
+
+        // Listen for any attempts to show the header and block them
+        hiderObserver = new MutationObserver(() => applyHide());
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                hiderObserver.observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
+            });
+        });
+    }
+
+    function showPageHeader() {
+        if (hiderObserver) {
+            hiderObserver.disconnect();
+            hiderObserver = null;
+        }
+
+        const selectors = [
+            'header', '.site-header', '.main-header', 
+            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
+        ];
+        
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                el.style.removeProperty('display');
+                el.style.removeProperty('opacity');
+                el.style.removeProperty('pointer-events');
+                const old = el.getAttribute('data-menu-old-style');
+                if (old) el.setAttribute('style', old);
+            });
+        });
+    }
+
     function toggle() {
         isOpen = !isOpen;
         const overlay = document.querySelector('.menu-overlay');
-        const hamburger = document.querySelector('.menu-hamburger');
 
         if (!overlay) {
             // First time click, render and then open
@@ -271,7 +347,9 @@ const MainMenu = (() => {
                 const newOverlay = document.querySelector('.menu-overlay');
                 if (newOverlay) {
                     newOverlay.classList.add('open');
+                    document.body.classList.add('menu-active');
                     document.body.style.overflow = 'hidden';
+                    hidePageHeader();
                 }
             });
             return;
@@ -279,7 +357,9 @@ const MainMenu = (() => {
 
         if (isOpen) {
             overlay.classList.add('open');
+            document.body.classList.add('menu-active');
             document.body.style.overflow = 'hidden';
+            hidePageHeader();
             // Sync auth state in background without blocking
             checkAuth().then(() => {
                 const authBtn = document.querySelector('.auth-text-btn');
@@ -293,10 +373,10 @@ const MainMenu = (() => {
             });
         } else {
             overlay.classList.remove('open');
+            document.body.classList.remove('menu-active');
             document.body.style.overflow = '';
+            showPageHeader();
         }
-
-        if (hamburger) hamburger.classList.toggle('active', isOpen);
     }
 
     /**
@@ -307,10 +387,14 @@ const MainMenu = (() => {
             I18n.setLanguage(lang);
         }
         // Redirect if on a page that has a dedicated localized version
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const path = window.location.pathname;
+        const currentPage = path.split('/').pop() || 'index.html';
+        const isRoot = path === '/' || path === '/index.html' || !path.substring(1).includes('/');
+        
         let targetPage = null;
+        const isResidents = path.includes('/residents/');
         if (lang === 'en') {
-            if (currentPage === 'index.html') targetPage = 'index-en.html';
+            if (currentPage === 'index.html' && (isRoot || isResidents)) targetPage = 'index-en.html';
             if (currentPage === 'resident-admin-ru.html') targetPage = 'resident-admin-en.html';
         } else {
             if (currentPage === 'index-en.html') targetPage = 'index.html';
@@ -334,6 +418,42 @@ const MainMenu = (() => {
         const style = document.createElement('style');
         style.id = 'alab-menu-styles';
         style.textContent = `
+            header {
+                transition: opacity 0.4s ease;
+            }
+            
+            /* High-priority nav blocker to hide other headers */
+            #alab-menu-nav-blocker {
+                position: fixed;
+                top: 0; left: 0; width: 100%; height: 100px;
+                background: #030407;
+                z-index: 1000000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+
+            body.menu-active #alab-menu-nav-blocker {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            /* Force hide header even if it has !important */
+            body.menu-active header,
+            body.menu-active header[style],
+            body.menu-active .logo,
+            body.menu-active .header-controls,
+            body.menu-active .menu-btn,
+            body.menu-active .back-btn {
+                display: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+                height: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
             /* --- MENU LAYOUT --- */
             .menu-overlay {
                 position: fixed;
@@ -342,7 +462,7 @@ const MainMenu = (() => {
                 width: 100%;
                 height: 100vh;
                 background: #030407;
-                z-index: 9999;
+                z-index: 100000;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.4s ease;
@@ -389,7 +509,7 @@ const MainMenu = (() => {
                 align-items: center;
                 justify-content: center;
                 transition: 0.3s;
-                z-index: 10;
+                z-index: 100001;
             }
             
             .menu-close:hover {
@@ -729,25 +849,7 @@ const MainMenu = (() => {
                 </div>
             </div>
 
-            <script>
-                // Local cursor handler for the modal
-                (function() {
-                    const modal = document.getElementById('alab-access-modal');
-                    const cursor = document.querySelector('.cursor');
-                    if (cursor) {
-                        modal.addEventListener('mousemove', (e) => {
-                            cursor.style.left = e.clientX + 'px';
-                            cursor.style.top = e.clientY + 'px';
-                            cursor.style.zIndex = '20001';
-                        });
-                        
-                        modal.querySelectorAll('.hover-trigger').forEach(el => {
-                            el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                            el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-                        });
-                    }
-                })();
-            </script>
+            <!-- Cursor handled globally by cursor.js -->
         `;
     }
 
@@ -778,28 +880,9 @@ const MainMenu = (() => {
         await loadItems();
         // Pre-inject styles so they are ready
         injectStyles();
-    }
-
-    // Re-assign toggle function
-    toggle = function () {
-        if (!isOpen) {
-            render();
-            // Small delay to allow DOM to paint before adding open class for transition
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const overlay = document.querySelector('.menu-overlay');
-                    if (overlay) overlay.classList.add('open');
-                    document.body.style.overflow = 'hidden';
-                    isOpen = true;
-                    attachEvents();
-                });
-            });
-        } else {
-            const overlay = document.querySelector('.menu-overlay');
-            if (overlay) overlay.classList.remove('open');
-            document.body.style.overflow = '';
-            isOpen = false;
-        }
+        
+        // Pre-render the menu to eliminate open delay
+        await render();
     }
 
     // Auto-run init
