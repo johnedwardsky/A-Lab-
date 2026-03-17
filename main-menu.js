@@ -225,7 +225,7 @@ const MainMenu = (() => {
                                    ${onclickAttr}
                                    target="${item.target || '_self'}">
                                     ${getLabel(item)}
-                                    ${isLocked ? '<span class="nav-link-badge">RESIDENT ONLY</span>' : ''}
+                                    ${isLocked ? '<span class="nav-link-badge">⬡ RESIDENT_ONLY</span>' : ''}
                                 </a>`;
         }).join('')}
                         </div>
@@ -647,28 +647,32 @@ const MainMenu = (() => {
                     margin-top: 0;
                 }
                 .nav-link--locked {
-                    opacity: 0.5;
                     cursor: pointer;
                 }
                 .nav-link--locked:hover {
-                    opacity: 0.85;
                     color: var(--accent, #FF2A2A);
                 }
-                .nav-link-badge {
-                    display: inline-block;
-                    margin-left: 12px;
-                    font-family: 'JetBrains Mono', monospace;
-                    font-size: 0.55rem;
-                    letter-spacing: 1.5px;
-                    color: #FF2A2A;
-                    border: 1px solid rgba(255,42,42,0.4);
-                    padding: 2px 6px;
-                    border-radius: 3px;
-                    vertical-align: middle;
-                    background: rgba(255,42,42,0.06);
-                    transform: translateY(-4px);
-                    position: relative;
-                }
+            }
+
+            /* Resident badge — global, visible on all screens */
+            .nav-link-badge {
+                display: inline-flex;
+                align-items: center;
+                margin-left: 10px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.45rem;
+                letter-spacing: 2px;
+                color: #FF2A2A;
+                border: 1px solid #FF2A2A;
+                padding: 3px 8px;
+                border-radius: 4px;
+                vertical-align: middle;
+                background: rgba(255, 42, 42, 0.06);
+                position: relative;
+                top: -6px;
+                text-transform: uppercase;
+                white-space: nowrap;
+                animation: pulseBadge 2.5s ease-in-out infinite;
             }
         `;
         document.head.appendChild(style);
