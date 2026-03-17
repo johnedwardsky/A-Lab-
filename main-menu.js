@@ -79,7 +79,7 @@ const MainMenu = (() => {
     let menuItems = [];
     let isOpen = false;
     let userLoggedIn = false;
-    let hideInterval = null; // Loop to keep things hidden
+    let hiderObserver = null; // Smart observer instead of a loop
 
     /**
      * Load menu items from Supabase or use fallback
@@ -185,9 +185,12 @@ const MainMenu = (() => {
         if (!container) {
             container = document.createElement('div');
             container.id = 'alab-main-menu';
-            // Ensure the container itself has stacking priority
-            container.style.position = 'relative';
-            container.style.zIndex = '999999'; 
+            // Absolute stacking priority
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100%';
+            container.style.zIndex = '2147483647'; // Max 32-bit z-index
             document.body.appendChild(container);
         }
 
@@ -281,36 +284,41 @@ const MainMenu = (() => {
      * Toggle menu open/close
      */
     function hidePageHeader() {
-        if (hideInterval) clearInterval(hideInterval);
+        if (hiderObserver) hiderObserver.disconnect();
         
-        const doHide = () => {
-            const selectors = [
-                'header', '.site-header', '.main-header', 
-                '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
-            ];
-            
+        const selectors = [
+            'header', '.site-header', '.main-header', 
+            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
+        ];
+
+        const applyHide = () => {
             selectors.forEach(selector => {
                 document.querySelectorAll(selector).forEach(el => {
-                    // Force inline style that beats EVERYTHING
-                    el.style.setProperty('display', 'none', 'important');
-                    el.style.setProperty('visibility', 'hidden', 'important');
-                    el.style.setProperty('opacity', '0', 'important');
-                    el.style.setProperty('pointer-events', 'none', 'important');
-                    el.style.setProperty('z-index', '-1', 'important');
+                    if (el.style.display !== 'none') {
+                        el.style.setProperty('display', 'none', 'important');
+                        el.style.setProperty('opacity', '0', 'important');
+                        el.style.setProperty('pointer-events', 'none', 'important');
+                    }
                 });
             });
         };
 
-        // Run immediately
-        doHide();
-        // Run repeatedly to fight any other scripts/inline styles
-        hideInterval = setInterval(doHide, 100);
+        // Hide initially
+        applyHide();
+
+        // Listen for any attempts to show the header and block them
+        hiderObserver = new MutationObserver(() => applyHide());
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                hiderObserver.observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
+            });
+        });
     }
 
     function showPageHeader() {
-        if (hideInterval) {
-            clearInterval(hideInterval);
-            hideInterval = null;
+        if (hiderObserver) {
+            hiderObserver.disconnect();
+            hiderObserver = null;
         }
 
         const selectors = [
@@ -321,10 +329,8 @@ const MainMenu = (() => {
         selectors.forEach(selector => {
             document.querySelectorAll(selector).forEach(el => {
                 el.style.removeProperty('display');
-                el.style.removeProperty('visibility');
                 el.style.removeProperty('opacity');
                 el.style.removeProperty('pointer-events');
-                el.style.removeProperty('z-index');
                 const old = el.getAttribute('data-menu-old-style');
                 if (old) el.setAttribute('style', old);
             });
