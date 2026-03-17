@@ -18,13 +18,11 @@ const I18n = (() => {
     const pageMapping = {
         'ru': {
             'index-en.html': 'index.html',
-            'resident-admin-en.html': 'resident-admin-ru.html',
-            'resident-workspace-en.html': 'resident-workspace-ru.html'
+            'resident-admin-en.html': 'resident-admin-ru.html'
         },
         'en': {
             'index.html': 'index-en.html',
-            'resident-admin-ru.html': 'resident-admin-en.html',
-            'resident-workspace-ru.html': 'resident-workspace-en.html'
+            'resident-admin-ru.html': 'resident-admin-en.html'
         }
     };
 
@@ -147,9 +145,24 @@ const I18n = (() => {
                 // Also check if it's a relative link to one of the mapped pages
                 // (e.g. href="../index.html" should map to "../index-en.html")
                 for (const [key, value] of Object.entries(currentMapping)) {
-                    if (href.endsWith('/' + key) || href === key) {
-                        const newHref = href.replace(key, value);
-                        link.setAttribute('href', newHref);
+                    // Only rewrite links to index.html if they point to the root or are relative to the root
+                    // Avoid rewriting index.html inside subfolders where index-en.html doesn't exist
+                    if (key === 'index.html' || key === 'index-en.html') {
+                        if (href === key || href.endsWith('/' + key)) {
+                            // index.html -> index-en.html is allowed in root and in residents/
+                            const isAllowed = !href.includes('/') || href.includes('residents/') || href.startsWith('../index');
+                            
+                            if (isAllowed) {
+                                const newHref = href.replace(key, value);
+                                link.setAttribute('href', newHref);
+                            }
+                        }
+                    } else {
+                        // For other specific mappings like resident-admin
+                        if (href.endsWith('/' + key) || href === key) {
+                            const newHref = href.replace(key, value);
+                            link.setAttribute('href', newHref);
+                        }
                     }
                 }
             });
@@ -182,9 +195,10 @@ const I18n = (() => {
         const currentPage = path.split('/').pop() || 'index.html';
         const isRoot = path === '/' || path === '/index.html' || !path.substring(1).includes('/');
         
-        // Only redirect index.html if we are in the root. Otherwise use in-place translation.
+        // For index.html, we only redirect if it's root OR if it's in the residents folder (which now has index-en.html)
+        const isResidents = path.includes('/residents/');
         let targetPage = pageMapping[lang] ? pageMapping[lang][currentPage] : null;
-        if (currentPage === 'index.html' && !isRoot) targetPage = null;
+        if (currentPage === 'index.html' && !isRoot && !isResidents) targetPage = null;
 
         if (targetPage && targetPage !== currentPage) {
             console.log('[i18n] Redirecting to localized version:', targetPage);

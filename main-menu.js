@@ -322,10 +322,14 @@ const MainMenu = (() => {
             I18n.setLanguage(lang);
         }
         // Redirect if on a page that has a dedicated localized version
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const path = window.location.pathname;
+        const currentPage = path.split('/').pop() || 'index.html';
+        const isRoot = path === '/' || path === '/index.html' || !path.substring(1).includes('/');
+        
         let targetPage = null;
+        const isResidents = path.includes('/residents/');
         if (lang === 'en') {
-            if (currentPage === 'index.html') targetPage = 'index-en.html';
+            if (currentPage === 'index.html' && (isRoot || isResidents)) targetPage = 'index-en.html';
             if (currentPage === 'resident-admin-ru.html') targetPage = 'resident-admin-en.html';
         } else {
             if (currentPage === 'index-en.html') targetPage = 'index.html';
