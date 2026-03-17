@@ -323,8 +323,6 @@ const MainMenu = (() => {
                 mainHeader.style.pointerEvents = 'auto';
             }
         }
-
-        if (hamburger) hamburger.classList.toggle('active', isOpen);
     }
 
     /**
@@ -424,7 +422,7 @@ const MainMenu = (() => {
                 align-items: center;
                 justify-content: center;
                 transition: 0.3s;
-                z-index: 10;
+                z-index: 10006;
             }
             
             .menu-close:hover {
