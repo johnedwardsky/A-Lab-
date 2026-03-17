@@ -1,0 +1,13 @@
+ENVIRONMENT
+node_modules
+venv
+.env
+.*
+~*
+/logs/
+/cache/
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md
+/QWEN.md
+/SPEC.md

@@ -1,0 +1,23 @@
+{
+  "ports": {
+    "11434": [{
+      "handler": "reverse_proxy",
+      "upstreams": [{ "dial": "127.0.0.1:11434" }],
+      "headers": {
+        "request": {
+          "set": {
+            "Origin": ["http://127.0.0.1:11434"]
+          }
+        },
+        "response": {
+          "set": {
+            "Access-Control-Allow-Origin": ["*"],
+            "Access-Control-Allow-Methods": ["GET, POST, OPTIONS, PUT, DELETE"],
+            "Access-Control-Allow-Headers": ["*"],
+            "Vary": ["Origin"]
+          }
+        }
+      }
+    }]
+  }
+}
