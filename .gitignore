@@ -36,4 +36,9 @@ __pycache__/
 .DS_Store
 .env*.local
 *.log
-\n# Scout Agent Tools\nscout_agent_session.session\nscout_agent_session.session-journal
+
+# Scout Agent Tools
+scout_agent_session.session
+scout_agent_session.session-journal
+.agent_session*
+scout_agent_session.session*
