@@ -262,7 +262,7 @@
         /* --- LAYOUT --- */
         .hero {
             padding: 120px 40px 60px;
-            margin-left: 80px;
+            margin-left: 0;
         }
 
         .hero h1 {
@@ -279,7 +279,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             padding: 40px;
-            margin-left: 80px;
+            margin-left: 0;
         }
 
         @media (max-width: 1400px) {
@@ -680,7 +680,9 @@
 <body data-no-resident-nav>
     <div class="noise-overlay"></div>
     <header>
-        <!-- Logo is provided by ResidentNav sidebar on this page -->
+        <a href="../index.html" class="logo hover-trigger">
+            <img decoding="async" src="../assets/img/A-lab-logo.svg" alt="A-LAB">
+        </a>
         <div class="header-controls">
             <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
                 МЕНЮ</button>
