@@ -29,14 +29,6 @@
             --font-code: 'JetBrains Mono', monospace;
         }
 
-        a, button, input, select, textarea { cursor: pointer; }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: none;
-        }
-
         html {
             overflow-x: hidden;
             width: 100%;
@@ -52,27 +44,6 @@
                 linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
-        }
-
-        /* --- UI ELEMENTS --- */
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 20000;
-            transition: width 0.1s, height 0.1s, background 0.1s;
-        }
-
-        .cursor.hidden { opacity: 0 !important; }
-        .cursor.hovered {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 42, 42, 0.2);
-            border-color: var(--accent);
         }
 
         /* --- HEADER (Standardized) --- */

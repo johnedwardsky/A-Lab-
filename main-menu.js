@@ -205,7 +205,7 @@ const MainMenu = (() => {
                         
                         <div class="menu-nav-list" style="margin-top: auto; margin-bottom: auto;">
                             ${menuItems.map((item, index) => {
-            const isLocked = item.requiresAuth && !userLoggedIn;
+            const isLocked = (item.requiresAuth || item.requires_auth) && !userLoggedIn;
             const itemUrl = isLocked ? '#' : getURL(item);
             const onclickAttr = isLocked
                 ? `onclick="event.preventDefault(); MainMenu.showAccessModal()"`
@@ -690,7 +690,7 @@ const MainMenu = (() => {
             modal = document.createElement('div');
             modal.id = 'alab-access-modal';
             modal.style.cssText = `
-                position: fixed; inset: 0; z-index: 15000;
+                position: fixed; inset: 0; z-index: 2147483645; /* Above menu (2147483640), below cursor (2147483647) */
                 display: flex; align-items: center; justify-content: center;
                 background: rgba(3, 4, 7, 0.9); backdrop-filter: blur(20px);
                 animation: fadeIn 0.3s ease;
