@@ -283,31 +283,6 @@ const MainMenu = (() => {
     /**
      * Toggle menu open/close
      */
-    function hidePageHeader() {
-        // 'By Command' hiding: Create a force-style that beats everything on the page
-        const styleId = 'alab-menu-hide-force';
-        if (document.getElementById(styleId)) return;
-
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-            header, .site-header, .main-header, .header-controls, 
-            .logo, .back-btn, .menu-btn, .lang-btn, .resident-nav {
-                display: none !important;
-                opacity: 0 !important;
-                visibility: hidden !important;
-                pointer-events: none !important;
-                z-index: -100 !important;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    function showPageHeader() {
-        const style = document.getElementById('alab-menu-hide-force');
-        if (style) style.remove();
-    }
-
     function toggle() {
         isOpen = !isOpen;
         const overlay = document.querySelector('.menu-overlay');
@@ -320,7 +295,6 @@ const MainMenu = (() => {
                     newOverlay.classList.add('open');
                     document.body.classList.add('menu-active');
                     document.body.style.overflow = 'hidden';
-                    hidePageHeader();
                 }
             });
             return;
@@ -330,7 +304,6 @@ const MainMenu = (() => {
             overlay.classList.add('open');
             document.body.classList.add('menu-active');
             document.body.style.overflow = 'hidden';
-            hidePageHeader();
             // Sync auth state in background without blocking
             checkAuth().then(() => {
                 const authBtn = document.querySelector('.auth-text-btn');
@@ -346,7 +319,6 @@ const MainMenu = (() => {
             overlay.classList.remove('open');
             document.body.classList.remove('menu-active');
             document.body.style.overflow = '';
-            showPageHeader();
         }
     }
 
@@ -413,9 +385,6 @@ const MainMenu = (() => {
                 pointer-events: auto;
             }
 
-            /* Force hide header even if it has !important */
-            body.menu-active header,
-            body.menu-active header[style],
             body.menu-active .logo,
             body.menu-active .header-controls,
             body.menu-active .menu-btn,
