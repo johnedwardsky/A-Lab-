@@ -279,6 +279,7 @@ const MainMenu = (() => {
         isOpen = !isOpen;
         const overlay = document.querySelector('.menu-overlay');
         const hamburger = document.querySelector('.menu-hamburger');
+        const mainHeader = document.querySelector('header');
 
         if (!overlay) {
             // First time click, render and then open
@@ -287,6 +288,10 @@ const MainMenu = (() => {
                 if (newOverlay) {
                     newOverlay.classList.add('open');
                     document.body.style.overflow = 'hidden';
+                    if (mainHeader) {
+                        mainHeader.style.opacity = '0';
+                        mainHeader.style.pointerEvents = 'none';
+                    }
                 }
             });
             return;
@@ -295,6 +300,10 @@ const MainMenu = (() => {
         if (isOpen) {
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
+            if (mainHeader) {
+                mainHeader.style.opacity = '0';
+                mainHeader.style.pointerEvents = 'none';
+            }
             // Sync auth state in background without blocking
             checkAuth().then(() => {
                 const authBtn = document.querySelector('.auth-text-btn');
@@ -309,6 +318,10 @@ const MainMenu = (() => {
         } else {
             overlay.classList.remove('open');
             document.body.style.overflow = '';
+            if (mainHeader) {
+                mainHeader.style.opacity = '1';
+                mainHeader.style.pointerEvents = 'auto';
+            }
         }
 
         if (hamburger) hamburger.classList.toggle('active', isOpen);
@@ -353,6 +366,9 @@ const MainMenu = (() => {
         const style = document.createElement('style');
         style.id = 'alab-menu-styles';
         style.textContent = `
+            header {
+                transition: opacity 0.4s ease;
+            }
             /* --- MENU LAYOUT --- */
             .menu-overlay {
                 position: fixed;
