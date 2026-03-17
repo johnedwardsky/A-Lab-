@@ -361,7 +361,7 @@ const MainMenu = (() => {
                 width: 100%;
                 height: 100vh;
                 background: #030407;
-                z-index: 9999;
+                z-index: 10005;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.4s ease;
@@ -779,28 +779,9 @@ const MainMenu = (() => {
         await loadItems();
         // Pre-inject styles so they are ready
         injectStyles();
-    }
-
-    // Re-assign toggle function
-    toggle = function () {
-        if (!isOpen) {
-            render();
-            // Small delay to allow DOM to paint before adding open class for transition
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const overlay = document.querySelector('.menu-overlay');
-                    if (overlay) overlay.classList.add('open');
-                    document.body.style.overflow = 'hidden';
-                    isOpen = true;
-                    attachEvents();
-                });
-            });
-        } else {
-            const overlay = document.querySelector('.menu-overlay');
-            if (overlay) overlay.classList.remove('open');
-            document.body.style.overflow = '';
-            isOpen = false;
-        }
+        
+        // Pre-render the menu to eliminate open delay
+        await render();
     }
 
     // Auto-run init
