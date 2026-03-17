@@ -27,14 +27,14 @@ label,
     background-color: #fff;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 999999;
+    z-index: 2147483647; /* Max z-index — always above menu overlay */
     mix-blend-mode: difference;
     opacity: 0;
     
     /* Performance optimizations */
     will-change: transform, opacity;
     contain: layout style paint;
-    box-shadow: 0 0 10px rgba(255,255,255,0.1); /* Subtle glow for luxury feel */
+    box-shadow: 0 0 10px rgba(255,255,255,0.1);
 }
 
 /* 4. Scrollbar and mobile cleanup */

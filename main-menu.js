@@ -694,7 +694,6 @@ const MainMenu = (() => {
                 display: flex; align-items: center; justify-content: center;
                 background: rgba(3, 4, 7, 0.9); backdrop-filter: blur(20px);
                 animation: fadeIn 0.3s ease;
-                cursor: none;
             `;
             document.body.appendChild(modal);
 
