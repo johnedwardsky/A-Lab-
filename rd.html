@@ -55,11 +55,12 @@
             padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             z-index: 100;
             pointer-events: none;
             border-bottom: none;
             backdrop-filter: none;
+            box-sizing: border-box;
         }
 
         .header-controls {
@@ -73,9 +74,7 @@
 
         .logo {
             pointer-events: auto;
-            position: fixed;
-            top: 40px;
-            left: 40px;
+            position: relative;
             z-index: 1100;
             display: flex;
             align-items: center;
@@ -659,11 +658,12 @@
             }
 
             header {
-                padding: 15px 20px !important;
+                padding: 12px 15px !important;
                 background: rgba(3, 4, 7, 0.9) !important;
                 backdrop-filter: blur(15px) !important;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
                 height: auto !important;
+                align-items: center !important;
             }
 
             .logo {
@@ -677,7 +677,7 @@
             }
 
             .logo img {
-                height: 24px !important;
+                height: 25px !important;
                 width: auto !important;
             }
 
