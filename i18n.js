@@ -178,8 +178,13 @@ const I18n = (() => {
         applyToDOM();
 
         // Check for dedicated page redirect
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-        const targetPage = pageMapping[lang] ? pageMapping[lang][currentPage] : null;
+        const path = window.location.pathname;
+        const currentPage = path.split('/').pop() || 'index.html';
+        const isRoot = path === '/' || path === '/index.html' || !path.substring(1).includes('/');
+        
+        // Only redirect index.html if we are in the root. Otherwise use in-place translation.
+        let targetPage = pageMapping[lang] ? pageMapping[lang][currentPage] : null;
+        if (currentPage === 'index.html' && !isRoot) targetPage = null;
 
         if (targetPage && targetPage !== currentPage) {
             console.log('[i18n] Redirecting to localized version:', targetPage);

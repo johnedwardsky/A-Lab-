@@ -137,13 +137,26 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             z-index: 1000;
             pointer-events: none;
             backdrop-filter: none;
+            padding: 40px 0; /* Padding moved to container */
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 40px;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
         }
 
         @media (max-width: 768px) {
@@ -173,16 +186,12 @@
             align-items: center;
         }
 
-        /* Scope header logo to not affect sidebar */
         header .logo {
             pointer-events: auto;
-            position: fixed;
-            top: 40px;
-            left: 40px;
-            z-index: 1100;
             display: flex;
             align-items: center;
             text-decoration: none;
+            z-index: 1100;
         }
 
         header .logo img {
@@ -261,8 +270,7 @@
         /* Shared styles from resident-nav.css are used */
         /* --- LAYOUT --- */
         .hero {
-            padding: 120px 40px 60px;
-            margin-left: 0;
+            padding: 120px 0 60px;
         }
 
         .hero h1 {
@@ -278,7 +286,7 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            padding: 40px;
+            padding: 40px 0;
             margin-left: 0;
         }
 
@@ -680,27 +688,30 @@
 <body data-no-resident-nav>
     <div class="noise-overlay"></div>
     <header>
-        <a href="../index.html" class="logo hover-trigger">
-            <img decoding="async" src="../assets/img/A-lab-logo.svg" alt="A-LAB">
-        </a>
-        <div class="header-controls">
-            <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
-                МЕНЮ</button>
+        <div class="container">
+            <a href="../index.html" class="logo hover-trigger">
+                <img decoding="async" src="../assets/img/A-lab-logo.svg" alt="A-LAB">
+            </a>
+            <div class="header-controls">
+                <button class="menu-btn hover-trigger" onclick="MainMenu.toggle()" data-i18n="menu.menu_btn">///
+                    МЕНЮ</button>
+            </div>
         </div>
     </header>
 
-    <!-- Navigation is injected by nav-manager.js -->
-
     <section class="hero">
-        <h1><span data-i18n="page_residents.hero_title_line1">Наши</span> <br> <span style="color: var(--accent);"
-                data-i18n="page_residents.hero_title_line2">Резиденты</span></h1>
-        <p style="color: var(--text-secondary); max-width: 600px;" data-i18n="page_residents.hero_desc">Закрытое
-            сообщество креативных лидеров и цифровых
-            архитекторов
-            будущего.</p>
+        <div class="container">
+            <h1><span data-i18n="page_residents.hero_title_line1">Наши</span> <br> <span style="color: var(--accent);"
+                    data-i18n="page_residents.hero_title_line2">Резиденты</span></h1>
+            <p style="color: var(--text-secondary); max-width: 600px;" data-i18n="page_residents.hero_desc">Закрытое
+                сообщество креативных лидеров и цифровых
+                архитекторов
+                будущего.</p>
+        </div>
     </section>
 
-    <div class="residents-grid">
+    <div class="container">
+        <div class="residents-grid">
         <!-- Ivan Lakshinsky -->
         <a href="profile.html?id=ivan-lakshinsky"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
