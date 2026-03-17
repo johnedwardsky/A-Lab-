@@ -185,23 +185,19 @@ const MainMenu = (() => {
         if (!container) {
             container = document.createElement('div');
             container.id = 'alab-main-menu';
-            // Absolute stacking priority
             container.style.position = 'fixed';
             container.style.top = '0';
             container.style.left = '0';
             container.style.width = '100%';
-            container.style.zIndex = '2147483647'; // Max 32-bit z-index
+            container.style.zIndex = '2147483647';
             document.body.appendChild(container);
         }
 
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'ru';
-
         const dashboardUrl = residentPrefix + 'workspace.html';
         const loginUrl = residentPrefix + 'login.html';
 
         container.innerHTML = `
-            <div id="alab-menu-nav-blocker"></div>
             <nav class="menu-overlay ${isOpen ? 'open' : ''}">
                 <div class="menu-container">
                     <div class="menu-links-section">
@@ -364,38 +360,16 @@ const MainMenu = (() => {
             header {
                 transition: opacity 0.4s ease;
             }
-            
-            /* High-priority nav blocker to hide other headers */
-            #alab-menu-nav-blocker {
-                position: fixed;
-                top: 0; left: 0; width: 100%; height: 100px;
-                background: #030407;
-                z-index: 2147483646; 
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.3s ease;
-            }
-            body.menu-active #alab-menu-nav-blocker {
-                opacity: 1;
-                pointer-events: auto;
-            }
 
-            body.menu-active #alab-menu-nav-blocker {
-                opacity: 1;
-                pointer-events: auto;
-            }
-
+            /* Hide Logo and Page-Menu buttons of the underlying page ONLY */
             body.menu-active .logo,
+            body.menu-active header > .menu-btn,
             body.menu-active .header-controls,
-            body.menu-active .menu-btn,
             body.menu-active .back-btn {
                 display: none !important;
-                opacity: 0 !important;
                 visibility: hidden !important;
                 pointer-events: none !important;
-                height: 0 !important;
-                padding: 0 !important;
-                overflow: hidden !important;
+                z-index: -1 !important;
             }
 
             /* --- MENU LAYOUT --- */
@@ -403,10 +377,10 @@ const MainMenu = (() => {
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 100%;
+                width: 100vw;
                 height: 100vh;
                 background: #030407;
-                z-index: 100000;
+                z-index: 2147483647; 
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.4s ease;
