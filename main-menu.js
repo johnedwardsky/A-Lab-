@@ -276,6 +276,30 @@ const MainMenu = (() => {
     /**
      * Toggle menu open/close
      */
+    function hidePageHeader() {
+        // Direct inline style always wins over any CSS !important
+        const el = document.querySelector('header');
+        if (el) {
+            el.setAttribute('data-menu-display', el.style.display || '');
+            el.style.setProperty('display', 'none', 'important');
+            el.style.setProperty('visibility', 'hidden', 'important');
+            el.style.setProperty('opacity', '0', 'important');
+            el.style.setProperty('pointer-events', 'none', 'important');
+        }
+    }
+
+    function showPageHeader() {
+        const el = document.querySelector('header');
+        if (el) {
+            const prev = el.getAttribute('data-menu-display') || '';
+            el.style.removeProperty('display');
+            el.style.removeProperty('visibility');
+            el.style.removeProperty('opacity');
+            el.style.removeProperty('pointer-events');
+            if (prev) el.style.display = prev;
+        }
+    }
+
     function toggle() {
         isOpen = !isOpen;
         const overlay = document.querySelector('.menu-overlay');
@@ -286,8 +310,8 @@ const MainMenu = (() => {
                 const newOverlay = document.querySelector('.menu-overlay');
                 if (newOverlay) {
                     newOverlay.classList.add('open');
-                    document.body.classList.add('menu-active');
                     document.body.style.overflow = 'hidden';
+                    hidePageHeader();
                 }
             });
             return;
@@ -295,8 +319,8 @@ const MainMenu = (() => {
 
         if (isOpen) {
             overlay.classList.add('open');
-            document.body.classList.add('menu-active');
             document.body.style.overflow = 'hidden';
+            hidePageHeader();
             // Sync auth state in background without blocking
             checkAuth().then(() => {
                 const authBtn = document.querySelector('.auth-text-btn');
@@ -310,8 +334,8 @@ const MainMenu = (() => {
             });
         } else {
             overlay.classList.remove('open');
-            document.body.classList.remove('menu-active');
             document.body.style.overflow = '';
+            showPageHeader();
         }
     }
 
