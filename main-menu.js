@@ -189,7 +189,7 @@ const MainMenu = (() => {
             container.style.top = '0';
             container.style.left = '0';
             container.style.width = '100%';
-            container.style.zIndex = '2147483647';
+            container.style.zIndex = '2147483640'; // Slightly lower than cursor (2147483647)
             document.body.appendChild(container);
         }
 
@@ -380,7 +380,7 @@ const MainMenu = (() => {
                 width: 100vw;
                 height: 100vh;
                 background: #030407;
-                z-index: 2147483647; 
+                z-index: 2147483640; 
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.4s ease;
