@@ -387,6 +387,13 @@ const MainMenu = (() => {
                 pointer-events: auto;
             }
 
+            /* Force hide main site header when menu is open */
+            body:has(.menu-overlay.open) header {
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+            }
+
             .menu-container {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
