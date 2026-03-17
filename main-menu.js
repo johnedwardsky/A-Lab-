@@ -376,13 +376,18 @@ const MainMenu = (() => {
 
             /* Force hide header even if it has !important */
             body.menu-active header,
+            body.menu-active header[style],
             body.menu-active .logo,
             body.menu-active .header-controls,
-            body.menu-active .menu-btn {
+            body.menu-active .menu-btn,
+            body.menu-active .back-btn {
                 display: none !important;
                 opacity: 0 !important;
                 visibility: hidden !important;
                 pointer-events: none !important;
+                height: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
             }
 
             /* --- MENU LAYOUT --- */
