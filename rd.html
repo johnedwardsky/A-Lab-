@@ -48,22 +48,18 @@
 
         /* --- HEADER (Standardized) --- */
         header {
-            pointer-events: none;
             position: fixed;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
             width: 100%;
-            max-width: 1400px;
             padding: 40px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             z-index: 100;
+            pointer-events: none;
             border-bottom: none;
-            /* Remove border if present */
             backdrop-filter: none;
-            /* Remove blur if present */
         }
 
         .header-controls {
@@ -77,7 +73,9 @@
 
         .logo {
             pointer-events: auto;
-            position: relative;
+            position: fixed;
+            top: 40px;
+            left: 40px;
             z-index: 1100;
             display: flex;
             align-items: center;
@@ -661,23 +659,11 @@
             }
 
             header {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: auto !important;
-                height: 52px !important;
-                padding: 12px 15px !important;
+                padding: 15px 20px !important;
                 background: rgba(3, 4, 7, 0.9) !important;
                 backdrop-filter: blur(15px) !important;
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                z-index: 10000 !important;
-                pointer-events: auto !important;
-                border-bottom: 1px solid var(--border) !important;
-                margin: 0 !important;
-                box-sizing: border-box !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                height: auto !important;
             }
 
             .logo {
