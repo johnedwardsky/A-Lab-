@@ -184,6 +184,9 @@ const MainMenu = (() => {
         if (!container) {
             container = document.createElement('div');
             container.id = 'alab-main-menu';
+            // Ensure the container itself has stacking priority
+            container.style.position = 'relative';
+            container.style.zIndex = '999999'; 
             document.body.appendChild(container);
         }
 
@@ -278,24 +281,38 @@ const MainMenu = (() => {
      */
     function hidePageHeader() {
         // Direct inline style always wins over any CSS !important
-        // Target all possible headers to be safe
-        document.querySelectorAll('header, .site-header, .main-header, #header').forEach(el => {
-            el.setAttribute('data-menu-display', el.style.display || '');
-            el.style.setProperty('display', 'none', 'important');
-            el.style.setProperty('visibility', 'hidden', 'important');
-            el.style.setProperty('opacity', '0', 'important');
-            el.style.setProperty('pointer-events', 'none', 'important');
+        // Target headers AND specific controls that are problematic on Home/About/Contacts
+        const selectors = [
+            'header', '.site-header', '.main-header', 
+            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
+        ];
+        
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                el.setAttribute('data-menu-old-style', el.getAttribute('style') || '');
+                el.style.setProperty('display', 'none', 'important');
+                el.style.setProperty('visibility', 'hidden', 'important');
+                el.style.setProperty('opacity', '0', 'important');
+                el.style.setProperty('pointer-events', 'none', 'important');
+            });
         });
     }
 
     function showPageHeader() {
-        document.querySelectorAll('header, .site-header, .main-header, #header').forEach(el => {
-            el.style.removeProperty('display');
-            el.style.removeProperty('visibility');
-            el.style.removeProperty('opacity');
-            el.style.removeProperty('pointer-events');
-            const prev = el.getAttribute('data-menu-display') || '';
-            if (prev) el.style.display = prev;
+        const selectors = [
+            'header', '.site-header', '.main-header', 
+            '.header-controls', '.logo', '.back-btn', '.menu-btn', '.lang-btn'
+        ];
+        
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                el.style.removeProperty('display');
+                el.style.removeProperty('visibility');
+                el.style.removeProperty('opacity');
+                el.style.removeProperty('pointer-events');
+                const old = el.getAttribute('data-menu-old-style');
+                if (old) el.setAttribute('style', old);
+            });
         });
     }
 
@@ -389,7 +406,7 @@ const MainMenu = (() => {
                 position: fixed;
                 top: 0; left: 0; width: 100%; height: 100px;
                 background: #030407;
-                z-index: 99999;
+                z-index: 1000000;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
