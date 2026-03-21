@@ -713,7 +713,7 @@
     <div class="container">
         <div class="residents-grid">
         <!-- Ivan Lakshinsky -->
-        <a href="profile.html?id=ivan-lakshinsky"
+        <a href="../profile.html?id=ivan-lakshinsky"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -741,7 +741,7 @@
         </a>
 
         <!-- Alexey Pak -->
-        <a href="profile.html?id=alexey-pak"
+        <a href="../profile.html?id=alexey-pak"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -768,7 +768,7 @@
             </div>
         </a>
         <!-- Alex River -->
-        <a href="profile.html?id=alex-river"
+        <a href="../profile.html?id=alex-river"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -797,7 +797,7 @@
         </a>
 
         <!-- Maya Neural -->
-        <a href="profile.html?id=maya-neural"
+        <a href="../profile.html?id=maya-neural"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -825,7 +825,7 @@
         </a>
 
         <!-- Viktor Code -->
-        <a href="profile.html?id=viktor-code"
+        <a href="../profile.html?id=viktor-code"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -854,7 +854,7 @@
         </a>
 
         <!-- Sophia Brand -->
-        <a href="profile.html?id=sophia-brand"
+        <a href="../profile.html?id=sophia-brand"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -882,7 +882,7 @@
         </a>
 
         <!-- Max Neural -->
-        <a href="profile.html?id=max-neural"
+        <a href="../profile.html?id=max-neural"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -911,7 +911,7 @@
         </a>
 
         <!-- Elena Motion -->
-        <a href="profile.html?id=elena-motion"
+        <a href="../profile.html?id=elena-motion"
             onclick="if(!ResidentNav.userLoggedIn) { ResidentNav.showRestrictedModal(); return false; }"
             class="resident-card hover-trigger">
             <div class="resident-image">
@@ -1049,7 +1049,7 @@
             document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
             document.getElementById('step1').classList.add('active');
             // Hide custom field
-            document.getElementById('customStrengthField').style.display = 'none';
+            document.getElementById('customStrengthBlock').style.display = 'none';
         }
 
         function nextStep(step) {
@@ -1070,7 +1070,7 @@
         }
 
         function toggleCustomStrength() {
-            const field = document.getElementById('customStrengthField');
+            const field = document.getElementById('customStrengthBlock');
             field.style.display = field.style.display === 'none' ? 'block' : 'none';
         }
 

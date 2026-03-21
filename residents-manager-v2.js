@@ -78,7 +78,7 @@
                     : (r.role || 'RESIDENT');
 
                 return `
-                    <a href="profile.html?id=${r.user_id}" class="resident-card dynamic-resident hover-trigger" style="animation-delay: ${delay}s">
+                    <a href="../profile.html?id=${r.user_id}" class="resident-card dynamic-resident hover-trigger" style="animation-delay: ${delay}s">
                         <div class="resident-image">
                             <img src="${r.avatar_url || 'maya_neural.png'}" alt="${r.full_name}">
                             <div class="resident-status ${r.status || 'online'}"></div>
