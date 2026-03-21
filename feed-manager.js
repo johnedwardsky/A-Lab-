@@ -1,8 +1,9 @@
 /**
- * A-LAB: FEED MANAGER v2.0
+ * A-LAB: FEED MANAGER v3.0
  * ============================================================
  * Full-featured social feed engine.
- * Features: load posts, create with image, emoji reactions, comments,
+ * Features: load posts with infinite scroll, create with image,
+ *           emoji reactions, comments, edit/delete (author + admin),
  *           share modal, realtime subscriptions, online residents.
  * Depends on: supabase-client.js, auth-guard.js, toast.js
  */
@@ -12,13 +13,20 @@
 
     const EMOJI_REACTIONS = ['🚀', '❤️', '🔥', '🤖', '💡', '👏'];
 
+    const POSTS_PER_PAGE = 15;
+
     const FeedManager = {
         posts: [],
         residentId: null,
         residentData: null,
+        isAdmin: false,
         editingPostId: null,
         _realtimeChannel: null,
         _pendingImageFile: null,
+        _page: 0,
+        _hasMore: true,
+        _loading: false,
+        _scrollBound: false,
 
         /* ── Init ─────────────────────────────────────────────── */
         async init() {
@@ -26,6 +34,9 @@
                 if (!auth.mockMode && auth.residentId) {
                     this.residentId = auth.residentId;
                     this.residentData = auth.residentData || null;
+                    // Check if user is admin (Founder / Admin role)
+                    const role = (auth.residentData?.role || '').toLowerCase();
+                    this.isAdmin = ['founder', 'admin', 'co-founder', 'moderator'].includes(role);
                 }
                 if (document.querySelector('#feedContainer')) {
                     await this.loadPosts();
@@ -112,8 +123,8 @@
             }
         },
 
-        /* ── Load Posts ───────────────────────────────────────── */
-        async loadPosts() {
+        /* ── Load Posts (with pagination) ────────────────────── */
+        async loadPosts(reset = true) {
             const container = document.querySelector('#feedContainer');
             if (!container) return;
 
@@ -123,7 +134,18 @@
                 return;
             }
 
-            container.innerHTML = '<div style="text-align:center;padding:30px;color:#555;font-family:var(--font-code);font-size:0.7rem;">LOADING_FEED...</div>';
+            if (this._loading) return;
+            this._loading = true;
+
+            if (reset) {
+                this._page = 0;
+                this._hasMore = true;
+                this.posts = [];
+                container.innerHTML = '<div style="text-align:center;padding:30px;color:#555;font-family:var(--font-code);font-size:0.7rem;">LOADING_FEED...</div>';
+            }
+
+            const from = this._page * POSTS_PER_PAGE;
+            const to = from + POSTS_PER_PAGE - 1;
 
             try {
                 const { data, error } = await db
@@ -133,30 +155,66 @@
                         author:residents!posts_author_id_fkey(id, full_name, avatar_url, role)
                     `)
                     .order('created_at', { ascending: false })
-                    .limit(50);
+                    .range(from, to);
 
                 if (error) throw error;
 
+                // Check if more posts available
+                if (!data || data.length < POSTS_PER_PAGE) {
+                    this._hasMore = false;
+                }
+
                 // Fetch my reactions if logged in
                 let myReactions = {};
-                if (this.residentId) {
+                if (this.residentId && data?.length) {
                     try {
+                        const postIds = data.map(p => p.id);
                         const { data: rxData } = await db
                             .from('post_reactions')
                             .select('post_id, emoji')
-                            .eq('resident_id', this.residentId);
+                            .eq('resident_id', this.residentId)
+                            .in('post_id', postIds);
                         if (rxData) {
                             rxData.forEach(r => { myReactions[r.post_id] = r.emoji; });
                         }
                     } catch (_) { }
                 }
 
-                this.posts = (data || []).map(p => ({ ...p, _myReaction: myReactions[p.id] || null }));
+                const newPosts = (data || []).map(p => ({ ...p, _myReaction: myReactions[p.id] || null }));
+                this.posts = reset ? newPosts : [...this.posts, ...newPosts];
+                this._page++;
                 this._renderPosts();
+                this._initInfiniteScroll();
             } catch (err) {
                 console.error('[FEED] Load error:', err);
-                container.innerHTML = `<div style="text-align:center;padding:40px;color:#555;font-family:var(--font-code);font-size:0.75rem;">FEED_ERROR: ${err.message}</div>`;
+                if (reset) {
+                    container.innerHTML = `<div style="text-align:center;padding:40px;color:#555;font-family:var(--font-code);font-size:0.75rem;">FEED_ERROR: ${err.message}</div>`;
+                }
+            } finally {
+                this._loading = false;
             }
+        },
+
+        /* ── Load More (infinite scroll trigger) ─────────────── */
+        async _loadMore() {
+            if (!this._hasMore || this._loading) return;
+            await this.loadPosts(false);
+        },
+
+        _initInfiniteScroll() {
+            if (this._scrollBound) return;
+            this._scrollBound = true;
+
+            const scrollArea = document.querySelector('.feed-scroll-area');
+            if (!scrollArea) return;
+
+            scrollArea.addEventListener('scroll', () => {
+                if (!this._hasMore || this._loading) return;
+                const { scrollTop, scrollHeight, clientHeight } = scrollArea;
+                if (scrollTop + clientHeight >= scrollHeight - 200) {
+                    this._loadMore();
+                }
+            });
         },
 
         /* ── Render Posts ─────────────────────────────────────── */
@@ -174,7 +232,22 @@
                 return;
             }
 
-            container.innerHTML = this.posts.map(post => this._renderPostCard(post)).join('');
+            let html = this.posts.map(post => this._renderPostCard(post)).join('');
+
+            // Load More / End indicator
+            if (this._hasMore) {
+                html += `
+                    <div id="feedLoadMore" style="text-align:center;padding:25px;">
+                        <button onclick="FeedManager._loadMore()" style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);color:var(--tech-blue);padding:10px 30px;border-radius:10px;cursor:pointer;font-family:var(--font-code);font-size:0.75rem;transition:all 0.3s;" onmouseover="this.style.background='rgba(0,229,255,0.15)'" onmouseout="this.style.background='rgba(0,229,255,0.08)'">ЗАГРУЗИТЬ ЕЩЁ ↓</button>
+                    </div>`;
+            } else if (this.posts.length > POSTS_PER_PAGE - 1) {
+                html += `
+                    <div style="text-align:center;padding:20px;color:#333;font-family:var(--font-code);font-size:0.65rem;">
+                        ── END_OF_FEED ──
+                    </div>`;
+            }
+
+            container.innerHTML = html;
         },
 
         _renderPostCard(post) {
@@ -202,11 +275,12 @@
                             </div>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;">
-                            <div class="feed-post-time">${this._formatTime(post.created_at)}</div>
-                            ${post.author_id === this.residentId ? `
+                            <div class="feed-post-time">${this._formatTime(post.created_at)}${post.updated_at && post.updated_at !== post.created_at ? ' <span style="font-size:0.55rem;color:#555;">(ред.)</span>' : ''}</div>
+                            ${(post.author_id === this.residentId || this.isAdmin) ? `
                                 <div style="position:relative;" id="post-menu-wrap-${post.id}">
                                     <button onclick="FeedManager._togglePostMenu('${post.id}')" style="background:transparent;border:none;color:#555;cursor:pointer;font-size:1rem;padding:4px 6px;border-radius:6px;" title="Управление">⋯</button>
-                                    <div id="post-menu-${post.id}" style="display:none;position:absolute;right:0;top:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;z-index:100;min-width:130px;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                                    <div id="post-menu-${post.id}" style="display:none;position:absolute;right:0;top:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;z-index:100;min-width:160px;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                                        <button onclick="FeedManager._startEditPost('${post.id}')" style="width:100%;background:transparent;border:none;color:var(--tech-blue);font-family:var(--font-code);font-size:0.7rem;padding:7px 10px;border-radius:8px;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(0,229,255,0.08)'" onmouseout="this.style.background='transparent'">✏️ Редактировать</button>
                                         <button onclick="FeedManager._deletePost('${post.id}')" style="width:100%;background:transparent;border:none;color:var(--accent);font-family:var(--font-code);font-size:0.7rem;padding:7px 10px;border-radius:8px;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(255,42,42,0.08)'" onmouseout="this.style.background='transparent'">🗑 Удалить</button>
                                     </div>
                                 </div>` : ''}
@@ -218,7 +292,16 @@
                             ${tags.map(t => `<span style="font-family:var(--font-code);font-size:0.6rem;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.15);color:var(--tech-blue);padding:3px 8px;border-radius:4px;">${this._escapeHtml(t)}</span>`).join('')}
                         </div>` : ''}
 
-                    <div class="feed-post-content">${this._linkify(this._escapeHtml(post.content))}</div>
+                    <div class="feed-post-content" id="post-content-${post.id}">${this._linkify(this._escapeHtml(post.content))}</div>
+
+                    <!-- Inline Edit Area (hidden by default) -->
+                    <div id="post-edit-${post.id}" style="display:none;margin-bottom:15px;">
+                        <textarea id="post-edit-textarea-${post.id}" style="width:100%;min-height:80px;background:rgba(0,0,0,0.3);border:1px solid var(--tech-blue);border-radius:12px;padding:12px 16px;color:white;font-family:var(--font-main);font-size:0.9rem;resize:vertical;outline:none;"></textarea>
+                        <div style="display:flex;gap:10px;margin-top:10px;justify-content:flex-end;">
+                            <button onclick="FeedManager._cancelEditPost('${post.id}')" style="background:transparent;border:1px solid var(--border);color:#888;padding:6px 16px;border-radius:8px;cursor:pointer;font-family:var(--font-code);font-size:0.7rem;">ОТМЕНА</button>
+                            <button onclick="FeedManager._saveEditPost('${post.id}')" style="background:var(--tech-blue);border:none;color:black;padding:6px 20px;border-radius:8px;cursor:pointer;font-family:var(--font-code);font-size:0.7rem;font-weight:700;">СОХРАНИТЬ</button>
+                        </div>
+                    </div>
 
                     ${hasImage ? `<img src="${post.image_url}" alt="Post image" style="width:100%;border-radius:14px;margin-bottom:15px;border:1px solid var(--border);object-fit:cover;max-height:400px;" loading="lazy">` : ''}
 
@@ -494,19 +577,113 @@
             }
         },
 
-        /* ── Delete Post ─────────────────────────────────────────*/
+        /* ── Delete Post (author or admin) ──────────────────────*/
         async _deletePost(postId) {
             if (!confirm('Удалить этот пост?')) return;
             const db = window.ALabCore?.db;
             if (!db) return;
+
+            const post = this.posts.find(p => p.id === postId);
+            const isOwner = post?.author_id === this.residentId;
+
             try {
-                const { error } = await db.from('posts').delete().eq('id', postId).eq('author_id', this.residentId);
+                let query = db.from('posts').delete().eq('id', postId);
+                // If not admin, restrict to own posts only
+                if (!this.isAdmin) {
+                    query = query.eq('author_id', this.residentId);
+                }
+                const { error } = await query;
                 if (error) throw error;
                 this.posts = this.posts.filter(p => p.id !== postId);
                 this._renderPosts();
-                this._toast('🗑 Пост удалён');
+                this._toast(isOwner ? '🗑 Пост удалён' : '🗑 Пост удалён (админ)');
             } catch (err) {
                 this._toast('Ошибка удаления: ' + err.message);
+            }
+        },
+
+        /* ── Edit Post (inline) ──────────────────────────────────*/
+        _startEditPost(postId) {
+            // Close the menu
+            const menuEl = document.getElementById(`post-menu-${postId}`);
+            if (menuEl) menuEl.style.display = 'none';
+
+            const post = this.posts.find(p => p.id === postId);
+            if (!post) return;
+
+            // Show edit area, hide content
+            const contentEl = document.getElementById(`post-content-${postId}`);
+            const editEl = document.getElementById(`post-edit-${postId}`);
+            const textareaEl = document.getElementById(`post-edit-textarea-${postId}`);
+
+            if (contentEl) contentEl.style.display = 'none';
+            if (editEl) editEl.style.display = 'block';
+            if (textareaEl) {
+                textareaEl.value = post.content;
+                textareaEl.focus();
+                // Auto-resize
+                textareaEl.style.height = 'auto';
+                textareaEl.style.height = textareaEl.scrollHeight + 'px';
+            }
+
+            this.editingPostId = postId;
+        },
+
+        _cancelEditPost(postId) {
+            const contentEl = document.getElementById(`post-content-${postId}`);
+            const editEl = document.getElementById(`post-edit-${postId}`);
+
+            if (contentEl) contentEl.style.display = '';
+            if (editEl) editEl.style.display = 'none';
+
+            this.editingPostId = null;
+        },
+
+        async _saveEditPost(postId) {
+            const textareaEl = document.getElementById(`post-edit-textarea-${postId}`);
+            if (!textareaEl) return;
+
+            const newContent = textareaEl.value.trim();
+            if (!newContent) { this._toast('⚠️ Текст не может быть пустым'); return; }
+
+            const db = window.ALabCore?.db;
+            if (!db) return;
+
+            try {
+                let query = db.from('posts').update({
+                    content: newContent,
+                    updated_at: new Date().toISOString()
+                }).eq('id', postId);
+
+                // If not admin, restrict to own posts
+                if (!this.isAdmin) {
+                    query = query.eq('author_id', this.residentId);
+                }
+
+                const { error } = await query;
+                if (error) throw error;
+
+                // Update local data
+                const post = this.posts.find(p => p.id === postId);
+                if (post) {
+                    post.content = newContent;
+                    post.updated_at = new Date().toISOString();
+                }
+
+                // Update DOM
+                const contentEl = document.getElementById(`post-content-${postId}`);
+                const editEl = document.getElementById(`post-edit-${postId}`);
+
+                if (contentEl) {
+                    contentEl.innerHTML = this._linkify(this._escapeHtml(newContent));
+                    contentEl.style.display = '';
+                }
+                if (editEl) editEl.style.display = 'none';
+
+                this.editingPostId = null;
+                this._toast('✅ Пост обновлён');
+            } catch (err) {
+                this._toast('Ошибка сохранения: ' + err.message);
             }
         },
 
