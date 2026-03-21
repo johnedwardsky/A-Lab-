@@ -168,13 +168,25 @@
             pointer-events: none;
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
             padding: 30px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(5px);
+            z-index: 10000;
+            backdrop-filter: none;
+            background: transparent;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                background: rgba(3, 4, 7, 0.9);
+                backdrop-filter: blur(15px);
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+            }
         }
 
         .logo {
@@ -193,21 +205,32 @@
         }
 
         .back-btn {
+            pointer-events: auto;
             font-family: var(--font-code);
             text-transform: uppercase;
             font-size: 0.8rem;
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
             padding: 8px 20px;
             border-radius: 50px;
             color: white;
             text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            z-index: 10002;
         }
 
         .back-btn:hover {
             border-color: var(--tech-blue);
             color: var(--tech-blue);
+            box-shadow: 0 0 15px rgba(0,229,255,0.2);
+            transform: translateY(-2px);
         }
+
+        header .logo { pointer-events: auto; z-index: 10002; position: relative; }
 
         /* --- PROFILE HERO --- */
         .profile-hero {
@@ -798,7 +821,7 @@
                 alt="A-LAB" loading="eager" decoding="async"></a>
         <div style="display: flex; align-items: center; pointer-events: auto; gap: 10px;" id="headerActions">
             <button class="theme-toggle hover-trigger" onclick="toggleTheme()" id="themeToggleBtn">🌓</button>
-            <a href="residents.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
+            <a href="index.html" class="back-btn hover-trigger" data-i18n="menu.back">/// НАЗАД</a>
         </div>
     </header>
 
@@ -828,7 +851,7 @@
 
                     .badge.verified::before {
                         content: '✓';
-                        position: fixed;
+                        position: absolute;
                         top: -5px;
                         right: -5px;
                         background: #00FF41;
@@ -974,35 +997,7 @@
     </footer>
 
     <script>
-            
-        const triggers = document.querySelectorAll('.hover-trigger');
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-        if (!isMobile) {
-            let mouseX = 0, mouseY = 0;
-            let cursorX = 0, cursorY = 0;
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
-
-            function updateCursor() {
-                cursorX = mouseX;
-                cursorY = mouseY;
-                cursor.style.left = cursorX + 'px';
-                cursor.style.top = cursorY + 'px';
-                requestAnimationFrame(updateCursor);
-            }
-            updateCursor();
-
-            const setupCursor = () => {
-                document.querySelectorAll('.hover-trigger').forEach(trigger => {
-                    trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                    trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-                });
-            };
-            setupCursor();
-        }
 
         // --- DATA MOCKUP ---
         const residentsData = {
@@ -1010,7 +1005,7 @@
                 name: 'Alex River',
                 role: 'Lead UI/UX Designer',
                 bio: 'Я проектирую цифровые экосистемы, которые сочетают в себе эстетику и функциональность. Моя цель — создавать интерфейсы, которые чувствуются живыми.',
-                img: 'alex_river.png',
+                img: '../assets/img/alex_river.png',
                 tokens: 150,
                 stats: { projects: 42, exhibitions: 5, exp: 8 },
                 skills: ['Figma', 'React', 'Three.js', 'WebGPU', 'AI Prototyping'],
@@ -1028,7 +1023,7 @@
                 name: 'Maya Neural',
                 role: 'AI Engineer & Artist',
                 bio: 'Стирая грани между кодом и кистью. Мои работы — это симбиоз нейронных сетей и человеческого воображения.',
-                img: 'maya_neural.png',
+                img: '../assets/img/maya_neural.png',
                 tokens: 150,
                 stats: { projects: 128, exhibitions: 12, exp: 4 },
                 skills: ['Python', 'PyTorch', 'Stable Diffusion', 'C4D', 'MLOps'],
@@ -1046,7 +1041,7 @@
                 name: 'Viktor Code',
                 role: 'Full-Stack Developer',
                 bio: 'Архитектор высоконагруженных систем. Создаю масштабируемые решения для миллионов пользователей.',
-                img: 'viktor_code.png',
+                img: '../assets/img/viktor_code.png',
                 tokens: 150,
                 stats: { projects: 67, exhibitions: 3, exp: 9 },
                 skills: ['Node.js', 'React', 'AWS', 'Docker', 'Kubernetes'],
@@ -1064,7 +1059,7 @@
                 name: 'Sophia Brand',
                 role: 'Brand Strategist',
                 bio: 'Создаю идентичность брендов будущего. Каждый проект — это история, которая резонирует с аудиторией.',
-                img: 'sophia_brand.png',
+                img: '../assets/img/sophia_brand.png',
                 tokens: 150,
                 stats: { projects: 34, exhibitions: 8, exp: 11 },
                 skills: ['Branding', 'Strategy', 'Marketing', 'Adobe Suite', 'Storytelling'],
@@ -1082,7 +1077,7 @@
                 name: 'Max Neural',
                 role: 'ML Engineer',
                 bio: 'Разработчик нейронных сетей и AI-решений. Специализируюсь на NLP и компьютерном зрении.',
-                img: 'max_neural.png',
+                img: '../assets/img/max_neural.png',
                 tokens: 150,
                 stats: { projects: 89, exhibitions: 6, exp: 5 },
                 skills: ['PyTorch', 'TensorFlow', 'NLP', 'Computer Vision', 'MLOps'],
@@ -1100,7 +1095,7 @@
                 name: 'Elena Motion',
                 role: 'Motion Designer',
                 bio: 'Создаю захватывающие анимации и motion-графику. Каждый кадр — это искусство в движении.',
-                img: 'elena_motion.png',
+                img: '../assets/img/elena_motion.png',
                 tokens: 150,
                 stats: { projects: 56, exhibitions: 9, exp: 6 },
                 skills: ['After Effects', 'Cinema 4D', '3D Animation', 'Blender', 'Houdini'],
@@ -1117,7 +1112,7 @@
             'ivan-lakshinsky': {
                 name: 'Иван Лакшинский',
                 role: 'CEO & Chief Admin',
-                img: 'ivan_tech.png',
+                img: '../assets/img/Ivan Lakshinsky.jpg',
                 tokens: 50000,
                 bio: 'Основатель лаборатории. Архитектор цифровых реальностей. Создаю системы, которые живут собственной жизнью.',
                 stats: { projects: 42, exhibitions: 15, exp: 12 },
@@ -1137,7 +1132,7 @@
             'alexey-pak': {
                 name: 'Алексей Пак',
                 role: 'Strategic Director',
-                img: 'alexey_tech.png',
+                img: '../assets/img/Alexey Pak.jpg',
                 tokens: 50000,
                 bio: 'Стратегическое развитие и масштабирование. Строю мосты между технологиями A-Lab и глобальным рынком.',
                 stats: { projects: 85, exhibitions: 5, exp: 15 },
@@ -1387,11 +1382,7 @@
                 });
             }
 
-            // Re-bind cursor
-            document.querySelectorAll('.hover-trigger').forEach(trigger => {
-                trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-                trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-            });
+            // cursor.js handles hover effects globally via event delegation on window
 
             // Auth actions in header
             const checkAuthStatus = async () => {
@@ -1432,11 +1423,26 @@
             return icons[key.toLowerCase()] || '🔗';
         }
 
+
+        // Wait for Supabase client to be available, then init profile
+        async function waitForSupabase(maxWait = 3000) {
+            const start = Date.now();
+            while (!window.ALabCore?.db && Date.now() - start < maxWait) {
+                await new Promise(r => setTimeout(r, 100));
+            }
+            return !!window.ALabCore?.db;
+        }
+
+        async function startProfile() {
+            await waitForSupabase();
+            initProfile();
+        }
+
         // Initialize
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initProfile);
+            document.addEventListener('DOMContentLoaded', startProfile);
         } else {
-            initProfile();
+            startProfile();
         }
 
         // --- TERMINAL LOGIC ---

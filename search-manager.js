@@ -195,7 +195,7 @@ const SearchManager = (() => {
 
         filteredResidents.slice(0, 5).forEach(r => {
             html += `
-                <div class="search-item" onclick="window.location.href='residents.html'">
+                <div class="search-item" onclick="window.location.href='residents/index.html'">
                     <span class="title">${r.full_name}</span>
                     <span class="type">RESIDENT // ${r.role}</span>
                 </div>

@@ -2355,18 +2355,17 @@
             <div class="right-panel">
                 <section class="section-card">
                     <div class="section-title">Активные Сессии</div>
-                    <div
+                    <div id="activeSessionInfo"
                         style="font-size: 0.75rem; padding: 15px; background: rgba(0,229,255,0.05); border: 1px solid var(--tech-blue); border-radius: 8px;">
-                        <b>Chrome / MacOS</b><br>
-                        <span style="font-size: 0.65rem; opacity: 0.6; display: block; margin-top: 5px;">IP:
-                            192.168.1.1</span>
+                        <b id="sessionBrowser">Текущий браузер</b><br>
+                        <span style="font-size: 0.65rem; opacity: 0.6; display: block; margin-top: 5px;" id="sessionIp">Загрузка...</span>
                         <span
                             style="font-size: 0.6rem; color: var(--tech-blue); text-transform: uppercase; margin-top: 5px; display: block;">Текущая
                             сессия</span>
                     </div>
                     <button class="status-btn"
-                        style="width: 100%; margin-top: 15px; border-color: var(--accent); color: var(--accent);">Завершить
-                        остальные</button>
+                        style="width: 100%; margin-top: 15px; border-color: var(--accent); color: var(--accent);"
+                        onclick="signOutAllSessions()">Завершить остальные</button>
                 </section>
             </div>
         </div>
@@ -2955,9 +2954,51 @@
                 window.switchTab = function (tabId) {
                     oldSwitch(tabId);
                     if (tabId === 'messages') tgInit();
+                    if (tabId === 'security') _initSecurityTab();
                 };
             }
         });
+
+        // ========== Security Tab: real browser detection ==========
+        function _initSecurityTab() {
+            const browserEl = document.getElementById('sessionBrowser');
+            const ipEl = document.getElementById('sessionIp');
+            if (!browserEl || !ipEl) return;
+
+            // Detect browser
+            const ua = navigator.userAgent;
+            let browser = 'Unknown Browser';
+            if (/Edg/.test(ua)) browser = 'Edge';
+            else if (/OPR|Opera/.test(ua)) browser = 'Opera';
+            else if (/Chrome/.test(ua) && !/Chromium/.test(ua)) browser = 'Chrome';
+            else if (/Firefox/.test(ua)) browser = 'Firefox';
+            else if (/Safari/.test(ua)) browser = 'Safari';
+            else if (/Chromium/.test(ua)) browser = 'Chromium';
+
+            let os = 'Unknown OS';
+            if (/Windows/.test(ua)) os = 'Windows';
+            else if (/Macintosh|Mac OS X/.test(ua)) os = 'macOS';
+            else if (/iPhone|iPad/.test(ua)) os = 'iOS';
+            else if (/Android/.test(ua)) os = 'Android';
+            else if (/Linux/.test(ua)) os = 'Linux';
+
+            browserEl.textContent = `${browser} / ${os}`;
+            ipEl.textContent = 'Текущая сессия (IP определяется)';
+        }
+
+        // Sign out from all sessions via Supabase
+        async function signOutAllSessions() {
+            const db = window.ALabCore?.db;
+            if (!db) { showToast('❌ База данных недоступна'); return; }
+            if (!confirm('Завершить все сессии? Вы будете перенаправлены на страницу входа.')) return;
+            try {
+                await db.auth.signOut({ scope: 'global' });
+                showToast('✅ Все сессии завершены');
+                setTimeout(() => window.location.href = '../login.html', 1200);
+            } catch (e) {
+                showToast('❌ Ошибка: ' + e.message);
+            }
+        }
 
         // Theme
         function toggleTheme() {

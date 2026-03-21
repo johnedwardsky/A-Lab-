@@ -17,7 +17,7 @@ const Sidebar = (() => {
     const guestItems = [
         { id: 'join', icon: '🚀', labelKey: 'sidebar.join', action: 'navigate', url: 'register-resident.html' },
         { id: 'feed', icon: '📡', labelKey: 'sidebar.feed', action: 'tab' },
-        { id: 'residents', icon: '👥', labelKey: 'sidebar.residents', action: 'navigate', url: 'residents.html' },
+        { id: 'residents', icon: '👥', labelKey: 'sidebar.residents', action: 'navigate', url: 'residents/index.html' },
         { id: 'projects', icon: '📋', labelKey: 'sidebar.projects', action: 'tab' },
     ];
 
