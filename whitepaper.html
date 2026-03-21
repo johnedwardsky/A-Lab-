@@ -582,20 +582,148 @@
                 </div>
             </div>
 
-            <div class="chart-visual">
-                <!-- CSS Chart visualization -->
-                <div class="chart-ring">
-                    <div class="chart-segment" style="transform: rotate(0deg); border-top-color: var(--tech-blue);">
+            <div class="dynamic-tokenomics" style="margin-top: 40px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center; background: rgba(11, 13, 20, 0.5); border: 1px solid var(--border); border-radius: 12px; padding: 40px; position: relative; overflow: hidden;">
+                <!-- background grid line effect -->
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 229, 255, 0.03) 2px, rgba(0, 229, 255, 0.03) 4px); pointer-events: none;"></div>
+
+                <div class="chart-container" style="position: relative; width: 250px; height: 250px; flex-shrink: 0; margin: 0 auto;">
+                    <!-- SVG Donut Chart -->
+                    <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));">
+                        
+                        <!-- Base Track -->
+                        <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--border)" stroke-width="15" />
+                        
+                        <!-- 40% RESIDENTS (TECH BLUE) -->
+                        <circle class="donut-segment hover-trigger" data-title="Резерв Резидентов" data-desc="Фонд вознаграждения инженеров и ученых за R&D. Выплачивается через smart-контракты." data-value="40" data-percent="40%" stroke="var(--tech-blue)" cx="50" cy="50" r="40" fill="transparent" stroke-width="15" stroke-dasharray="100.5 251.2" stroke-dashoffset="0" style="transition: all 0.4s ease; cursor: pointer;" />
+                        
+                        <!-- 25% TREASURY (ACCENT) -->
+                        <circle class="donut-segment hover-trigger" data-title="A-LAB Treasury" data-desc="Користится для со-финансирования R&D, развития лаборатории и покрытия OPEX." data-value="25" data-percent="25%" stroke="var(--accent)" cx="50" cy="50" r="40" fill="transparent" stroke-width="15" stroke-dasharray="62.8 251.2" stroke-dashoffset="-100.5" style="transition: all 0.4s ease; cursor: pointer;" />
+                        
+                        <!-- 20% LIQUIDITY RESERVES (GREEN) -->
+                        <circle class="donut-segment hover-trigger" data-title="Фонд Ликвидности" data-desc="Специальный 'фиатный мост' для обеспечения безопасного вывода токенов в стабильный кэш." data-value="20" data-percent="20%" stroke="#00FF41" cx="50" cy="50" r="40" fill="transparent" stroke-width="15" stroke-dasharray="50.2 251.2" stroke-dashoffset="-163.3" style="transition: all 0.4s ease; cursor: pointer;" />
+
+                        <!-- 15% INVESTORS/SEED (WHITE) -->
+                        <circle class="donut-segment hover-trigger" data-title="Ранние Инвесторы" data-desc="Доля Seed-инвесторов, выкупающих MVP. Включает строгий лок-ап и жесткие условия." data-value="15" data-percent="15%" stroke="#ffffff" cx="50" cy="50" r="40" fill="transparent" stroke-width="15" stroke-dasharray="37.6 251.2" stroke-dashoffset="-213.5" style="transition: all 0.4s ease; cursor: pointer;" />
+                    </svg>
+                    
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none;">
+                        <div id="chart-center-value" style="font-family: var(--font-code); font-size: 2.2rem; margin-bottom: -5px; color: #fff; font-weight: bold; text-shadow: 0 0 15px rgba(255,255,255,0.2);">100%</div>
+                        <div id="chart-center-label" style="font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">TOTAL SUPPLY</div>
                     </div>
-                    <div class="chart-segment" style="transform: rotate(144deg); border-top-color: var(--accent);">
+                </div>
+
+                <div class="chart-info" style="flex-grow: 1; min-width: 250px; z-index: 1;">
+                    <div id="info-panel" style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--border); padding: 25px; border-radius: 0 8px 8px 0; backdrop-filter: blur(10px); transition: all 0.3s ease;">
+                        <div id="info-title" style="font-family: var(--font-code); font-size: 1.2rem; margin-bottom: 10px; color: var(--text); text-transform: uppercase; transition: color 0.3s ease;">
+                            Токеномика A-LAB
+                        </div>
+                        <div id="info-desc" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; min-height: 50px;">
+                            Наведите на дуги диаграммы, чтобы увидеть детальную информацию по каждому пулу эмиссии. Модель строго ограничена.
+                        </div>
                     </div>
-                    <div class="chart-segment" style="transform: rotate(252deg); border-top-color: #555;"></div>
+                    
+                    <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="legend-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-family: var(--font-code);">
+                            <div style="width: 12px; height: 12px; background: var(--tech-blue); border-radius: 2px;"></div>
+                            <span style="color: white; white-space: nowrap;">40% Резиденты</span>
+                        </div>
+                        <div class="legend-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-family: var(--font-code);">
+                            <div style="width: 12px; height: 12px; background: var(--accent); border-radius: 2px;"></div>
+                            <span style="color: white;">25% Treasury</span>
+                        </div>
+                        <div class="legend-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-family: var(--font-code);">
+                            <div style="width: 12px; height: 12px; background: #00FF41; border-radius: 2px;"></div>
+                            <span style="color: white;">20% Ликвидность</span>
+                        </div>
+                        <div class="legend-item" style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-family: var(--font-code);">
+                            <div style="width: 12px; height: 12px; background: #ffffff; border-radius: 2px;"></div>
+                            <span style="color: white;">15% Инвесторы</span>
+                        </div>
+                    </div>
                 </div>
-                <div
-                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-family: var(--font-code); font-size: 0.8rem;">
-                    <div>40% RESIDENTS</div>
-                    <div style="color: var(--accent);">30% TREASURY</div>
-                </div>
+
+                <style>
+                    .donut-segment:hover {
+                        opacity: 1 !important;
+                        stroke-width: 18;
+                        cursor: none;
+                        filter: drop-shadow(0 0 10px currentColor);
+                    }
+                    @keyframes corePulse {
+                        0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); }
+                        50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+                        100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); }
+                    }
+                    .chart-container::after {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 130px;
+                        height: 130px;
+                        background: radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 70%);
+                        border-radius: 50%;
+                        transform: translate(-50%, -50%);
+                        animation: corePulse 4s infinite ease-in-out;
+                        pointer-events: none;
+                        z-index: -1;
+                        transition: background 0.3s ease;
+                    }
+                </style>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const segments = document.querySelectorAll('.donut-segment');
+                        const infoTitle = document.getElementById('info-title');
+                        const infoDesc = document.getElementById('info-desc');
+                        const infoPanel = document.getElementById('info-panel');
+                        const centerValue = document.getElementById('chart-center-value');
+                        const centerLabel = document.getElementById('chart-center-label');
+                        const containerAfter = document.querySelector('.chart-container');
+
+                        segments.forEach(seg => {
+                            seg.addEventListener('mouseenter', (e) => {
+                                const title = e.target.getAttribute('data-title');
+                                const desc = e.target.getAttribute('data-desc');
+                                const color = e.target.getAttribute('stroke');
+                                const percent = e.target.getAttribute('data-percent');
+                                
+                                infoTitle.innerText = title;
+                                infoTitle.style.color = color;
+                                infoTitle.style.textShadow = `0 0 10px ${color}44`;
+                                infoDesc.innerText = desc;
+                                infoPanel.style.borderLeftColor = color;
+                                infoPanel.style.background = `rgba(0,0,0,0.6)`;
+                                
+                                centerValue.innerText = percent;
+                                centerValue.style.color = color;
+                                centerValue.style.textShadow = `0 0 15px ${color}aa`;
+                                centerLabel.innerText = title;
+                                
+                                // Reset other opacities slightly
+                                segments.forEach(s => {
+                                    if(s !== e.target) s.style.opacity = '0.15';
+                                });
+                            });
+                            
+                            seg.addEventListener('mouseleave', () => {
+                                infoTitle.innerText = 'Токеномика A-LAB';
+                                infoTitle.style.color = 'var(--text)';
+                                infoTitle.style.textShadow = 'none';
+                                infoDesc.innerText = 'Наведите на дуги диаграммы, чтобы увидеть детальную информацию по каждому пулу эмиссии. Модель строго ограничена.';
+                                infoPanel.style.borderLeftColor = 'var(--border)';
+                                infoPanel.style.background = 'rgba(0,0,0,0.4)';
+                                
+                                centerValue.innerText = '100%';
+                                centerValue.style.color = '#fff';
+                                centerValue.style.textShadow = '0 0 15px rgba(255,255,255,0.2)';
+                                centerLabel.innerText = 'TOTAL SUPPLY';
+                                
+                                segments.forEach(s => s.style.opacity = '1');
+                            });
+                        });
+                    });
+                </script>
             </div>
         </section>
 
