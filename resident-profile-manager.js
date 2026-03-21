@@ -44,15 +44,20 @@
                     .from('residents')
                     .select('*')
                     .eq('user_id', this.userId)
-                    .single();
+                    .maybeSingle();
 
                 if (error) throw error;
 
-                this.profile = data;
-                this.residentId = data.id;
-
-                document.dispatchEvent(new CustomEvent('rpm:profile-loaded', { detail: data }));
-                return data;
+                if (data) {
+                    this.profile = data;
+                    this.residentId = data.id;
+                    document.dispatchEvent(new CustomEvent('rpm:profile-loaded', { detail: data }));
+                    return data;
+                } else {
+                    console.warn('[RPM] No resident profile found for user:', this.userId);
+                    document.dispatchEvent(new CustomEvent('rpm:profile-missing', { detail: { userId: this.userId } }));
+                    return null;
+                }
             } catch (err) {
                 console.error('[RPM] loadProfile error:', err);
             }
@@ -60,24 +65,49 @@
 
         /* =========================================================
          * PROFILE — SAVE (identity + bio + visibility)
+         * Creates new record if profile doesn't exist yet.
          * ========================================================= */
         async saveProfile({ fullName, role, bio, visible }) {
             const db = window.ALabCore?.db;
-            if (!db || !this.residentId) return { error: 'not_ready' };
+            if (!db) return { error: 'not_connected' };
 
             const links = { ...(this.profile?.links || {}), visibility: visible ? 'public' : 'hidden' };
 
             try {
-                const { data, error } = await db
-                    .from('residents')
-                    .update({ full_name: fullName, role, bio, links })
-                    .eq('id', this.residentId)
-                    .select()
-                    .single();
+                let data, error;
+
+                if (this.residentId) {
+                    // UPDATE existing profile
+                    ({ data, error } = await db
+                        .from('residents')
+                        .update({ full_name: fullName, role, bio, links })
+                        .eq('id', this.residentId)
+                        .select()
+                        .single());
+                } else {
+                    // INSERT new profile (first save)
+                    ({ data, error } = await db
+                        .from('residents')
+                        .insert({
+                            user_id: this.userId,
+                            full_name: fullName || 'Новый Резидент',
+                            role: role || 'Resident',
+                            bio: bio || '',
+                            links
+                        })
+                        .select()
+                        .single());
+
+                    if (!error && data) {
+                        this.residentId = data.id;
+                        console.log('[RPM] Created new resident profile:', data.id);
+                    }
+                }
 
                 if (error) throw error;
                 this.profile = data;
                 document.dispatchEvent(new CustomEvent('rpm:profile-saved', { detail: data }));
+                document.dispatchEvent(new CustomEvent('rpm:profile-loaded', { detail: data }));
                 return { data };
             } catch (err) {
                 console.error('[RPM] saveProfile error:', err);

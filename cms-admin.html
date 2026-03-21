@@ -796,6 +796,24 @@
             border: 1px solid rgba(255, 42, 42, 0.3);
         }
 
+        .badge-success {
+            background: rgba(0, 200, 83, 0.1);
+            color: #00C853;
+            border: 1px solid rgba(0, 200, 83, 0.3);
+        }
+
+        .badge-danger {
+            background: rgba(255, 68, 68, 0.1);
+            color: #FF4444;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(255, 184, 0, 0.15);
+            color: #FFB800;
+            border: 1px solid rgba(255, 184, 0, 0.3);
+        }
+
         /* --- ASTRA TOKEN CARD --- */
         .astra-card {
             background: var(--surface);
@@ -1002,9 +1020,10 @@
             <div class="section-header">
                 <div class="filter-pills">
                     <button class="filter-pill active hover-trigger" onclick="filterLeads('all')">ВСЕ</button>
-                    <button class="filter-pill hover-trigger" onclick="filterLeads('new')">НОВЫЕ</button>
-                    <button class="filter-pill hover-trigger" onclick="filterLeads('contacted')">В РАБОТЕ</button>
-                    <button class="filter-pill hover-trigger" onclick="filterLeads('closed')">ЗАКРЫТО</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLeads('new')">🆕 НОВЫЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLeads('contacted')">📞 В РАБОТЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLeads('approved')">✅ ПРИНЯТЫЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterLeads('rejected')">❌ ОТКЛОНЁННЫЕ</button>
                 </div>
                 <button class="btn btn-secondary btn-sm hover-trigger" onclick="exportCSV('leads')">⬇ CSV</button>
             </div>
@@ -1016,10 +1035,10 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Имя</th>
-                            <th>Контакт</th>
+                            <th>Имя / Email</th>
+                            <th>Telegram</th>
                             <th>Источник</th>
-                            <th>Сообщение</th>
+                            <th>Детали / Сообщение</th>
                             <th>Статус</th>
                             <th>Дата</th>
                             <th>Действия</th>
@@ -1449,7 +1468,7 @@
     <script defer src="auth.js"></script>
     <script defer src="main-menu.js"></script>
                 
-    <script defer src="cms-engine.js"></script>
+    <script defer src="cms-engine.js?v=2"></script>
     <script defer src="cursor.js"></script>
 </body>
 

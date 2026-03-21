@@ -1799,44 +1799,61 @@
                 <div id="postsList" style="display:none;"></div>
             </div>
 
-            <!-- RIGHT PANEL: Online residents + Tags -->
+            <!-- RIGHT PANEL: Online residents + Tags + Stats -->
             <aside class="feed-right-panel">
+                <!-- Online Residents -->
                 <div class="feed-section-header">В СЕТИ // ONLINE</div>
                 <div id="onlineResidentsList">
                     <!-- Dynamically populated by feed-manager.js -->
                 </div>
 
+                <!-- Themes - Dynamic -->
                 <div style="margin-top: 30px;">
                     <div class="feed-section-header">ТЕМЫ // THEMES</div>
-                    <div>
-                        <a href="#" class="feed-theme-link hover-trigger"><span>Development</span><span
-                                class="count">24</span></a>
-                        <a href="#" class="feed-theme-link hover-trigger"><span>Neural Art</span><span
-                                class="count">18</span></a>
-                        <a href="#" class="feed-theme-link hover-trigger"><span>Cyber Security</span><span
-                                class="count">7</span></a>
-                        <a href="#" class="feed-theme-link hover-trigger"><span>R&D Updates</span><span
-                                class="count">12</span></a>
+                    <div id="feedThemesList">
+                        <a href="#" class="feed-theme-link hover-trigger" onclick="filterFeedByTheme('Development', event)"><span>Development</span><span class="count" id="theme-count-development">0</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger" onclick="filterFeedByTheme('Neural Art', event)"><span>Neural Art</span><span class="count" id="theme-count-neural-art">0</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger" onclick="filterFeedByTheme('Cyber Security', event)"><span>Cyber Security</span><span class="count" id="theme-count-cyber-security">0</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger" onclick="filterFeedByTheme('R&D Updates', event)"><span>R&D Updates</span><span class="count" id="theme-count-r-d-updates">0</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger" onclick="filterFeedByTheme('Community', event)"><span>Community</span><span class="count" id="theme-count-community">0</span></a>
+                        <a href="#" class="feed-theme-link hover-trigger" onclick="filterFeedByTheme(null, event)" style="color:var(--tech-blue);"><span>🔄 Все посты</span><span class="count">ALL</span></a>
                     </div>
 
+                    <!-- Tags - Dynamic from posts -->
                     <div class="feed-section-header" style="margin-top: 25px;">ТЕГИ // TAGS</div>
-                    <div class="feed-tag-cloud">
-                        <a href="#" class="feed-tag-item hover-trigger">#AI</a>
-                        <a href="#" class="feed-tag-item hover-trigger">#Web3</a>
-                        <a href="#" class="feed-tag-item hover-trigger">#Cyberpunk</a>
-                        <a href="#" class="feed-tag-item hover-trigger">#Neural</a>
-                        <a href="#" class="feed-tag-item hover-trigger">#Code</a>
-                        <a href="#" class="feed-tag-item hover-trigger">#UX</a>
-                        <a href="#" class="feed-tag-item hover-trigger">#Matrix</a>
-                        <a href="#" class="feed-tag-item hover-trigger">#Supabase</a>
+                    <div class="feed-tag-cloud" id="feedTagCloud">
+                        <a href="#" class="feed-tag-item hover-trigger" onclick="filterFeedByTag('#AI', event)">#AI</a>
+                        <a href="#" class="feed-tag-item hover-trigger" onclick="filterFeedByTag('#Web3', event)">#Web3</a>
+                        <a href="#" class="feed-tag-item hover-trigger" onclick="filterFeedByTag('#Cyberpunk', event)">#Cyberpunk</a>
+                        <a href="#" class="feed-tag-item hover-trigger" onclick="filterFeedByTag('#Neural', event)">#Neural</a>
+                        <a href="#" class="feed-tag-item hover-trigger" onclick="filterFeedByTag('#Code', event)">#Code</a>
+                        <a href="#" class="feed-tag-item hover-trigger" onclick="filterFeedByTag('#UX', event)">#UX</a>
                     </div>
 
-                    <div class="feed-section-header">СВЯЗЬ // CHANNELS</div>
-                    <a href="#" class="feed-theme-link hover-trigger">
-                        <div>Discord Server</div><span class="count">JOIN</span>
+                    <!-- Community Stats -->
+                    <div class="feed-section-header" style="margin-top: 25px;">СТАТИСТИКА // STATS</div>
+                    <div id="feedCommunityStats" style="display:flex;flex-direction:column;gap:8px;">
+                        <div class="feed-theme-link" style="cursor:default;">
+                            <div>📝 Постов</div><span class="count" id="feed-stat-posts">0</span>
+                        </div>
+                        <div class="feed-theme-link" style="cursor:default;">
+                            <div>👥 Резидентов</div><span class="count" id="feed-stat-residents">0</span>
+                        </div>
+                        <div class="feed-theme-link" style="cursor:default;">
+                            <div>🚀 Реакций</div><span class="count" id="feed-stat-reactions">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Channels -->
+                    <div class="feed-section-header" style="margin-top: 25px;">СВЯЗЬ // CHANNELS</div>
+                    <a href="https://t.me/A_LAB_CORE" target="_blank" class="feed-theme-link hover-trigger">
+                        <div>✈️ Telegram Group</div><span class="count">JOIN</span>
                     </a>
-                    <a href="#" class="feed-theme-link hover-trigger">
-                        <div>Telegram Group</div><span class="count">JOIN</span>
+                    <a href="https://discord.gg/a-lab" target="_blank" class="feed-theme-link hover-trigger">
+                        <div>🎮 Discord Server</div><span class="count">JOIN</span>
+                    </a>
+                    <a href="https://github.com/a-lab-tech" target="_blank" class="feed-theme-link hover-trigger">
+                        <div>🐙 GitHub</div><span class="count">CODE</span>
                     </a>
                 </div>
             </aside>
@@ -2444,7 +2461,7 @@
     <script src="../i18n.js"></script>
     <script src="../toast.js"></script>
     <script src="../auth-guard.js"></script>
-    <script src="../resident-profile-manager.js"></script>
+    <script src="../resident-profile-manager.js?v=3"></script>
     <script defer src="../feed-manager.js"></script>
 
     <script>
@@ -2540,6 +2557,8 @@
                 window.FeedManager.loadPosts();
                 window.FeedManager.loadOnlineResidents();
             }
+            // Load sidebar stats
+            updateFeedSidebarStats();
         }
 
         let _feedPendingImageFile = null;
@@ -2625,6 +2644,150 @@
             closeFeedShareModal();
             switchTab('messages');
         }
+
+        /* ========================================================
+         * FEED FILTER BY THEME
+         * ======================================================== */
+        let _feedActiveTheme = null;
+        let _feedActiveTag = null;
+
+        function filterFeedByTheme(theme, event) {
+            if (event) event.preventDefault();
+            _feedActiveTheme = theme;
+            _feedActiveTag = null;
+
+            // Update active state in sidebar
+            document.querySelectorAll('#feedThemesList .feed-theme-link').forEach(a => {
+                a.style.background = '';
+                a.style.borderColor = '';
+            });
+            if (theme && event?.target?.closest) {
+                const link = event.target.closest('.feed-theme-link');
+                if (link) {
+                    link.style.background = 'rgba(0,229,255,0.08)';
+                    link.style.borderColor = 'rgba(0,229,255,0.3)';
+                }
+            }
+
+            _applyFeedFilter();
+        }
+
+        function filterFeedByTag(tag, event) {
+            if (event) event.preventDefault();
+            _feedActiveTag = tag;
+            _feedActiveTheme = null;
+
+            // Update active tag
+            document.querySelectorAll('#feedTagCloud .feed-tag-item').forEach(a => {
+                a.style.background = a.textContent.trim() === tag ? 'rgba(0,229,255,0.15)' : '';
+                a.style.color = a.textContent.trim() === tag ? 'white' : '';
+            });
+
+            _applyFeedFilter();
+        }
+
+        function _applyFeedFilter() {
+            if (!window.FeedManager) return;
+
+            const allPosts = window.FeedManager.posts;
+            if (!allPosts) return;
+
+            const container = document.querySelector('#feedContainer');
+            if (!container) return;
+
+            let filtered = allPosts;
+
+            if (_feedActiveTheme) {
+                filtered = allPosts.filter(p => {
+                    const tags = Array.isArray(p.tags) ? p.tags : [];
+                    return tags.some(t => t.toLowerCase() === _feedActiveTheme.toLowerCase());
+                });
+            }
+
+            if (_feedActiveTag) {
+                const tagClean = _feedActiveTag.replace('#', '').toLowerCase();
+                filtered = allPosts.filter(p => {
+                    const content = (p.content || '').toLowerCase();
+                    const tags = Array.isArray(p.tags) ? p.tags.map(t => t.toLowerCase()) : [];
+                    return content.includes('#' + tagClean) || tags.some(t => t.toLowerCase().includes(tagClean));
+                });
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:60px 40px;color:#555;font-family:var(--font-code);font-size:0.8rem;border:1px dashed rgba(255,255,255,0.05);border-radius:20px;">
+                        <div style="font-size:2rem;margin-bottom:12px;">🔍</div>
+                        НЕТ ПОСТОВ ПО ФИЛЬТРУ<br>
+                        <span style="font-size:0.65rem;color:#333;margin-top:8px;display:block;">${_feedActiveTheme || _feedActiveTag || 'Все'}</span>
+                        <button onclick="filterFeedByTheme(null)" style="margin-top:16px;background:var(--tech-blue);border:none;color:black;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:var(--font-code);font-size:0.7rem;">ПОКАЗАТЬ ВСЕ</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(post => window.FeedManager._renderPostCard(post)).join('');
+        }
+
+        /* ========================================================
+         * FEED RIGHT PANEL — DYNAMIC DATA
+         * ======================================================== */
+        async function updateFeedSidebarStats() {
+            const db = window.ALabCore?.db;
+            if (!db || !window.ALabCore.isConnected) return;
+
+            try {
+                // Theme counts
+                const { data: posts } = await db.from('posts').select('tags');
+                const themeCounts = {};
+                (posts || []).forEach(p => {
+                    const tags = Array.isArray(p.tags) ? p.tags : [];
+                    tags.forEach(t => {
+                        const key = t.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '-');
+                        themeCounts[key] = (themeCounts[key] || 0) + 1;
+                    });
+                });
+
+                // Update theme counters
+                ['development', 'neural-art', 'cyber-security', 'r-d-updates', 'community'].forEach(key => {
+                    const el = document.getElementById(`theme-count-${key}`);
+                    if (el) el.textContent = themeCounts[key] || 0;
+                });
+
+                // Community stats
+                const totalPosts = posts?.length || 0;
+                document.getElementById('feed-stat-posts')?.textContent && (document.getElementById('feed-stat-posts').textContent = totalPosts);
+
+                const { count: residentsCount } = await db.from('residents').select('id', { count: 'exact', head: true });
+                const rEl = document.getElementById('feed-stat-residents');
+                if (rEl) rEl.textContent = residentsCount || 0;
+
+                const { count: reactionsCount } = await db.from('post_reactions').select('id', { count: 'exact', head: true });
+                const rxEl = document.getElementById('feed-stat-reactions');
+                if (rxEl) rxEl.textContent = reactionsCount || 0;
+
+            } catch (e) {
+                console.warn('[FEED] Stats update error:', e);
+            }
+        }
+
+        /* ========================================================
+         * UPDATE last_seen — track online presence
+         * ======================================================== */
+        async function updateLastSeen() {
+            const db = window.ALabCore?.db;
+            const rpm = window.ResidentProfileManager;
+            if (!db || !window.ALabCore.isConnected || !rpm?.residentId) return;
+
+            try {
+                await db.from('residents')
+                    .update({ last_seen: new Date().toISOString() })
+                    .eq('id', rpm.residentId);
+            } catch (_) { }
+        }
+
+        // Update last_seen every 5 minutes
+        setInterval(updateLastSeen, 5 * 60 * 1000);
+        // Initial call after page load
+        setTimeout(updateLastSeen, 3000);
 
         // Hook: init feed + portfolio tabs when activated
         (function () {
@@ -3572,7 +3735,7 @@
 
         async function saveProfile() {
             const rpm = window.ResidentProfileManager;
-            if (!rpm || !rpm.residentId) { showToast('⚠️ Не авторизован'); return; }
+            if (!rpm || !rpm.userId) { showToast('⚠️ Не авторизован'); return; }
 
             const fullName = document.getElementById('profileName').value.trim();
             const role = document.getElementById('profileRole').value.trim();
@@ -3581,15 +3744,15 @@
 
             if (!fullName) { showToast('⚠️ Укажите имя'); return; }
 
-            // Save skills first if any new ones added
-            await saveSkillsToDb();
+            // Save skills first if any new ones added (only if profile exists)
+            if (rpm.residentId) await saveSkillsToDb();
 
             const { data, error } = await rpm.saveProfile({ fullName, role, bio, visible });
             if (error) { showToast('❌ Ошибка: ' + error); return; }
 
             // Upload avatar if a new file was selected
             const avatarFile = document.getElementById('avatarInput').files[0];
-            if (avatarFile) {
+            if (avatarFile && rpm.residentId) {
                 const { url, error: avatarError } = await rpm.uploadAvatar(avatarFile);
                 if (url) {
                     document.getElementById('avatarPreview').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
@@ -3600,6 +3763,12 @@
 
             updatePreview();
             showToast('✅ Профиль сохранён!');
+
+            // Reload wallet and residents after profile creation
+            if (rpm.residentId) {
+                loadWalletData();
+                loadResidentsForMessenger();
+            }
         }
 
         async function saveSkillsToDb() {

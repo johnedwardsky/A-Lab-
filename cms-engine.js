@@ -11,6 +11,8 @@
     const CMS = {
         db: null,
 
+        _user: null,
+
         async init() {
             // Wait for Supabase
             let attempts = 0;
@@ -22,6 +24,19 @@
             if (!this.db) {
                 console.warn('[CMS] Supabase not available');
                 return;
+            }
+
+            // Check authentication
+            try {
+                const { data: { user } } = await this.db.auth.getUser();
+                this._user = user;
+                if (user) {
+                    console.log('[CMS] Authenticated as:', user.email);
+                } else {
+                    console.warn('[CMS] Not authenticated — write operations will fail');
+                }
+            } catch (e) {
+                console.warn('[CMS] Auth check failed:', e.message);
             }
 
             console.log('[CMS] Engine initialized');
@@ -124,29 +139,45 @@
                 if (!tbody) return;
 
                 if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-icon">📭</div><p>Нет лидов с фильтром: ' + filter + '</p></td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-state"><div class="empty-icon">📭</div><p>Нет лидов с фильтром: ' + filter + '</p></td></tr>';
                     return;
                 }
 
-                tbody.innerHTML = data.map(l => `
-                    <tr>
-                        <td>${this._esc(l.name || '—')}</td>
-                        <td>${this._esc(l.contact || l.email || '—')}</td>
+                tbody.innerHTML = data.map(l => {
+                    const statusBadge = l.status === 'approved'
+                        ? '<span class="badge badge-success">✅ ПРИНЯТ</span>'
+                        : l.status === 'rejected'
+                            ? '<span class="badge badge-danger">❌ ОТКЛОНЁН</span>'
+                            : l.status === 'new'
+                                ? '<span class="badge badge-warning">🆕 НОВЫЙ</span>'
+                                : `<span class="badge badge-info">${this._esc(l.status || 'new').toUpperCase()}</span>`;
+
+                    const hasEmail = l.email && l.email.includes('@');
+                    const isActionable = l.status === 'new' || l.status === 'contacted';
+
+                    return `
+                    <tr style="${l.status === 'approved' ? 'opacity:0.6;' : l.status === 'rejected' ? 'opacity:0.4;' : ''}">
+                        <td>
+                            <strong>${this._esc(l.name || '—')}</strong>
+                            ${l.email ? `<br><span style="font-size:0.65rem;color:var(--text-tertiary);">${this._esc(l.email)}</span>` : ''}
+                        </td>
+                        <td>${this._esc(l.contact || '—')}</td>
                         <td><span class="badge badge-info">${this._esc(l.source || 'direct')}</span></td>
-                        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">${this._esc(l.message || '—')}</td>
-                        <td>
-                            <select onchange="CMS.updateLeadStatus('${l.id}', this.value)" style="background:transparent;border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:0.7rem;">
-                                <option value="new" ${l.status === 'new' ? 'selected' : ''}>NEW</option>
-                                <option value="contacted" ${l.status === 'contacted' ? 'selected' : ''}>CONTACTED</option>
-                                <option value="closed" ${l.status === 'closed' ? 'selected' : ''}>CLOSED</option>
-                            </select>
+                        <td style="max-width:250px;font-size:0.7rem;line-height:1.3;">
+                            ${l.source_detail ? `<div style="color:var(--tech-blue);margin-bottom:2px;">${this._esc(l.source_detail)}</div>` : ''}
+                            ${this._esc(l.message || '—')}
                         </td>
-                        <td>${this._formatDate(l.created_at)}</td>
-                        <td>
-                            <button class="action-btn hover-trigger" onclick="CMS.deleteLead('${l.id}')" title="Удалить">🗑</button>
+                        <td>${statusBadge}</td>
+                        <td style="font-size:0.7rem;">${this._formatDate(l.created_at)}</td>
+                        <td style="white-space:nowrap;">
+                            ${isActionable ? `
+                                <button class="action-btn hover-trigger" onclick="CMS.approveLead('${l.id}')" title="Принять в резиденты" style="color:#00E5FF;font-size:1rem;">✅</button>
+                                <button class="action-btn hover-trigger" onclick="CMS.rejectLead('${l.id}')" title="Отклонить заявку" style="color:#FF4444;font-size:1rem;">❌</button>
+                            ` : ''}
+                            <button class="action-btn hover-trigger" onclick="CMS.deleteLead('${l.id}')" title="Удалить" style="font-size:0.9rem;">🗑</button>
                         </td>
-                    </tr>
-                `).join('');
+                    </tr>`;
+                }).join('');
 
             } catch (err) {
                 console.error('[CMS] Leads error:', err);
@@ -272,42 +303,158 @@
         },
 
         // ─── ASTRA BALANCES ──────────────────────────────
+        _astraResidents: [], // cache for grant form
+
         async loadAstra() {
             try {
-                const { data, error } = await this.db
+                // Load all residents
+                const { data: residents, error: rErr } = await this.db
                     .from('residents')
-                    .select('user_id, full_name, role')
-                    .order('created_at', { ascending: false });
+                    .select('id, user_id, full_name, role, avatar_url')
+                    .order('full_name');
 
-                if (error) throw error;
+                if (rErr) throw rErr;
+                this._astraResidents = residents || [];
+
+                // Load balances from astra_balances
+                let balances = [];
+                try {
+                    const { data: balData } = await this.db
+                        .from('astra_balances')
+                        .select('resident_id, balance');
+                    balances = balData || [];
+                } catch (e) {
+                    console.warn('[CMS] astra_balances table not found, showing 0');
+                }
+
+                // Create balance map: resident_id -> balance
+                const balMap = {};
+                balances.forEach(b => { balMap[b.resident_id] = parseFloat(b.balance || 0); });
+
+                // Load transaction count
+                let txCount = 0;
+                try {
+                    const { count } = await this.db
+                        .from('astra_transactions')
+                        .select('*', { count: 'exact', head: true });
+                    txCount = count || 0;
+                } catch (e) { /* table may not exist */ }
 
                 const grid = document.getElementById('astraGrid');
                 if (!grid) return;
 
-                if (!data || data.length === 0) {
-                    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">💎</div><p>Нет данных о балансах.</p></div>';
+                if (!residents || residents.length === 0) {
+                    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">💎</div><p>Нет резидентов.</p></div>';
                     return;
                 }
 
                 let totalAstra = 0;
-                grid.innerHTML = data.map(r => {
-                    const bal = 0; // astra_balance column TBD
+                grid.innerHTML = residents.map(r => {
+                    const bal = balMap[r.id] || 0;
                     totalAstra += bal;
+                    const avatarHTML = r.avatar_url
+                        ? `<img src="${r.avatar_url}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--border);">`
+                        : `<div style="width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;">👤</div>`;
                     return `
-                        <div class="astra-card hover-trigger">
-                            <div>
-                                <div class="astra-name">${this._esc(r.full_name)}</div>
-                                <div class="astra-role">${this._esc(r.role || 'Resident')}</div>
+                        <div class="cms-card astra-resident-card" style="display:flex;align-items:center;gap:14px;padding:16px;" data-name="${this._esc(r.full_name).toLowerCase()}">
+                            ${avatarHTML}
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-weight:700;font-size:0.85rem;">${this._esc(r.full_name)}</div>
+                                <div style="font-family:var(--font-code);font-size:0.6rem;color:var(--text-dim);">${this._esc(r.role || 'Resident')}</div>
                             </div>
-                            <div class="astra-balance">${bal.toLocaleString()} ✦</div>
+                            <div style="text-align:right;">
+                                <div style="font-family:var(--font-code);font-weight:800;font-size:1.1rem;color:var(--tech-blue);">${bal.toLocaleString('ru-RU')} ✦</div>
+                                <div style="font-family:var(--font-code);font-size:0.55rem;color:var(--text-dim);">≈ $${(bal * 1.5).toFixed(2)}</div>
+                            </div>
                         </div>
                     `;
                 }).join('');
 
-                this._setText('statTotalAstra', totalAstra.toLocaleString());
+                this._setText('statTotalAstra', totalAstra.toLocaleString('ru-RU') + ' ✦');
+                this._setText('statTotalTx', txCount.toLocaleString());
 
             } catch (err) {
                 console.error('[CMS] Astra error:', err);
+            }
+        },
+
+        // ─── ASTRA: GRANT TOKENS (Admin) ─────────────────
+        async grantAstraTokens(recipientResidentId, amount, note) {
+            try {
+                const numAmount = parseFloat(amount);
+                if (isNaN(numAmount) || numAmount <= 0) throw new Error('Некорректная сумма');
+
+                // Check auth
+                if (!this._user) {
+                    throw new Error('Требуется авторизация. Войдите в систему через login.html');
+                }
+
+                // Try RPC first (SECURITY DEFINER — bypasses RLS)
+                let rpcSuccess = false;
+                try {
+                    const { data: rpcResult, error: rpcError } = await this.db.rpc('admin_grant_astra', {
+                        p_recipient_id: recipientResidentId,
+                        p_amount: numAmount,
+                        p_reason: note || 'Начисление администратором'
+                    });
+                    if (!rpcError) {
+                        rpcSuccess = true;
+                        console.log('[CMS] Grant via RPC successful');
+                    }
+                } catch (e) {
+                    console.warn('[CMS] RPC admin_grant_astra not available, using direct queries');
+                }
+
+                // Fallback: direct insert/upsert
+                if (!rpcSuccess) {
+                    // 1. Upsert balance
+                    const { data: existing, error: readErr } = await this.db
+                        .from('astra_balances')
+                        .select('balance')
+                        .eq('resident_id', recipientResidentId)
+                        .maybeSingle();
+
+                    if (readErr && readErr.code !== 'PGRST116') {
+                        throw new Error('Ошибка чтения баланса: ' + readErr.message);
+                    }
+
+                    if (existing) {
+                        const newBal = parseFloat(existing.balance || 0) + numAmount;
+                        const { error: updErr } = await this.db
+                            .from('astra_balances')
+                            .update({ balance: newBal, last_updated: new Date().toISOString() })
+                            .eq('resident_id', recipientResidentId);
+                        if (updErr) throw new Error('Ошибка обновления баланса: ' + updErr.message);
+                    } else {
+                        const { error: insErr } = await this.db
+                            .from('astra_balances')
+                            .insert({ resident_id: recipientResidentId, balance: numAmount, last_updated: new Date().toISOString() });
+                        if (insErr) throw new Error('Ошибка создания баланса: ' + insErr.message);
+                    }
+
+                    // 2. Log transaction
+                    const { error: txErr } = await this.db.from('astra_transactions').insert({
+                        to_id: recipientResidentId,
+                        from_id: null,
+                        amount: numAmount,
+                        type: 'admin_grant',
+                        reason: note || 'Начисление администратором'
+                    });
+                    if (txErr) {
+                        console.warn('[CMS] Transaction log error (non-critical):', txErr.message);
+                    }
+                }
+
+                // 3. System log
+                const resident = this._astraResidents.find(r => r.id === recipientResidentId);
+                if (window.ALabCore?.log) {
+                    window.ALabCore.log('astra_grant', `Granted ${numAmount} ASTRA to ${resident?.full_name || recipientResidentId}`);
+                }
+
+                return { success: true };
+            } catch (err) {
+                console.error('[CMS] Grant error:', err);
+                return { error: err.message };
             }
         },
 
@@ -353,6 +500,217 @@
                 console.error('[CMS] Update lead:', err);
                 alert('Error: ' + err.message);
             }
+        },
+
+        /* =========================================================
+         * APPROVE LEAD — Create account + resident + 300 ASTRA
+         * ========================================================= */
+        async approveLead(leadId) {
+            try {
+                // 1. Fetch lead data
+                const { data: lead, error: leadErr } = await this.db
+                    .from('leads')
+                    .select('*')
+                    .eq('id', leadId)
+                    .single();
+
+                if (leadErr) throw leadErr;
+                if (!lead) throw new Error('Лид не найден');
+
+                // Find email: check email column first, then contact field
+                let email = lead.email;
+                if (!email || !email.includes('@')) {
+                    // Fallback: check if contact contains an email
+                    if (lead.contact && lead.contact.includes('@') && lead.contact.includes('.')) {
+                        email = lead.contact;
+                    }
+                }
+
+                if (!email || !email.includes('@')) {
+                    // Last resort: prompt admin to enter email
+                    email = prompt('⚠️ У лида нет email.\n\nВведите email для создания аккаунта:');
+                    if (!email || !email.includes('@')) {
+                        alert('❌ Email обязателен для создания аккаунта.');
+                        return;
+                    }
+                }
+
+                const leadName = lead.name || email.split('@')[0];
+
+                // Confirm action
+                if (!confirm(`✅ ПРИНЯТЬ ЗАЯВКУ?\n\nИмя: ${leadName}\nEmail: ${email}\nTelegram: ${lead.contact || '—'}\n\nБудет создан:\n• Аккаунт Supabase (${email})\n• Профиль резидента\n• Начислено 300 ASTRA\n• Отправлено письмо-приглашение`)) return;
+
+                // 2. Generate random password
+                const password = this._generatePassword(12);
+
+                // 3. Try to create Supabase auth user via RPC (SECURITY DEFINER)
+                let userId = null;
+
+                try {
+                    const { data: rpcResult, error: rpcErr } = await this.db.rpc('admin_create_user', {
+                        p_email: email,
+                        p_password: password,
+                        p_full_name: leadName
+                    });
+
+                    if (!rpcErr && rpcResult) {
+                        userId = rpcResult.user_id || rpcResult;
+                        console.log('[CMS] User created via RPC:', userId);
+                    } else {
+                        throw rpcErr || new Error('RPC returned empty');
+                    }
+                } catch (rpcErr) {
+                    console.warn('[CMS] RPC admin_create_user not available, trying signUp fallback:', rpcErr);
+
+                    // Fallback: Use client-side auth.signUp
+                    try {
+                        const { data: signUpData, error: signUpErr } = await this.db.auth.signUp({
+                            email: email,
+                            password: password,
+                            options: {
+                                data: { full_name: leadName }
+                            }
+                        });
+
+                        if (signUpErr) throw signUpErr;
+
+                        userId = signUpData?.user?.id;
+                        if (!userId) throw new Error('User ID not returned from signUp');
+
+                        console.log('[CMS] User created via signUp:', userId);
+                    } catch (signUpErr) {
+                        console.error('[CMS] signUp failed:', signUpErr);
+                        alert(`❌ Не удалось создать аккаунт:\n${signUpErr.message}\n\nВозможно, email уже зарегистрирован.`);
+                        return;
+                    }
+                }
+
+                // 4. Create resident profile
+                try {
+                    const { data: resident, error: resErr } = await this.db
+                        .from('residents')
+                        .insert({
+                            user_id: userId,
+                            full_name: leadName,
+                            role: 'Resident',
+                            bio: lead.message || '',
+                            links: {
+                                telegram: (lead.contact || '').replace('@', ''),
+                                visibility: 'public'
+                            }
+                        })
+                        .select()
+                        .single();
+
+                    if (resErr) {
+                        console.error('[CMS] Resident profile creation error:', resErr);
+                        // Continue anyway — user account is already created
+                    } else {
+                        console.log('[CMS] Resident profile created:', resident?.id);
+
+                        // 5. Grant 300 ASTRA
+                        if (resident?.id) {
+                            try {
+                                await this.db.from('astra_balances').upsert({
+                                    resident_id: resident.id,
+                                    balance: 300,
+                                    last_updated: new Date().toISOString()
+                                }, { onConflict: 'resident_id' });
+
+                                await this.db.from('astra_transactions').insert({
+                                    to_id: resident.id,
+                                    from_id: null,
+                                    amount: 300,
+                                    type: 'welcome_bonus',
+                                    reason: 'Приветственный бонус нового резидента'
+                                });
+
+                                console.log('[CMS] Granted 300 ASTRA to', leadName);
+                            } catch (astraErr) {
+                                console.error('[CMS] ASTRA grant error:', astraErr);
+                            }
+                        }
+                    }
+                } catch (profileErr) {
+                    console.error('[CMS] Profile creation error:', profileErr);
+                }
+
+                // 6. Send welcome email via RPC
+                try {
+                    await this.db.rpc('send_welcome_email', {
+                        p_email: email,
+                        p_name: leadName,
+                        p_password: password
+                    });
+                    console.log('[CMS] Welcome email sent to', email);
+                } catch (emailErr) {
+                    console.warn('[CMS] Welcome email RPC not available:', emailErr);
+                    // Show password to admin as fallback
+                    alert(`📧 Email не отправлен (RPC send_welcome_email не настроен).\n\n⚠️ ПЕРЕДАЙТЕ ДАННЫЕ ВРУЧНУЮ:\n\nEmail: ${email}\nПароль: ${password}\nАккаунт: https://www.a-lab.tech/residents/login.html\n\nРезидент должен сменить пароль после входа.`);
+                }
+
+                // 7. Update lead status
+                await this.db.from('leads').update({ status: 'approved' }).eq('id', leadId);
+
+                // 8. Refresh UI
+                await this.loadLeads();
+                await this.loadDashboardStats();
+                await this.loadResidents();
+
+                alert(`✅ Заявка одобрена!\n\n${leadName} теперь резидент A-LAB.\n• Аккаунт: ${email}\n• Начислено: 300 ASTRA\n• Пароль: ${password}`);
+
+            } catch (err) {
+                console.error('[CMS] Approve lead error:', err);
+                alert('❌ Ошибка одобрения: ' + err.message);
+            }
+        },
+
+        /* =========================================================
+         * REJECT LEAD
+         * ========================================================= */
+        async rejectLead(leadId) {
+            if (!confirm('❌ ОТКЛОНИТЬ ЗАЯВКУ?\n\nЛид будет отмечен как отклонённый.')) return;
+
+            try {
+                const { error } = await this.db
+                    .from('leads')
+                    .update({ status: 'rejected' })
+                    .eq('id', leadId);
+
+                if (error) throw error;
+
+                await this.loadLeads();
+                await this.loadDashboardStats();
+
+            } catch (err) {
+                console.error('[CMS] Reject lead error:', err);
+                alert('Error: ' + err.message);
+            }
+        },
+
+        /* =========================================================
+         * GENERATE RANDOM PASSWORD
+         * ========================================================= */
+        _generatePassword(length = 12) {
+            const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+            const lower = 'abcdefghjkmnpqrstuvwxyz';
+            const digits = '23456789';
+            const special = '!@#$%&*';
+            const all = upper + lower + digits + special;
+
+            // Ensure at least one of each type
+            let pwd = '';
+            pwd += upper[Math.floor(Math.random() * upper.length)];
+            pwd += lower[Math.floor(Math.random() * lower.length)];
+            pwd += digits[Math.floor(Math.random() * digits.length)];
+            pwd += special[Math.floor(Math.random() * special.length)];
+
+            for (let i = pwd.length; i < length; i++) {
+                pwd += all[Math.floor(Math.random() * all.length)];
+            }
+
+            // Shuffle
+            return pwd.split('').sort(() => Math.random() - 0.5).join('');
         },
 
         async deleteLead(id) {
@@ -552,13 +910,70 @@
         }
     };
 
-    // Placeholder stubs for advanced features
+    // ─── OPEN GRANT FORM (Modal with resident selector) ──
+    window.openGrantForm = function() {
+        const residents = CMS._astraResidents || [];
+        const options = residents.map(r =>
+            `<option value="${r.id}">${r.full_name} (${r.role || 'Resident'})</option>`
+        ).join('');
+
+        openModal(`
+            <h2 style="margin-bottom:20px;font-size:1.1rem;">💎 Начислить ASTRA Токены</h2>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label style="display:block;font-size:0.7rem;font-family:var(--font-code);color:var(--tech-blue);margin-bottom:6px;">ПОЛУЧАТЕЛЬ</label>
+                <select id="grantRecipient" class="form-input" style="width:100%;">
+                    <option value="">— Выберите резидента —</option>
+                    ${options}
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label style="display:block;font-size:0.7rem;font-family:var(--font-code);color:var(--tech-blue);margin-bottom:6px;">СУММА (ASTRA)</label>
+                <input type="number" id="grantAmount" class="form-input" style="width:100%;" min="1" placeholder="100">
+            </div>
+            <div class="form-group" style="margin-bottom:20px;">
+                <label style="display:block;font-size:0.7rem;font-family:var(--font-code);color:var(--tech-blue);margin-bottom:6px;">КОММЕНТАРИЙ</label>
+                <input type="text" id="grantNote" class="form-input" style="width:100%;" placeholder="За вклад в проект, награда...">
+            </div>
+            <div class="modal-footer" style="display:flex;gap:12px;">
+                <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                <button class="btn btn-primary hover-trigger" onclick="submitGrant()" style="background:var(--tech-blue);color:var(--bg);">💎 НАЧИСЛИТЬ</button>
+            </div>
+        `);
+    };
+
+    window.submitGrant = async function() {
+        const recipientId = document.getElementById('grantRecipient')?.value;
+        const amount = document.getElementById('grantAmount')?.value;
+        const note = document.getElementById('grantNote')?.value || '';
+
+        if (!recipientId) return alert('Выберите получателя');
+        if (!amount || parseFloat(amount) <= 0) return alert('Укажите сумму');
+
+        const result = await CMS.grantAstraTokens(recipientId, amount, note);
+        if (result.success) {
+            closeModal();
+            alert(`✅ Начислено ${amount} ASTRA`);
+            await CMS.loadAstra();
+        } else {
+            alert('❌ Ошибка: ' + (result.error || 'Неизвестная'));
+        }
+    };
+
+    // ─── SEARCH ASTRA CARDS ──────────────────────────
+    window.searchAstra = function(q) {
+        const cards = document.querySelectorAll('.astra-resident-card');
+        const query = (q || '').toLowerCase();
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name') || '';
+            card.style.display = name.includes(query) || !query ? '' : 'none';
+        });
+    };
+
+    // Placeholder stubs for features in development
     window.openProjectForm = window.openProjectForm || function() { alert('Функция в разработке'); };
     window.openBlockForm = window.openBlockForm || function() { alert('Функция в разработке'); };
     window.openMenuForm = window.openMenuForm || function() { alert('Функция в разработке'); };
-    window.openGrantForm = window.openGrantForm || function() { alert('Функция в разработке'); };
     window.publishDaoVote = window.publishDaoVote || function() { alert('Функция в разработке'); };
-    window.searchAstra = window.searchAstra || function(q) { /* placeholder */ };
     window.filterAdminChats = window.filterAdminChats || function(q) { /* placeholder */ };
     window.adminSendMsg = window.adminSendMsg || function() { alert('Функция в разработке'); };
     window.adminMsgKeyDown = window.adminMsgKeyDown || function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); adminSendMsg(); } };

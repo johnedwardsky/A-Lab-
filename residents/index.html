@@ -1000,10 +1000,13 @@
                 </div>
                 <div class="quiz-step" id="step4">
                     <div class="quiz-progress"><span data-i18n="page_residents.quiz_progress">ШАГ</span> 5 // 5</div>
-                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step5_title">Ваше имя и Telegram?</h2>
+                    <h2 class="quiz-q" data-i18n="page_residents.quiz_step5_title">Контактные данные</h2>
                     <input type="text" class="quiz-input" placeholder="Имя Фамилия" id="regFullName"
                         style="margin-bottom:10px;">
-                    <input type="text" class="quiz-input" placeholder="@username" id="regTg">
+                    <input type="email" class="quiz-input" placeholder="your@email.com" id="regEmail"
+                        style="margin-bottom:10px;">
+                    <input type="text" class="quiz-input" placeholder="@telegram_username" id="regTg">
+                    <p style="font-size:0.6rem;color:#666;margin-top:8px;font-family:var(--font-code);" data-i18n="page_residents.quiz_email_note">Email используется для создания аккаунта при одобрении заявки.</p>
                     <div style="display:flex; gap:15px; margin-top:20px;">
                         <button class="btn-quiz-back" onclick="prevStep('recommender')"
                             data-i18n="page_residents.quiz_back">← НАЗАД</button>
@@ -1088,12 +1091,14 @@
 
         async function finishQuiz() {
             const fullName = document.getElementById('regFullName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
             const tg = document.getElementById('regTg').value.trim();
             const bio = document.getElementById('regBio').value.trim();
             const recommender = document.getElementById('recommenderId').value.trim();
             const btn = document.getElementById('submitAppBtn');
 
             if (!fullName) return alert(window.I18n?.t('page_residents.alert_name') || 'Please enter your name');
+            if (!email || !email.includes('@')) return alert(window.I18n?.t('page_residents.alert_email') || 'Please enter a valid email');
             if (!tg) return alert(window.I18n?.t('page_residents.alert_tg') || 'Enter Telegram');
             if (!recommender) return alert(window.I18n?.t('page_residents.alert_id') || 'Enter Resident ID');
 
@@ -1108,6 +1113,7 @@
                     .from('leads')
                     .insert({
                         name: fullName,
+                        email: email,
                         contact: tg,
                         source: 'quiz',
                         source_detail: `Скилл: ${window.selectedStrength || 'N/A'}, Опыт: ${window.selectedExp || 'N/A'}`,
