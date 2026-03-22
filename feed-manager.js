@@ -664,17 +664,23 @@
             if (!db) return;
 
             try {
-                let query = db.from('posts').update({
-                    content: newContent,
-                    updated_at: new Date().toISOString()
-                }).eq('id', postId);
+                // Try with updated_at first, fall back without it
+                let updateData = { content: newContent };
+                let query = db.from('posts').update(updateData).eq('id', postId);
 
                 // If not admin, restrict to own posts
                 if (!this.isAdmin) {
                     query = query.eq('author_id', this.residentId);
                 }
 
-                const { error } = await query;
+                let { error } = await query;
+
+                // If updated_at column exists, update it separately
+                if (!error) {
+                    try {
+                        await db.from('posts').update({ updated_at: new Date().toISOString() }).eq('id', postId);
+                    } catch (_) { /* updated_at column may not exist yet */ }
+                }
                 if (error) throw error;
 
                 // Update local data
