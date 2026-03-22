@@ -648,6 +648,15 @@
             const db = window.ALabCore?.db;
             if (!db) { showError('Service unavailable'); return; }
 
+            // ── If user is an authenticated resident → redirect to workspace feed ──
+            try {
+                const { data: { session } } = await db.auth.getSession();
+                if (session && session.user) {
+                    window.location.replace(`/residents/workspace.html?tab=feed&highlight=${postId}`);
+                    return;
+                }
+            } catch (_) { /* not logged in, continue with public view */ }
+
             try {
                 const { data: post, error } = await db
                     .from('posts')

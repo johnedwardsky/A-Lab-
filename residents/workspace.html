@@ -1461,6 +1461,17 @@
             border-color: rgba(0, 229, 255, 0.2);
         }
 
+        /* Highlight animation for shared post links */
+        @keyframes postHighlightPulse {
+            0%, 100% { border-color: rgba(0, 229, 255, 0.6); box-shadow: 0 0 20px rgba(0, 229, 255, 0.15); }
+            50% { border-color: rgba(0, 229, 255, 0.2); box-shadow: 0 0 8px rgba(0, 229, 255, 0.05); }
+        }
+        .feed-post-highlight {
+            animation: postHighlightPulse 1.5s ease-in-out 3;
+            border-color: rgba(0, 229, 255, 0.6) !important;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+        }
+
         .feed-post-header {
             display: flex;
             justify-content: space-between;
@@ -3043,8 +3054,37 @@
 
         // Auto init on deep-link or on page load
         document.addEventListener('DOMContentLoaded', () => {
-            if (window.location.hash === '#feed') switchTab('feed');
-            if (window.location.hash === '#portfolio') switchTab('portfolio');
+            const _urlP = new URLSearchParams(window.location.search);
+            const _tabParam = _urlP.get('tab');
+            const _highlightId = _urlP.get('highlight');
+
+            if (_tabParam === 'feed' || window.location.hash === '#feed') {
+                switchTab('feed');
+            } else if (window.location.hash === '#portfolio') {
+                switchTab('portfolio');
+            }
+
+            // Highlight specific post after feed loads
+            if (_highlightId) {
+                const _waitForPost = () => {
+                    const postEl = document.querySelector(`[data-post-id="${_highlightId}"]`);
+                    if (postEl) {
+                        postEl.classList.add('feed-post-highlight');
+                        postEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Remove highlight animation after 5s
+                        setTimeout(() => postEl.classList.remove('feed-post-highlight'), 5000);
+                    } else {
+                        // Feed may still be loading, retry
+                        if (_waitForPost._retries < 20) {
+                            _waitForPost._retries++;
+                            setTimeout(_waitForPost, 500);
+                        }
+                    }
+                };
+                _waitForPost._retries = 0;
+                setTimeout(_waitForPost, 1200);
+            }
+
             setTimeout(loadPortfolioFromDB, 1500);
             setTimeout(_restoreSettings, 200);
         });
