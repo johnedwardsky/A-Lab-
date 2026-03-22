@@ -2119,16 +2119,16 @@
                             style="background:transparent;border:none;color:#555;cursor:pointer;font-family:var(--font-code);font-size:1.2rem;">&times;</button>
                     </div>
                     <div class="feed-share-grid">
-                        <a class="feed-share-item hover-trigger" id="feedShareTg" href="#" target="_blank">
+                        <a class="feed-share-item hover-trigger" id="feedShareTg" onclick="window.open(this.dataset.url,'_blank','width=600,height=400')" style="cursor:pointer;">
                             <div class="feed-share-icon">✈️</div><span>Telegram</span>
                         </a>
-                        <a class="feed-share-item hover-trigger" id="feedShareWa" href="#" target="_blank">
+                        <a class="feed-share-item hover-trigger" id="feedShareWa" onclick="window.open(this.dataset.url,'_blank','width=600,height=400')" style="cursor:pointer;">
                             <div class="feed-share-icon">💬</div><span>WhatsApp</span>
                         </a>
-                        <a class="feed-share-item hover-trigger" id="feedShareTw" href="#" target="_blank">
+                        <a class="feed-share-item hover-trigger" id="feedShareTw" onclick="window.open(this.dataset.url,'_blank','width=600,height=400')" style="cursor:pointer;">
                             <div class="feed-share-icon">🐦</div><span>Twitter</span>
                         </a>
-                        <a class="feed-share-item hover-trigger" onclick="shareFeedToDM(event)">
+                        <a class="feed-share-item hover-trigger" onclick="copyFeedLink(); closeFeedShareModal();" style="cursor:pointer;">
                             <div class="feed-share-icon">🔗</div><span>Копировать</span>
                         </a>
                     </div>
@@ -2874,9 +2874,9 @@
             const shareText = 'Резиденты A-Lab — сообщество инженеров будущего';
             const url = `${window.location.origin}/residents/post.html?id=${postId || 'latest'}`;
             document.getElementById('feedShareUrl').innerText = url;
-            document.getElementById('feedShareTg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`;
-            document.getElementById('feedShareWa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n' + url)}`;
-            document.getElementById('feedShareTw').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`;
+            document.getElementById('feedShareTg').dataset.url = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`;
+            document.getElementById('feedShareWa').dataset.url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n' + url)}`;
+            document.getElementById('feedShareTw').dataset.url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`;
             document.getElementById('feedShareModal').classList.add('active');
         }
         function closeFeedShareModal() {
