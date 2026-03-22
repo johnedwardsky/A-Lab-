@@ -1,20 +1,13 @@
-/* A-LAB.TECH X-Ray Cursor — Optimized Performance CSS */
+/* A-LAB.TECH X-Ray Cursor — v2 Ultra Performance CSS */
 
-/* 1. Global Reset to hide native cursor */
-* { 
-    cursor: none !important; 
+/* 1. Hide native cursor — scoped to body only (avoids costly universal selector repaint) */
+html, body { 
+    cursor: none; 
 }
 
-/* 2. Standard interactive elements cursor fallback */
-a, 
-button, 
-input, 
-select, 
-textarea, 
-[role="button"], 
-label, 
-.hover-trigger {
-    cursor: pointer !important;
+/* 2. Standard interactive elements — keep pointer fallback for accessibility */
+a, button, input, select, textarea, [role="button"], label, .hover-trigger {
+    cursor: none;
 }
 
 /* 3. The Custom Cursor Element */
@@ -27,22 +20,24 @@ label,
     background-color: #fff;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 2147483647; /* Max z-index — always above menu overlay */
+    z-index: 2147483647;
     mix-blend-mode: difference;
     opacity: 0;
     
-    /* Performance optimizations */
-    will-change: transform, opacity;
+    /* GPU layer promotion — only active during animation */
     contain: layout style paint;
-    box-shadow: 0 0 10px rgba(255,255,255,0.1);
 }
 
-/* 4. Scrollbar and mobile cleanup */
-::-webkit-scrollbar {
-    display: none; /* Hide scrollbar for immersive feel if desired, though optional */
+/* Active state — promoted to GPU layer only when visible */
+.cursor.active {
+    will-change: transform, opacity;
 }
 
+/* 4. Mobile — disable completely */
 @media (max-width: 1024px) {
     .cursor { display: none !important; }
-    * { cursor: auto !important; }
+    html, body { cursor: auto; }
+    a, button, input, select, textarea, [role="button"], label, .hover-trigger {
+        cursor: pointer;
+    }
 }
