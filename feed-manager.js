@@ -15,6 +15,14 @@
 
     const POSTS_PER_PAGE = 15;
 
+    // ── Image Optimization Config ────────────────────────────
+    const IMG_MAX_WIDTH = 1200;   // max px width
+    const IMG_MAX_HEIGHT = 1200;  // max px height
+    const IMG_QUALITY = 0.8;      // WebP quality (0-1)
+    const IMG_QUALITY_LARGE = 0.6; // quality for files >1MB
+    const IMG_OUTPUT_TYPE = 'image/webp'; // output format
+
+
     const FeedManager = {
         posts: [],
         residentId: null,
@@ -562,14 +570,16 @@
             // Upload image if provided
             if (imageFile) {
                 try {
-                    const ext = imageFile.name.split('.').pop();
-                    const path = `posts/${this.residentId}/${Date.now()}.${ext}`;
+                    // ── Optimize image before upload ──
+                    const optimized = await this._optimizeImage(imageFile);
+                    const path = `posts/${this.residentId}/${Date.now()}.webp`;
                     const { data: uploadData, error: upErr } = await db.storage
                         .from('post-images')
-                        .upload(path, imageFile, { contentType: imageFile.type, upsert: false });
+                        .upload(path, optimized, { contentType: 'image/webp', upsert: false });
                     if (upErr) throw upErr;
                     const { data: urlData } = db.storage.from('post-images').getPublicUrl(path);
                     imageUrl = urlData?.publicUrl || null;
+                    console.log(`[FEED] Image optimized: ${(imageFile.size/1024).toFixed(0)}KB → ${(optimized.size/1024).toFixed(0)}KB`);
                 } catch (err) {
                     console.warn('[FEED] Image upload failed, posting without image:', err);
                 }
@@ -1088,6 +1098,69 @@
             }
             if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');
             document.getElementById('feedLightbox')?.remove();
+        },
+
+        /* ── Client-side image optimization ──────────────────────── */
+        async _optimizeImage(file) {
+            // Skip non-image files
+            if (!file.type.startsWith('image/')) return file;
+
+            // Skip small images (<100KB), already optimized
+            if (file.size < 100 * 1024) return file;
+
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+
+                img.onload = () => {
+                    URL.revokeObjectURL(url);
+
+                    let { width, height } = img;
+
+                    // Calculate new dimensions (maintain aspect ratio)
+                    if (width > IMG_MAX_WIDTH || height > IMG_MAX_HEIGHT) {
+                        const ratio = Math.min(IMG_MAX_WIDTH / width, IMG_MAX_HEIGHT / height);
+                        width = Math.round(width * ratio);
+                        height = Math.round(height * ratio);
+                    }
+
+                    // Draw to canvas
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+
+                    // Smooth scaling
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Choose quality based on original size
+                    const quality = file.size > 1024 * 1024 ? IMG_QUALITY_LARGE : IMG_QUALITY;
+
+                    canvas.toBlob(
+                        (blob) => {
+                            if (!blob) { resolve(file); return; }
+                            // If optimized is somehow bigger, use original
+                            if (blob.size >= file.size) { resolve(file); return; }
+                            const optimizedFile = new File([blob], file.name.replace(/\.\w+$/, '.webp'), {
+                                type: IMG_OUTPUT_TYPE,
+                                lastModified: Date.now()
+                            });
+                            resolve(optimizedFile);
+                        },
+                        IMG_OUTPUT_TYPE,
+                        quality
+                    );
+                };
+
+                img.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    resolve(file); // fallback to original
+                };
+
+                img.src = url;
+            });
         },
 
         _toast(msg) {
