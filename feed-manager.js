@@ -248,6 +248,9 @@
             }
 
             container.innerHTML = html;
+
+            // Compute SHA hashes lazily for all visible posts
+            this._computePostHashes();
         },
 
         _renderPostCard(post) {
@@ -256,6 +259,9 @@
             const myReaction = post._myReaction || null;
             const hasImage = post.image_url;
             const tags = Array.isArray(post.tags) ? post.tags : [];
+            // Pre-compute SHA hash input
+            const shaInput = `${post.content || ''}|${post.author_id || ''}|${post.created_at || ''}`;
+            const shaPlaceholder = post.content_hash || '';
 
             return `
                 <div class="feed-post-card" id="post-card-${post.id}" data-post-id="${post.id}">
@@ -307,7 +313,7 @@
                             ${tags.map(t => `<span style="font-family:var(--font-code);font-size:0.6rem;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.15);color:var(--tech-blue);padding:3px 8px;border-radius:4px;">${this._escapeHtml(t)}</span>`).join('')}
                         </div>` : ''}
 
-                    <div class="feed-post-content" id="post-content-${post.id}">${this._linkify(this._escapeHtml(post.content))}</div>
+                    <div class="feed-post-content" id="post-content-${post.id}">${this._formatContent(post.content)}</div>
 
                     <!-- Inline Edit Area (hidden by default) -->
                     <div id="post-edit-${post.id}" style="display:none;margin-bottom:15px;">
@@ -318,7 +324,7 @@
                         </div>
                     </div>
 
-                    ${hasImage ? `<img src="${post.image_url}" alt="Post image" style="width:100%;border-radius:14px;margin-bottom:15px;border:1px solid var(--border);object-fit:cover;max-height:400px;" loading="lazy">` : ''}
+                    ${hasImage ? `<div class="feed-post-image-wrap"><img src="${post.image_url}" alt="Post image" class="feed-post-image" loading="lazy" onclick="FeedManager._openLightbox('${post.image_url}', '${post.id}')"></div>` : ''}
 
                     <div class="feed-post-footer" style="flex-wrap:wrap;gap:8px;">
                         <!-- Reactions -->
@@ -361,6 +367,11 @@
                                 <button onclick="FeedManager.submitComment('${post.id}')" style="background:var(--tech-blue);border:none;color:black;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:0.9rem;flex-shrink:0;">➤</button>
                             </div>
                         </div>` : ''}
+                    </div>
+
+                    <!-- SHA-256 Digital Fingerprint -->
+                    <div class="feed-post-sha" id="post-sha-${post.id}" data-sha-input="${this._escapeHtml(shaInput)}">
+                        🔐 SHA-256: <span class="sha-value">${shaPlaceholder || 'вычисляется...'}</span>
                     </div>
                 </div>
             `;
@@ -695,7 +706,7 @@
                 const editEl = document.getElementById(`post-edit-${postId}`);
 
                 if (contentEl) {
-                    contentEl.innerHTML = this._linkify(this._escapeHtml(newContent));
+                    contentEl.innerHTML = this._formatContent(newContent);
                     contentEl.style.display = '';
                 }
                 if (editEl) editEl.style.display = 'none';
@@ -849,6 +860,65 @@
             return date.toLocaleDateString('ru-RU');
         },
 
+        /* ── SHA-256 Hash Generation ────────────────────────── */
+        async _generateSHA256(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        },
+
+        async _computePostHashes() {
+            const shaElements = document.querySelectorAll('.feed-post-sha[data-sha-input]');
+            for (const el of shaElements) {
+                const input = el.getAttribute('data-sha-input');
+                if (!input) continue;
+                const valueEl = el.querySelector('.sha-value');
+                if (valueEl && valueEl.textContent !== 'вычисляется...') continue; // already computed
+                try {
+                    const hash = await this._generateSHA256(input);
+                    const shortHash = hash.substring(0, 16);
+                    if (valueEl) valueEl.textContent = shortHash;
+                    el.title = `Full SHA-256: ${hash}`;
+                } catch (_) {
+                    if (valueEl) valueEl.textContent = 'N/A';
+                }
+            }
+        },
+
+        _formatContent(text) {
+            if (!text) return '';
+            const escaped = this._escapeHtml(text);
+            // Process line by line for quote detection
+            const lines = escaped.split('\n');
+            let inQuote = false;
+            let quoteLines = [];
+            let result = [];
+
+            const flushQuote = () => {
+                if (quoteLines.length > 0) {
+                    result.push(`<div class="feed-quote-block">${quoteLines.join('<br>')}</div>`);
+                    quoteLines = [];
+                }
+                inQuote = false;
+            };
+
+            for (const line of lines) {
+                if (line.startsWith('&gt; ') || line.startsWith('&gt;')) {
+                    inQuote = true;
+                    const content = line.replace(/^&gt;\s?/, '');
+                    quoteLines.push(content);
+                } else {
+                    if (inQuote) flushQuote();
+                    result.push(line);
+                }
+            }
+            if (inQuote) flushQuote();
+
+            return this._linkify(result.join('<br>'));
+        },
+
         _escapeHtml(str) {
             if (!str) return '';
             const div = document.createElement('div');
@@ -858,6 +928,86 @@
 
         _linkify(text) {
             return text.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--tech-blue);text-decoration:none;">$1</a>');
+        },
+
+        /* ── Image Lightbox ────────────────────────────────────── */
+        _openLightbox(imageUrl, postId) {
+            // Remove existing lightbox
+            const old = document.getElementById('feedLightbox');
+            if (old) old.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'feedLightbox';
+            overlay.className = 'feed-lightbox-overlay';
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+            overlay.innerHTML = `
+                <div class="feed-lightbox-container">
+                    <button class="feed-lightbox-close" onclick="document.getElementById('feedLightbox').remove()">&times;</button>
+                    <img src="${imageUrl}" alt="Image" class="feed-lightbox-img">
+                    <div class="feed-lightbox-actions">
+                        <a href="${imageUrl}" download class="feed-lightbox-btn">
+                            <span>⬇️</span> Скачать
+                        </a>
+                        <button class="feed-lightbox-btn" onclick="FeedManager._quoteLightboxImage('${imageUrl}', '${postId}')">
+                            <span>💬</span> Цитировать
+                        </button>
+                        <button class="feed-lightbox-btn" onclick="FeedManager._shareLightbox('${imageUrl}', 'telegram')">
+                            <span>✈️</span> Telegram
+                        </button>
+                        <button class="feed-lightbox-btn" onclick="FeedManager._shareLightbox('${imageUrl}', 'whatsapp')">
+                            <span>💬</span> WhatsApp
+                        </button>
+                        <button class="feed-lightbox-btn" onclick="FeedManager._shareLightbox('${imageUrl}', 'twitter')">
+                            <span>🐦</span> Twitter
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            // ESC to close
+            const escHandler = (e) => {
+                if (e.key === 'Escape') {
+                    overlay.remove();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+        },
+
+        _quoteLightboxImage(imageUrl, postId) {
+            document.getElementById('feedLightbox')?.remove();
+            const post = this.posts.find(p => p.id === postId);
+            const authorName = post?.author?.full_name || 'Resident';
+            const quoteText = `> ${authorName}: [изображение]\n\n`;
+            const textarea = document.getElementById('postContent');
+            if (textarea) {
+                textarea.value = quoteText;
+                textarea.focus();
+                const scrollArea = document.querySelector('.feed-scroll-area');
+                if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+                this._toast('💬 Цитата с изображением добавлена');
+            }
+        },
+
+        _shareLightbox(imageUrl, platform) {
+            const url = imageUrl;
+            const text = 'Check out this from A-LAB!';
+            let shareUrl = '';
+            switch (platform) {
+                case 'telegram':
+                    shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                    break;
+            }
+            if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');
+            document.getElementById('feedLightbox')?.remove();
         },
 
         _toast(msg) {
