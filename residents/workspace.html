@@ -2090,9 +2090,22 @@
             <div id="feedShareModal">
                 <div class="feed-share-modal">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                        <h3 style="font-family:var(--font-code);font-size:0.85rem;">SHARE_POST</h3>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <svg width="36" height="32" viewBox="0 0 421 370" xmlns="http://www.w3.org/2000/svg">
+                                <g stroke="none" fill="none" stroke-linecap="round">
+                                    <g transform="translate(119.875,77.770)" stroke="#CE3333">
+                                        <path d="M52.87,143.98 L88.72,52.74 C89.33,51.2 91.07,50.44 92.61,51.04 C93.35,51.33 93.95,51.91 94.26,52.64 L133.87,143.98" stroke-width="20"/>
+                                        <path d="M54.62,144.98 C105.29,94.65 140.21,80.06 159.37,101.23 C186.03,130.66 175.37,160.98 156.62,180.23 C137.87,199.48 112.12,207.48 86.62,205.23 C61.12,202.98 38.87,194.98 21.37,173.73 C3.87,152.48 -3.88,113.48 1.87,86.48 C7.62,59.48 18.62,31.73 52.87,11.48" stroke-width="16"/>
+                                    </g>
+                                </g>
+                            </svg>
+                            <div>
+                                <h3 style="font-family:var(--font-code);font-size:0.75rem;margin:0;">ПОДЕЛИТЬСЯ ПОСТОМ</h3>
+                                <div style="font-family:var(--font-code);font-size:0.55rem;color:var(--accent);font-weight:700;margin-top:2px;">Резиденты A-Lab — сообщество инженеров будущего</div>
+                            </div>
+                        </div>
                         <button onclick="closeFeedShareModal()"
-                            style="background:transparent;border:none;color:#555;cursor:pointer;font-family:var(--font-code);">[X]</button>
+                            style="background:transparent;border:none;color:#555;cursor:pointer;font-family:var(--font-code);font-size:1.2rem;">&times;</button>
                     </div>
                     <div class="feed-share-grid">
                         <a class="feed-share-item hover-trigger" id="feedShareTg" href="#" target="_blank">
@@ -2102,16 +2115,16 @@
                             <div class="feed-share-icon">💬</div><span>WhatsApp</span>
                         </a>
                         <a class="feed-share-item hover-trigger" id="feedShareTw" href="#" target="_blank">
-                            <div class="feed-share-icon">✖️</div><span>Twitter</span>
+                            <div class="feed-share-icon">🐦</div><span>Twitter</span>
                         </a>
                         <a class="feed-share-item hover-trigger" onclick="shareFeedToDM(event)">
-                            <div class="feed-share-icon">📥</div><span>DM</span>
+                            <div class="feed-share-icon">🔗</div><span>Копировать</span>
                         </a>
                     </div>
                     <div
                         style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;">
                         <span id="feedShareUrl"
-                            style="font-family:var(--font-code);font-size:0.75rem;color:#888;">https://a-lab.tech</span>
+                            style="font-family:var(--font-code);font-size:0.65rem;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px;">https://a-lab.tech</span>
                         <button onclick="copyFeedLink()" class="status-btn hover-trigger" id="feedCopyBtn"
                             style="padding:5px 10px;">COPY</button>
                     </div>
@@ -2690,7 +2703,7 @@
     <script src="../toast.js"></script>
     <script src="../auth-guard.js"></script>
     <script src="../resident-profile-manager.js?v=3"></script>
-    <script defer src="../feed-manager.js?v=7"></script>
+    <script defer src="../feed-manager.js?v=8"></script>
 
     <script>
         // Tabs
@@ -2847,11 +2860,12 @@
         let _feedSharePostId = null;
         function openFeedShareModal(postId) {
             _feedSharePostId = postId;
-            const url = `https://a-lab.tech/post/${postId || 'latest'}`;
+            const shareText = 'Резиденты A-Lab — сообщество инженеров будущего';
+            const url = `${window.location.origin}/residents/post.html?id=${postId || 'latest'}`;
             document.getElementById('feedShareUrl').innerText = url;
-            document.getElementById('feedShareTg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=A-LAB Post`;
-            document.getElementById('feedShareWa').href = `https://wa.me/?text=${encodeURIComponent(url)}`;
-            document.getElementById('feedShareTw').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`;
+            document.getElementById('feedShareTg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`;
+            document.getElementById('feedShareWa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n' + url)}`;
+            document.getElementById('feedShareTw').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`;
             document.getElementById('feedShareModal').classList.add('active');
         }
         function closeFeedShareModal() {
@@ -2870,7 +2884,6 @@
             e.preventDefault();
             copyFeedLink();
             closeFeedShareModal();
-            switchTab('messages');
         }
 
         /* ========================================================

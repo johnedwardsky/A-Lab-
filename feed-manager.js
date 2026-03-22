@@ -755,20 +755,92 @@
         },
 
         /* ── Share ───────────────────────────────────────────────*/
+        _getPostShareUrl(postId) {
+            return `${window.location.origin}/residents/post.html?id=${postId}`;
+        },
+
+        _getShareText() {
+            const isRu = (navigator.language || '').startsWith('ru');
+            return isRu 
+                ? 'Резиденты A-Lab — сообщество инженеров будущего'
+                : 'A-Lab Residents — Community of Future Engineers';
+        },
+
         sharePost(postId) {
-            // Try to call the workspace share modal if available
+            const url = this._getPostShareUrl(postId);
+            const text = this._getShareText();
+
             if (typeof openFeedShareModal === 'function') {
                 openFeedShareModal(postId);
-            } else {
-                const url = `${window.location.origin}/post/${postId}`;
-                if (navigator.share) {
-                    navigator.share({ title: 'A-LAB Post', url }).catch(() => { });
-                } else {
-                    navigator.clipboard.writeText(url).then(() => {
-                        this._toast('🔗 Ссылка скопирована');
-                    });
-                }
+                return;
             }
+
+            // Show share picker
+            const old = document.getElementById('feedSharePicker');
+            if (old) old.remove();
+
+            const picker = document.createElement('div');
+            picker.id = 'feedSharePicker';
+            picker.className = 'feed-lightbox-overlay';
+            picker.onclick = (e) => { if (e.target === picker) picker.remove(); };
+            picker.innerHTML = `
+                <div class="feed-lightbox-container" style="max-width:400px;">
+                    <button class="feed-lightbox-close" onclick="document.getElementById('feedSharePicker').remove()">&times;</button>
+                    <div style="text-align:center;margin-bottom:16px;">
+                        <svg width="48" height="42" viewBox="0 0 421 370" xmlns="http://www.w3.org/2000/svg">
+                            <g stroke="none" fill="none" stroke-linecap="round">
+                                <g transform="translate(119.875,77.770)" stroke="#CE3333">
+                                    <path d="M52.87,143.98 L88.72,52.74 C89.33,51.2 91.07,50.44 92.61,51.04 C93.35,51.33 93.95,51.91 94.26,52.64 L133.87,143.98" stroke-width="20"/>
+                                    <path d="M54.62,144.98 C105.29,94.65 140.21,80.06 159.37,101.23 C186.03,130.66 175.37,160.98 156.62,180.23 C137.87,199.48 112.12,207.48 86.62,205.23 C61.12,202.98 38.87,194.98 21.37,173.73 C3.87,152.48 -3.88,113.48 1.87,86.48 C7.62,59.48 18.62,31.73 52.87,11.48" stroke-width="16"/>
+                                </g>
+                            </g>
+                        </svg>
+                        <div style="font-family:var(--font-code);font-size:0.75rem;color:var(--accent);font-weight:700;margin-top:8px;">${this._getShareText()}</div>
+                    </div>
+                    <div class="feed-lightbox-actions">
+                        <button class="feed-lightbox-btn" onclick="FeedManager._shareToSocial('${postId}', 'telegram')">
+                            <span>✈️</span> Telegram
+                        </button>
+                        <button class="feed-lightbox-btn" onclick="FeedManager._shareToSocial('${postId}', 'whatsapp')">
+                            <span>💬</span> WhatsApp
+                        </button>
+                        <button class="feed-lightbox-btn" onclick="FeedManager._shareToSocial('${postId}', 'twitter')">
+                            <span>🐦</span> Twitter
+                        </button>
+                        <button class="feed-lightbox-btn" onclick="FeedManager._copyPostLink('${postId}')">
+                            <span>🔗</span> Копировать
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(picker);
+        },
+
+        _shareToSocial(postId, platform) {
+            const url = this._getPostShareUrl(postId);
+            const text = this._getShareText();
+            let shareUrl = '';
+            switch (platform) {
+                case 'telegram':
+                    shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + '\n' + url)}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                    break;
+            }
+            if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');
+            document.getElementById('feedSharePicker')?.remove();
+        },
+
+        _copyPostLink(postId) {
+            const url = this._getPostShareUrl(postId);
+            navigator.clipboard.writeText(url).then(() => {
+                this._toast('🔗 Ссылка скопирована');
+            });
+            document.getElementById('feedSharePicker')?.remove();
         },
 
         /* ── My Posts (workspace admin tab) ─────────────────────*/
@@ -992,18 +1064,26 @@
         },
 
         _shareLightbox(imageUrl, platform) {
-            const url = imageUrl;
-            const text = 'Check out this from A-LAB!';
+            // Find the postId from the lightbox context
+            const postId = imageUrl; // postId is passed as 2nd param from lightbox buttons
+            const text = this._getShareText();
+            // If imageUrl looks like a URL, try to find the post with this image
+            let sharePostUrl = imageUrl;
+            if (imageUrl.startsWith('http')) {
+                // Find post by image
+                const post = this.posts.find(p => p.image_url === imageUrl);
+                if (post) sharePostUrl = this._getPostShareUrl(post.id);
+            }
             let shareUrl = '';
             switch (platform) {
                 case 'telegram':
-                    shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                    shareUrl = `https://t.me/share/url?url=${encodeURIComponent(sharePostUrl)}&text=${encodeURIComponent(text)}`;
                     break;
                 case 'whatsapp':
-                    shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`;
+                    shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + '\n' + sharePostUrl)}`;
                     break;
                 case 'twitter':
-                    shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+                    shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(sharePostUrl)}&text=${encodeURIComponent(text)}`;
                     break;
             }
             if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');

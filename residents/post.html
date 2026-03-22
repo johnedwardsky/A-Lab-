@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-LAB | Пост резидента</title>
+    <!-- OG Meta for Social Sharing -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="A-LAB.TECH — Резиденты">
+    <meta property="og:title" content="Резиденты A-Lab — сообщество инженеров будущего" id="ogTitle">
+    <meta property="og:description" content="Пост от резидента A-Lab. Присоединяйтесь к сообществу инженеров будущего." id="ogDesc">
+    <meta property="og:image" content="" id="ogImage">
+    <meta property="og:url" content="" id="ogUrl">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="A-Lab Residents — Community of Future Engineers" id="twTitle">
+    <meta name="twitter:description" content="A post from A-Lab resident. Join the community of future engineers." id="twDesc">
+    <meta name="twitter:image" content="" id="twImage">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet">
+    </noscript>
+
+    <style>
+        :root {
+            --bg: #030407;
+            --surface: #0b0d14;
+            --text: #ffffff;
+            --text-secondary: #b8b8b8;
+            --accent: #FF2A2A;
+            --tech-blue: #00E5FF;
+            --border: rgba(255,255,255,0.08);
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ───────────────────────────────────────── */
+        .sp-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sp-header svg { width: 48px; height: 42px; }
+        .sp-header-text {
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .sp-header-sub {
+            font-family: var(--font-main);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-top: 2px;
+        }
+
+        /* ── Main Container ───────────────────────────────── */
+        .sp-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        /* ── Blurred Feed Background ──────────────────────── */
+        .sp-blurred-feed {
+            display: none !important;
+        }
+
+        /* ── Author Card ──────────────────────────────────── */
+        .sp-author-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+        }
+        .sp-author-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid var(--tech-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(0,229,255,0.05);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .sp-author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sp-author-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .sp-author-role {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--tech-blue);
+            text-transform: uppercase;
+        }
+
+        /* ── Post Content ─────────────────────────────────── */
+        .sp-post-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 30px;
+        }
+        .sp-post-tag {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            background: rgba(0,229,255,0.06);
+            border: 1px solid rgba(0,229,255,0.15);
+            color: var(--tech-blue);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        .sp-post-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+        .sp-post-image {
+            max-width: 100%;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .sp-post-time {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .sp-post-sha {
+            font-family: var(--font-code);
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.15);
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+        }
+        .sp-post-sha .sha-val { color: rgba(0,229,255,0.25); }
+
+        /* Quote block */
+        .sp-quote-block {
+            border-left: 3px solid var(--tech-blue);
+            background: rgba(0,229,255,0.04);
+            padding: 10px 16px;
+            margin: 10px 0;
+            border-radius: 0 10px 10px 0;
+            color: #8ecfda;
+            font-style: italic;
+            font-size: 0.88rem;
+        }
+
+        /* ── CTA Section (non-resident) ───────────────────── */
+        .sp-cta-section {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            text-align: center;
+        }
+        .sp-cta-box {
+            max-width: 520px;
+            margin: 0 auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+        }
+        .sp-cta-title {
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--tech-blue);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sp-cta-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .sp-cta-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .sp-btn-join {
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-family: var(--font-code);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 12px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .sp-btn-join:hover { transform: scale(1.03); box-shadow: 0 8px 30px rgba(255,42,42,0.3); }
+        .sp-btn-main {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            font-family: var(--font-code);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 12px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .sp-btn-main:hover { border-color: var(--tech-blue); color: var(--tech-blue); }
+
+        /* ── Quiz Modal ───────────────────────────────────── */
+        .sp-quiz-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(16px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .sp-quiz-modal.active { display: flex; }
+        .sp-quiz-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .sp-quiz-close {
+            position: absolute;
+            top: 16px; right: 20px;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .sp-quiz-close:hover { color: white; }
+        .sp-quiz-step { display: none; }
+        .sp-quiz-step.active { display: block; }
+        .sp-quiz-progress {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: var(--tech-blue);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        .sp-quiz-q {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .sp-quiz-opt {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-family: var(--font-code);
+            font-size: 0.72rem;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        .sp-quiz-opt:hover { border-color: var(--tech-blue); color: white; background: rgba(0,229,255,0.05); }
+        .sp-quiz-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            margin-bottom: 10px;
+        }
+        .sp-quiz-input:focus { border-color: var(--tech-blue); }
+        .sp-quiz-input::placeholder { color: #555; }
+        .sp-quiz-btn {
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            border: none;
+            transition: all 0.2s;
+        }
+        .sp-quiz-btn.primary { background: var(--tech-blue); color: #000; }
+        .sp-quiz-btn.primary:hover { transform: scale(1.03); }
+        .sp-quiz-btn.secondary { background: transparent; border: 1px solid var(--border); color: #888; }
+        .sp-quiz-btn.secondary:hover { border-color: var(--tech-blue); color: white; }
+
+        /* Loading */
+        .sp-loading {
+            text-align: center;
+            padding: 60px 20px;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--tech-blue);
+        }
+        .sp-loading::after {
+            content: '';
+            display: inline-block;
+            width: 12px; height: 12px;
+            border: 2px solid var(--tech-blue);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Error */
+        .sp-error {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--accent);
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .sp-author-card { padding: 20px; gap: 14px; }
+            .sp-post-card { padding: 20px; }
+            .sp-cta-box { padding: 24px; }
+            .sp-quiz-content { padding: 28px; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="sp-header">
+        <svg viewBox="0 0 421 370" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+                <g transform="translate(119.875266, 77.770457)" stroke="#CE3333">
+                    <path d="M52.87,143.98 L88.72,52.74 C89.33,51.2 91.07,50.44 92.61,51.04 C93.35,51.33 93.95,51.91 94.26,52.64 L133.87,143.98" stroke-width="20"></path>
+                    <path d="M54.62,144.98 C105.29,94.65 140.21,80.06 159.37,101.23 C186.03,130.66 175.37,160.98 156.62,180.23 C137.87,199.48 112.12,207.48 86.62,205.23 C61.12,202.98 38.87,194.98 21.37,173.73 C3.87,152.48 -3.88,113.48 1.87,86.48 C7.62,59.48 18.62,31.73 52.87,11.48 C53.42,11.15 53.99,10.87 54.54,10.58 C102.47,-14.66 149.24,11.62 159.37,23.73" stroke-width="16"></path>
+                </g>
+            </g>
+        </svg>
+        <div>
+            <div class="sp-header-text" id="headerTitle">РЕЗИДЕНТЫ A-LAB</div>
+            <div class="sp-header-sub" id="headerSub">сообщество инженеров будущего</div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <main class="sp-container" id="mainContent">
+        <div class="sp-loading" id="loadingState">Загрузка поста</div>
+    </main>
+
+    <!-- CTA Section for non-residents (inline, below post) -->
+    <div class="sp-cta-section" id="ctaSection" style="display:none;">
+        <div class="sp-cta-box">
+            <div class="sp-cta-title" id="ctaTitle">Лента резидентов A-Lab</div>
+            <div class="sp-cta-desc" id="ctaDesc">
+                Это закрытое сообщество инженеров будущего. Присоединяйтесь, чтобы видеть все посты и общаться с резидентами.
+            </div>
+            <div class="sp-cta-actions">
+                <button class="sp-btn-join" id="ctaBtnJoin" onclick="openJoinQuiz()">Присоединиться</button>
+                <a class="sp-btn-main" id="ctaBtnMain" href="/">На главную</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="sp-quiz-modal" id="quizModal">
+        <div class="sp-quiz-content">
+            <button class="sp-quiz-close" onclick="closeQuiz()">&times;</button>
+            <div id="quizForm">
+                <!-- Step 1 -->
+                <div class="sp-quiz-step active" id="qStep1">
+                    <div class="sp-quiz-progress" id="qProg1">ШАГ 1 // 5</div>
+                    <h2 class="sp-quiz-q" id="qTitle1">Ваша суперсила?</h2>
+                    <div class="sp-quiz-opt" onclick="selectStrength('DEVELOPMENT')">DEVELOPMENT</div>
+                    <div class="sp-quiz-opt" onclick="selectStrength('DESIGN / UI / UX')">DESIGN / UI / UX</div>
+                    <div class="sp-quiz-opt" onclick="selectStrength('MARKETING / BIZDEV')">MARKETING / BIZDEV</div>
+                    <div class="sp-quiz-opt" onclick="selectStrength('CONTENT / AI ART')">CONTENT / AI ART</div>
+                    <div class="sp-quiz-opt" id="qOther" onclick="showOtherStrength()">ДРУГОЕ (УКАЗАТЬ)</div>
+                    <div id="customStrengthBlock" style="display:none;">
+                        <input type="text" class="sp-quiz-input" id="customStrengthInput" placeholder="...">
+                        <button class="sp-quiz-btn primary" onclick="submitCustomStrength()" id="qNextCustom">ДАЛЕЕ</button>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="sp-quiz-step" id="qStep2">
+                    <div class="sp-quiz-progress" id="qProg2">ШАГ 2 // 5</div>
+                    <h2 class="sp-quiz-q" id="qTitle2">Ваш опыт в годах?</h2>
+                    <div class="sp-quiz-opt" onclick="selectExp('1-3')">1-3 ГОДА</div>
+                    <div class="sp-quiz-opt" onclick="selectExp('3-7')">3-7 ЛЕТ</div>
+                    <div class="sp-quiz-opt" onclick="selectExp('7+')">7+ ЛЕТ</div>
+                    <button class="sp-quiz-btn secondary" onclick="goStep(1)" id="qBack2" style="margin-top:12px;">← НАЗАД</button>
+                </div>
+                <!-- Step 3 -->
+                <div class="sp-quiz-step" id="qStep3">
+                    <div class="sp-quiz-progress" id="qProg3">ШАГ 3 // 5</div>
+                    <h2 class="sp-quiz-q" id="qTitle3">Расскажите о себе</h2>
+                    <textarea class="sp-quiz-input" id="regBio" placeholder="Ваша мотивация..." rows="4"></textarea>
+                    <div style="display:flex;gap:12px;margin-top:12px;">
+                        <button class="sp-quiz-btn secondary" onclick="goStep(2)" id="qBack3">← НАЗАД</button>
+                        <button class="sp-quiz-btn primary" onclick="goStep(4)" id="qNext3" style="flex:1;">ДАЛЕЕ</button>
+                    </div>
+                </div>
+                <!-- Step 4 -->
+                <div class="sp-quiz-step" id="qStep4">
+                    <div class="sp-quiz-progress" id="qProg4">ШАГ 4 // 5</div>
+                    <h2 class="sp-quiz-q" id="qTitle4">Рекомендация (ID)</h2>
+                    <p style="font-size:0.7rem;color:#666;margin-bottom:15px;font-family:var(--font-code);" id="qDesc4">Для вступления необходим ID действующего резидента.</p>
+                    <input type="text" class="sp-quiz-input" placeholder="ID.XXXXXX" id="recommenderId">
+                    <div style="display:flex;gap:12px;margin-top:12px;">
+                        <button class="sp-quiz-btn secondary" onclick="goStep(3)" id="qBack4">← НАЗАД</button>
+                        <button class="sp-quiz-btn primary" onclick="goStep(5)" id="qNext4" style="flex:1;">ДАЛЕЕ</button>
+                    </div>
+                </div>
+                <!-- Step 5 -->
+                <div class="sp-quiz-step" id="qStep5">
+                    <div class="sp-quiz-progress" id="qProg5">ШАГ 5 // 5</div>
+                    <h2 class="sp-quiz-q" id="qTitle5">Контактные данные</h2>
+                    <input type="text" class="sp-quiz-input" placeholder="Имя Фамилия" id="regFullName">
+                    <input type="email" class="sp-quiz-input" placeholder="your@email.com" id="regEmail">
+                    <input type="text" class="sp-quiz-input" placeholder="@telegram_username" id="regTg">
+                    <p style="font-size:0.6rem;color:#666;margin-top:8px;font-family:var(--font-code);" id="qEmailNote">Email используется для создания аккаунта при одобрении заявки.</p>
+                    <div style="display:flex;gap:12px;margin-top:16px;">
+                        <button class="sp-quiz-btn secondary" onclick="goStep(4)" id="qBack5">← НАЗАД</button>
+                        <button class="sp-quiz-btn primary" id="submitAppBtn" onclick="finishQuiz()" style="flex:1;">ОТПРАВИТЬ ЗАЯВКУ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script defer src="../assets/js/supabase.js"></script>
+    <script defer src="../supabase-client.js"></script>
+
+    <script>
+        /* ── Language Detection ────────────────────────────── */
+        const userLang = navigator.language || navigator.userLanguage || 'ru';
+        const isEN = !userLang.startsWith('ru');
+
+        const i18n = {
+            ru: {
+                pageTitle: 'A-LAB | Пост резидента',
+                headerTitle: 'РЕЗИДЕНТЫ A-LAB',
+                headerSub: 'сообщество инженеров будущего',
+                loading: 'Загрузка поста',
+                postNotFound: 'Пост не найден или удалён',
+                ctaTitle: 'Лента резидентов A-Lab',
+                ctaDesc: 'Это закрытое сообщество инженеров будущего. Присоединяйтесь, чтобы видеть все посты и общаться с резидентами.',
+                btnJoin: 'Присоединиться',
+                btnMain: 'На главную',
+                ogTitle: 'Резиденты A-Lab — сообщество инженеров будущего',
+                ogDesc: 'Пост от резидента A-Lab. Присоединяйтесь к сообществу инженеров будущего.',
+                step: 'ШАГ',
+                q1: 'Ваша суперсила?',
+                q2: 'Ваш опыт в годах?',
+                q3: 'Расскажите о себе',
+                q4: 'Рекомендация (ID)',
+                q4desc: 'Для вступления необходим ID действующего резидента.',
+                q5: 'Контактные данные',
+                emailNote: 'Email используется для создания аккаунта при одобрении заявки.',
+                otherOpt: 'ДРУГОЕ (УКАЗАТЬ)',
+                back: '← НАЗАД',
+                next: 'ДАЛЕЕ',
+                submit: 'ОТПРАВИТЬ ЗАЯВКУ',
+                sending: 'ОТПРАВКА...',
+                successMsg: 'ЗАЯВКА ПРИНЯТА: Мы свяжемся с вами через Telegram после рассмотрения.',
+                alertName: 'Укажите имя',
+                alertEmail: 'Введите корректный email',
+                alertTg: 'Введите Telegram',
+                alertId: 'Введите ID резидента',
+                bioPlaceholder: 'Ваша мотивация...',
+                exp1: '1-3 ГОДА',
+                exp2: '3-7 ЛЕТ',
+                exp3: '7+ ЛЕТ',
+                justNow: 'ТОЛЬКО ЧТО',
+                minAgo: 'МИН. НАЗАД',
+                hrAgo: 'Ч. НАЗАД',
+                dayAgo: 'Д. НАЗАД'
+            },
+            en: {
+                pageTitle: 'A-LAB | Resident Post',
+                headerTitle: 'A-LAB RESIDENTS',
+                headerSub: 'community of future engineers',
+                loading: 'Loading post',
+                postNotFound: 'Post not found or deleted',
+                ctaTitle: 'A-Lab Residents Feed',
+                ctaDesc: 'This is a private community of future engineers. Join to see all posts and connect with residents.',
+                btnJoin: 'Join Us',
+                btnMain: 'Go to Main Page',
+                ogTitle: 'A-Lab Residents — Community of Future Engineers',
+                ogDesc: 'A post from an A-Lab resident. Join the community of future engineers.',
+                step: 'STEP',
+                q1: 'Your superpower?',
+                q2: 'Years of experience?',
+                q3: 'Tell about yourself',
+                q4: 'Referral (ID)',
+                q4desc: 'You need an existing resident ID to join.',
+                q5: 'Contact Details',
+                emailNote: 'Email will be used to create your account upon approval.',
+                otherOpt: 'OTHER (SPECIFY)',
+                back: '← BACK',
+                next: 'NEXT',
+                submit: 'SUBMIT APPLICATION',
+                sending: 'SENDING...',
+                successMsg: 'APPLICATION RECEIVED: We will contact you on Telegram after review.',
+                alertName: 'Enter your name',
+                alertEmail: 'Enter a valid email',
+                alertTg: 'Enter Telegram username',
+                alertId: 'Enter Resident ID',
+                bioPlaceholder: 'Your motivation...',
+                exp1: '1-3 YEARS',
+                exp2: '3-7 YEARS',
+                exp3: '7+ YEARS',
+                justNow: 'JUST NOW',
+                minAgo: 'MIN AGO',
+                hrAgo: 'HR AGO',
+                dayAgo: 'DAYS AGO'
+            }
+        };
+
+        const t = isEN ? i18n.en : i18n.ru;
+
+        /* ── Apply translations to static elements ──────── */
+        function applyTranslations() {
+            document.title = t.pageTitle;
+            if (isEN) document.documentElement.lang = 'en';
+            document.getElementById('headerTitle').textContent = t.headerTitle;
+            document.getElementById('headerSub').textContent = t.headerSub;
+            document.getElementById('loadingState').textContent = t.loading;
+            document.getElementById('ctaTitle').textContent = t.ctaTitle;
+            document.getElementById('ctaDesc').textContent = t.ctaDesc;
+            document.getElementById('ctaBtnJoin').textContent = t.btnJoin;
+            document.getElementById('ctaBtnMain').textContent = t.btnMain;
+            document.getElementById('ogTitle').content = t.ogTitle;
+            document.getElementById('ogDesc').content = t.ogDesc;
+            document.getElementById('twTitle').content = t.ogTitle;
+            document.getElementById('twDesc').content = t.ogDesc;
+
+            // Quiz
+            for (let i = 1; i <= 5; i++) {
+                const prog = document.getElementById('qProg' + i);
+                if (prog) prog.textContent = `${t.step} ${i} // 5`;
+            }
+            document.getElementById('qTitle1').textContent = t.q1;
+            document.getElementById('qTitle2').textContent = t.q2;
+            document.getElementById('qTitle3').textContent = t.q3;
+            document.getElementById('qTitle4').textContent = t.q4;
+            document.getElementById('qDesc4').textContent = t.q4desc;
+            document.getElementById('qTitle5').textContent = t.q5;
+            document.getElementById('qEmailNote').textContent = t.emailNote;
+            document.getElementById('qOther').textContent = t.otherOpt;
+            document.getElementById('qNextCustom').textContent = t.next;
+            document.getElementById('regBio').placeholder = t.bioPlaceholder;
+            document.getElementById('submitAppBtn').textContent = t.submit;
+
+            // Back/Next
+            ['qBack2','qBack3','qBack4','qBack5'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = t.back;
+            });
+            ['qNext3','qNext4'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = t.next;
+            });
+
+            // Experience options
+            const opts = document.querySelectorAll('#qStep2 .sp-quiz-opt');
+            if (opts[0]) opts[0].textContent = t.exp1;
+            if (opts[1]) opts[1].textContent = t.exp2;
+            if (opts[2]) opts[2].textContent = t.exp3;
+        }
+
+        /* ── Post Loading ──────────────────────────────────── */
+        async function loadPost() {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get('id');
+
+            if (!postId) {
+                showError(t.postNotFound);
+                return;
+            }
+
+            // Set OG URL
+            document.getElementById('ogUrl').content = window.location.href;
+
+            // Wait for Supabase
+            let attempts = 0;
+            while (!window.ALabCore?.db && attempts < 30) {
+                await new Promise(r => setTimeout(r, 200));
+                attempts++;
+            }
+
+            const db = window.ALabCore?.db;
+            if (!db) { showError('Service unavailable'); return; }
+
+            try {
+                const { data: post, error } = await db
+                    .from('posts')
+                    .select('*, author:residents(id, full_name, role, avatar_url)')
+                    .eq('id', postId)
+                    .single();
+
+                if (error || !post) { showError(t.postNotFound); return; }
+
+                renderPost(post);
+            } catch (err) {
+                showError(t.postNotFound);
+            }
+        }
+
+        function renderPost(post) {
+            const main = document.getElementById('mainContent');
+            const loading = document.getElementById('loadingState');
+            loading.style.display = 'none';
+
+            const author = post.author || {};
+            const tags = Array.isArray(post.tags) ? post.tags : [];
+            const timeStr = formatTime(post.created_at);
+            const contentHtml = formatContent(post.content || '');
+            const shaInput = `${post.content || ''}|${post.author_id || ''}|${post.created_at || ''}`;
+
+            // Update OG meta
+            const authorName = author.full_name || 'Resident';
+            const preview = (post.content || '').substring(0, 120);
+            document.getElementById('ogTitle').content = `${authorName} — ${t.headerTitle}`;
+            document.getElementById('ogDesc').content = preview || t.ogDesc;
+            document.getElementById('twTitle').content = `${authorName} — ${t.headerTitle}`;
+            document.getElementById('twDesc').content = preview || t.ogDesc;
+            if (post.image_url) {
+                document.getElementById('ogImage').content = post.image_url;
+                document.getElementById('twImage').content = post.image_url;
+            }
+
+            // Author Card
+            main.innerHTML = `
+                <div class="sp-author-card">
+                    <div class="sp-author-avatar">
+                        ${author.avatar_url ? `<img src="${author.avatar_url}" alt="${escHtml(authorName)}">` : '👤'}
+                    </div>
+                    <div>
+                        <div class="sp-author-name">${escHtml(authorName)}</div>
+                        <div class="sp-author-role">${escHtml(author.role || 'Resident')}</div>
+                    </div>
+                </div>
+
+                <div class="sp-post-card">
+                    ${tags.map(tag => `<span class="sp-post-tag">${escHtml(tag)}</span>`).join(' ')}
+                    <div class="sp-post-text">${contentHtml}</div>
+                    ${post.image_url ? `<img src="${post.image_url}" alt="Post" class="sp-post-image">` : ''}
+                    <div class="sp-post-time">${timeStr}</div>
+                    <div class="sp-post-sha">🔐 SHA-256: <span class="sha-val" id="postSha">...</span></div>
+                </div>
+            `;
+
+            // Compute SHA
+            computeSHA(shaInput);
+
+            // Show CTA below post
+            document.getElementById('ctaSection').style.display = 'block';
+        }
+
+        async function computeSHA(input) {
+            try {
+                const enc = new TextEncoder();
+                const hash = await crypto.subtle.digest('SHA-256', enc.encode(input));
+                const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+                const el = document.getElementById('postSha');
+                if (el) el.textContent = hex.substring(0, 16);
+            } catch (_) {}
+        }
+
+        function showError(msg) {
+            const main = document.getElementById('mainContent');
+            main.innerHTML = `<div class="sp-error">${escHtml(msg)}</div>`;
+            // Show CTA anyway
+            document.getElementById('ctaSection').style.display = 'block';
+        }
+
+        /* ── Formatting ──────────────────────────────────────── */
+        function escHtml(str) {
+            if (!str) return '';
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        function formatContent(text) {
+            const escaped = escHtml(text);
+            const lines = escaped.split('\n');
+            let inQuote = false, quoteLines = [], result = [];
+
+            const flush = () => {
+                if (quoteLines.length) {
+                    result.push(`<div class="sp-quote-block">${quoteLines.join('<br>')}</div>`);
+                    quoteLines = [];
+                }
+                inQuote = false;
+            };
+
+            for (const line of lines) {
+                if (line.startsWith('&gt; ') || line.startsWith('&gt;')) {
+                    inQuote = true;
+                    quoteLines.push(line.replace(/^&gt;\s?/, ''));
+                } else {
+                    if (inQuote) flush();
+                    result.push(line);
+                }
+            }
+            if (inQuote) flush();
+
+            const joined = result.join('<br>');
+            return joined.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--tech-blue);">$1</a>');
+        }
+
+        function formatTime(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = now - date;
+            const mins = Math.floor(diff / 60000);
+            const hrs = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            if (mins < 1) return t.justNow;
+            if (mins < 60) return `${mins} ${t.minAgo}`;
+            if (hrs < 24) return `${hrs} ${t.hrAgo}`;
+            if (days < 7) return `${days} ${t.dayAgo}`;
+            return date.toLocaleDateString(isEN ? 'en-US' : 'ru-RU');
+        }
+
+        /* ── Quiz Logic ────────────────────────────────────── */
+        let selectedStrength = '', selectedExp = '';
+
+        function openJoinQuiz() {
+            document.getElementById('quizModal').classList.add('active');
+        }
+        function closeQuiz() {
+            document.getElementById('quizModal').classList.remove('active');
+            goStep(1);
+        }
+        function goStep(n) {
+            document.querySelectorAll('.sp-quiz-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('qStep' + n)?.classList.add('active');
+        }
+        function selectStrength(v) { selectedStrength = v; goStep(2); }
+        function selectExp(v) { selectedExp = v; goStep(3); }
+        function showOtherStrength() {
+            document.getElementById('customStrengthBlock').style.display = 'block';
+        }
+        function submitCustomStrength() {
+            const v = document.getElementById('customStrengthInput').value.trim();
+            if (!v) return alert(t.alertName);
+            selectedStrength = v;
+            goStep(2);
+        }
+
+        async function finishQuiz() {
+            const fullName = document.getElementById('regFullName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const tg = document.getElementById('regTg').value.trim();
+            const bio = document.getElementById('regBio').value.trim();
+            const recommender = document.getElementById('recommenderId').value.trim();
+            const btn = document.getElementById('submitAppBtn');
+
+            if (!fullName) return alert(t.alertName);
+            if (!email || !email.includes('@')) return alert(t.alertEmail);
+            if (!tg) return alert(t.alertTg);
+            if (!recommender) return alert(t.alertId);
+
+            btn.disabled = true;
+            btn.textContent = t.sending;
+
+            try {
+                const db = window.ALabCore?.db;
+                if (!db) throw new Error('Service unavailable');
+
+                const { error } = await db.from('leads').insert({
+                    name: fullName,
+                    email: email,
+                    contact: tg,
+                    source: 'shared_post_quiz',
+                    source_detail: `Skill: ${selectedStrength || 'N/A'}, Exp: ${selectedExp || 'N/A'}`,
+                    message: `Bio: ${bio}\nRecommender ID: ${recommender}\nShared post: ${window.location.href}`,
+                    status: 'new'
+                });
+
+                if (error) throw error;
+                alert(t.successMsg);
+                closeQuiz();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = t.submit;
+            }
+        }
+
+        /* ── Init ──────────────────────────────────────────── */
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations();
+            loadPost();
+        });
+    </script>
+</body>
+</html>
