@@ -278,12 +278,27 @@
                             <div class="feed-post-time">${this._formatTime(post.created_at)}${post.updated_at && post.updated_at !== post.created_at ? ' <span style="font-size:0.55rem;color:#555;">(ред.)</span>' : ''}</div>
                             ${(post.author_id === this.residentId || this.isAdmin) ? `
                                 <div style="position:relative;" id="post-menu-wrap-${post.id}">
-                                    <button onclick="FeedManager._togglePostMenu('${post.id}')" style="background:transparent;border:none;color:#555;cursor:pointer;font-size:1rem;padding:4px 6px;border-radius:6px;" title="Управление">⋯</button>
-                                    <div id="post-menu-${post.id}" style="display:none;position:absolute;right:0;top:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px;z-index:100;min-width:160px;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-                                        <button onclick="FeedManager._startEditPost('${post.id}')" style="width:100%;background:transparent;border:none;color:var(--tech-blue);font-family:var(--font-code);font-size:0.7rem;padding:7px 10px;border-radius:8px;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(0,229,255,0.08)'" onmouseout="this.style.background='transparent'">✏️ Редактировать</button>
-                                        <button onclick="FeedManager._deletePost('${post.id}')" style="width:100%;background:transparent;border:none;color:var(--accent);font-family:var(--font-code);font-size:0.7rem;padding:7px 10px;border-radius:8px;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(255,42,42,0.08)'" onmouseout="this.style.background='transparent'">🗑 Удалить</button>
+                                    <button class="post-menu-btn" onclick="event.stopPropagation();FeedManager._togglePostMenu('${post.id}')" title="Действия">⋯</button>
+                                    <div class="post-dropdown-menu" id="post-menu-${post.id}">
+                                        <button class="post-dropdown-item" onclick="FeedManager._startEditPost('${post.id}')">
+                                            <span>✏️</span> Редактировать
+                                        </button>
+                                        <button class="post-dropdown-item" onclick="FeedManager._quotePost('${post.id}')">
+                                            <span>💬</span> Цитировать
+                                        </button>
+                                        <button class="post-dropdown-item danger" onclick="FeedManager._deletePost('${post.id}')">
+                                            <span>🗑</span> Удалить
+                                        </button>
                                     </div>
-                                </div>` : ''}
+                                </div>` : `
+                                <div style="position:relative;" id="post-menu-wrap-${post.id}">
+                                    <button class="post-menu-btn" onclick="event.stopPropagation();FeedManager._togglePostMenu('${post.id}')" title="Действия">⋯</button>
+                                    <div class="post-dropdown-menu" id="post-menu-${post.id}">
+                                        <button class="post-dropdown-item" onclick="FeedManager._quotePost('${post.id}')">
+                                            <span>💬</span> Цитировать
+                                        </button>
+                                    </div>
+                                </div>`}
                         </div>
                     </div>
 
@@ -604,9 +619,8 @@
 
         /* ── Edit Post (inline) ──────────────────────────────────*/
         _startEditPost(postId) {
-            // Close the menu
-            const menuEl = document.getElementById(`post-menu-${postId}`);
-            if (menuEl) menuEl.style.display = 'none';
+            // Close all menus
+            document.querySelectorAll('.post-dropdown-menu').forEach(m => m.classList.remove('active'));
 
             const post = this.posts.find(p => p.id === postId);
             if (!post) return;
@@ -691,10 +705,36 @@
         _togglePostMenu(postId) {
             const menuEl = document.getElementById(`post-menu-${postId}`);
             if (!menuEl) return;
-            const isVisible = menuEl.style.display === 'block';
-            // Close all menus
-            document.querySelectorAll('[id^="post-menu-"]').forEach(m => m.style.display = 'none');
-            if (!isVisible) menuEl.style.display = 'block';
+            const isActive = menuEl.classList.contains('active');
+            // Close all menus first
+            document.querySelectorAll('.post-dropdown-menu').forEach(m => m.classList.remove('active'));
+            if (!isActive) menuEl.classList.add('active');
+        },
+
+        /* ── Quote Post ──────────────────────────────────────────*/
+        _quotePost(postId) {
+            // Close menu
+            document.querySelectorAll('.post-dropdown-menu').forEach(m => m.classList.remove('active'));
+
+            const post = this.posts.find(p => p.id === postId);
+            if (!post) return;
+
+            const authorName = post.author?.full_name || 'Resident';
+            const shortContent = post.content.length > 120 ? post.content.substring(0, 120) + '...' : post.content;
+            const quoteText = `> ${authorName}: «${shortContent}»\n\n`;
+
+            // Insert into post creation textarea
+            const textarea = document.getElementById('postContent');
+            if (textarea) {
+                textarea.value = quoteText;
+                textarea.focus();
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+                // Scroll to top to show the create form
+                const scrollArea = document.querySelector('.feed-scroll-area');
+                if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+                this._toast('💬 Цитата добавлена — дополните ответ');
+            }
         },
 
         /* ── Share ───────────────────────────────────────────────*/
@@ -767,8 +807,8 @@
 
             // Close menus/pickers on outside click
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('[id^="post-menu-wrap-"]')) {
-                    document.querySelectorAll('[id^="post-menu-"]').forEach(m => m.style.display = 'none');
+                if (!e.target.closest('[id^="post-menu-wrap-"]') && !e.target.closest('.post-menu-btn')) {
+                    document.querySelectorAll('.post-dropdown-menu').forEach(m => m.classList.remove('active'));
                 }
                 if (!e.target.closest('[id^="emoji-picker-"]') && !e.target.closest('[id^="reaction-btn-"]')) {
                     document.querySelectorAll('[id^="emoji-picker-"]').forEach(p => p.style.display = 'none');
