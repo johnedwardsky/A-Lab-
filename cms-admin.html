@@ -1060,10 +1060,11 @@
         <div class="tab-content" id="tab-projects">
             <div class="section-header">
                 <div class="filter-pills">
-                    <button class="filter-pill active hover-trigger">ВСЕ</button>
-                    <button class="filter-pill hover-trigger">MARKETING</button>
-                    <button class="filter-pill hover-trigger">DESIGN</button>
-                    <button class="filter-pill hover-trigger">R&D</button>
+                    <button class="filter-pill active hover-trigger" onclick="filterProjects('all')">ВСЕ</button>
+                    <button class="filter-pill hover-trigger" onclick="filterProjects('marketing')">MARKETING</button>
+                    <button class="filter-pill hover-trigger" onclick="filterProjects('design')">DESIGN</button>
+                    <button class="filter-pill hover-trigger" onclick="filterProjects('rd')">R&D</button>
+                    <button class="filter-pill hover-trigger" onclick="filterProjects('digital')">DIGITAL</button>
                 </div>
                 <button class="btn btn-primary btn-sm hover-trigger" onclick="openProjectForm()">+ НОВЫЙ ПРОЕКТ</button>
             </div>

@@ -1,4 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
+const fs = require('fs');
+const path = require('path');
 
 const SUPABASE_URL = 'https://lvyfuljsvzczuwccktln.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2eWZ1bGpzdnpjenV3Y2NrdGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5OTAwMzEsImV4cCI6MjA4NjU2NjAzMX0.juafzih9bbcIsntrAvku2O_77yz7mnIkOqbY8xencIo';
@@ -35,7 +37,7 @@ const designProjects = [
         description: "Designing the world's first decentralized banking identity, merging complex blockchain aesthetics with high-end fintech reliability.",
         category: "design",
         lang: "en",
-        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_nebula.png",
+        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_nebula_v2.png",
         order_index: 2
     },
     {
@@ -45,7 +47,7 @@ const designProjects = [
         description: "Создание визуальной идентичности первого децентрализованного банка, объединяющей эстетику блокчейна с доверием мирового финтеха.",
         category: "design",
         lang: "ru",
-        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_nebula.png",
+        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_nebula_v2.png",
         order_index: 2
     },
     // Aura Blockchain Consortium
@@ -77,7 +79,7 @@ const designProjects = [
         description: "Designing a comprehensive OS interface for real-time brain activity monitoring and AI-driven neural diagnostics.",
         category: "design",
         lang: "en",
-        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_med_v3.png",
+        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_med_v4.png",
         order_index: 4
     },
     {
@@ -87,12 +89,33 @@ const designProjects = [
         description: "Разработка комплексного интерфейса операционной системы для мониторинга активности мозга и нейро-диагностики в реальном времени.",
         category: "design",
         lang: "ru",
-        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_med_v3.png",
+        image_url: "https://lvyfuljsvzczuwccktln.supabase.co/storage/v1/object/public/portfolio/design_case_med_v4.png",
         order_index: 4
     }
 ];
 
+async function uploadImage(localPath, storageName) {
+    const fileBuffer = fs.readFileSync(localPath);
+    console.log(`Uploading ${storageName} (${fileBuffer.length} bytes)...`);
+    const { data, error } = await supabase.storage
+        .from('portfolio')
+        .upload(storageName, fileBuffer, {
+            contentType: 'image/png',
+            upsert: true
+        });
+    if (error) {
+        console.error(`Upload error for ${storageName}:`, error.message);
+    } else {
+        console.log(`✅ Uploaded ${storageName}`);
+    }
+}
+
 async function seed() {
+    // Upload new images to Supabase Storage
+    const imgDir = path.join(__dirname, 'assets', 'img');
+    await uploadImage(path.join(imgDir, 'design_case_nebula_v2.png'), 'design_case_nebula_v2.png');
+    await uploadImage(path.join(imgDir, 'design_case_med_v4.png'), 'design_case_med_v4.png');
+
     console.log('Cleaning up existing design projects...');
     await supabase.from('projects').delete().eq('category', 'design');
 

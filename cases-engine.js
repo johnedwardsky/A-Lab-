@@ -85,7 +85,7 @@ const ALabCases = {
             description: "Designing the world's first decentralized banking identity, merging complex blockchain aesthetics with high-end fintech reliability.",
             category: "design",
             lang: "en",
-            image_url: "design_case_nebula.png"
+            image_url: "design_case_nebula_v2.png"
         },
         {
             id: 109,
@@ -106,7 +106,7 @@ const ALabCases = {
             description: "Designing a comprehensive OS interface for real-time brain activity monitoring and AI-driven neural diagnostics.",
             category: "design",
             lang: "en",
-            image_url: "design_case_med_v3.png"
+            image_url: "design_case_med_v4.png"
         },
         {
             id: 5,
@@ -126,7 +126,7 @@ const ALabCases = {
             description: "Создание визуальной идентичности первого децентрализованного банка, объединяющей эстетику блокчейна с доверием мирового финтеха.",
             category: "design",
             lang: "ru",
-            image_url: "design_case_nebula.png"
+            image_url: "design_case_nebula_v2.png"
         },
         {
             id: 9,
@@ -146,7 +146,7 @@ const ALabCases = {
             description: "Разработка комплексного интерфейса операционной системы для мониторинга активности мозга и нейро-диагностики в реальном времени.",
             category: "design",
             lang: "ru",
-            image_url: "design_case_med_v3.png"
+            image_url: "design_case_med_v4.png"
         },
         {
             id: 'lumina_ai',

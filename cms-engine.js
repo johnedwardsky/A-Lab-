@@ -48,6 +48,7 @@
                 this.loadDashboardStats(),
                 this.loadRecentLeads(),
                 this.loadLeads(),
+                this.loadProjects(),
                 this.loadResidents(),
                 this.loadNDA(),
                 this.loadApplications(),
@@ -458,6 +459,146 @@
             }
         },
 
+        // ─── PROJECTS ─────────────────────────────────────
+        _projectsCache: [],
+        _projectFilter: 'all',
+
+        async loadProjects(filter) {
+            if (filter !== undefined) this._projectFilter = filter;
+            const f = this._projectFilter;
+
+            try {
+                let query = this.db.from('projects').select('*').order('order_index', { ascending: true });
+                if (f && f !== 'all') query = query.eq('category', f);
+
+                const { data, error } = await query;
+                if (error && error.code !== '42P01') throw error;
+
+                this._projectsCache = data || [];
+                const tbody = document.getElementById('projectsBody');
+                if (!tbody) return;
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-icon">🗂️</div><p>Нет проектов' + (f !== 'all' ? ' в категории ' + f.toUpperCase() : '') + '.</p></td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map(p => {
+                    const imgSrc = p.image_url
+                        ? (p.image_url.startsWith('http') ? p.image_url : 'assets/img/' + p.image_url)
+                        : '';
+                    const catBadge = p.category === 'design' ? 'badge-design'
+                        : p.category === 'rd' ? 'badge-rd'
+                        : p.category === 'marketing' ? 'badge-marketing'
+                        : 'badge-info';
+
+                    return `
+                    <tr>
+                        <td style="width:80px;">
+                            ${imgSrc
+                                ? `<img src="${imgSrc}" alt="" style="width:70px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--border);"  onerror="this.style.display='none'">`
+                                : '<div style="width:70px;height:44px;background:var(--surface);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#333;font-size:0.6rem;">NO IMG</div>'}
+                        </td>
+                        <td>
+                            <strong>${this._esc(p.title || '—')}</strong>
+                            <div style="font-size:0.65rem;color:var(--text-dim);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${this._esc(p.description || '')}</div>
+                        </td>
+                        <td><span class="badge ${catBadge}">${(p.category || '—').toUpperCase()}</span></td>
+                        <td>
+                            <span style="font-family:var(--font-code);font-size:0.75rem;color:var(--tech-blue);">${this._esc(p.result_value || '')}</span>
+                            <span style="font-size:0.6rem;color:var(--text-dim);">${this._esc(p.result_label || '')}</span>
+                        </td>
+                        <td><span class="badge badge-info">${(p.lang || '—').toUpperCase()}</span></td>
+                        <td style="text-align:center;font-family:var(--font-code);">${p.order_index ?? '—'}</td>
+                        <td style="white-space:nowrap;">
+                            <button class="action-btn hover-trigger" onclick="CMS.editProject('${p.id}')" title="Редактировать" style="font-size:0.9rem;">✏️</button>
+                            <button class="action-btn hover-trigger" onclick="CMS.deleteProject('${p.id}')" title="Удалить" style="font-size:0.9rem;">🗑</button>
+                        </td>
+                    </tr>`;
+                }).join('');
+
+            } catch (err) {
+                console.error('[CMS] Projects error:', err);
+            }
+        },
+
+        async deleteProject(id) {
+            if (!confirm('🗑 Удалить этот проект?')) return;
+            try {
+                const { error } = await this.db.from('projects').delete().eq('id', id);
+                if (error) throw error;
+                await this.loadProjects();
+                await this.loadDashboardStats();
+            } catch (err) {
+                alert('Ошибка удаления: ' + err.message);
+            }
+        },
+
+        editProject(id) {
+            const proj = this._projectsCache.find(p => String(p.id) === String(id));
+            if (!proj) return alert('Проект не найден');
+            window._openProjectFormWithData(proj);
+        },
+
+        async saveProject(formData, existingId) {
+            try {
+                // If there's a file to upload, handle it first
+                let imageUrl = formData.image_url;
+                const fileInput = document.getElementById('projectImageFile');
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const fileName = 'design_case_' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '');
+                    
+                    const { data: upData, error: upErr } = await this.db.storage
+                        .from('portfolio')
+                        .upload(fileName, file, {
+                            contentType: file.type,
+                            upsert: true
+                        });
+
+                    if (upErr) {
+                        console.error('[CMS] Upload error:', upErr);
+                        alert('⚠️ Загрузка файла в Storage не удалась: ' + upErr.message + '\nПопробуйте указать URL вручную.');
+                    } else {
+                        const { data: pubUrl } = this.db.storage
+                            .from('portfolio')
+                            .getPublicUrl(fileName);
+                        imageUrl = pubUrl?.publicUrl || imageUrl;
+                        console.log('[CMS] Image uploaded:', imageUrl);
+                    }
+                }
+
+                const record = {
+                    title: formData.title,
+                    description: formData.description,
+                    category: formData.category,
+                    lang: formData.lang,
+                    result_value: formData.result_value,
+                    result_label: formData.result_label,
+                    image_url: imageUrl,
+                    link_url: formData.link_url || null,
+                    order_index: parseInt(formData.order_index) || 0
+                };
+
+                if (existingId) {
+                    const { error } = await this.db.from('projects').update(record).eq('id', existingId);
+                    if (error) throw error;
+                } else {
+                    const { error } = await this.db.from('projects').insert(record);
+                    if (error) throw error;
+                }
+
+                closeModal();
+                await this.loadProjects();
+                await this.loadDashboardStats();
+                return { success: true };
+            } catch (err) {
+                console.error('[CMS] Save project error:', err);
+                alert('❌ Ошибка сохранения: ' + err.message);
+                return { error: err.message };
+            }
+        },
+
         // ─── SYSTEM LOGS ─────────────────────────────────
         async loadLogs(filter = 'all') {
             try {
@@ -793,6 +934,7 @@
     window.filterLeads = (f) => CMS.loadLeads(f);
     window.filterApps = (f) => CMS.loadApplications(f);
     window.filterLogs = (f) => CMS.loadLogs(f);
+    window.filterProjects = (f) => CMS.loadProjects(f);
 
     // ─── TAB SWITCHING ───────────────────────────────
     window.switchTab = function(tabName) {
@@ -969,8 +1111,136 @@
         });
     };
 
+    // ─── PROJECT FORM (Create / Edit) ───────────────
+    function _buildProjectFormHTML(p) {
+        const isEdit = !!p;
+        const d = p || { title: '', description: '', category: 'design', lang: 'ru', result_value: '', result_label: '', image_url: '', link_url: '', order_index: 1 };
+        const imgSrc = d.image_url
+            ? (d.image_url.startsWith('http') ? d.image_url : 'assets/img/' + d.image_url)
+            : '';
+
+        return `
+            <h2 style="margin-bottom:20px;font-size:1.1rem;">${isEdit ? '✏️ Редактировать проект' : '🗂️ Новый проект'}</h2>
+            
+            <!-- Image preview & upload -->
+            <div style="margin-bottom:20px;">
+                <label class="form-label">ПРЕВЬЮ ИЗОБРАЖЕНИЯ</label>
+                <div style="display:flex;gap:15px;align-items:flex-start;">
+                    <div id="projectImgPreview" style="width:160px;height:100px;border-radius:10px;border:2px dashed var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);flex-shrink:0;">
+                        ${imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='NO IMG'">` : '<span style="color:#444;font-size:0.7rem;">NO IMAGE</span>'}
+                    </div>
+                    <div style="flex:1;">
+                        <div style="margin-bottom:8px;">
+                            <label class="form-label" style="margin-bottom:4px;">ЗАГРУЗИТЬ ФАЙЛ</label>
+                            <input type="file" id="projectImageFile" accept="image/png,image/jpeg,image/webp" 
+                                style="font-size:0.75rem;color:var(--text-dim);" onchange="_previewProjectImage(this)">
+                        </div>
+                        <div>
+                            <label class="form-label" style="margin-bottom:4px;">ИЛИ URL ИЗОБРАЖЕНИЯ</label>
+                            <input type="text" id="projectImageUrl" class="form-input" style="width:100%;font-size:0.8rem;" 
+                                value="${CMS._esc(d.image_url || '')}" placeholder="https://... или design_case_name.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">НАЗВАНИЕ</label>
+                    <input type="text" id="projectTitle" class="form-input" value="${CMS._esc(d.title)}" placeholder="Nebula Digital Bank">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">КАТЕГОРИЯ</label>
+                    <select id="projectCategory" class="form-input">
+                        <option value="design" ${d.category === 'design' ? 'selected' : ''}>DESIGN</option>
+                        <option value="marketing" ${d.category === 'marketing' ? 'selected' : ''}>MARKETING</option>
+                        <option value="rd" ${d.category === 'rd' ? 'selected' : ''}>R&D</option>
+                        <option value="digital" ${d.category === 'digital' ? 'selected' : ''}>DIGITAL</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label class="form-label">ОПИСАНИЕ</label>
+                <textarea id="projectDesc" class="form-input" rows="3" style="resize:vertical;min-height:60px;">${CMS._esc(d.description || '')}</textarea>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">RESULT VALUE</label>
+                    <input type="text" id="projectResultVal" class="form-input" value="${CMS._esc(d.result_value || '')}" placeholder="BRANDING">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">RESULT LABEL</label>
+                    <input type="text" id="projectResultLabel" class="form-input" value="${CMS._esc(d.result_label || '')}" placeholder="CRYPTO">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ЯЗЫК</label>
+                    <select id="projectLang" class="form-input">
+                        <option value="ru" ${d.lang === 'ru' ? 'selected' : ''}>RU</option>
+                        <option value="en" ${d.lang === 'en' ? 'selected' : ''}>EN</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ССЫЛКА (URL)</label>
+                    <input type="text" id="projectLinkUrl" class="form-input" value="${CMS._esc(d.link_url || '')}" placeholder="project_page.html или #">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ПОРЯДОК</label>
+                    <input type="number" id="projectOrder" class="form-input" value="${d.order_index || 1}" min="0">
+                </div>
+            </div>
+
+            <div class="modal-footer" style="display:flex;gap:12px;justify-content:flex-end;">
+                <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                <button class="btn btn-primary hover-trigger" onclick="_submitProjectForm('${isEdit ? p.id : ''}')">
+                    ${isEdit ? '💾 СОХРАНИТЬ' : '➕ СОЗДАТЬ'}
+                </button>
+            </div>
+        `;
+    }
+
+    window._previewProjectImage = function(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('projectImgPreview');
+                if (preview) preview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    window._submitProjectForm = async function(existingId) {
+        const formData = {
+            title: document.getElementById('projectTitle')?.value || '',
+            description: document.getElementById('projectDesc')?.value || '',
+            category: document.getElementById('projectCategory')?.value || 'design',
+            lang: document.getElementById('projectLang')?.value || 'ru',
+            result_value: document.getElementById('projectResultVal')?.value || '',
+            result_label: document.getElementById('projectResultLabel')?.value || '',
+            image_url: document.getElementById('projectImageUrl')?.value || '',
+            link_url: document.getElementById('projectLinkUrl')?.value || '',
+            order_index: document.getElementById('projectOrder')?.value || 1
+        };
+
+        if (!formData.title) return alert('Укажите название проекта');
+
+        await CMS.saveProject(formData, existingId || null);
+    };
+
+    window.openProjectForm = function() {
+        openModal(_buildProjectFormHTML(null));
+    };
+
+    window._openProjectFormWithData = function(proj) {
+        openModal(_buildProjectFormHTML(proj));
+    };
+
     // Placeholder stubs for features in development
-    window.openProjectForm = window.openProjectForm || function() { alert('Функция в разработке'); };
     window.openBlockForm = window.openBlockForm || function() { alert('Функция в разработке'); };
     window.openMenuForm = window.openMenuForm || function() { alert('Функция в разработке'); };
     window.publishDaoVote = window.publishDaoVote || function() { alert('Функция в разработке'); };
