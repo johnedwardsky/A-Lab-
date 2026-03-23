@@ -806,14 +806,82 @@
         },
 
         _renderAnalytics(container, data) {
-            const countryFlags = {
-                'RU': '🇷🇺', 'US': '🇺🇸', 'DE': '🇩🇪', 'GB': '🇬🇧', 'FR': '🇫🇷',
-                'UA': '🇺🇦', 'KZ': '🇰🇿', 'TR': '🇹🇷', 'AE': '🇦🇪', 'IL': '🇮🇱',
-                'CN': '🇨🇳', 'JP': '🇯🇵', 'IN': '🇮🇳', 'BR': '🇧🇷', 'PL': '🇵🇱',
-                'NL': '🇳🇱', 'ES': '🇪🇸', 'IT': '🇮🇹', 'CA': '🇨🇦', 'AU': '🇦🇺'
+            // Country coordinates (x%, y%) on a simplified Mercator world map
+            const countryCoords = {
+                'US': [18, 38], 'CA': [20, 28], 'MX': [16, 48], 'BR': [32, 62],
+                'AR': [28, 74], 'CL': [25, 72], 'CO': [24, 52],
+                'GB': [47, 28], 'FR': [48, 35], 'DE': [51, 30], 'ES': [46, 38],
+                'IT': [52, 36], 'NL': [49, 28], 'PL': [53, 29], 'SE': [52, 22],
+                'NO': [50, 20], 'FI': [55, 20], 'CH': [50, 33], 'AT': [52, 32],
+                'PT': [44, 38], 'BE': [49, 30], 'CZ': [52, 30], 'IE': [45, 27],
+                'RU': [65, 24], 'UA': [57, 30], 'BY': [55, 28],
+                'TR': [58, 37], 'IL': [59, 40], 'AE': [63, 46], 'SA': [61, 44],
+                'KZ': [66, 28], 'UZ': [66, 34],
+                'CN': [76, 38], 'JP': [83, 34], 'KR': [80, 36], 'IN': [70, 46],
+                'TH': [75, 50], 'VN': [76, 48], 'ID': [78, 58], 'PH': [80, 50],
+                'SG': [76, 55], 'AU': [82, 70], 'NZ': [88, 76],
+                'ZA': [55, 72], 'NG': [50, 54], 'EG': [57, 42], 'KE': [58, 58],
+                'MA': [45, 42], 'GH': [47, 54]
+            };
+
+            const countryNames = {
+                'RU': 'Россия', 'US': 'США', 'DE': 'Германия', 'GB': 'Великобритания',
+                'FR': 'Франция', 'UA': 'Украина', 'KZ': 'Казахстан', 'TR': 'Турция',
+                'AE': 'ОАЭ', 'IL': 'Израиль', 'CN': 'Китай', 'JP': 'Япония',
+                'IN': 'Индия', 'BR': 'Бразилия', 'PL': 'Польша', 'NL': 'Нидерланды',
+                'ES': 'Испания', 'IT': 'Италия', 'CA': 'Канада', 'AU': 'Австралия',
+                'SE': 'Швеция', 'KR': 'Ю.Корея', 'TH': 'Таиланд', 'MX': 'Мексика'
             };
 
             const maxCount = data.topCountries.length > 0 ? data.topCountries[0][1] : 1;
+
+            // Build map dots
+            const mapDots = data.topCountries.map(([code, count]) => {
+                const coords = countryCoords[code];
+                if (!coords) return '';
+                const [x, y] = coords;
+                const size = Math.max(3, Math.min(12, 3 + (count / maxCount) * 9));
+                const pulse = count / maxCount > 0.3 ? `<animate attributeName="r" values="${size};${size+4};${size}" dur="2s" repeatCount="indefinite"/>` : '';
+                const name = countryNames[code] || code;
+                return `
+                    <g class="map-dot-group" style="cursor:pointer;">
+                        <circle cx="${x}%" cy="${y}%" r="${size + 6}" fill="rgba(0,229,255,0.08)" stroke="none">
+                            ${pulse}
+                        </circle>
+                        <circle cx="${x}%" cy="${y}%" r="${size}" fill="rgba(0,229,255,0.5)" stroke="#00E5FF" stroke-width="1"/>
+                        <text x="${x}%" y="${y - 3}%" text-anchor="middle" fill="#00E5FF" font-family="'JetBrains Mono',monospace" font-size="9" font-weight="700">${count}</text>
+                        <text x="${x}%" y="${y + 4}%" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="'JetBrains Mono',monospace" font-size="7">${name}</text>
+                    </g>`;
+            }).join('');
+
+            // Simplified continent outlines (polylines approximating continental shapes)
+            const continentPaths = `
+                <!-- North America -->
+                <polyline points="80,100 100,80 130,70 160,70 190,90 210,80 230,70 250,60 240,80 220,110 210,130 200,150 180,160 170,170 160,165 150,160 140,170 130,175 120,170 100,140 85,120"
+                    fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1"/>
+                <!-- South America -->
+                <polyline points="230,200 250,190 280,200 300,220 320,250 330,280 310,310 290,320 270,310 260,280 255,260 240,230"
+                    fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1"/>
+                <!-- Europe -->
+                <polyline points="440,70 450,80 460,75 480,80 500,85 520,75 530,90 520,100 510,110 500,120 480,125 460,120 450,115 440,100"
+                    fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1"/>
+                <!-- Africa -->
+                <polyline points="440,140 470,130 500,140 530,150 550,170 560,200 555,240 540,270 520,280 500,280 480,260 470,230 460,200 450,170"
+                    fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1"/>
+                <!-- Asia -->
+                <polyline points="530,60 560,55 600,50 650,55 700,60 740,70 770,80 790,100 800,120 780,140 760,150 740,160 720,155 700,150 680,140 660,130 640,120 620,110 600,100 580,90 560,80"
+                    fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1"/>
+                <!-- Australia -->
+                <polyline points="750,240 780,230 810,240 830,255 825,275 800,285 775,280 760,265"
+                    fill="none" stroke="rgba(0,229,255,0.12)" stroke-width="1"/>
+            `;
+
+            // Grid lines for blueprint effect
+            const gridLines = [];
+            for (let i = 0; i <= 10; i++) {
+                gridLines.push(`<line x1="0" y1="${i*10}%" x2="100%" y2="${i*10}%" stroke="rgba(0,229,255,0.04)" stroke-width="0.5"/>`);
+                gridLines.push(`<line x1="${i*10}%" y1="0" x2="${i*10}%" y2="100%" stroke="rgba(0,229,255,0.04)" stroke-width="0.5"/>`);
+            }
 
             container.innerHTML = `
                 <div class="section-title" style="margin-bottom:16px;">// АНАЛИТИКА ВИЗИТОВ</div>
@@ -835,19 +903,54 @@
                         <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);margin-top:4px;">ВСЕГО</div>
                     </div>
                 </div>
+
+                <div class="section-title" style="margin-bottom:12px;">// КАРТА ТРАФИКА</div>
+                <div style="position:relative;background:linear-gradient(135deg, rgba(0,20,30,0.9) 0%, rgba(3,4,7,0.95) 100%);border-radius:16px;border:1px solid rgba(0,229,255,0.15);overflow:hidden;padding:10px;">
+                    <!-- Blueprint corner marks -->
+                    <div style="position:absolute;top:8px;left:8px;width:20px;height:20px;border-top:2px solid rgba(0,229,255,0.3);border-left:2px solid rgba(0,229,255,0.3);"></div>
+                    <div style="position:absolute;top:8px;right:8px;width:20px;height:20px;border-top:2px solid rgba(0,229,255,0.3);border-right:2px solid rgba(0,229,255,0.3);"></div>
+                    <div style="position:absolute;bottom:8px;left:8px;width:20px;height:20px;border-bottom:2px solid rgba(0,229,255,0.3);border-left:2px solid rgba(0,229,255,0.3);"></div>
+                    <div style="position:absolute;bottom:8px;right:8px;width:20px;height:20px;border-bottom:2px solid rgba(0,229,255,0.3);border-right:2px solid rgba(0,229,255,0.3);"></div>
+                    
+                    <!-- Blueprint label -->
+                    <div style="position:absolute;top:14px;left:36px;font-family:var(--font-code);font-size:0.6rem;color:rgba(0,229,255,0.35);letter-spacing:2px;">GLOBAL_TRAFFIC_MAP // A-LAB.TECH</div>
+                    <div style="position:absolute;bottom:14px;right:36px;font-family:var(--font-code);font-size:0.55rem;color:rgba(0,229,255,0.25);">MERCATOR_PROJECTION // REAL-TIME</div>
+
+                    <svg viewBox="0 0 960 400" style="width:100%;height:auto;display:block;" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Grid -->
+                        ${gridLines.join('')}
+                        
+                        <!-- Equator -->
+                        <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(0,229,255,0.08)" stroke-width="1" stroke-dasharray="8,4"/>
+                        
+                        <!-- Continent outlines -->
+                        ${continentPaths}
+                        
+                        <!-- Country dots with traffic -->
+                        ${mapDots}
+                        
+                        <!-- No data message -->
+                        ${data.topCountries.length === 0 ? '<text x="50%" y="50%" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-family="\'JetBrains Mono\',monospace" font-size="14">AWAITING GEO DATA...</text>' : ''}
+                    </svg>
+                </div>
+
                 ${data.topCountries.length > 0 ? `
-                <div class="section-title" style="margin-bottom:12px;">// ГЕОГРАФИЯ ВИЗИТОВ</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                    ${data.topCountries.map(([code, count]) => `
-                        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
-                            <span style="font-size:1.3rem;">${countryFlags[code] || '🌍'}</span>
-                            <span style="font-family:var(--font-code);font-size:0.75rem;font-weight:700;min-width:28px;">${code}</span>
-                            <div style="flex:1;height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
-                                <div style="width:${(count/maxCount*100).toFixed(0)}%;height:100%;background:var(--tech-blue);border-radius:3px;transition:width 0.5s;"></div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;">
+                    ${data.topCountries.slice(0, 8).map(([code, count]) => {
+                        const name = countryNames[code] || code;
+                        const pct = (count / data.month * 100).toFixed(1);
+                        return `
+                        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+                            <span style="font-family:var(--font-code);font-size:0.75rem;font-weight:700;color:var(--tech-blue);min-width:24px;">${code}</span>
+                            <div style="flex:1;">
+                                <div style="font-size:0.7rem;color:var(--text-dim);">${name}</div>
+                                <div style="height:3px;background:rgba(255,255,255,0.05);border-radius:2px;margin-top:3px;overflow:hidden;">
+                                    <div style="width:${(count/maxCount*100).toFixed(0)}%;height:100%;background:var(--tech-blue);border-radius:2px;"></div>
+                                </div>
                             </div>
                             <span style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);">${count}</span>
-                        </div>
-                    `).join('')}
+                        </div>`;
+                    }).join('')}
                 </div>` : ''}
             `;
         },
