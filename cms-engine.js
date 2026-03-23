@@ -381,6 +381,9 @@
             } catch (err) {
                 console.error('[CMS] Astra error:', err);
             }
+
+            // Also load DAO voting history
+            await this.loadDaoHistory();
         },
 
         // ─── ASTRA: GRANT TOKENS (Admin) ─────────────────
@@ -460,6 +463,78 @@
             } catch (err) {
                 console.error('[CMS] Grant error:', err);
                 return { error: err.message };
+            }
+        },
+
+        // ─── DAO VOTING ──────────────────────────────────
+        async publishDaoVote(title, description, options, deadline) {
+            try {
+                if (!title) throw new Error('Укажите тему голосования');
+                const { error } = await this.db.from('dao_votes').insert({
+                    title: title,
+                    description: description || '',
+                    options: options || ['✅ Поддержать', '❌ Отклонить'],
+                    deadline: deadline || null,
+                    status: 'active',
+                    created_by: this._user?.id || null
+                });
+                if (error) throw error;
+
+                // Log
+                if (window.ALabCore?.log) {
+                    window.ALabCore.log('dao_vote', `Голосование создано: ${title}`);
+                }
+
+                return { success: true };
+            } catch (err) {
+                console.error('[CMS] DAO vote error:', err);
+                return { error: err.message };
+            }
+        },
+
+        async loadDaoHistory() {
+            const container = document.getElementById('daoHistory');
+            if (!container) return;
+
+            try {
+                const { data, error } = await this.db
+                    .from('dao_votes')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                if (!data || !data.length) {
+                    container.innerHTML = '<div style="text-align:center;padding:20px;color:#444;font-family:var(--font-code);font-size:0.75rem;">Нет голосований</div>';
+                    return;
+                }
+
+                container.innerHTML = '<div class="section-title" style="margin-bottom:12px;">// ИСТОРИЯ ГОЛОСОВАНИЙ</div>' + 
+                    data.map(v => {
+                    const isActive = v.status === 'active' && (!v.deadline || new Date(v.deadline) > new Date());
+                    const statusLabel = isActive ? '🟢 АКТИВНО' : '🔴 ЗАВЕРШЕНО';
+                    const statusColor = isActive ? '#00FF88' : 'var(--accent)';
+                    const opts = v.options || [];
+                    return `
+                        <div class="stat-card hover-trigger" style="padding:16px;">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                                <div style="flex:1;">
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                                        <span style="font-size:0.55rem;color:${statusColor};font-family:var(--font-code);font-weight:600;">${statusLabel}</span>
+                                        ${v.deadline ? `<span style="font-size:0.55rem;color:var(--text-dim);font-family:var(--font-code);">до ${this._formatDate(v.deadline)}</span>` : ''}
+                                    </div>
+                                    <div style="font-size:0.9rem;font-weight:700;margin-bottom:4px;">${this._esc(v.title)}</div>
+                                    ${v.description ? `<div style="font-size:0.72rem;color:var(--text-dim);line-height:1.3;margin-bottom:8px;">${this._esc(v.description)}</div>` : ''}
+                                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                        ${opts.map(o => `<span style="font-size:0.65rem;padding:3px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);font-family:var(--font-code);">${this._esc(o)}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div style="font-family:var(--font-code);font-size:0.6rem;color:var(--text-dim);">${this._formatDate(v.created_at)}</div>
+                            </div>
+                        </div>`;
+                }).join('');
+            } catch (err) {
+                console.debug('[CMS] DAO history not available:', err.message);
             }
         },
 
@@ -2118,6 +2193,32 @@ CREATE POLICY "Allow select for authenticated"
         pills.forEach(p => p.classList.remove('active'));
         event.target.classList.add('active');
         CMS.loadBlocks(filter);
+    };
+
+    // ─── DAO VOTING ─────────────────────────────────
+    window.publishDaoVote = async function() {
+        const title = document.getElementById('daoTitle')?.value?.trim();
+        const desc = document.getElementById('daoDesc')?.value?.trim();
+        const opt1 = document.getElementById('daoOpt1')?.value?.trim() || '✅ Поддержать';
+        const opt2 = document.getElementById('daoOpt2')?.value?.trim() || '❌ Отклонить';
+        const deadline = document.getElementById('daoDeadline')?.value || null;
+
+        if (!title) return alert('Укажите тему голосования');
+
+        const result = await CMS.publishDaoVote(title, desc, [opt1, opt2], deadline);
+        if (result.success) {
+            // Clear form
+            document.getElementById('daoTitle').value = '';
+            document.getElementById('daoDesc').value = '';
+            document.getElementById('daoDeadline').value = '';
+            // Show status
+            const status = document.getElementById('daoPublishStatus');
+            if (status) { status.style.display = 'inline'; setTimeout(() => status.style.display = 'none', 4000); }
+            // Reload history
+            await CMS.loadDaoHistory();
+        } else {
+            alert('❌ Ошибка: ' + (result.error || 'Неизвестная'));
+        }
     };
     // ─── MESSAGING FUNCTIONS ─────────────────────────
     window._selectChatResident = function(userId) {
