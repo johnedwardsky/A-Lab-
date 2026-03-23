@@ -1129,18 +1129,22 @@
         <!-- ═══════════ PAGE BLOCKS TAB ═══════════ -->
         <div class="tab-content" id="tab-blocks">
             <div class="section-header">
-                <div class="filter-pills">
-                    <button class="filter-pill active hover-trigger">ВСЕ СТРАНИЦЫ</button>
-                    <button class="filter-pill hover-trigger">index</button>
-                    <button class="filter-pill hover-trigger">about</button>
-                    <button class="filter-pill hover-trigger">consulting</button>
-                    <button class="filter-pill hover-trigger">design</button>
-                    <button class="filter-pill hover-trigger">digital</button>
-                </div>
+                <div class="section-title">// КОНТЕНТ-БЛОКИ СТРАНИЦ</div>
                 <button class="btn btn-primary btn-sm hover-trigger" onclick="openBlockForm()">+ НОВЫЙ БЛОК</button>
             </div>
-            <div class="cms-grid" id="blocksGrid">
-                <div class="empty-state" style="grid-column: 1/-1;">
+            <div class="filter-pills" style="margin-bottom:16px;">
+                <button class="filter-pill active hover-trigger" onclick="filterBlocks('all')">ВСЕ</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('index')">ГЛАВНАЯ</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('about')">О НАС</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('consulting')">КОНСАЛТИНГ</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('design')">ДИЗАЙН</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('digital')">DIGITAL</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('marketing')">МАРКЕТИНГ</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('rd')">R&D</button>
+                <button class="filter-pill hover-trigger" onclick="filterBlocks('contacts')">КОНТАКТЫ</button>
+            </div>
+            <div id="blocksGrid" style="display:flex;flex-direction:column;gap:12px;">
+                <div class="empty-state">
                     <div class="empty-icon">📄</div>
                     <p>Нет контентных блоков. Добавьте первый блок для начала.</p>
                 </div>

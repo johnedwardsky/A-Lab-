@@ -56,7 +56,8 @@
                 this.loadLogs(),
                 this.loadMenu(),
                 this.loadAnalytics(),
-                this.loadMessages()
+                this.loadMessages(),
+                this.loadBlocks()
             ]);
         },
 
@@ -754,6 +755,102 @@
                 console.error('[CMS] Save menu error:', err);
                 alert('❌ Ошибка сохранения: ' + err.message);
                 return { error: err.message };
+            }
+        },
+
+        // ─── CONTENT BLOCKS ──────────────────────────────
+        _blocksCache: [],
+        _blocksFilter: 'all',
+
+        async loadBlocks(filter) {
+            if (filter !== undefined) this._blocksFilter = filter;
+            try {
+                let query = this.db.from('page_blocks').select('*').order('page').order('order_index', { ascending: true });
+                if (this._blocksFilter && this._blocksFilter !== 'all') {
+                    query = query.eq('page', this._blocksFilter);
+                }
+                const { data, error } = await query;
+                if (error) throw error;
+                this._blocksCache = data || [];
+
+                const grid = document.getElementById('blocksGrid');
+                if (!grid) return;
+
+                if (!this._blocksCache.length) {
+                    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📄</div><p>Нет контентных блоков${this._blocksFilter !== 'all' ? ' для страницы "' + this._blocksFilter + '"' : ''}. Добавьте первый!</p></div>`;
+                    return;
+                }
+
+                const pageLabels = {index:'Главная',about:'О нас',consulting:'Консалтинг',design:'Дизайн',digital:'Digital & AI',marketing:'Маркетинг',rd:'R&D Lab',contacts:'Контакты'};
+
+                grid.innerHTML = this._blocksCache.map(b => `
+                    <div class="stat-card hover-trigger" data-page="${b.page}" style="padding:16px;position:relative;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+                            <div style="flex:1;min-width:0;">
+                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                                    <span style="font-size:0.55rem;padding:2px 8px;border-radius:6px;background:rgba(0,229,255,0.1);color:var(--tech-blue);font-family:var(--font-code);font-weight:600;text-transform:uppercase;">${this._esc(pageLabels[b.page] || b.page)}</span>
+                                    <span style="font-size:0.55rem;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.05);color:var(--text-dim);font-family:var(--font-code);">${this._esc(b.block_key || '—')}</span>
+                                    ${b.is_visible === false ? '<span style="font-size:0.55rem;color:var(--accent);">🔴 СКРЫТ</span>' : '<span style="font-size:0.55rem;color:#00FF88;">🟢 ВИДЕН</span>'}
+                                </div>
+                                <div style="font-size:0.9rem;font-weight:700;margin-bottom:4px;">${this._esc(b.title_ru || '—')}</div>
+                                ${b.title_en ? `<div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:4px;">EN: ${this._esc(b.title_en)}</div>` : ''}
+                                <div style="font-size:0.72rem;color:var(--text-dim);line-height:1.3;max-height:40px;overflow:hidden;">${this._esc((b.text_ru || '').substring(0, 120))}${(b.text_ru || '').length > 120 ? '...' : ''}</div>
+                            </div>
+                            ${b.image_url ? `<div style="width:80px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--border);"><img src="${b.image_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='NO IMG'"></div>` : ''}
+                        </div>
+                        <div style="display:flex;gap:6px;margin-top:10px;justify-content:flex-end;">
+                            <button class="action-btn hover-trigger" onclick="CMS.toggleBlockVisibility('${b.id}')" title="${b.is_visible === false ? 'Показать' : 'Скрыть'}">${b.is_visible === false ? '👁' : '🙈'}</button>
+                            <button class="action-btn hover-trigger" onclick="_editBlock('${b.id}')" title="Редактировать">✏️</button>
+                            <button class="action-btn hover-trigger" onclick="CMS.deleteBlock('${b.id}')" title="Удалить" style="color:var(--accent);">🗑</button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error('[CMS] Blocks error:', err);
+            }
+        },
+
+        async saveBlock(formData, existingId) {
+            try {
+                if (existingId) {
+                    const { error } = await this.db.from('page_blocks').update(formData).eq('id', existingId);
+                    if (error) throw error;
+                } else {
+                    const { error } = await this.db.from('page_blocks').insert(formData);
+                    if (error) throw error;
+                }
+                closeModal();
+                await this.loadBlocks();
+                await this.loadDashboardStats();
+                return { success: true };
+            } catch (err) {
+                console.error('[CMS] Save block error:', err);
+                alert('❌ Ошибка сохранения: ' + err.message);
+                return { error: err.message };
+            }
+        },
+
+        async deleteBlock(id) {
+            if (!confirm('Удалить контент-блок?')) return;
+            try {
+                const { error } = await this.db.from('page_blocks').delete().eq('id', id);
+                if (error) throw error;
+                await this.loadBlocks();
+            } catch (err) {
+                alert('Ошибка удаления: ' + err.message);
+            }
+        },
+
+        async toggleBlockVisibility(id) {
+            const block = this._blocksCache.find(b => b.id === id);
+            if (!block) return;
+            try {
+                const { error } = await this.db.from('page_blocks').update({ is_visible: block.is_visible === false ? true : false }).eq('id', id);
+                if (error) throw error;
+                await this.loadBlocks();
+            } catch (err) {
+                alert('Ошибка: ' + err.message);
             }
         },
 
@@ -1919,9 +2016,109 @@ CREATE POLICY "Allow select for authenticated"
         openModal(_buildMenuFormHTML(item));
     };
 
-    // Placeholder stubs for features in development
-    window.openBlockForm = window.openBlockForm || function() { alert('Функция в разработке'); };
-    window.publishDaoVote = window.publishDaoVote || function() { alert('Функция в разработке'); };
+    // ─── CONTENT BLOCKS FORM ─────────────────────────
+    window.openBlockForm = function(block) {
+        const isEdit = !!block;
+        const d = block || { page: 'index', block_key: '', title_ru: '', title_en: '', text_ru: '', text_en: '', image_url: '', order_index: 0, is_visible: true };
+
+        openModal(`
+            <h2 style="margin-bottom:20px;font-size:1.1rem;">${isEdit ? '✏️ Редактировать блок' : '📄 Новый контент-блок'}</h2>
+            
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">СТРАНИЦА</label>
+                    <select id="blockPage" class="form-input">
+                        <option value="index" ${d.page==='index'?'selected':''}>Главная</option>
+                        <option value="about" ${d.page==='about'?'selected':''}>О нас</option>
+                        <option value="consulting" ${d.page==='consulting'?'selected':''}>Консалтинг</option>
+                        <option value="design" ${d.page==='design'?'selected':''}>Дизайн</option>
+                        <option value="digital" ${d.page==='digital'?'selected':''}>Digital</option>
+                        <option value="marketing" ${d.page==='marketing'?'selected':''}>Маркетинг</option>
+                        <option value="rd" ${d.page==='rd'?'selected':''}>R&D</option>
+                        <option value="contacts" ${d.page==='contacts'?'selected':''}>Контакты</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">КЛЮЧ БЛОКА</label>
+                    <input type="text" id="blockKey" class="form-input" value="${CMS._esc(d.block_key || '')}" placeholder="hero_title, about_desc...">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ПОРЯДОК</label>
+                    <input type="number" id="blockOrder" class="form-input" value="${d.order_index || 0}" min="0">
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ЗАГОЛОВОК (RU)</label>
+                    <input type="text" id="blockTitleRu" class="form-input" value="${CMS._esc(d.title_ru || '')}" placeholder="Заголовок на русском">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ЗАГОЛОВОК (EN)</label>
+                    <input type="text" id="blockTitleEn" class="form-input" value="${CMS._esc(d.title_en || '')}" placeholder="English title">
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ТЕКСТ (RU)</label>
+                    <textarea id="blockTextRu" class="form-input" rows="4" style="resize:vertical;">${CMS._esc(d.text_ru || '')}</textarea>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">TEXT (EN)</label>
+                    <textarea id="blockTextEn" class="form-input" rows="4" style="resize:vertical;">${CMS._esc(d.text_en || '')}</textarea>
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:2fr 1fr;gap:15px;margin-bottom:20px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">URL ИЗОБРАЖЕНИЯ</label>
+                    <input type="text" id="blockImageUrl" class="form-input" value="${CMS._esc(d.image_url || '')}" placeholder="https://... или assets/img/...">
+                </div>
+                <div class="form-group" style="margin-bottom:0;display:flex;align-items:center;gap:10px;padding-top:22px;">
+                    <input type="checkbox" id="blockVisible" ${d.is_visible !== false ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--tech-blue);">
+                    <label for="blockVisible" style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">ВИДИМОСТЬ</label>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="display:flex;gap:12px;justify-content:flex-end;">
+                <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                <button class="btn btn-primary hover-trigger" onclick="_submitBlockForm('${isEdit ? block.id : ''}')">
+                    ${isEdit ? '💾 СОХРАНИТЬ' : '➕ СОЗДАТЬ'}
+                </button>
+            </div>
+        `);
+    };
+
+    window._editBlock = function(id) {
+        const block = CMS._blocksCache.find(b => b.id === id);
+        if (block) openBlockForm(block);
+    };
+
+    window._submitBlockForm = async function(existingId) {
+        const formData = {
+            page: document.getElementById('blockPage')?.value || 'index',
+            block_key: document.getElementById('blockKey')?.value || '',
+            title_ru: document.getElementById('blockTitleRu')?.value || '',
+            title_en: document.getElementById('blockTitleEn')?.value || '',
+            text_ru: document.getElementById('blockTextRu')?.value || '',
+            text_en: document.getElementById('blockTextEn')?.value || '',
+            image_url: document.getElementById('blockImageUrl')?.value || '',
+            order_index: parseInt(document.getElementById('blockOrder')?.value) || 0,
+            is_visible: document.getElementById('blockVisible')?.checked ?? true
+        };
+        if (!formData.block_key) return alert('Укажите ключ блока');
+        if (!formData.title_ru) return alert('Укажите заголовок (RU)');
+        await CMS.saveBlock(formData, existingId || null);
+    };
+
+    window.filterBlocks = function(filter) {
+        // Update active pill
+        const pills = document.querySelectorAll('#tab-blocks .filter-pill');
+        pills.forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+        CMS.loadBlocks(filter);
+    };
     // ─── MESSAGING FUNCTIONS ─────────────────────────
     window._selectChatResident = function(userId) {
         CMS.loadConversation(userId);
