@@ -961,11 +961,16 @@
                     <div style="position:absolute;bottom:14px;right:36px;font-family:var(--font-code);font-size:0.55rem;color:rgba(0,229,255,0.25);">MERCATOR_PROJECTION // REAL-TIME</div>
 
                     <svg viewBox="0 0 960 400" style="width:100%;height:auto;display:block;" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <clipPath id="mapClip"><rect x="0" y="15" width="960" height="370"/></clipPath>
+                        </defs>
                         <!-- Equator -->
                         <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(0,229,255,0.08)" stroke-width="1" stroke-dasharray="8,4"/>
                         
-                        <!-- Continent outlines -->
+                        <!-- Continent outlines (clipped to hide Arctic/Antarctic edge artifacts) -->
+                        <g clip-path="url(#mapClip)">
                         ${continentPaths}
+                        </g>
                         
                         <!-- Country labels -->
                         ${countryLabels}
