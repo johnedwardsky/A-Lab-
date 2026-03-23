@@ -765,9 +765,9 @@
         async loadBlocks(filter) {
             if (filter !== undefined) this._blocksFilter = filter;
             try {
-                let query = this.db.from('page_blocks').select('*').order('page').order('order_index', { ascending: true });
+                let query = this.db.from('page_blocks').select('*').order('page_name').order('order_index', { ascending: true });
                 if (this._blocksFilter && this._blocksFilter !== 'all') {
-                    query = query.eq('page', this._blocksFilter);
+                    query = query.eq('page_name', this._blocksFilter);
                 }
                 const { data, error } = await query;
                 if (error) throw error;
@@ -784,11 +784,11 @@
                 const pageLabels = {index:'Главная',about:'О нас',consulting:'Консалтинг',design:'Дизайн',digital:'Digital & AI',marketing:'Маркетинг',rd:'R&D Lab',contacts:'Контакты'};
 
                 grid.innerHTML = this._blocksCache.map(b => `
-                    <div class="stat-card hover-trigger" data-page="${b.page}" style="padding:16px;position:relative;">
+                    <div class="stat-card hover-trigger" data-page="${b.page_name}" style="padding:16px;position:relative;">
                         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
                             <div style="flex:1;min-width:0;">
                                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                                    <span style="font-size:0.55rem;padding:2px 8px;border-radius:6px;background:rgba(0,229,255,0.1);color:var(--tech-blue);font-family:var(--font-code);font-weight:600;text-transform:uppercase;">${this._esc(pageLabels[b.page] || b.page)}</span>
+                                    <span style="font-size:0.55rem;padding:2px 8px;border-radius:6px;background:rgba(0,229,255,0.1);color:var(--tech-blue);font-family:var(--font-code);font-weight:600;text-transform:uppercase;">${this._esc(pageLabels[b.page_name] || b.page_name)}</span>
                                     <span style="font-size:0.55rem;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.05);color:var(--text-dim);font-family:var(--font-code);">${this._esc(b.block_key || '—')}</span>
                                     ${b.is_visible === false ? '<span style="font-size:0.55rem;color:var(--accent);">🔴 СКРЫТ</span>' : '<span style="font-size:0.55rem;color:#00FF88;">🟢 ВИДЕН</span>'}
                                 </div>
@@ -2019,7 +2019,7 @@ CREATE POLICY "Allow select for authenticated"
     // ─── CONTENT BLOCKS FORM ─────────────────────────
     window.openBlockForm = function(block) {
         const isEdit = !!block;
-        const d = block || { page: 'index', block_key: '', title_ru: '', title_en: '', text_ru: '', text_en: '', image_url: '', order_index: 0, is_visible: true };
+        const d = block || { page_name: 'index', block_key: '', title_ru: '', title_en: '', text_ru: '', text_en: '', image_url: '', order_index: 0, is_visible: true };
 
         openModal(`
             <h2 style="margin-bottom:20px;font-size:1.1rem;">${isEdit ? '✏️ Редактировать блок' : '📄 Новый контент-блок'}</h2>
@@ -2028,14 +2028,14 @@ CREATE POLICY "Allow select for authenticated"
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">СТРАНИЦА</label>
                     <select id="blockPage" class="form-input">
-                        <option value="index" ${d.page==='index'?'selected':''}>Главная</option>
-                        <option value="about" ${d.page==='about'?'selected':''}>О нас</option>
-                        <option value="consulting" ${d.page==='consulting'?'selected':''}>Консалтинг</option>
-                        <option value="design" ${d.page==='design'?'selected':''}>Дизайн</option>
-                        <option value="digital" ${d.page==='digital'?'selected':''}>Digital</option>
-                        <option value="marketing" ${d.page==='marketing'?'selected':''}>Маркетинг</option>
-                        <option value="rd" ${d.page==='rd'?'selected':''}>R&D</option>
-                        <option value="contacts" ${d.page==='contacts'?'selected':''}>Контакты</option>
+                        <option value="index" ${d.page_name==='index'?'selected':''}>Главная</option>
+                        <option value="about" ${d.page_name==='about'?'selected':''}>О нас</option>
+                        <option value="consulting" ${d.page_name==='consulting'?'selected':''}>Консалтинг</option>
+                        <option value="design" ${d.page_name==='design'?'selected':''}>Дизайн</option>
+                        <option value="digital" ${d.page_name==='digital'?'selected':''}>Digital</option>
+                        <option value="marketing" ${d.page_name==='marketing'?'selected':''}>Маркетинг</option>
+                        <option value="rd" ${d.page_name==='rd'?'selected':''}>R&D</option>
+                        <option value="contacts" ${d.page_name==='contacts'?'selected':''}>Контакты</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
@@ -2097,7 +2097,7 @@ CREATE POLICY "Allow select for authenticated"
 
     window._submitBlockForm = async function(existingId) {
         const formData = {
-            page: document.getElementById('blockPage')?.value || 'index',
+            page_name: document.getElementById('blockPage')?.value || 'index',
             block_key: document.getElementById('blockKey')?.value || '',
             title_ru: document.getElementById('blockTitleRu')?.value || '',
             title_en: document.getElementById('blockTitleEn')?.value || '',
