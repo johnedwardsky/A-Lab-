@@ -53,7 +53,9 @@
                 this.loadNDA(),
                 this.loadApplications(),
                 this.loadAstra(),
-                this.loadLogs()
+                this.loadLogs(),
+                this.loadMenu(),
+                this.loadAnalytics()
             ]);
         },
 
@@ -603,7 +605,7 @@
         async loadLogs(filter = 'all') {
             try {
                 let query = this.db.from('system_logs').select('*').order('created_at', { ascending: false }).limit(50);
-                if (filter !== 'all') query = query.eq('level', filter);
+                if (filter !== 'all') query = query.eq('event_type', filter);
 
                 const { data, error } = await query;
                 if (error && error.code !== '42P01') throw error;
@@ -616,19 +618,263 @@
                     return;
                 }
 
-                tbody.innerHTML = data.map(l => `
+                tbody.innerHTML = data.map(l => {
+                    // Map actual DB fields to display
+                    const level = l.event_type || l.level || 'info';
+                    const meta = l.metadata || {};
+                    const action = meta.message || l.action || '—';
+                    const userName = l.user_id ? l.user_id.substring(0, 8) + '...' : (l.user_name || '—');
+                    const details = (typeof meta === 'object' && Object.keys(meta).length > 1)
+                        ? Object.entries(meta).filter(([k]) => k !== 'message').map(([k,v]) => `${k}: ${v}`).join(', ')
+                        : (l.details || '—');
+
+                    const badgeClass = level === 'error' ? 'badge-error'
+                        : level === 'warn' || level === 'warning' ? 'badge-warning'
+                        : level === 'auth' ? 'badge-auth'
+                        : 'badge-info';
+
+                    return `
                     <tr>
-                        <td><span class="badge badge-${l.level || 'info'}">${(l.level || 'info').toUpperCase()}</span></td>
-                        <td>${this._esc(l.action || '—')}</td>
-                        <td>${this._esc(l.user_name || '—')}</td>
-                        <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis;">${this._esc(l.details || '—')}</td>
+                        <td><span class="badge ${badgeClass}">${level.toUpperCase()}</span></td>
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${this._esc(action)}</td>
+                        <td><span style="font-family:var(--font-code);font-size:0.7rem;">${this._esc(userName)}</span></td>
+                        <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis;white-space:nowrap;font-size:0.75rem;color:var(--text-dim);">${this._esc(details)}</td>
                         <td>${this._formatDate(l.created_at)}</td>
-                    </tr>
-                `).join('');
+                    </tr>`;
+                }).join('');
 
             } catch (err) {
                 console.error('[CMS] Logs error:', err);
             }
+        },
+
+        // ─── MENU ITEMS ──────────────────────────────────
+        _menuCache: [],
+
+        async loadMenu() {
+            try {
+                const { data, error } = await this.db
+                    .from('menu_items')
+                    .select('*')
+                    .order('order_index', { ascending: true });
+
+                if (error && error.code !== '42P01') throw error;
+
+                this._menuCache = data || [];
+                const tbody = document.getElementById('menuBody');
+                if (!tbody) return;
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-icon">🔗</div><p>Нет пунктов меню.</p></td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map(m => `
+                    <tr style="opacity: ${m.is_visible ? 1 : 0.45};">
+                        <td style="text-align:center;font-family:var(--font-code);font-weight:700;">${m.order_index ?? '—'}</td>
+                        <td>
+                            <strong>${this._esc(m.label_ru || '—')}</strong>
+                            <div style="font-size:0.6rem;color:var(--tech-blue);font-family:var(--font-code);">${this._esc(m.code || '')}</div>
+                        </td>
+                        <td>${this._esc(m.label_en || '—')}</td>
+                        <td><a href="${this._esc(m.url || '#')}" target="_blank" style="color:var(--tech-blue);font-family:var(--font-code);font-size:0.75rem;text-decoration:none;">${this._esc(m.url || '—')}</a></td>
+                        <td style="text-align:center;">
+                            <button class="action-btn hover-trigger" onclick="CMS.toggleMenuVisibility('${m.id}', ${!m.is_visible})" title="${m.is_visible ? 'Скрыть' : 'Показать'}" style="font-size:0.9rem;">
+                                ${m.is_visible ? '👁' : '👁‍🗨'}
+                            </button>
+                        </td>
+                        <td style="white-space:nowrap;">
+                            <button class="action-btn hover-trigger" onclick="CMS.editMenuItem('${m.id}')" title="Редактировать" style="font-size:0.9rem;">✏️</button>
+                            <button class="action-btn hover-trigger" onclick="CMS.deleteMenuItem('${m.id}')" title="Удалить" style="font-size:0.9rem;">🗑</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (err) {
+                console.error('[CMS] Menu error:', err);
+            }
+        },
+
+        async toggleMenuVisibility(id, visible) {
+            try {
+                const { error } = await this.db.from('menu_items').update({ is_visible: visible }).eq('id', id);
+                if (error) throw error;
+                await this.loadMenu();
+            } catch (err) {
+                alert('Ошибка: ' + err.message);
+            }
+        },
+
+        async deleteMenuItem(id) {
+            if (!confirm('🗑 Удалить пункт меню?')) return;
+            try {
+                const { error } = await this.db.from('menu_items').delete().eq('id', id);
+                if (error) throw error;
+                await this.loadMenu();
+                await this.loadDashboardStats();
+            } catch (err) {
+                alert('Ошибка удаления: ' + err.message);
+            }
+        },
+
+        editMenuItem(id) {
+            const item = this._menuCache.find(m => String(m.id) === String(id));
+            if (!item) return alert('Пункт не найден');
+            window._openMenuFormWithData(item);
+        },
+
+        async saveMenuItem(formData, existingId) {
+            try {
+                const record = {
+                    label_ru: formData.label_ru,
+                    label_en: formData.label_en,
+                    url: formData.url,
+                    code: formData.code,
+                    desc_ru: formData.desc_ru || '',
+                    desc_en: formData.desc_en || '',
+                    order_index: parseInt(formData.order_index) || 0,
+                    is_visible: formData.is_visible,
+                    requires_auth: formData.requires_auth || false
+                };
+
+                if (existingId) {
+                    const { error } = await this.db.from('menu_items').update(record).eq('id', existingId);
+                    if (error) throw error;
+                } else {
+                    const { error } = await this.db.from('menu_items').insert(record);
+                    if (error) throw error;
+                }
+
+                closeModal();
+                await this.loadMenu();
+                await this.loadDashboardStats();
+                return { success: true };
+            } catch (err) {
+                console.error('[CMS] Save menu error:', err);
+                alert('❌ Ошибка сохранения: ' + err.message);
+                return { error: err.message };
+            }
+        },
+
+        // ─── SITE ANALYTICS ──────────────────────────────
+        async loadAnalytics() {
+            const container = document.getElementById('analyticsSection');
+            if (!container) return;
+
+            try {
+                // Try to load from page_views table
+                const now = new Date();
+                const dayAgo = new Date(now - 24*60*60*1000).toISOString();
+                const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()).toISOString();
+                const quarterAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate()).toISOString();
+
+                const [day, month, quarter, total] = await Promise.all([
+                    this.db.from('page_views').select('*', {count:'exact', head:true}).gte('created_at', dayAgo),
+                    this.db.from('page_views').select('*', {count:'exact', head:true}).gte('created_at', monthAgo),
+                    this.db.from('page_views').select('*', {count:'exact', head:true}).gte('created_at', quarterAgo),
+                    this.db.from('page_views').select('*', {count:'exact', head:true})
+                ]);
+
+                // Geo data - top countries
+                const { data: geoData } = await this.db
+                    .from('page_views')
+                    .select('country')
+                    .not('country', 'is', null)
+                    .gte('created_at', monthAgo);
+
+                const geoMap = {};
+                (geoData || []).forEach(r => {
+                    geoMap[r.country] = (geoMap[r.country] || 0) + 1;
+                });
+                const topCountries = Object.entries(geoMap)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 8);
+
+                this._renderAnalytics(container, {
+                    day: day.count || 0,
+                    month: month.count || 0,
+                    quarter: quarter.count || 0,
+                    total: total.count || 0,
+                    topCountries
+                });
+
+            } catch (err) {
+                // Table might not exist yet — show setup instructions
+                console.warn('[CMS] Analytics not available:', err.message);
+                this._renderAnalyticsFallback(container);
+            }
+        },
+
+        _renderAnalytics(container, data) {
+            const countryFlags = {
+                'RU': '🇷🇺', 'US': '🇺🇸', 'DE': '🇩🇪', 'GB': '🇬🇧', 'FR': '🇫🇷',
+                'UA': '🇺🇦', 'KZ': '🇰🇿', 'TR': '🇹🇷', 'AE': '🇦🇪', 'IL': '🇮🇱',
+                'CN': '🇨🇳', 'JP': '🇯🇵', 'IN': '🇮🇳', 'BR': '🇧🇷', 'PL': '🇵🇱',
+                'NL': '🇳🇱', 'ES': '🇪🇸', 'IT': '🇮🇹', 'CA': '🇨🇦', 'AU': '🇦🇺'
+            };
+
+            const maxCount = data.topCountries.length > 0 ? data.topCountries[0][1] : 1;
+
+            container.innerHTML = `
+                <div class="section-title" style="margin-bottom:16px;">// АНАЛИТИКА ВИЗИТОВ</div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;">
+                    <div class="stat-card hover-trigger" style="padding:20px;">
+                        <div style="font-size:1.8rem;font-weight:800;color:var(--tech-blue);font-family:var(--font-code);">${data.day.toLocaleString()}</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);margin-top:4px;">СЕГОДНЯ (24ч)</div>
+                    </div>
+                    <div class="stat-card hover-trigger" style="padding:20px;">
+                        <div style="font-size:1.8rem;font-weight:800;color:#00FF88;font-family:var(--font-code);">${data.month.toLocaleString()}</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);margin-top:4px;">ЗА МЕСЯЦ</div>
+                    </div>
+                    <div class="stat-card hover-trigger" style="padding:20px;">
+                        <div style="font-size:1.8rem;font-weight:800;color:#FFB800;font-family:var(--font-code);">${data.quarter.toLocaleString()}</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);margin-top:4px;">ЗА КВАРТАЛ</div>
+                    </div>
+                    <div class="stat-card hover-trigger" style="padding:20px;">
+                        <div style="font-size:1.8rem;font-weight:800;color:var(--accent);font-family:var(--font-code);">${data.total.toLocaleString()}</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);margin-top:4px;">ВСЕГО</div>
+                    </div>
+                </div>
+                ${data.topCountries.length > 0 ? `
+                <div class="section-title" style="margin-bottom:12px;">// ГЕОГРАФИЯ ВИЗИТОВ</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    ${data.topCountries.map(([code, count]) => `
+                        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+                            <span style="font-size:1.3rem;">${countryFlags[code] || '🌍'}</span>
+                            <span style="font-family:var(--font-code);font-size:0.75rem;font-weight:700;min-width:28px;">${code}</span>
+                            <div style="flex:1;height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+                                <div style="width:${(count/maxCount*100).toFixed(0)}%;height:100%;background:var(--tech-blue);border-radius:3px;transition:width 0.5s;"></div>
+                            </div>
+                            <span style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);">${count}</span>
+                        </div>
+                    `).join('')}
+                </div>` : ''}
+            `;
+        },
+
+        _renderAnalyticsFallback(container) {
+            container.innerHTML = `
+                <div class="section-title" style="margin-bottom:16px;">// АНАЛИТИКА ВИЗИТОВ</div>
+                <div style="padding:30px;background:var(--surface);border-radius:12px;border:1px solid var(--border);text-align:center;">
+                    <div style="font-size:2rem;margin-bottom:12px;">📊</div>
+                    <p style="color:var(--text-dim);font-size:0.85rem;margin-bottom:16px;">Для аналитики визитов добавьте таблицу <code style="color:var(--tech-blue);">page_views</code> в Supabase</p>
+                    <div style="text-align:left;max-width:500px;margin:0 auto;background:rgba(0,0,0,0.3);padding:16px;border-radius:8px;font-family:var(--font-code);font-size:0.7rem;color:#aaa;white-space:pre;overflow-x:auto;">CREATE TABLE page_views (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  page text NOT NULL,
+  referrer text,
+  country text,
+  city text,
+  user_agent text,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE page_views ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow insert for all"
+  ON page_views FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow select for authenticated"
+  ON page_views FOR SELECT TO authenticated USING (true);</div>
+                </div>
+            `;
         },
 
         // ─── CRUD OPERATIONS ─────────────────────────────
@@ -1241,8 +1487,98 @@
     };
 
     // Placeholder stubs for features in development
+    // ─── MENU FORM (Create / Edit) ───────────────────
+    function _buildMenuFormHTML(m) {
+        const isEdit = !!m;
+        const d = m || { label_ru: '', label_en: '', url: '', code: '', desc_ru: '', desc_en: '', order_index: 0, is_visible: true, requires_auth: false };
+
+        return `
+            <h2 style="margin-bottom:20px;font-size:1.1rem;">${isEdit ? '✏️ Редактировать пункт меню' : '🔗 Новый пункт меню'}</h2>
+            
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">НАЗВАНИЕ (RU)</label>
+                    <input type="text" id="menuLabelRu" class="form-input" value="${CMS._esc(d.label_ru)}" placeholder="Главная">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">НАЗВАНИЕ (EN)</label>
+                    <input type="text" id="menuLabelEn" class="form-input" value="${CMS._esc(d.label_en || '')}" placeholder="Home">
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:2fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">URL СТРАНИЦЫ</label>
+                    <input type="text" id="menuUrl" class="form-input" value="${CMS._esc(d.url || '')}" placeholder="index.html или https://...">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">КОД (системный)</label>
+                    <input type="text" id="menuCode" class="form-input" value="${CMS._esc(d.code || '')}" placeholder="CORE_HUB" style="text-transform:uppercase;">
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ОПИСАНИЕ (RU)</label>
+                    <input type="text" id="menuDescRu" class="form-input" value="${CMS._esc(d.desc_ru || '')}" placeholder="Краткое описание для превью">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ОПИСАНИЕ (EN)</label>
+                    <input type="text" id="menuDescEn" class="form-input" value="${CMS._esc(d.desc_en || '')}" placeholder="Short description for preview">
+                </div>
+            </div>
+
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;margin-bottom:20px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">ПОРЯДОК</label>
+                    <input type="number" id="menuOrder" class="form-input" value="${d.order_index || 0}" min="0">
+                </div>
+                <div class="form-group" style="margin-bottom:0;display:flex;align-items:center;gap:10px;padding-top:22px;">
+                    <input type="checkbox" id="menuVisible" ${d.is_visible !== false ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--tech-blue);">
+                    <label for="menuVisible" style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">ВИДИМОСТЬ</label>
+                </div>
+                <div class="form-group" style="margin-bottom:0;display:flex;align-items:center;gap:10px;padding-top:22px;">
+                    <input type="checkbox" id="menuAuth" ${d.requires_auth ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--accent);">
+                    <label for="menuAuth" style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">ТОЛЬКО РЕЗИДЕНТЫ</label>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="display:flex;gap:12px;justify-content:flex-end;">
+                <button class="btn btn-secondary hover-trigger" onclick="closeModal()">ОТМЕНА</button>
+                <button class="btn btn-primary hover-trigger" onclick="_submitMenuForm('${isEdit ? m.id : ''}')">
+                    ${isEdit ? '💾 СОХРАНИТЬ' : '➕ ДОБАВИТЬ'}
+                </button>
+            </div>
+        `;
+    }
+
+    window._submitMenuForm = async function(existingId) {
+        const formData = {
+            label_ru: document.getElementById('menuLabelRu')?.value || '',
+            label_en: document.getElementById('menuLabelEn')?.value || '',
+            url: document.getElementById('menuUrl')?.value || '',
+            code: document.getElementById('menuCode')?.value?.toUpperCase() || '',
+            desc_ru: document.getElementById('menuDescRu')?.value || '',
+            desc_en: document.getElementById('menuDescEn')?.value || '',
+            order_index: document.getElementById('menuOrder')?.value || 0,
+            is_visible: document.getElementById('menuVisible')?.checked ?? true,
+            requires_auth: document.getElementById('menuAuth')?.checked || false
+        };
+        if (!formData.label_ru) return alert('Укажите название (RU)');
+        if (!formData.url) return alert('Укажите URL страницы');
+        await CMS.saveMenuItem(formData, existingId || null);
+    };
+
+    window.openMenuForm = function() {
+        openModal(_buildMenuFormHTML(null));
+    };
+
+    window._openMenuFormWithData = function(item) {
+        openModal(_buildMenuFormHTML(item));
+    };
+
+    // Placeholder stubs for features in development
     window.openBlockForm = window.openBlockForm || function() { alert('Функция в разработке'); };
-    window.openMenuForm = window.openMenuForm || function() { alert('Функция в разработке'); };
     window.publishDaoVote = window.publishDaoVote || function() { alert('Функция в разработке'); };
     window.filterAdminChats = window.filterAdminChats || function(q) { /* placeholder */ };
     window.adminSendMsg = window.adminSendMsg || function() { alert('Функция в разработке'); };
