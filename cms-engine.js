@@ -860,31 +860,44 @@
                 try {
                     const resp = await fetch('https://unpkg.com/world-atlas@2.0.2/land-110m.json');
                     const topo = await resp.json();
-                    // Simple TopoJSON to SVG decoder
-                    const arc2coords = (topology, arcIdx) => {
+                    const tr = topo.transform;
+                    // Decode a single arc index into [lon,lat] coordinates
+                    const decodeArc = (arcIdx) => {
                         const reverse = arcIdx < 0;
-                        const arc = topology.arcs[reverse ? ~arcIdx : arcIdx];
-                        const tr = topology.transform;
+                        const arc = topo.arcs[reverse ? ~arcIdx : arcIdx];
                         let x = 0, y = 0;
-                        const coords = arc.map(([dx,dy]) => { x+=dx; y+=dy; return [x*tr.scale[0]+tr.translate[0], y*tr.scale[1]+tr.translate[1]]; });
-                        return reverse ? coords.reverse() : coords;
-                    };
-                    const proj = ([lon,lat]) => [480+lon*152/57.2958, 230-lat*152/57.2958];
-                    const geo = topo.objects.land;
-                    let pathD = '';
-                    const processArcs = (arcs) => {
-                        arcs.forEach(ring => {
-                            let coords = [];
-                            ring.forEach(idx => { coords = coords.concat(arc2coords(topo, idx)); });
-                            coords.forEach(([lon,lat], i) => {
-                                const [px,py] = proj([lon,lat]);
-                                pathD += (i===0?'M':'L')+Math.round(px)+','+Math.round(py);
-                            });
-                            pathD += 'Z';
+                        const pts = arc.map(([dx,dy]) => {
+                            x += dx; y += dy;
+                            return [x * tr.scale[0] + tr.translate[0], y * tr.scale[1] + tr.translate[1]];
                         });
+                        return reverse ? pts.reverse() : pts;
                     };
-                    if (geo.type === 'GeometryCollection') { geo.geometries.forEach(g => processArcs(g.arcs)); }
-                    else { processArcs(geo.arcs); }
+                    // Project [lon,lat] → SVG [x,y] (equirectangular, scale=152, translate=[480,230])
+                    const proj = (lon, lat) => [480 + lon * 2.6529, 230 - lat * 2.6529];
+                    let pathD = '';
+                    // Process a single ring (array of arc indices)
+                    const processRing = (ring) => {
+                        let coords = [];
+                        ring.forEach(idx => { coords = coords.concat(decodeArc(idx)); });
+                        coords.forEach(([lon, lat], i) => {
+                            const [px, py] = proj(lon, lat);
+                            pathD += (i === 0 ? 'M' : 'L') + Math.round(px) + ',' + Math.round(py);
+                        });
+                        pathD += 'Z';
+                    };
+                    // Get the land geometry object
+                    const geo = topo.objects.land;
+                    if (geo.type === 'MultiPolygon') {
+                        // arcs = [polygon[ring[arcIndex]]]
+                        geo.arcs.forEach(polygon => polygon.forEach(ring => processRing(ring)));
+                    } else if (geo.type === 'Polygon') {
+                        geo.arcs.forEach(ring => processRing(ring));
+                    } else if (geo.type === 'GeometryCollection') {
+                        geo.geometries.forEach(g => {
+                            if (g.type === 'MultiPolygon') g.arcs.forEach(p => p.forEach(r => processRing(r)));
+                            else if (g.type === 'Polygon') g.arcs.forEach(r => processRing(r));
+                        });
+                    }
                     window.__worldMapCache = pathD;
                 } catch(e) { console.debug('[MAP] Could not load world map:', e.message); }
             }
