@@ -925,11 +925,7 @@
               return `<text x="${lx}" y="${ly}" text-anchor="middle" fill="rgba(0,229,255,0.18)" font-family="'JetBrains Mono',monospace" font-size="6" letter-spacing="0.5">${nm}</text>`;
             }).join('');
 
-            // Grid lines for blueprint effect (vertical only, equator is separate)
-            const gridLines = [];
-            for (let i = 0; i <= 10; i++) {
-                gridLines.push(`<line x1="${i*10}%" y1="0" x2="${i*10}%" y2="100%" stroke="rgba(0,229,255,0.04)" stroke-width="0.5"/>`);
-            }
+            // No grid lines — only equator dashed line (rendered in SVG below)
 
             container.innerHTML = `
                 <div class="section-title" style="margin-bottom:16px;">// АНАЛИТИКА ВИЗИТОВ</div>
@@ -965,9 +961,6 @@
                     <div style="position:absolute;bottom:14px;right:36px;font-family:var(--font-code);font-size:0.55rem;color:rgba(0,229,255,0.25);">MERCATOR_PROJECTION // REAL-TIME</div>
 
                     <svg viewBox="0 0 960 400" style="width:100%;height:auto;display:block;" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Grid -->
-                        ${gridLines.join('')}
-                        
                         <!-- Equator -->
                         <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(0,229,255,0.08)" stroke-width="1" stroke-dasharray="8,4"/>
                         
