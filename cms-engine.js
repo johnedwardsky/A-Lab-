@@ -925,10 +925,9 @@
               return `<text x="${lx}" y="${ly}" text-anchor="middle" fill="rgba(0,229,255,0.18)" font-family="'JetBrains Mono',monospace" font-size="6" letter-spacing="0.5">${nm}</text>`;
             }).join('');
 
-            // Grid lines for blueprint effect
+            // Grid lines for blueprint effect (vertical only, equator is separate)
             const gridLines = [];
             for (let i = 0; i <= 10; i++) {
-                gridLines.push(`<line x1="0" y1="${i*10}%" x2="100%" y2="${i*10}%" stroke="rgba(0,229,255,0.04)" stroke-width="0.5"/>`);
                 gridLines.push(`<line x1="${i*10}%" y1="0" x2="${i*10}%" y2="100%" stroke="rgba(0,229,255,0.04)" stroke-width="0.5"/>`);
             }
 
