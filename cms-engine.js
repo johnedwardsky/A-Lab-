@@ -875,13 +875,20 @@
                     // Project [lon,lat] → SVG [x,y] (equirectangular, scale=152, translate=[480,230])
                     const proj = (lon, lat) => [480 + lon * 2.6529, 230 - lat * 2.6529];
                     let pathD = '';
-                    // Process a single ring (array of arc indices), skip extreme latitudes
+                    // Process a single ring (array of arc indices)
                     const processRing = (ring) => {
                         let coords = [];
                         ring.forEach(idx => { coords = coords.concat(decodeArc(idx)); });
-                        // Filter out Antarctica (lat < -60) and extreme Arctic (lat > 84)
-                        coords = coords.filter(([lon, lat]) => lat > -60 && lat < 84);
-                        if (coords.length < 3) return; // skip tiny remnants
+                        // If it's a completely invalid/tiny ring, skip
+                        if (coords.length < 3) return;
+                        
+                        // Check ring's max latitude. If it's entirely below -50, it's Antarctica.
+                        let isAntarctica = true;
+                        for (let i = 0; i < coords.length; i++) {
+                            if (coords[i][1] > -50) { isAntarctica = false; break; }
+                        }
+                        if (isAntarctica) return; // Skip drawing Antarctica to avoid bottom map edge polygons
+
                         coords.forEach(([lon, lat], i) => {
                             const [px, py] = proj(lon, lat);
                             pathD += (i === 0 ? 'M' : 'L') + Math.round(px) + ',' + Math.round(py);
