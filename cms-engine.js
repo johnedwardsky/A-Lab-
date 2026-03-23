@@ -55,7 +55,8 @@
                 this.loadAstra(),
                 this.loadLogs(),
                 this.loadMenu(),
-                this.loadAnalytics()
+                this.loadAnalytics(),
+                this.loadMessages()
             ]);
         },
 
@@ -753,6 +754,185 @@
                 console.error('[CMS] Save menu error:', err);
                 alert('❌ Ошибка сохранения: ' + err.message);
                 return { error: err.message };
+            }
+        },
+
+        // ─── MESSAGES ────────────────────────────────────
+        _selectedChatUserId: null,
+        _messagesCache: [],
+        _chatResidents: [],
+
+        async loadMessages() {
+            try {
+                // Load all residents for the chat list
+                const { data: residents, error: rErr } = await this.db
+                    .from('residents')
+                    .select('user_id, full_name, role, avatar_url, status')
+                    .order('full_name', { ascending: true });
+
+                if (rErr) throw rErr;
+                this._chatResidents = residents || [];
+
+                // Load message counts per resident
+                const { data: messages } = await this.db
+                    .from('admin_messages')
+                    .select('resident_id, created_at')
+                    .order('created_at', { ascending: false });
+
+                const msgCounts = {};
+                const lastMsg = {};
+                (messages || []).forEach(m => {
+                    msgCounts[m.resident_id] = (msgCounts[m.resident_id] || 0) + 1;
+                    if (!lastMsg[m.resident_id]) lastMsg[m.resident_id] = m.created_at;
+                });
+
+                // Render chat list
+                const chatList = document.getElementById('adminChatList');
+                if (!chatList) return;
+
+                if (!this._chatResidents.length) {
+                    chatList.innerHTML = '<div style="padding:20px;text-align:center;color:#444;font-size:0.75rem;font-family:var(--font-code);">Нет резидентов</div>';
+                    return;
+                }
+
+                // Sort: residents with messages first, then alphabetically
+                const sorted = [...this._chatResidents].sort((a, b) => {
+                    const aLast = lastMsg[a.user_id] || '';
+                    const bLast = lastMsg[b.user_id] || '';
+                    if (aLast && !bLast) return -1;
+                    if (!aLast && bLast) return 1;
+                    if (aLast && bLast) return bLast.localeCompare(aLast);
+                    return (a.full_name || '').localeCompare(b.full_name || '');
+                });
+
+                chatList.innerHTML = sorted.map(r => {
+                    const count = msgCounts[r.user_id] || 0;
+                    const initials = (r.full_name || '?').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                    const isActive = r.user_id === this._selectedChatUserId;
+                    return `
+                        <div class="admin-chat-item ${isActive ? 'active' : ''}" 
+                             data-uid="${r.user_id}" data-name="${this._esc(r.full_name || '')}"
+                             onclick="_selectChatResident('${r.user_id}')"
+                             style="display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);transition:background 0.2s;${isActive ? 'background:rgba(0,229,255,0.08);' : ''}">
+                            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(255,42,42,0.1));border:1px solid rgba(0,229,255,0.2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--tech-blue);flex-shrink:0;">
+                                ${initials}
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:0.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${this._esc(r.full_name || '—')}</div>
+                                <div style="font-size:0.6rem;color:var(--text-dim);font-family:var(--font-code);">${this._esc(r.role || 'Resident')}</div>
+                            </div>
+                            ${count > 0 ? `<div style="background:var(--tech-blue);color:var(--bg);font-size:0.55rem;font-weight:700;padding:2px 6px;border-radius:8px;font-family:var(--font-code);">${count}</div>` : ''}
+                        </div>`;
+                }).join('');
+
+            } catch (err) {
+                console.error('[CMS] Messages error:', err);
+            }
+        },
+
+        async loadConversation(residentId) {
+            this._selectedChatUserId = residentId;
+            
+            // Update header
+            const resident = this._chatResidents.find(r => r.user_id === residentId);
+            const headerName = document.getElementById('adminChatHeaderName');
+            const headerAvatar = document.getElementById('adminChatHeaderAvatar');
+            if (headerName && resident) headerName.textContent = resident.full_name || '—';
+            if (headerAvatar && resident) {
+                const initials = (resident.full_name || '?').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                headerAvatar.textContent = initials;
+                headerAvatar.style.background = 'linear-gradient(135deg,rgba(0,229,255,0.2),rgba(255,42,42,0.15))';
+                headerAvatar.style.color = 'var(--tech-blue)';
+                headerAvatar.style.fontSize = '0.8rem';
+                headerAvatar.style.fontWeight = '700';
+            }
+
+            // Highlight active chat in list
+            document.querySelectorAll('.admin-chat-item').forEach(el => {
+                const isActive = el.getAttribute('data-uid') === residentId;
+                el.style.background = isActive ? 'rgba(0,229,255,0.08)' : '';
+            });
+
+            // Load messages
+            const msgArea = document.getElementById('adminMsgArea');
+            if (!msgArea) return;
+            msgArea.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:#444;">Загрузка...</div>';
+
+            try {
+                const { data, error } = await this.db
+                    .from('admin_messages')
+                    .select('*')
+                    .eq('resident_id', residentId)
+                    .order('created_at', { ascending: true });
+
+                if (error) throw error;
+                this._messagesCache = data || [];
+
+                if (!this._messagesCache.length) {
+                    msgArea.innerHTML = `
+                        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#444;">
+                            <div style="font-size:2rem;margin-bottom:8px;">💬</div>
+                            <div style="font-family:var(--font-code);font-size:0.75rem;">Нет сообщений</div>
+                            <div style="font-family:var(--font-code);font-size:0.6rem;color:#333;margin-top:4px;">Напишите первое сообщение от Поддержки</div>
+                        </div>`;
+                    return;
+                }
+
+                msgArea.innerHTML = this._messagesCache.map(m => {
+                    const isAdmin = m.sender === 'admin';
+                    const time = this._formatDate(m.created_at);
+                    return `
+                        <div style="display:flex;${isAdmin ? 'justify-content:flex-end;' : 'justify-content:flex-start;'}">
+                            <div style="max-width:70%;padding:10px 14px;border-radius:${isAdmin ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};
+                                background:${isAdmin ? 'linear-gradient(135deg,rgba(0,229,255,0.12),rgba(0,229,255,0.06))' : 'rgba(255,255,255,0.04)'};
+                                border:1px solid ${isAdmin ? 'rgba(0,229,255,0.15)' : 'rgba(255,255,255,0.06)'};
+                                position:relative;">
+                                <div style="font-size:0.82rem;line-height:1.4;word-break:break-word;">${this._esc(m.text)}</div>
+                                <div style="font-size:0.55rem;color:${isAdmin ? 'rgba(0,229,255,0.4)' : 'rgba(255,255,255,0.2)'};font-family:var(--font-code);margin-top:4px;text-align:${isAdmin ? 'right' : 'left'};">
+                                    ${isAdmin ? '⚙️ Поддержка' : '👤 Резидент'} • ${time}
+                                </div>
+                            </div>
+                        </div>`;
+                }).join('');
+
+                // Scroll to bottom
+                msgArea.scrollTop = msgArea.scrollHeight;
+
+            } catch (err) {
+                console.error('[CMS] Conversation error:', err);
+                msgArea.innerHTML = '<div style="padding:20px;color:var(--accent);font-size:0.75rem;">Ошибка загрузки сообщений</div>';
+            }
+        },
+
+        async sendMessage(text) {
+            if (!this._selectedChatUserId || !text.trim()) return;
+
+            try {
+                const { error } = await this.db
+                    .from('admin_messages')
+                    .insert({
+                        resident_id: this._selectedChatUserId,
+                        sender: 'admin',
+                        text: text.trim()
+                    });
+
+                if (error) throw error;
+
+                // Clear input and reload conversation
+                const input = document.getElementById('adminMsgInput');
+                if (input) input.value = '';
+                await this.loadConversation(this._selectedChatUserId);
+
+                // Log the action
+                const resident = this._chatResidents.find(r => r.user_id === this._selectedChatUserId);
+                await ALabCore.log('message', `Сообщение отправлено: ${resident?.full_name || this._selectedChatUserId}`, {
+                    resident_id: this._selectedChatUserId,
+                    preview: text.trim().substring(0, 50)
+                });
+
+            } catch (err) {
+                console.error('[CMS] Send message error:', err);
+                alert('❌ Ошибка отправки: ' + err.message);
             }
         },
 
@@ -1742,9 +1922,34 @@ CREATE POLICY "Allow select for authenticated"
     // Placeholder stubs for features in development
     window.openBlockForm = window.openBlockForm || function() { alert('Функция в разработке'); };
     window.publishDaoVote = window.publishDaoVote || function() { alert('Функция в разработке'); };
-    window.filterAdminChats = window.filterAdminChats || function(q) { /* placeholder */ };
-    window.adminSendMsg = window.adminSendMsg || function() { alert('Функция в разработке'); };
-    window.adminMsgKeyDown = window.adminMsgKeyDown || function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); adminSendMsg(); } };
+    // ─── MESSAGING FUNCTIONS ─────────────────────────
+    window._selectChatResident = function(userId) {
+        CMS.loadConversation(userId);
+    };
+
+    window.filterAdminChats = function(query) {
+        const items = document.querySelectorAll('.admin-chat-item');
+        const q = (query || '').toLowerCase();
+        items.forEach(el => {
+            const name = (el.getAttribute('data-name') || '').toLowerCase();
+            el.style.display = name.includes(q) || !q ? '' : 'none';
+        });
+    };
+
+    window.adminSendMsg = async function() {
+        const input = document.getElementById('adminMsgInput');
+        if (!input || !input.value.trim()) return;
+        if (!CMS._selectedChatUserId) return alert('Сначала выберите резидента');
+        await CMS.sendMessage(input.value);
+    };
+
+    window.adminMsgKeyDown = function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            adminSendMsg();
+        }
+    };
+
     window.sendResidentNotify = window.sendResidentNotify || function(type) { alert('Функция в разработке'); };
 
     // Init on DOM ready
