@@ -1,43 +1,79 @@
-/* A-LAB.TECH X-Ray Cursor — v2 Ultra Performance CSS */
+/**
+ * A-LAB.TECH — Cyber Cursor (Pure CSS, Zero JS)
+ * Native cursor — no performance impact whatsoever.
+ * Adapts to dark / light backgrounds via prefers-color-scheme.
+ */
 
-/* 1. Hide native cursor — scoped to body only (avoids costly universal selector repaint) */
-html, body { 
-    cursor: none; 
+/* ─── DARK THEME (default) ─────────────────────────────────────────────────
+   Arrow: white fill + cyan (#00E5FF) outline — pops on dark backgrounds.     */
+:root {
+    --cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 2 L3 19 L8 14 L12 22 L15 21 L11 13 L18 13 Z' fill='white' stroke='%2300E5FF' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto;
+    --cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M8 1 C8 1 8 17 8 17 L5 14 C4 13 2.5 13.5 2.5 15 L2.5 15 C2.5 15.5 2.8 16 3.2 16.4 L9 22 L9 26 L18 26 L18 17 C18 16 17 15 16 15 L15 15 L15 10 C15 9 14 8 13 8 L13 8 C12.5 8 12 8.2 11.7 8.5 L11 9.2 L11 1 C11 0 10 -0 10 0 C9 0 8 1 8 1 Z' fill='white' stroke='%2300E5FF' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 10 2, pointer;
 }
 
-/* 2. Standard interactive elements — keep pointer fallback for accessibility */
-a, button, input, select, textarea, [role="button"], label, .hover-trigger {
-    cursor: none;
+/* ─── LIGHT THEME ───────────────────────────────────────────────────────────
+   Arrow: dark fill + cyan outline — visible on white/light backgrounds.       */
+@media (prefers-color-scheme: light) {
+    :root {
+        --cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 2 L3 19 L8 14 L12 22 L15 21 L11 13 L18 13 Z' fill='%230a0c10' stroke='%2300E5FF' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto;
+        --cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M8 1 C8 1 8 17 8 17 L5 14 C4 13 2.5 13.5 2.5 15 L2.5 15 C2.5 15.5 2.8 16 3.2 16.4 L9 22 L9 26 L18 26 L18 17 C18 16 17 15 16 15 L15 15 L15 10 C15 9 14 8 13 8 L13 8 C12.5 8 12 8.2 11.7 8.5 L11 9.2 L11 1 C11 0 10 -0 10 0 C9 0 8 1 8 1 Z' fill='%230a0c10' stroke='%2300E5FF' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 10 2, pointer;
+    }
 }
 
-/* 3. The Custom Cursor Element */
-.cursor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    background-color: #fff;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 2147483647;
-    mix-blend-mode: difference;
-    opacity: 0;
-    
-    /* GPU layer promotion — only active during animation */
-    contain: layout style paint;
+/* ─── APPLY ─────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    cursor: var(--cursor-default);
 }
 
-/* Active state — promoted to GPU layer only when visible */
-.cursor.active {
-    will-change: transform, opacity;
+a,
+button,
+[role="button"],
+label,
+select,
+.hover-trigger,
+.card,
+.case-card,
+.resident-card,
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+    cursor: var(--cursor-pointer) !important;
 }
 
-/* 4. Mobile — disable completely */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+textarea {
+    cursor: text;
+}
+
+/* ─── MOBILE: restore system cursor ─────────────────────────────────────── */
 @media (max-width: 1024px) {
-    .cursor { display: none !important; }
-    html, body { cursor: auto; }
-    a, button, input, select, textarea, [role="button"], label, .hover-trigger {
-        cursor: pointer;
+    *,
+    *::before,
+    *::after {
+        cursor: auto !important;
+    }
+
+    a,
+    button,
+    [role="button"],
+    label,
+    select,
+    .hover-trigger {
+        cursor: pointer !important;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="search"],
+    input[type="number"],
+    textarea {
+        cursor: text !important;
     }
 }
