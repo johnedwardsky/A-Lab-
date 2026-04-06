@@ -1,0 +1,169 @@
+/* ═══════════════════════════════════════════════════════
+   HEADER NAV — Shared across all A-Lab pages
+   Ensures consistent header background, button sizes,
+   and responsive behavior site-wide.
+   ═══════════════════════════════════════════════════════ */
+
+/* --- HEADER BAR --- */
+header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    padding: 20px 40px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    z-index: 10000 !important;
+    background: var(--bg, #030407) !important;
+    border-bottom: 1px solid var(--border, rgba(255,255,255,0.08)) !important;
+    backdrop-filter: none !important;
+    box-sizing: border-box !important;
+    pointer-events: none !important;
+}
+
+/* Light theme override */
+body.light-theme header {
+    background: var(--bg, #f5f5f7) !important;
+    border-bottom-color: var(--border, rgba(0,0,0,0.1)) !important;
+}
+
+/* --- HEADER CONTROLS CONTAINER --- */
+header .header-controls,
+header > div[style*="pointer-events"],
+header > div:last-child {
+    pointer-events: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+/* --- LOGO --- */
+header .logo {
+    pointer-events: auto !important;
+    z-index: 10002 !important;
+    position: relative !important;
+}
+
+/* --- BACK BUTTON (/// НАЗАД) --- */
+header .back-btn {
+    pointer-events: auto !important;
+    font-family: var(--font-code, 'JetBrains Mono', monospace) !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    border: 1px solid var(--border, rgba(255,255,255,0.08)) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    padding: 10px 22px !important;
+    border-radius: 50px !important;
+    color: white !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+}
+
+body.light-theme header .back-btn {
+    color: #1d1d1f !important;
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+header .back-btn:hover {
+    border-color: var(--tech-blue, #00E5FF) !important;
+    color: var(--tech-blue, #00E5FF) !important;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* --- MENU BUTTON (/// МЕНЮ) --- */
+header .menu-btn {
+    pointer-events: auto !important;
+    font-family: var(--font-code, 'JetBrains Mono', monospace) !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    border: 1px solid var(--border, rgba(255,255,255,0.08)) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    padding: 10px 22px !important;
+    border-radius: 50px !important;
+    color: white !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+}
+
+body.light-theme header .menu-btn {
+    color: #1d1d1f !important;
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+header .menu-btn:hover {
+    border-color: var(--tech-blue, #00E5FF) !important;
+    color: var(--tech-blue, #00E5FF) !important;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* --- THEME TOGGLE BUTTON --- */
+header .theme-toggle {
+    pointer-events: auto !important;
+    background: transparent !important;
+    border: 1px solid var(--border, rgba(255,255,255,0.08)) !important;
+    color: var(--text, #fff) !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.2rem !important;
+    transition: 0.3s !important;
+    cursor: pointer !important;
+}
+
+header .theme-toggle:hover {
+    border-color: var(--accent, #FF2A2A) !important;
+    color: var(--accent, #FF2A2A) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    header {
+        padding: 12px 16px !important;
+    }
+
+    header .back-btn,
+    header .menu-btn {
+        font-size: 0.65rem !important;
+        padding: 8px 14px !important;
+    }
+
+    header .theme-toggle {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 1rem !important;
+    }
+
+    header .logo img {
+        height: 28px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    header .back-btn,
+    header .menu-btn {
+        font-size: 0.6rem !important;
+        padding: 7px 12px !important;
+    }
+}
