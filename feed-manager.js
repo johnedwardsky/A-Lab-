@@ -267,9 +267,22 @@
             const myReaction = post._myReaction || null;
             const hasImage = post.image_url;
             const tags = Array.isArray(post.tags) ? post.tags : [];
+            const projectId = post.project_id || null;
             // Pre-compute SHA hash input
             const shaInput = `${post.content || ''}|${post.author_id || ''}|${post.created_at || ''}`;
             const shaPlaceholder = post.content_hash || '';
+
+            // Project map for badges
+            const PROJECT_MAP = {
+                'M01': { name: 'M01', icon: '🏗️', url: '../m01-internal.html' },
+                'ARACHNID': { name: 'ARACHNID', icon: '🕷️', url: '../project_arachnid.html' },
+                'AIR_BRIDGES': { name: 'AIR BRIDGES', icon: '🌉', url: '../project_air_bridges.html' },
+                'VTEMNOTE': { name: 'В ТЁМНОТЕ', icon: '🌑', url: '../project_vtemnote.html' },
+                'RD_OS': { name: 'R&D OS', icon: '⚙️', url: '../rd-os.html' },
+                'MATRIX_CORE': { name: 'MATRIX CORE', icon: '🧩', url: '../projects.html' },
+                'NEURAL_UI': { name: 'NEURAL UI', icon: '🧠', url: '../projects.html' }
+            };
+            const project = projectId ? PROJECT_MAP[projectId] : null;
 
             return `
                 <div class="feed-post-card" id="post-card-${post.id}" data-post-id="${post.id}">
@@ -315,6 +328,14 @@
                                 </div>`}
                         </div>
                     </div>
+
+                    ${project ? `
+                        <div style="margin-bottom:12px;">
+                            <a href="${project.url}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,42,42,0.06);border:1px solid rgba(255,42,42,0.2);color:var(--accent);padding:5px 12px;border-radius:8px;font-family:var(--font-code);font-size:0.65rem;font-weight:700;text-decoration:none;transition:all 0.3s;letter-spacing:0.5px;" onmouseover="this.style.background='rgba(255,42,42,0.12)';this.style.borderColor='rgba(255,42,42,0.4)'" onmouseout="this.style.background='rgba(255,42,42,0.06)';this.style.borderColor='rgba(255,42,42,0.2)'">
+                                <span>${project.icon}</span> ${project.name}
+                            </a>
+                        </div>
+                    ` : ''}
 
                     ${tags.length > 0 ? `
                         <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:6px;">
@@ -557,7 +578,7 @@
         },
 
         /* ── Create / Publish Post ────────────────────────────── */
-        async publishPost(content, tags, imageFile) {
+        async publishPost(content, tags, imageFile, projectId) {
             if (!content?.trim()) { this._toast('⚠️ Введите текст'); return false; }
             if (!tags?.length) { this._toast('⚠️ Выберите тему'); return false; }
             if (!this.residentId) { this._toast('⚠️ Войдите в систему'); return false; }
@@ -586,14 +607,21 @@
             }
 
             try {
-                const { data, error } = await db.from('posts').insert({
+                const insertData = {
                     author_id: this.residentId,
                     content: content.trim(),
                     tags,
                     image_url: imageUrl,
                     votes_count: 0,
                     comments_count: 0
-                }).select('*, author:residents!posts_author_id_fkey(id, full_name, avatar_url, role)').single();
+                };
+                // Only include project_id if a project was selected
+                if (projectId) {
+                    insertData.project_id = projectId;
+                }
+
+                const { data, error } = await db.from('posts').insert(insertData)
+                    .select('*, author:residents!posts_author_id_fkey(id, full_name, avatar_url, role)').single();
 
                 if (error) throw error;
 

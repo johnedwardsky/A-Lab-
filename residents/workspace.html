@@ -1333,10 +1333,68 @@
         .theme-chips {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             overflow-x: auto;
             padding-bottom: 5px;
             scrollbar-width: none;
+        }
+
+        /* Project Selector */
+        .project-selector-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .project-selector-label {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .project-select {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 9px 14px;
+            color: var(--text);
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            outline: none;
+            cursor: pointer;
+            transition: 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%2300E5FF' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        .project-select:hover,
+        .project-select:focus {
+            border-color: rgba(0, 229, 255, 0.4);
+        }
+
+        .project-select option {
+            background: #0b0d14;
+            color: white;
+        }
+
+        body.light-theme .project-select {
+            background-color: #fff;
+            color: #1d1d1f;
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .project-select option {
+            background: #fff;
+            color: #1d1d1f;
         }
 
         .theme-chips::-webkit-scrollbar {
@@ -1992,6 +2050,21 @@
                         <div class="theme-chip hover-trigger" data-theme="Cyber Security">Cyber Security</div>
                         <div class="theme-chip hover-trigger" data-theme="R&D Updates">R&D Updates</div>
                         <div class="theme-chip hover-trigger" data-theme="Community">Community</div>
+                    </div>
+
+                    <!-- Project Selector -->
+                    <div class="project-selector-row">
+                        <span class="project-selector-label">🧪 Проект:</span>
+                        <select class="project-select" id="feedProjectSelect">
+                            <option value="">— Без привязки к проекту —</option>
+                            <option value="M01">M01 — Модульная Система</option>
+                            <option value="ARACHNID">ARACHNID — Автономная Платформа</option>
+                            <option value="AIR_BRIDGES">AIR BRIDGES — Воздушные Мосты</option>
+                            <option value="VTEMNOTE">В ТЁМНОТЕ — Цифровая Платформа</option>
+                            <option value="RD_OS">R&D OS — Операционная Система</option>
+                            <option value="MATRIX_CORE">MATRIX CORE — Система Управления</option>
+                            <option value="NEURAL_UI">NEURAL UI — Нейро Интерфейс</option>
+                        </select>
                     </div>
 
                     <div class="post-input-row">
@@ -2817,6 +2890,8 @@
 
         async function publishFeedPost() {
             const content = document.getElementById('postContent')?.value?.trim();
+            const projectSelect = document.getElementById('feedProjectSelect');
+            const projectId = projectSelect?.value || null;
 
             if (!_feedSelectedTheme) { showToast('⚠️ Выберите тему (кнопка выше)'); return; }
             if (!content) { showToast('⚠️ Введите текст поста'); return; }
@@ -2825,13 +2900,14 @@
             if (btn) { btn.disabled = true; btn.textContent = 'ПУБЛИКАЦИЯ...'; }
 
             try {
-                const ok = await (window.FeedManager?.publishPost(content, [_feedSelectedTheme], _feedPendingImageFile));
+                const ok = await (window.FeedManager?.publishPost(content, [_feedSelectedTheme], _feedPendingImageFile, projectId));
                 if (ok !== false) {
                     document.getElementById('postContent').value = '';
                     document.getElementById('postContent').style.height = 'auto';
                     document.querySelectorAll('#themeChips .theme-chip').forEach(c => c.classList.remove('active'));
                     _feedSelectedTheme = null;
                     _feedPendingImageFile = null;
+                    if (projectSelect) projectSelect.value = '';
                     removeFeedPreview();
                 }
             } finally {
