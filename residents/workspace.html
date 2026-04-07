@@ -1533,7 +1533,7 @@
         .feed-post-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 15px;
         }
 
@@ -3136,8 +3136,10 @@
 
             if (_tabParam === 'feed' || window.location.hash === '#feed') {
                 switchTab('feed');
-            } else if (window.location.hash === '#portfolio') {
+            } else if (_tabParam === 'portfolio' || window.location.hash === '#portfolio') {
                 switchTab('portfolio');
+            } else if (_tabParam === 'messages' || window.location.hash === '#messages' || window.location.hash === '#messages-tab') {
+                switchTab('messages');
             }
 
             // Highlight specific post after feed loads
@@ -3329,7 +3331,7 @@
         let tgCurrentChat = null;
 
         function tgInit() {
-            renderChatList(TG_CHATS);
+            renderChatList(window.ALL_CHATS || TG_CHATS);
         }
 
         function renderChatList(chats) {
@@ -3350,13 +3352,14 @@
             `).join('');
         }
 
-        function openTgChat(chatId) {
+        async function openTgChat(chatId) {
             tgCurrentChat = chatId;
-            const chat = TG_CHATS.find(c => c.id === chatId);
+            const chatArray = window.ALL_CHATS || TG_CHATS;
+            const chat = chatArray.find(c => c.id === chatId);
             if (!chat) return;
 
             // Update header
-            document.getElementById('tgChatAvatar').textContent = chat.avatar;
+            document.getElementById('tgChatAvatar').innerHTML = chat.avatar;
             document.getElementById('tgChatName').textContent = chat.name;
             document.getElementById('tgChatStatus').textContent = chat.status;
 
@@ -3368,17 +3371,33 @@
             // Clear unread badge
             chat.unread = 0;
 
-            // Render messages
-            renderMessages(chatId);
+            if (chat.userId) {
+                // Real DB Chat
+                document.getElementById('tgMessages').innerHTML = '<div style="text-align:center;padding:20px;font-family:var(--font-code);font-size:0.8rem;">Загрузка...</div>';
+                if (window.MessageManager) {
+                    await window.MessageManager.loadMessages(chat.userId);
+                }
+            } else {
+                // System / Local Chat
+                renderMessagesLocal(chatId);
+            }
 
             // On mobile: push to chat view
             document.getElementById('tgMessenger').classList.add('chat-open');
 
             // Highlight active in list
-            renderChatList(TG_CHATS);
+            renderChatList(window.ALL_CHATS || TG_CHATS);
+            
+            // Replace URL to share recipient
+            if (chat.userId) {
+                const url = new URL(window.location);
+                if (url.searchParams.get('tab') !== 'messages') url.searchParams.set('tab', 'messages');
+                url.searchParams.set('recipient', chat.userId);
+                window.history.replaceState({}, '', url);
+            }
         }
 
-        function renderMessages(chatId) {
+        function renderMessagesLocal(chatId) {
             const area = document.getElementById('tgMessages');
             const stored = JSON.parse(localStorage.getItem('tg_msgs_' + chatId) || 'null');
             const msgs = stored || TG_DEFAULT_MSGS[chatId] || [];
@@ -3407,36 +3426,97 @@
             area.scrollTop = area.scrollHeight;
         }
 
-        function closeTgChat() {
-            document.getElementById('tgMessenger').classList.remove('chat-open');
+        function renderRealMessages(msgs) {
+            const area = document.getElementById('tgMessages');
+            if (!area) return;
+            area.innerHTML = '';
+
+            const sep = document.createElement('div');
+            sep.className = 'tg-date-sep';
+            sep.textContent = '// ИСТОРИЯ ПЕРЕПИСКИ';
+            area.appendChild(sep);
+
+            const myId = window.ResidentProfileManager?.residentId;
+
+            if (!msgs || msgs.length === 0) {
+               const empty = document.createElement('div');
+               empty.style = "text-align:center;color:#888;font-size:0.8rem;margin-top:20px;font-family:var(--font-code);";
+               empty.innerText = "Здесь пока нет сообщений.\nНапишите первым!";
+               area.appendChild(empty);
+            }
+
+            msgs.forEach(m => {
+                const isOut = m.sender_id === myId;
+                const wrap = document.createElement('div');
+                wrap.className = 'tg-bubble ' + (isOut ? 'tg-bubble-out' : 'tg-bubble-in');
+                const d = new Date(m.created_at);
+                const timeStr = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                
+                wrap.innerHTML = `
+                    <div>${escTg(m.content)}</div>
+                    <div class="tg-bubble-time">${timeStr}</div>
+                `;
+                area.appendChild(wrap);
+            });
+
+            area.scrollTop = area.scrollHeight;
         }
 
-        function tgSendMsg() {
+        document.addEventListener('alab:messages-loaded', (e) => {
+            renderRealMessages(e.detail);
+        });
+
+        document.addEventListener('alab:messages-updated', (e) => {
+            renderRealMessages(e.detail);
+        });
+
+        function closeTgChat() {
+            document.getElementById('tgMessenger').classList.remove('chat-open');
+            // remove recipient from URL
+            const url = new URL(window.location);
+            url.searchParams.delete('recipient');
+            window.history.replaceState({}, '', url);
+        }
+
+        async function tgSendMsg() {
             const input = document.getElementById('tgMsgInput');
             const text = input.value.trim();
             if (!text || !tgCurrentChat) return;
 
-            const now = new Date();
-            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+            const chatArray = window.ALL_CHATS || TG_CHATS;
+            const chat = chatArray.find(c => c.id === tgCurrentChat);
 
-            // Save to localStorage
-            const key = 'tg_msgs_' + tgCurrentChat;
-            const msgs = JSON.parse(localStorage.getItem(key) || '[]');
-            msgs.push({ from: 'out', sender: 'Я', text, time });
-            localStorage.setItem(key, JSON.stringify(msgs));
+            if (chat && chat.userId) {
+                // Real DB Send
+                input.value = '';
+                input.style.height = 'auto';
+                input.focus();
+                
+                if (window.MessageManager) {
+                    await window.MessageManager.sendMessage(chat.userId, text);
+                }
+            } else {
+                // Local Send
+                const now = new Date();
+                const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
 
-            // Update preview in list
-            const chat = TG_CHATS.find(c => c.id === tgCurrentChat);
-            if (chat) { chat.preview = text; chat.time = time; }
-            renderChatList(TG_CHATS);
+                // Save to localStorage
+                const key = 'tg_msgs_' + tgCurrentChat;
+                const msgs = JSON.parse(localStorage.getItem(key) || '[]');
+                msgs.push({ from: 'out', sender: 'Я', text, time });
+                localStorage.setItem(key, JSON.stringify(msgs));
 
-            // Render messages
-            renderMessages(tgCurrentChat);
+                // Update preview in list
+                if (chat) { chat.preview = text; chat.time = time; }
+                renderChatList(chatArray);
 
-            // Reset input
-            input.value = '';
-            input.style.height = 'auto';
-            input.focus();
+                renderMessagesLocal(tgCurrentChat);
+
+                // Reset input
+                input.value = '';
+                input.style.height = 'auto';
+                input.focus();
+            }
         }
 
         function tgKeyDown(e) {
@@ -3453,9 +3533,14 @@
         }
 
         function filterChats(q) {
-            const filtered = TG_CHATS.filter(c =>
-                c.name.toLowerCase().includes(q.toLowerCase()) ||
-                c.preview.toLowerCase().includes(q.toLowerCase())
+            const listToSearch = window.ALL_CHATS || TG_CHATS;
+            const qLower = q.toLowerCase();
+            const filtered = listToSearch.filter(c =>
+                c.name.toLowerCase().includes(qLower) ||
+                (c.preview && c.preview.toLowerCase().includes(qLower)) ||
+                (c.id && c.id.toLowerCase().includes(qLower)) ||
+                (c.userId && String(c.userId).toLowerCase().includes(qLower)) ||
+                (c.email && c.email.toLowerCase().includes(qLower))
             );
             renderChatList(filtered);
         }
@@ -3468,6 +3553,38 @@
         const _origSwitch = window.switchTab;
         document.addEventListener('DOMContentLoaded', () => {
             tgInit();
+            
+            // Check query param for recipient
+            const _urlP = new URLSearchParams(window.location.search);
+            const _recipientParam = _urlP.get('recipient');
+            
+            // Auto-init MessageManager when profile is ready
+            document.addEventListener('rpm:profile-loaded', () => {
+                 if (window.MessageManager && !window.MessageManager.residentId) {
+                     window.MessageManager.init(window.ResidentProfileManager.residentId);
+                 }
+                 
+                 // Deep link support
+                 setTimeout(() => {
+                     if (_recipientParam && window.ALL_CHATS) {
+                         // Find target by user_id
+                         const targetUser = window.ALL_CHATS.find(c => String(c.userId) === _recipientParam);
+                         // Find target by resident_id equivalent
+                         const targetRes = window.ALL_CHATS.find(c => c.id === 'resident_' + _recipientParam);
+                         
+                         const target = targetUser || targetRes;
+                         if (target) {
+                             // Always ensure the messages tab is active if we're deep-linking to a chat
+                             const activeTab = document.querySelector('.tab-content.active');
+                             if (!activeTab || activeTab.id !== 'messages-tab') {
+                                 switchTab('messages');
+                             }
+                             openTgChat(target.id);
+                         }
+                     }
+                 }, 800);
+            });
+
             // Also re-init when switching to messages tab
             const oldSwitch = window.switchTab;
             if (oldSwitch) {
@@ -4673,15 +4790,23 @@
                     preview: 'Резидент A-LAB',
                     time: '',
                     unread: 0,
-                    userId: r.user_id
+                    userId: r.user_id,
+                    email: r.email || ''
                 }));
 
             // Merge with system chats at top
             const combined = [...TG_CHATS, ...realChats];
+            window.ALL_CHATS = combined; // save for filtering
             renderChatList(combined);
+
+            // Re-render if there's an active chat to ensure it stays active
+            if (tgCurrentChat) {
+                renderChatList(combined);
+            }
         }
     </script>
-                <script defer src="../cursor.js"></script>
+    <script defer src="../message-manager.js"></script>
+    <script defer src="../cursor.js"></script>
 </body>
 
 </html>

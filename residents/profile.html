@@ -639,8 +639,8 @@
 
         @media (max-width: 1024px) {
             .logo {
-                top: 20px;
-                left: 20px;
+                
+                
                 position: fixed !important;
             }
 
@@ -746,8 +746,8 @@
         /* --- RESPONSIVENESS --- */
         @media (max-width: 1024px) {
             .logo {
-                top: 20px;
-                left: 20px;
+                
+                
                 position: fixed !important;
             }
 
@@ -978,7 +978,7 @@
                 </div>
 
                 <div style="margin-top: 50px; display: flex; gap: 15px;">
-                    <a id="startChatBtn" href="messages.html" class="back-btn hover-trigger"
+                    <a id="startChatBtn" href="workspace.html?tab=messages" class="back-btn hover-trigger"
                         style="background: var(--tech-blue); border-color: var(--tech-blue); color: black; font-weight: 800; font-size: 1rem; padding: 15px 40px; text-decoration: none;">💬
                         Написать</a>
                     <button id="tgBtn" class="back-btn hover-trigger"
@@ -1286,9 +1286,9 @@
 
             const chatBtn = document.getElementById('startChatBtn');
             if (chatBtn && data.residentId) {
-                chatBtn.href = 'messages.html?recipient=' + data.residentId;
+                chatBtn.href = 'workspace.html?tab=messages&recipient=' + data.residentId;
             } else if (chatBtn && data.userId) { // fallback
-                chatBtn.href = 'messages.html';
+                chatBtn.href = 'workspace.html?tab=messages';
             }
 
             if (data.stats) {

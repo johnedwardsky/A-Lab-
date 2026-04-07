@@ -131,7 +131,7 @@
             padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             z-index: 100;
             pointer-events: none;
             backdrop-filter: none;
@@ -148,9 +148,9 @@
 
         .logo {
             pointer-events: auto;
-            position: fixed;
-            top: 40px;
-            left: 40px;
+            position: relative;
+            
+            
             z-index: 1100;
             display: flex;
             align-items: center;
@@ -158,7 +158,7 @@
         }
 
         .logo img {
-            height: 50px;
+            height: 40px;
             width: auto;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
@@ -416,13 +416,25 @@
             font-weight: 800;
         }
 
+        @media (max-width: 1024px) {
+            .case-overlay {
+                opacity: 1;
+                transform: translateY(0);
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.4), transparent);
+            }
+            .case-card img {
+                opacity: 1;
+                filter: grayscale(0) brightness(0.6);
+            }
+        }
+
         /* --- FORM SECTION --- */
         .lead-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 100px;
+            gap: 80px;
             background: linear-gradient(135deg, #05070a, #000);
-            padding: 100px;
+            padding: 80px;
             border-radius: 40px;
             border: 1px solid var(--border);
             position: relative;
@@ -432,91 +444,334 @@
         .lead-section::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, rgba(255, 42, 42, 0.03), transparent 50%);
-            z-index: 0;
+            top: -200px;
+            right: -200px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,42,42,0.04) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         .form-info,
-        .form-container {
+        .form-container-new {
             position: relative;
             z-index: 1;
         }
 
         .form-info h2 {
-            font-size: clamp(2.2rem, 8vw, 3rem);
+            font-size: clamp(2rem, 5vw, 3.2rem);
             font-weight: 800;
-            line-height: 1;
+            line-height: 1.05;
             margin-bottom: 20px;
         }
 
-        .form-info p {
-            color: #999;
+        .form-info-tag {
             font-family: var(--font-code);
-            font-size: 0.9rem;
-            margin-bottom: 40px;
+            color: var(--accent);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .form-trust-items {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
         }
 
-        label {
-            display: block;
+        .form-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .form-trust-icon {
+            font-size: 1.4rem;
+            width: 44px;
+            height: 44px;
+            background: rgba(255,42,42,0.06);
+            border: 1px solid rgba(255,42,42,0.12);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .form-trust-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #e0e0e0;
+            margin-bottom: 2px;
+        }
+
+        .form-trust-sub {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #555;
+        }
+
+        /* Modern form */
+        .modern-form {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            padding: 36px;
+        }
+
+        /* Step indicator */
+        .form-steps {
+            display: flex;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 0;
+        }
+
+        .form-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .step-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #2a2a35;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-family: var(--font-code);
             font-size: 0.7rem;
-            color: #888;
+            color: #444;
+            transition: all 0.3s;
+        }
+
+        .form-step-active .step-dot {
+            border-color: var(--accent);
+            background: rgba(255,42,42,0.1);
+            color: var(--accent);
+        }
+
+        .form-step.step-done .step-dot {
+            border-color: #28c840;
+            background: rgba(40,200,64,0.1);
+            color: #28c840;
+        }
+
+        .step-label {
+            font-family: var(--font-code);
+            font-size: 0.55rem;
+            color: #444;
             text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-step-active .step-label,
+        .form-step.step-done .step-label {
+            color: #888;
+        }
+
+        .form-step-line {
+            flex: 1;
+            height: 1px;
+            background: #1e1e28;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+
+        .form-step-line.line-done {
+            background: linear-gradient(to right, rgba(40,200,64,0.4), rgba(255,42,42,0.2));
+        }
+
+        .form-section-label {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        /* Service pills */
+        .service-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .service-pill {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px;
+            padding: 8px 16px;
+            color: #666;
+            font-family: var(--font-main);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .service-pill:hover {
+            border-color: rgba(255,42,42,0.3);
+            color: #ccc;
+            background: rgba(255,42,42,0.04);
+        }
+
+        .service-pill.pill-selected {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(255,42,42,0.08);
+            box-shadow: 0 0 20px rgba(255,42,42,0.1);
+        }
+
+        /* Floating label inputs */
+        .float-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .float-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #2a2a35;
+            padding: 16px 0 8px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+            border-radius: 0;
+        }
+
+        .float-textarea {
+            resize: none;
+            display: block;
+        }
+
+        .float-input:focus {
+            border-bottom-color: transparent;
+        }
+
+        .float-label {
+            position: absolute;
+            left: 0;
+            top: 16px;
+            font-size: 0.88rem;
+            color: #555;
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+
+        .float-input:focus ~ .float-label,
+        .float-input:not(:placeholder-shown) ~ .float-label {
+            top: -2px;
+            font-size: 0.62rem;
+            color: var(--accent);
+            font-family: var(--font-code);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .float-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--accent), rgba(255,42,42,0.3));
+            transition: width 0.35s ease;
+        }
+
+        .float-input:focus ~ .float-line {
+            width: 100%;
+        }
+
+        /* Submit button */
+        .btn-modern-submit {
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, var(--accent) 0%, rgba(200,30,30,1) 100%);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .btn-modern-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(255,42,42,0.3);
+        }
+
+        .btn-modern-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-glow {
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        /* Success state */
+        .form-success {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(40,200,64,0.1);
+            border: 2px solid #28c840;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #28c840;
+            margin: 0 auto 20px;
+            animation: successPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
             margin-bottom: 8px;
         }
 
-        input,
-        textarea {
-            width: 100%;
-            background: #0b0d14;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 15px;
-            color: white;
-            font-family: var(--font-main);
-            outline: none;
-            transition: 0.3s;
-        }
-
-        input:focus,
-        textarea:focus {
-            border-color: var(--accent);
-            background: #0d111a;
-        }
-
-        textarea {
-            height: 120px;
-        }
-
-        input::placeholder,
-        textarea::placeholder {
-            color: #777;
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: var(--accent);
-            color: black;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 20px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: 0.3s;
-        }
-
-        .btn-submit:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(255, 42, 42, 0.4);
+        .success-sub {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
         }
 
         footer {
@@ -540,8 +795,13 @@
 
             .lead-section {
                 grid-template-columns: 1fr;
-                gap: 50px;
-                padding: 40px 20px;
+                gap: 40px;
+                padding: 40px 24px;
+                border-radius: 24px;
+            }
+
+            .modern-form {
+                padding: 24px 20px;
             }
 
             .trend-card {
@@ -553,6 +813,17 @@
                 gap: 20px;
                 padding: 40px 20px;
                 text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .service-pill {
+                font-size: 0.72rem;
+                padding: 7px 13px;
+            }
+
+            .form-steps {
+                margin-bottom: 24px;
             }
         }
     </style>
@@ -611,26 +882,111 @@
 
         <section class="lead-section">
             <div class="form-info">
-                <h2 data-i18n-html="page_design.form_title">Нужен <br> сильный <br> дизайн?</h2>
-                <p data-i18n-html="page_design.form_subtitle">// ОТПРАВЬТЕ ЗАПРОС ПРЯМО В CORE <br> МЫ СВЯЖЕМСЯ В
-                    ТЕЧЕНИИ 4-Х ЧАСОВ.</p>
+                <div class="form-info-tag">// DESIGN REQUEST</div>
+                <h2 style="font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.05;margin-bottom:20px;">
+                    Нужен<br>сильный<br><span style="color:var(--accent)">дизайн?</span>
+                </h2>
+                <p style="color:#666;font-size:0.9rem;line-height:1.7;margin-bottom:40px;">
+                    Выберите тип задачи и оставьте контакт — наш арт-директор проведёт бесплатный разбор вашего проекта в течение 4 часов.
+                </p>
+                <div class="form-trust-items">
+                    <div class="form-trust-item">
+                        <div class="form-trust-icon">🎨</div>
+                        <div>
+                            <div class="form-trust-title">Ответ за 4ч</div>
+                            <div class="form-trust-sub">Арт-директор лично</div>
+                        </div>
+                    </div>
+                    <div class="form-trust-item">
+                        <div class="form-trust-icon">🔒</div>
+                        <div>
+                            <div class="form-trust-title">NDA по запросу</div>
+                            <div class="form-trust-sub">Полная конфиденциальность</div>
+                        </div>
+                    </div>
+                    <div class="form-trust-item">
+                        <div class="form-trust-icon">✨</div>
+                        <div>
+                            <div class="form-trust-title">Бесплатный мудборд</div>
+                            <div class="form-trust-sub">Визуальный концепт под ваш бриф</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-container">
-                <form id="leadForm">
-                    <div class="form-group">
-                        <label data-i18n="page_design.form_name">Ваше имя</label>
-                        <input type="text" placeholder="Введите имя..." required>
+            <div class="form-container-new">
+                <form id="leadForm" class="modern-form" novalidate>
+                    <!-- Step indicator -->
+                    <div class="form-steps">
+                        <div class="form-step form-step-active" id="step1dot">
+                            <div class="step-dot">1</div>
+                            <div class="step-label">Задача</div>
+                        </div>
+                        <div class="form-step-line"></div>
+                        <div class="form-step" id="step2dot">
+                            <div class="step-dot">2</div>
+                            <div class="step-label">Контакт</div>
+                        </div>
+                        <div class="form-step-line"></div>
+                        <div class="form-step" id="step3dot">
+                            <div class="step-dot">3</div>
+                            <div class="step-label">Отправка</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label data-i18n="page_design.form_company">Название компании</label>
-                        <input type="text" placeholder="Project / Company name..." required>
+
+                    <!-- Service type pills -->
+                    <div class="form-section-label">// ЧТО ВАС ИНТЕРЕСУЕТ?</div>
+                    <div class="service-pills" id="servicePills">
+                        <button type="button" class="service-pill" data-value="Брендинг" onclick="selectPill(this)">
+                            🎨 Брендинг
+                        </button>
+                        <button type="button" class="service-pill" data-value="UI/UX Дизайн" onclick="selectPill(this)">
+                            📱 UI/UX Дизайн
+                        </button>
+                        <button type="button" class="service-pill" data-value="Промышленный дизайн" onclick="selectPill(this)">
+                            🏭 Промышленный дизайн
+                        </button>
+                        <button type="button" class="service-pill" data-value="Веб-дизайн" onclick="selectPill(this)">
+                            🌐 Веб-дизайн
+                        </button>
+                        <button type="button" class="service-pill" data-value="Презентация / Питч" onclick="selectPill(this)">
+                            📊 Презентация
+                        </button>
+                        <button type="button" class="service-pill" data-value="Другое" onclick="selectPill(this)">
+                            💡 Другое
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label data-i18n="page_design.form_task">Описание задачи</label>
-                        <textarea placeholder="Опишите в двух словах ваш проект..."></textarea>
+                    <input type="hidden" id="selectedService" name="service" value="">
+
+                    <!-- Floating label inputs -->
+                    <div class="float-group">
+                        <input type="text" id="formName" class="float-input" placeholder=" " required autocomplete="name">
+                        <label for="formName" class="float-label">Ваше имя *</label>
+                        <div class="float-line"></div>
                     </div>
-                    <button type="submit" class="btn-submit hover-trigger" data-i18n="page_design.form_submit">Отправить
-                        запрос</button>
+
+                    <div class="float-group">
+                        <input type="text" id="formContact" class="float-input" placeholder=" " required autocomplete="tel">
+                        <label for="formContact" class="float-label">Telegram / Email / Телефон *</label>
+                        <div class="float-line"></div>
+                    </div>
+
+                    <div class="float-group">
+                        <textarea id="formMessage" class="float-input float-textarea" placeholder=" " rows="3"></textarea>
+                        <label for="formMessage" class="float-label">Кратко о проекте</label>
+                        <div class="float-line"></div>
+                    </div>
+
+                    <button type="submit" class="btn-modern-submit" id="modernSubmitBtn">
+                        <span id="submitText">Отправить запрос →</span>
+                        <div class="btn-glow"></div>
+                    </button>
+
+                    <!-- Success state -->
+                    <div class="form-success" id="formSuccess" style="display:none;">
+                        <div class="success-icon">✓</div>
+                        <div class="success-title">Запрос отправлен!</div>
+                        <div class="success-sub">Наш арт-директор свяжется с вами в течение 4 часов.</div>
+                    </div>
                 </form>
             </div>
         </section>
@@ -668,45 +1024,77 @@
             t.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
         });
 
+        // Pill selection
+        function selectPill(btn) {
+            document.querySelectorAll('.service-pill').forEach(p => p.classList.remove('pill-selected'));
+            btn.classList.add('pill-selected');
+            document.getElementById('selectedService').value = btn.dataset.value;
+            // Activate step 1 done
+            document.getElementById('step1dot').classList.add('step-done');
+            document.getElementById('step1dot').classList.remove('form-step-active');
+            document.getElementById('step2dot').classList.add('form-step-active');
+            document.querySelectorAll('.form-step-line')[0].classList.add('line-done');
+        }
+
+        // Track contact fill for step 2
+        const formContactEl = document.getElementById('formContact');
+        if (formContactEl) {
+            formContactEl.addEventListener('input', () => {
+                if (formContactEl.value.trim().length > 2) {
+                    document.getElementById('step2dot').classList.add('step-done');
+                    document.getElementById('step2dot').classList.remove('form-step-active');
+                    document.getElementById('step3dot').classList.add('form-step-active');
+                    document.querySelectorAll('.form-step-line')[1].classList.add('line-done');
+                }
+            });
+        }
+
         document.getElementById('leadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const form = e.target;
-            const btn = form.querySelector('button');
-            const name = form.querySelector('input[type="text"]').value;
-            const company = form.querySelectorAll('input[type="text"]')[1].value;
-            const task = form.querySelector('textarea').value;
+            const btn = document.getElementById('modernSubmitBtn');
+            const submitText = document.getElementById('submitText');
+            const name = document.getElementById('formName')?.value || '';
+            const contact = document.getElementById('formContact')?.value || '';
+            const message = document.getElementById('formMessage')?.value || '';
+            const service = document.getElementById('selectedService')?.value || '';
 
-            btn.innerText = 'ОТПРАВКА...';
+            if (!name.trim() || !contact.trim()) {
+                document.getElementById('formName').style.borderBottomColor = !name.trim() ? 'var(--accent)' : '';
+                document.getElementById('formContact').style.borderBottomColor = !contact.trim() ? 'var(--accent)' : '';
+                return;
+            }
+
+            submitText.textContent = '// Отправляем...';
             btn.disabled = true;
+            btn.style.opacity = '0.7';
 
             const { success, error } = await window.ALabCore.submitLead({
-                name: name,
-                contact: company, // Using company as contact for now or adding field
-                message: task,
+                name,
+                contact,
+                message: (service ? '[' + service + '] ' : '') + message,
                 source: 'design',
                 source_detail: 'Design Page Form'
             });
 
             if (success) {
-                alert('Запрос зашифрован и официально зарегистрирован в A-LAB. Наш арт-директор свяжется с вами в течение 4-х часов.');
-                form.reset();
+                // Mark step 3 done
+                document.getElementById('step3dot').classList.add('step-done');
+                document.getElementById('step3dot').classList.remove('form-step-active');
+                // Show success state
+                document.querySelector('.modern-form').querySelectorAll('.form-steps, .form-section-label, .service-pills, #selectedService, .float-group, #modernSubmitBtn').forEach(el => el.style.display = 'none');
+                document.getElementById('formSuccess').style.display = 'block';
             } else {
-                alert('Ошибка отправки: ' + (error?.message || 'Повторите позже'));
+                submitText.textContent = 'Ошибка — попробуйте ещё раз';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                setTimeout(() => { submitText.textContent = 'Отправить запрос →'; }, 3000);
             }
-            btn.innerText = 'Отправить запрос';
-            btn.disabled = false;
         });
     </script>
     <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="tracker.js"></script>
-    <script defer src="cases-engine.js?v=1.1"></script>
-    <script>
-        // Force init if DOMContentLoaded already fired or to be double sure
-        if (typeof ALabCases !== 'undefined') {
-            ALabCases.init('design', 'casesContainer');
-        }
-    </script>
+    <script defer src="cases-engine.js?v=1.4"></script>
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js?v=2.2"></script>

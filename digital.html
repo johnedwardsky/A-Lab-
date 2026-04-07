@@ -74,7 +74,7 @@
             padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             z-index: 100;
             pointer-events: none;
             backdrop-filter: none;
@@ -91,9 +91,9 @@
 
         .logo {
             pointer-events: auto;
-            position: fixed;
-            top: 40px;
-            left: 40px;
+            position: relative;
+            
+            
             z-index: 1100;
             display: flex;
             align-items: center;
@@ -101,7 +101,7 @@
         }
 
         .logo img {
-            height: 50px;
+            height: 40px;
             width: auto;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
@@ -428,14 +428,378 @@
             margin-bottom: 10px;
         }
 
+        @media (max-width: 1024px) {
+            .case-overlay {
+                opacity: 1;
+                transform: translateY(0);
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.4), transparent);
+            }
+            .case-card img {
+                opacity: 1; /* always somewhat visible on mobile */
+                filter: brightness(0.6);
+            }
+        }
+
         .lead-section {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 100px;
-            background: #000;
-            padding: 100px;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 80px;
+            background: linear-gradient(135deg, #07090f 0%, #0b0d14 100%);
+            padding: 80px;
             border-radius: 40px;
             border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lead-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Form info left side */
+        .form-info-tag {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .form-trust-items {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .form-trust-icon {
+            font-size: 1.4rem;
+            width: 44px;
+            height: 44px;
+            background: rgba(0,229,255,0.06);
+            border: 1px solid rgba(0,229,255,0.12);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .form-trust-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #e0e0e0;
+            margin-bottom: 2px;
+        }
+
+        .form-trust-sub {
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #555;
+        }
+
+        /* Right side container */
+        .form-container-new {
+            position: relative;
+        }
+
+        .modern-form {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            padding: 36px;
+        }
+
+        /* Step indicator */
+        .form-steps {
+            display: flex;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 0;
+        }
+
+        .form-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .step-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #2a2a35;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #444;
+            transition: all 0.3s;
+        }
+
+        .form-step-active .step-dot {
+            border-color: var(--tech-blue);
+            background: rgba(0,229,255,0.1);
+            color: var(--tech-blue);
+        }
+
+        .form-step.step-done .step-dot {
+            border-color: #28c840;
+            background: rgba(40,200,64,0.1);
+            color: #28c840;
+        }
+
+        .step-label {
+            font-family: var(--font-code);
+            font-size: 0.55rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-step-active .step-label,
+        .form-step.step-done .step-label {
+            color: #888;
+        }
+
+        .form-step-line {
+            flex: 1;
+            height: 1px;
+            background: #1e1e28;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+
+        .form-step-line.line-done {
+            background: linear-gradient(to right, rgba(40,200,64,0.4), rgba(0,229,255,0.2));
+        }
+
+        /* Section label */
+        .form-section-label {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        /* Service pills */
+        .service-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .service-pill {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px;
+            padding: 8px 16px;
+            color: #666;
+            font-family: var(--font-main);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .service-pill:hover {
+            border-color: rgba(0,229,255,0.3);
+            color: #ccc;
+            background: rgba(0,229,255,0.04);
+        }
+
+        .service-pill.pill-selected {
+            border-color: var(--tech-blue);
+            color: var(--tech-blue);
+            background: rgba(0,229,255,0.08);
+            box-shadow: 0 0 20px rgba(0,229,255,0.1);
+        }
+
+        /* Floating label inputs */
+        .float-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .float-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #2a2a35;
+            padding: 16px 0 8px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+            border-radius: 0;
+        }
+
+        .float-textarea {
+            resize: none;
+            display: block;
+        }
+
+        .float-input:focus {
+            border-bottom-color: transparent;
+        }
+
+        .float-label {
+            position: absolute;
+            left: 0;
+            top: 16px;
+            font-size: 0.88rem;
+            color: #555;
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+
+        .float-input:focus ~ .float-label,
+        .float-input:not(:placeholder-shown) ~ .float-label {
+            top: -2px;
+            font-size: 0.62rem;
+            color: var(--tech-blue);
+            font-family: var(--font-code);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .float-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--tech-blue), rgba(0,229,255,0.3));
+            transition: width 0.35s ease;
+        }
+
+        .float-input:focus ~ .float-line {
+            width: 100%;
+        }
+
+        /* Submit button */
+        .btn-modern-submit {
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, var(--tech-blue) 0%, rgba(0,180,220,1) 100%);
+            color: #000;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .btn-modern-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,229,255,0.3);
+        }
+
+        .btn-modern-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-glow {
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        /* Success state */
+        .form-success {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(40,200,64,0.1);
+            border: 2px solid #28c840;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #28c840;
+            margin: 0 auto 20px;
+            animation: successPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .success-sub {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1024px) {
+            .lead-section {
+                grid-template-columns: 1fr;
+                padding: 40px 24px;
+                gap: 40px;
+                border-radius: 24px;
+            }
+
+            .modern-form {
+                padding: 24px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .service-pill {
+                font-size: 0.72rem;
+                padding: 7px 13px;
+            }
+
+            .form-steps {
+                margin-bottom: 24px;
+            }
         }
 
         .form-info h2 {
@@ -504,6 +868,522 @@
                 gap: 40px;
             }
         }
+        /* ====== CODE BUILDER SECTION ====== */
+        .code-builder-section {
+            margin-bottom: 120px;
+            position: relative;
+        }
+
+        .code-builder-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .cb-tag {
+            font-family: var(--font-code);
+            color: var(--tech-blue);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .cb-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .cb-subtitle {
+            color: #888;
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .code-builder-container {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            min-height: 520px;
+        }
+
+        /* --- IDE EDITOR --- */
+        .cb-editor {
+            flex: 1.2;
+            background: #0d1117;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .cb-editor-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #161b22;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .cb-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .cb-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .cb-dot-red { background: #ff5f57; }
+        .cb-dot-yellow { background: #febc2e; }
+        .cb-dot-green { background: #28c840; }
+
+        .cb-filename {
+            font-family: var(--font-code);
+            font-size: 0.7rem;
+            color: #8b949e;
+        }
+
+        .cb-toolbar-spacer { flex: 1; }
+
+        .cb-editor-tabs {
+            display: flex;
+            background: #0d1117;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .cb-tab {
+            padding: 8px 16px;
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: #555;
+            cursor: pointer;
+            border-right: 1px solid rgba(255,255,255,0.04);
+            transition: 0.2s;
+        }
+
+        .cb-tab-active {
+            color: #e6edf3;
+            background: #161b22;
+            border-bottom: 2px solid var(--tech-blue);
+        }
+
+        .cb-code-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            padding: 16px 0;
+        }
+
+        .cb-line-numbers {
+            padding: 0 12px 0 16px;
+            font-family: var(--font-code);
+            font-size: 0.72rem;
+            line-height: 1.7;
+            color: #484f58;
+            text-align: right;
+            user-select: none;
+            min-width: 40px;
+            white-space: pre;
+        }
+
+        .cb-code {
+            flex: 1;
+            font-family: var(--font-code);
+            font-size: 0.72rem;
+            line-height: 1.7;
+            color: #e6edf3;
+            padding: 0 16px;
+            margin: 0;
+            white-space: pre;
+            overflow: hidden;
+        }
+
+        .cb-editor-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: #161b22;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            font-family: var(--font-code);
+            font-size: 0.6rem;
+            color: #8b949e;
+        }
+
+        .cb-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28c840;
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Syntax highlighting helper classes */
+        .cb-code .kw { color: #ff7b72; }
+        .cb-code .str { color: #a5d6ff; }
+        .cb-code .fn { color: #d2a8ff; }
+        .cb-code .cls { color: #79c0ff; }
+        .cb-code .cmt { color: #484f58; font-style: italic; }
+        .cb-code .num { color: #79c0ff; }
+        .cb-code .ann { color: #ffa657; }
+        .cb-code .typ { color: #ff7b72; }
+
+        /* Typing cursor */
+        .cb-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--tech-blue);
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 1px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* --- CONNECTION ARROW --- */
+        .cb-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .cb-arrow-line {
+            width: 2px;
+            height: 0;
+            background: linear-gradient(to bottom, var(--tech-blue), var(--accent));
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            transform-origin: center;
+            width: 60px;
+            height: 2px;
+        }
+
+        .cb-arrow-pulse {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--tech-blue);
+            box-shadow: 0 0 20px var(--tech-blue), 0 0 40px rgba(0,229,255,0.3);
+            animation: arrowPulse 2s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px var(--tech-blue); }
+            50% { transform: scale(1.6); box-shadow: 0 0 40px var(--tech-blue), 0 0 60px rgba(0,229,255,0.4); }
+        }
+
+        .cb-arrow-label {
+            font-family: var(--font-code);
+            font-size: 0.55rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            writing-mode: vertical-rl;
+            position: absolute;
+            bottom: 20%;
+        }
+
+        /* --- PHONE APP PREVIEW --- */
+        .cb-app-preview {
+            flex: 0.8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .cb-phone-frame {
+            width: 280px;
+            height: 480px;
+            background: #0a0a0f;
+            border-radius: 36px;
+            border: 3px solid #2a2a35;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+        }
+
+        .cb-phone-notch {
+            width: 120px;
+            height: 28px;
+            background: #0a0a0f;
+            border-radius: 0 0 18px 18px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .cb-phone-screen {
+            height: calc(100% - 28px);
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #0d1117 0%, #0a0c12 100%);
+        }
+
+        .cb-app-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.6s ease;
+        }
+
+        .cb-app-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cb-app-logo {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        .cb-app-name {
+            font-family: var(--font-code);
+            font-size: 0.65rem;
+            color: var(--tech-blue);
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .cb-app-status {
+            font-family: var(--font-code);
+            font-size: 0.55rem;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .cb-app-chat {
+            flex: 1;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .cb-chat-bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.4s ease;
+        }
+
+        .cb-chat-bubble.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cb-chat-bubble.user {
+            align-self: flex-end;
+            background: rgba(0,229,255,0.15);
+            color: #e6edf3;
+            border-bottom-right-radius: 4px;
+        }
+
+        .cb-chat-bubble.assistant {
+            align-self: flex-start;
+            background: rgba(255,255,255,0.06);
+            color: #ccc;
+            border-bottom-left-radius: 4px;
+        }
+
+        .cb-chat-typing {
+            align-self: flex-start;
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 16px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cb-chat-typing.visible { opacity: 1; }
+
+        .cb-chat-typing span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #555;
+            animation: typingDot 1.4s infinite;
+        }
+
+        .cb-chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .cb-chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingDot {
+            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-4px); }
+        }
+
+        .cb-app-input {
+            padding: 10px 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .cb-app-input.visible { opacity: 1; }
+
+        .cb-app-input-field {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 0.65rem;
+            color: #555;
+            font-family: var(--font-main);
+        }
+
+        .cb-app-send-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--tech-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+
+        /* Metrics under phone */
+        .cb-app-metrics {
+            display: flex;
+            gap: 24px;
+        }
+
+        .cb-metric {
+            text-align: center;
+        }
+
+        .cb-metric-value {
+            font-family: var(--font-code);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--tech-blue);
+        }
+
+        .cb-metric-label {
+            font-family: var(--font-code);
+            font-size: 0.55rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* ====== MOBILE RESPONSIVE ====== */
+        @media (max-width: 1024px) {
+            .code-builder-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .cb-editor {
+                width: 100%;
+                min-height: 350px;
+            }
+
+            .cb-arrow {
+                width: 100%;
+                height: 60px;
+                flex-direction: row;
+            }
+
+            .cb-arrow-line {
+                transform: none;
+                width: 60px;
+                height: 2px;
+                top: auto;
+            }
+
+            .cb-arrow-label {
+                writing-mode: horizontal-tb;
+                position: static;
+                margin-left: 12px;
+            }
+
+            .cb-app-preview {
+                width: 100%;
+            }
+
+            .cb-phone-frame {
+                width: 260px;
+                height: 440px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .code-builder-header {
+                margin-bottom: 30px;
+            }
+
+            .cb-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .cb-code {
+                font-size: 0.6rem;
+            }
+
+            .cb-line-numbers {
+                font-size: 0.6rem;
+                min-width: 30px;
+                padding: 0 8px 0 10px;
+            }
+
+            .cb-phone-frame {
+                width: 240px;
+                height: 400px;
+            }
+
+            .cb-app-metrics {
+                gap: 16px;
+            }
+
+            .cb-metric-value {
+                font-size: 0.85rem;
+            }
+        }
     </style>
                 <link rel="stylesheet" href="cursor.css">
     <link rel="stylesheet" href="header-nav.css">
@@ -550,36 +1430,199 @@
                     рабочих цепочек.</p>
             </div>
         </div>
-        <h2 class="section-title" data-i18n="page_digital.projects_title">Digital Проекты</h2>
+        <!-- ====== LIVE CODE → APP BUILDER BLOCK ====== -->
+        <section class="code-builder-section" id="codeBuilderSection">
+            <div class="code-builder-header">
+                <div class="cb-tag">// LIVE DEVELOPMENT PIPELINE</div>
+                <h2 class="cb-title">От кода — к продукту<span style="color:var(--accent)">.</span></h2>
+                <p class="cb-subtitle">Наблюдайте, как из строчек кода рождается интеллектуальный AI-ассистент</p>
+            </div>
+            <div class="code-builder-container">
+                <!-- LEFT: CODE EDITOR -->
+                <div class="cb-editor">
+                    <div class="cb-editor-toolbar">
+                        <div class="cb-dots">
+                            <span class="cb-dot cb-dot-red"></span>
+                            <span class="cb-dot cb-dot-yellow"></span>
+                            <span class="cb-dot cb-dot-green"></span>
+                        </div>
+                        <div class="cb-filename">SmartAssistant.java</div>
+                        <div class="cb-toolbar-spacer"></div>
+                    </div>
+                    <div class="cb-editor-tabs">
+                        <span class="cb-tab cb-tab-active">SmartAssistant.java</span>
+                        <span class="cb-tab">MLModel.py</span>
+                        <span class="cb-tab">config.yml</span>
+                    </div>
+                    <div class="cb-code-area" id="cbCodeArea">
+                        <div class="cb-line-numbers" id="cbLineNumbers"></div>
+                        <pre class="cb-code" id="cbCode"></pre>
+                    </div>
+                    <div class="cb-editor-status">
+                        <span class="cb-status-dot"></span>
+                        <span>Java 21</span>
+                        <span style="margin-left:auto; color:#555;">UTF-8</span>
+                        <span style="margin-left:12px; color:#555;">LF</span>
+                    </div>
+                </div>
+
+                <!-- CONNECTION ARROW -->
+                <div class="cb-arrow">
+                    <div class="cb-arrow-line"></div>
+                    <div class="cb-arrow-pulse"></div>
+                    <div class="cb-arrow-label">compile & deploy</div>
+                </div>
+
+                <!-- RIGHT: APP PREVIEW -->
+                <div class="cb-app-preview">
+                    <div class="cb-phone-frame">
+                        <div class="cb-phone-notch"></div>
+                        <div class="cb-phone-screen" id="cbPhoneScreen">
+                            <!-- App Header -->
+                            <div class="cb-app-header" id="cbAppHeader">
+                                <div class="cb-app-logo">🧠</div>
+                                <div class="cb-app-name">A-LAB Smart Assistant</div>
+                                <div class="cb-app-status" id="cbAppStatus">Initializing...</div>
+                            </div>
+                            <!-- Chat Area -->
+                            <div class="cb-app-chat" id="cbAppChat"></div>
+                            <!-- Input Area -->
+                            <div class="cb-app-input" id="cbAppInput">
+                                <div class="cb-app-input-field">Ask anything...</div>
+                                <div class="cb-app-send-btn">➤</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cb-app-metrics" id="cbAppMetrics">
+                        <div class="cb-metric">
+                            <div class="cb-metric-value" id="cbMetricAccuracy">—</div>
+                            <div class="cb-metric-label">Accuracy</div>
+                        </div>
+                        <div class="cb-metric">
+                            <div class="cb-metric-value" id="cbMetricLatency">—</div>
+                            <div class="cb-metric-label">Latency</div>
+                        </div>
+                        <div class="cb-metric">
+                            <div class="cb-metric-value" id="cbMetricStatus">—</div>
+                            <div class="cb-metric-label">Status</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <h2 class="section-title">Digital Проекты</h2>
         <div class="cases-grid" id="casesContainer" data-category="digital">
-            <div
-                style="grid-column: 1/-1; text-align: center; padding: 50px; color: #555; font-family: var(--font-code);">
-                [ INITIALIZING DIGITAL PROJECTS... ]</div>
+            <!-- Content populated by cases-engine.js -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #555;">ЗАГРУЗКА КЕЙСОВ...</div>
         </div>
         <section class="lead-section">
             <div class="form-info">
-                <h2 data-i18n-html="page_digital.form_title">Время <br> внедрять <br> интеллект.</h2>
-                <p data-i18n-html="page_digital.form_subtitle">// ВЫБЕРИТЕ ТИП РЕШЕНИЯ И МЫ <br> ПРОВЕДЕМ АНАЛИЗ ВАШЕГО
-                    СТЕКА.</p>
-            </div>
-            <div class="form-container">
-                <form id="leadForm">
-                    <div class="form-group"><label data-i18n="page_digital.form_name">Фамилия Имя</label><input
-                            type="text" required></div>
-                    <div class="form-group">
-                        <label data-i18n="page_digital.form_solution">Интересующее решение</label>
-                        <select
-                            style="background: #0b0d14; border: 1px solid #222; border-radius: 12px; padding: 15px; color: white;">
-                            <option data-i18n="page_digital.opt_ai">AI Интеграция</option>
-                            <option data-i18n="page_digital.opt_web">Веб-разработка</option>
-                            <option data-i18n="page_digital.opt_crm">CRM / Автоматизация</option>
-                            <option data-i18n="page_digital.opt_audit">Технологический аудит</option>
-                        </select>
+                <div class="form-info-tag">// CONNECT</div>
+                <h2 style="font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.05;margin-bottom:20px;">
+                    Время<br>внедрять<br><span style="color:var(--tech-blue)">интеллект.</span>
+                </h2>
+                <p style="color:#666;font-size:0.9rem;line-height:1.7;margin-bottom:40px;">
+                    Выберите тип задачи и оставьте контакт — наш технический директор проведёт бесплатный разбор вашего проекта в течение 24 часов.
+                </p>
+                <div class="form-trust-items">
+                    <div class="form-trust-item">
+                        <div class="form-trust-icon">⚡</div>
+                        <div>
+                            <div class="form-trust-title">Ответ за 24ч</div>
+                            <div class="form-trust-sub">Без менеджеров и бюрократии</div>
+                        </div>
                     </div>
-                    <div class="form-group"><label data-i18n="page_digital.form_request">Ваш
-                            запрос</label><textarea></textarea></div>
-                    <button type="submit" class="btn-submit hover-trigger" data-i18n="page_digital.form_submit">Получить
-                        консультацию</button>
+                    <div class="form-trust-item">
+                        <div class="form-trust-icon">🔒</div>
+                        <div>
+                            <div class="form-trust-title">NDA по запросу</div>
+                            <div class="form-trust-sub">Полная конфиденциальность</div>
+                        </div>
+                    </div>
+                    <div class="form-trust-item">
+                        <div class="form-trust-icon">🎯</div>
+                        <div>
+                            <div class="form-trust-title">Бесплатный аудит</div>
+                            <div class="form-trust-sub">Технический разбор вашего стека</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-container-new">
+                <form id="leadForm" class="modern-form" novalidate>
+                    <!-- Step indicator -->
+                    <div class="form-steps">
+                        <div class="form-step form-step-active" id="step1dot">
+                            <div class="step-dot">1</div>
+                            <div class="step-label">Задача</div>
+                        </div>
+                        <div class="form-step-line"></div>
+                        <div class="form-step" id="step2dot">
+                            <div class="step-dot">2</div>
+                            <div class="step-label">Контакт</div>
+                        </div>
+                        <div class="form-step-line"></div>
+                        <div class="form-step" id="step3dot">
+                            <div class="step-dot">3</div>
+                            <div class="step-label">Отправка</div>
+                        </div>
+                    </div>
+
+                    <!-- Service type pills -->
+                    <div class="form-section-label">// ЧТО ВАС ИНТЕРЕСУЕТ?</div>
+                    <div class="service-pills" id="servicePills">
+                        <button type="button" class="service-pill" data-value="AI Интеграция" onclick="selectPill(this)">
+                            🤖 AI Интеграция
+                        </button>
+                        <button type="button" class="service-pill" data-value="Веб-разработка" onclick="selectPill(this)">
+                            🌐 Веб-разработка
+                        </button>
+                        <button type="button" class="service-pill" data-value="CRM / Автоматизация" onclick="selectPill(this)">
+                            ⚙️ CRM / Автоматизация
+                        </button>
+                        <button type="button" class="service-pill" data-value="Технологический аудит" onclick="selectPill(this)">
+                            🔍 Тех. аудит
+                        </button>
+                        <button type="button" class="service-pill" data-value="Компьютерное зрение" onclick="selectPill(this)">
+                            👁️ Компьютерное зрение
+                        </button>
+                        <button type="button" class="service-pill" data-value="Другое" onclick="selectPill(this)">
+                            💡 Другое
+                        </button>
+                    </div>
+                    <input type="hidden" id="selectedService" name="service" value="">
+
+                    <!-- Floating label inputs -->
+                    <div class="float-group">
+                        <input type="text" id="formName" class="float-input" placeholder=" " required autocomplete="name">
+                        <label for="formName" class="float-label">Ваше имя *</label>
+                        <div class="float-line"></div>
+                    </div>
+
+                    <div class="float-group">
+                        <input type="text" id="formContact" class="float-input" placeholder=" " required autocomplete="tel">
+                        <label for="formContact" class="float-label">Telegram / Email / Телефон *</label>
+                        <div class="float-line"></div>
+                    </div>
+
+                    <div class="float-group">
+                        <textarea id="formMessage" class="float-input float-textarea" placeholder=" " rows="3"></textarea>
+                        <label for="formMessage" class="float-label">Кратко о задаче</label>
+                        <div class="float-line"></div>
+                    </div>
+
+                    <button type="submit" class="btn-modern-submit" id="modernSubmitBtn">
+                        <span id="submitText">Отправить запрос →</span>
+                        <div class="btn-glow"></div>
+                    </button>
+
+                    <!-- Success state -->
+                    <div class="form-success" id="formSuccess" style="display:none;">
+                        <div class="success-icon">✓</div>
+                        <div class="success-title">Запрос отправлен!</div>
+                        <div class="success-sub">Наш технический директор свяжется с вами в течение 24 часов.</div>
+                    </div>
                 </form>
             </div>
         </section>
@@ -593,40 +1636,331 @@
             
         document.addEventListener('mousemove', (e) => { /* cursor left disabled */ /* cursor top disabled */ });
         document.querySelectorAll('.hover-trigger').forEach(t => { t.addEventListener('mouseenter', () => cursor.classList.add('hovered')); t.addEventListener('mouseleave', () => cursor.classList.remove('hovered')); });
+        // Pill selection
+        function selectPill(btn) {
+            document.querySelectorAll('.service-pill').forEach(p => p.classList.remove('pill-selected'));
+            btn.classList.add('pill-selected');
+            document.getElementById('selectedService').value = btn.dataset.value;
+            // Activate step 1 done
+            document.getElementById('step1dot').classList.add('step-done');
+            document.getElementById('step1dot').classList.remove('form-step-active');
+            document.getElementById('step2dot').classList.add('form-step-active');
+            document.querySelectorAll('.form-step-line')[0].classList.add('line-done');
+        }
+
+        // Track contact fill for step 2
+        const formContactEl = document.getElementById('formContact');
+        if (formContactEl) {
+            formContactEl.addEventListener('input', () => {
+                if (formContactEl.value.trim().length > 2) {
+                    document.getElementById('step2dot').classList.add('step-done');
+                    document.getElementById('step2dot').classList.remove('form-step-active');
+                    document.getElementById('step3dot').classList.add('form-step-active');
+                    document.querySelectorAll('.form-step-line')[1].classList.add('line-done');
+                }
+            });
+        }
+
         document.getElementById('leadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const form = e.target;
-            const btn = form.querySelector('button');
-            const name = form.querySelector('input').value;
-            const solution = form.querySelector('select').value;
-            const message = form.querySelector('textarea').value;
+            const btn = document.getElementById('modernSubmitBtn');
+            const submitText = document.getElementById('submitText');
+            const name = document.getElementById('formName')?.value || '';
+            const contact = document.getElementById('formContact')?.value || '';
+            const message = document.getElementById('formMessage')?.value || '';
+            const service = document.getElementById('selectedService')?.value || '';
 
-            btn.innerText = 'SENDING...';
+            if (!name.trim() || !contact.trim()) {
+                document.getElementById('formName').style.borderBottomColor = !name.trim() ? 'var(--accent)' : '';
+                document.getElementById('formContact').style.borderBottomColor = !contact.trim() ? 'var(--accent)' : '';
+                return;
+            }
+
+            submitText.textContent = '// Отправляем...';
             btn.disabled = true;
+            btn.style.opacity = '0.7';
 
             const { success, error } = await window.ALabCore.submitLead({
-                name: name,
-                contact: 'Solution: ' + solution,
-                message: message,
+                name,
+                contact,
+                message: (service ? '[' + service + '] ' : '') + message,
                 source: 'digital',
                 source_detail: 'Digital Page Form'
             });
 
             if (success) {
-                alert('Система зафиксировала запрос. Специалист IT-отдела свяжется с Вами в Telegram.');
-                form.reset();
+                // Mark step 3 done
+                document.getElementById('step3dot').classList.add('step-done');
+                document.getElementById('step3dot').classList.remove('form-step-active');
+                // Show success state
+                document.querySelector('.modern-form').querySelectorAll('.form-steps, .form-section-label, .service-pills, #selectedService, .float-group, #modernSubmitBtn').forEach(el => el.style.display = 'none');
+                document.getElementById('formSuccess').style.display = 'block';
             } else {
-                alert('Ошибка отправки: ' + (error?.message || 'Поторите позже'));
+                submitText.textContent = 'Ошибка — попробуйте ещё раз';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                setTimeout(() => { submitText.textContent = 'Отправить запрос →'; }, 3000);
             }
-            btn.innerText = 'Получить консультацию';
-            btn.disabled = false;
         });
+    </script>
+
+    <!-- CODE BUILDER ANIMATION ENGINE -->
+    <script>
+    (function() {
+        // ———— CODE LINES (raw text + html-highlighted version) ————
+        const CODE_LINES = [
+            { raw: 'package tech.alab.assistant;',              html: '<span class="kw">package</span> tech.alab.assistant;' },
+            { raw: '',                                           html: '' },
+            { raw: 'import ai.model.TransformerEngine;',        html: '<span class="kw">import</span> ai.model.<span class="cls">TransformerEngine</span>;' },
+            { raw: 'import ai.nlp.TokenizerFactory;',           html: '<span class="kw">import</span> ai.nlp.<span class="cls">TokenizerFactory</span>;' },
+            { raw: 'import ai.pipeline.InferencePipeline;',     html: '<span class="kw">import</span> ai.pipeline.<span class="cls">InferencePipeline</span>;' },
+            { raw: '',                                           html: '' },
+            { raw: '/**',                                        html: '<span class="cmt">/**</span>' },
+            { raw: ' * Smart Assistant — ML Engine',             html: '<span class="cmt"> * Smart Assistant — ML Engine</span>' },
+            { raw: ' * @version 2.4.0',                          html: '<span class="cmt"> * @version 2.4.0</span>' },
+            { raw: ' */',                                        html: '<span class="cmt"> */</span>' },
+            { raw: '@Service',                                   html: '<span class="ann">@Service</span>' },
+            { raw: 'public class SmartAssistant {',              html: '<span class="kw">public class</span> <span class="cls">SmartAssistant</span> {' },
+            { raw: '',                                           html: '' },
+            { raw: '    private TransformerEngine engine;',      html: '    <span class="kw">private</span> <span class="cls">TransformerEngine</span> engine;' },
+            { raw: '    private InferencePipeline pipeline;',    html: '    <span class="kw">private</span> <span class="cls">InferencePipeline</span> pipeline;' },
+            { raw: '',                                           html: '' },
+            { raw: '    @PostConstruct',                         html: '    <span class="ann">@PostConstruct</span>' },
+            { raw: '    public void initialize() {',             html: '    <span class="kw">public void</span> <span class="fn">initialize</span>() {' },
+            { raw: '        engine = TransformerEngine',         html: '        engine = <span class="cls">TransformerEngine</span>' },
+            { raw: '            .builder("gpt-neo-2.7B")',       html: '            .<span class="fn">builder</span>(<span class="str">"gpt-neo-2.7B"</span>)' },
+            { raw: '            .withTokenizer(8192)',            html: '            .<span class="fn">withTokenizer</span>(<span class="num">8192</span>)' },
+            { raw: '            .enableGPU(true)',                html: '            .<span class="fn">enableGPU</span>(<span class="num">true</span>)' },
+            { raw: '            .build();',                      html: '            .<span class="fn">build</span>();' },
+            { raw: '',                                           html: '' },
+            { raw: '        pipeline = new InferencePipeline(',  html: '        pipeline = <span class="kw">new</span> <span class="cls">InferencePipeline</span>(' },
+            { raw: '            engine,',                        html: '            engine,' },
+            { raw: '            TokenizerFactory.bpe(),',        html: '            <span class="cls">TokenizerFactory</span>.<span class="fn">bpe</span>(),' },
+            { raw: '            0.7  // temperature',            html: '            <span class="num">0.7</span>  <span class="cmt">// temperature</span>' },
+            { raw: '        );',                                 html: '        );' },
+            { raw: '    }',                                      html: '    }' },
+            { raw: '',                                           html: '' },
+            { raw: '    public Response chat(String q) {',       html: '    <span class="kw">public</span> <span class="cls">Response</span> <span class="fn">chat</span>(<span class="cls">String</span> q) {' },
+            { raw: '        var ctx = engine.encode(q);',        html: '        <span class="kw">var</span> ctx = engine.<span class="fn">encode</span>(q);' },
+            { raw: '        return pipeline.run(ctx);',          html: '        <span class="kw">return</span> pipeline.<span class="fn">run</span>(ctx);' },
+            { raw: '    }',                                      html: '    }' },
+            { raw: '}',                                          html: '}' },
+        ];
+
+        // ———— APP CHAT SCENARIO ————
+        const CHAT_SCENARIO = [
+            { type: 'user',      text: 'Привет! Как работает нейросеть?' },
+            { type: 'assistant', text: 'Нейросеть — это математическая модель, вдохновлённая работой мозга. Она учится на данных и находит паттерны.' },
+            { type: 'user',      text: 'Можешь проанализировать этот датасет?' },
+            { type: 'assistant', text: 'Конечно! Загружаю данные... Обнаружены 3 кластера с точностью 94.7%. Рекомендую модель Random Forest.' },
+        ];
+
+        // ———— STATE ————
+        let currentLine = 0;
+        let charIndex = 0;
+        let chatStep = 0;
+        let animFrame;
+        let isRunning = false;
+
+        const codeEl    = document.getElementById('cbCode');
+        const lineNumEl = document.getElementById('cbLineNumbers');
+        const chatEl    = document.getElementById('cbAppChat');
+        const headerEl  = document.getElementById('cbAppHeader');
+        const inputEl   = document.getElementById('cbAppInput');
+        const statusEl  = document.getElementById('cbAppStatus');
+        const metAcc    = document.getElementById('cbMetricAccuracy');
+        const metLat    = document.getElementById('cbMetricLatency');
+        const metStat   = document.getElementById('cbMetricStatus');
+
+        if (!codeEl) return; // Guard: element not found
+
+        // ———— TYPING ENGINE ————
+        function resetAll() {
+            currentLine = 0;
+            charIndex = 0;
+            chatStep = 0;
+            isRunning = false;
+            codeEl.innerHTML = '';
+            lineNumEl.innerHTML = '';
+            chatEl.innerHTML = '';
+            headerEl.classList.remove('visible');
+            inputEl.classList.remove('visible');
+            statusEl.textContent = 'Initializing...';
+            metAcc.textContent = '—';
+            metLat.textContent = '—';
+            metStat.textContent = '—';
+            metStat.style.color = '';
+        }
+
+        function addLineNumber(n) {
+            lineNumEl.innerHTML += n + '\n';
+        }
+
+        function typeNextChar() {
+            if (currentLine >= CODE_LINES.length) {
+                // Done typing — finish app build & wait then loop
+                finishApp();
+                setTimeout(() => { resetAll(); startAnimation(); }, 6000);
+                return;
+            }
+
+            const line = CODE_LINES[currentLine];
+
+            if (charIndex === 0) {
+                addLineNumber(currentLine + 1);
+                // Trigger app events at certain lines
+                triggerAppEvent(currentLine);
+            }
+
+            if (line.raw.length === 0) {
+                // Empty line — just add newline
+                codeEl.innerHTML += '\n';
+                currentLine++;
+                charIndex = 0;
+                setTimeout(typeNextChar, 80);
+                return;
+            }
+
+            charIndex++;
+
+            if (charIndex <= line.raw.length) {
+                // Build partial display: show highlighted html up to charIndex
+                const partial = line.raw.substring(0, charIndex);
+                // Re-render all previous completed lines + current partial
+                let html = '';
+                for (let i = 0; i < currentLine; i++) {
+                    html += CODE_LINES[i].html + '\n';
+                }
+                // For current line, show raw partial (with cursor)
+                html += escapeHtml(partial) + '<span class="cb-cursor"></span>';
+                codeEl.innerHTML = html;
+
+                // Scroll code area to bottom
+                const area = document.getElementById('cbCodeArea');
+                if (area) area.scrollTop = area.scrollHeight;
+
+                const speed = 25 + Math.random() * 35;
+                setTimeout(typeNextChar, speed);
+            } else {
+                // Line complete — show highlighted version
+                let html = '';
+                for (let i = 0; i <= currentLine; i++) {
+                    html += CODE_LINES[i].html + '\n';
+                }
+                codeEl.innerHTML = html;
+                currentLine++;
+                charIndex = 0;
+                setTimeout(typeNextChar, 150 + Math.random() * 200);
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // ———— APP BUILD EVENTS ————
+        function triggerAppEvent(lineNum) {
+            if (lineNum === 2) {
+                // Show app header
+                headerEl.classList.add('visible');
+                statusEl.textContent = 'Loading model...';
+                metStat.textContent = 'INIT';
+            }
+            if (lineNum === 11) {
+                statusEl.textContent = 'Compiling engine...';
+                metStat.textContent = 'BUILD';
+                metStat.style.color = '#febc2e';
+            }
+            if (lineNum === 17) {
+                inputEl.classList.add('visible');
+                statusEl.textContent = 'Model ready';
+                metStat.textContent = 'READY';
+                metStat.style.color = '#28c840';
+                metLat.textContent = '42ms';
+            }
+            if (lineNum === 22) {
+                metAcc.textContent = '87.3%';
+                // Start showing chat bubbles
+                showNextChat();
+            }
+            if (lineNum === 30) {
+                metAcc.textContent = '94.7%';
+                metLat.textContent = '28ms';
+            }
+        }
+
+        function showNextChat() {
+            if (chatStep >= CHAT_SCENARIO.length) return;
+
+            const msg = CHAT_SCENARIO[chatStep];
+
+            if (msg.type === 'assistant') {
+                // Show typing indicator first
+                const typing = document.createElement('div');
+                typing.className = 'cb-chat-typing';
+                typing.innerHTML = '<span></span><span></span><span></span>';
+                chatEl.appendChild(typing);
+                setTimeout(() => typing.classList.add('visible'), 50);
+
+                setTimeout(() => {
+                    typing.remove();
+                    addBubble(msg);
+                    chatStep++;
+                    setTimeout(showNextChat, 2500);
+                }, 1500);
+            } else {
+                addBubble(msg);
+                chatStep++;
+                setTimeout(showNextChat, 2000);
+            }
+        }
+
+        function addBubble(msg) {
+            const bubble = document.createElement('div');
+            bubble.className = 'cb-chat-bubble ' + msg.type;
+            bubble.textContent = msg.text;
+            chatEl.appendChild(bubble);
+            setTimeout(() => bubble.classList.add('visible'), 50);
+            chatEl.scrollTop = chatEl.scrollHeight;
+        }
+
+        function finishApp() {
+            statusEl.textContent = '🟢 Online — v2.4.0';
+            metAcc.textContent = '97.2%';
+            metLat.textContent = '18ms';
+            metStat.textContent = 'LIVE';
+            metStat.style.color = 'var(--tech-blue)';
+        }
+
+        // ———— INTERSECTION OBSERVER (start when visible) ————
+        function startAnimation() {
+            if (isRunning) return;
+            isRunning = true;
+            typeNextChar();
+        }
+
+        const section = document.getElementById('codeBuilderSection');
+        if (section && 'IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !isRunning) {
+                        startAnimation();
+                        // Don't unobserve — animation loops on its own
+                    }
+                });
+            }, { threshold: 0.2 });
+            observer.observe(section);
+        } else {
+            // Fallback: start after page load
+            setTimeout(startAnimation, 2000);
+        }
+    })();
     </script>
     <!-- A-LAB Integration -->
     <script defer src="assets/js/supabase.js"></script>
     <script defer src="supabase-client.js"></script>
     <script defer src="tracker.js"></script>
-    <script defer src="cases-engine.js"></script>
+    <script defer src="cases-engine.js?v=1.4"></script>
     <script defer src="i18n.js"></script>
     <script defer src="nda-manager.js"></script>
     <script defer src="main-menu.js?v=2.2"></script>

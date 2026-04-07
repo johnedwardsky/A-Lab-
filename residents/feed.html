@@ -279,7 +279,7 @@
         .post-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 20px;
         }
 
@@ -1198,7 +1198,7 @@
                         <div class="share-icon-circle">✖️</div>
                         <span>Twitter</span>
                     </a>
-                    <a href="messages.html" class="share-item hover-trigger" onclick="shareToDM(event)">
+                    <a href="workspace.html?tab=messages" class="share-item hover-trigger" onclick="shareToDM(event)">
                         <div class="share-icon-circle">📥</div>
                         <span>DM</span>
                     </a>
@@ -1422,7 +1422,7 @@
             const url = document.getElementById('shareUrl').innerText;
             navigator.clipboard.writeText(url).then(() => {
                 alert('Ссылка скопирована! Переходим в мессенджер для выбора получателя.');
-                window.location.href = 'messages.html';
+                window.location.href = 'workspace.html?tab=messages';
             });
         }
 

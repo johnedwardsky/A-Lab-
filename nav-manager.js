@@ -59,7 +59,7 @@ const ResidentNav = {
             <nav style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
                 <a href="${this.userLoggedIn ? this.pathPrefix + 'feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'feed.html' ? 'active' : ''}"><i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span></a>
                 <a href="${this.pathPrefix}index.html" class="nav-item hover-trigger ${currentPage === 'index.html' ? 'active' : ''}"><i>👥</i> <span>${window.I18n?.t('nav.residents') || 'Резиденты'}</span></a>
-                <a href="${this.userLoggedIn ? this.pathPrefix + 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}"><i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span></a>
+                <a href="${this.userLoggedIn ? this.pathPrefix + 'workspace.html?tab=messages' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'workspace.html?tab=messages' ? 'active' : ''}"><i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span></a>
                 <a href="${this.userLoggedIn ? this.pathPrefix + 'projects.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item hover-trigger ${currentPage === 'projects.html' ? 'active' : ''}"><i>🛡️</i> <span>${window.I18n?.t('nav.projects') || 'Проекты'}</span></a>
             </nav>
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%;">
@@ -85,7 +85,7 @@ const ResidentNav = {
             <a href="${this.userLoggedIn ? this.pathPrefix + 'feed.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'feed.html' ? 'active' : ''}">
                 <i>📡</i> <span>${window.I18n?.t('nav.feed') || 'Лента'}</span>
             </a>
-            <a href="${this.userLoggedIn ? this.pathPrefix + 'messages.html' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'messages.html' ? 'active' : ''}">
+            <a href="${this.userLoggedIn ? this.pathPrefix + 'workspace.html?tab=messages' : '#'}" onclick="${!this.userLoggedIn ? 'ResidentNav.showRestrictedModal(); return false;' : ''}" class="nav-item-bottom hover-trigger ${currentPage === 'workspace.html?tab=messages' ? 'active' : ''}">
                 <i>💬</i> <span>${window.I18n?.t('nav.messenger') || 'Messenger'}</span>
             </a>
             <button class="nav-item-bottom hover-trigger" onclick="ResidentNav.toggleTheme()">

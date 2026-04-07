@@ -123,7 +123,7 @@
                                 ${r.role ? `<div style="font-family:var(--font-code);font-size:0.58rem;color:var(--tech-blue);">${r.role.toUpperCase()}</div>` : ''}
                             </div>
                         </div>
-                        <a href="messages.html?recipient=${r.id}" style="background:transparent;border:1px solid var(--border);color:#888;font-family:var(--font-code);font-size:0.6rem;padding:5px 10px;border-radius:6px;cursor:pointer;transition:0.3s;text-decoration:none;" onmouseover="this.style.borderColor='var(--tech-blue)';this.style.color='var(--tech-blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='#888'">💬</a>
+                        <a href="workspace.html?tab=messages&recipient=${r.id}" style="background:transparent;border:1px solid var(--border);color:#888;font-family:var(--font-code);font-size:0.6rem;padding:5px 10px;border-radius:6px;cursor:pointer;transition:0.3s;text-decoration:none;" onmouseover="this.style.borderColor='var(--tech-blue)';this.style.color='var(--tech-blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='#888'">💬</a>
                     </div>
                 `).join('');
             } catch (e) {

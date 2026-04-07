@@ -71,16 +71,16 @@
             padding: 40px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             z-index: 100;
             pointer-events: none;
         }
 
         .logo {
             pointer-events: auto;
-            position: fixed;
-            top: 40px;
-            left: 40px;
+            position: relative;
+            
+            
             z-index: 1100;
             display: flex;
             align-items: center;
@@ -88,7 +88,7 @@
         }
 
         .logo img {
-            height: 50px;
+            height: 40px;
             width: auto;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 0 5px rgba(255, 42, 42, 0.2));
@@ -641,8 +641,8 @@
         .logo {
             pointer-events: auto;
             position: relative;
-            top: auto;
-            left: auto;
+            
+            
             margin: 0;
             display: flex;
             align-items: center;

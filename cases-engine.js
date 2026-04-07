@@ -176,124 +176,76 @@ const ALabCases = {
         // --- DIGITAL CATEGORY (RU) ---
         {
             id: 201,
-            title: "Lumina AI Support",
-            result_value: "85%",
-            result_label: "Automation",
-            description: "Интеграция LLM-ассистента в поддержку крупного маркетплейса. 85% ответов без участия человека.",
+            title: "AI Support Platform",
+            result_label: "// AI · NLP · CHATBOT",
+            description: "Интеллектуальная платформа поддержки клиентов с NLP-движком. CSAT 94.2%, среднее время ответа — 1.2 сек.",
             category: "digital",
             lang: "ru",
-            image_url: "rd_lumina_ai.png"
+            image_url: "case-ai-chatbot.jpg"
         },
         {
             id: 202,
-            title: "Supply Chain Predictor",
-            result_value: "-22%",
-            result_label: "Lead Time",
-            description: "Нейросетевая модель прогнозирования спроса и оптимизации складских запасов.",
+            title: "FinTech Banking App",
+            result_label: "// FINTECH · MOBILE · UX",
+            description: "Мобильный банкинг с управлением портфелем, аналитикой рынка и мгновенными транзакциями. 50K+ пользователей.",
             category: "digital",
             lang: "ru",
-            image_url: "rd_industrial.png"
+            image_url: "case-fintech-app.jpg"
         },
         {
             id: 203,
-            title: "Defi Vault Shield",
-            result_value: "SECURE",
-            result_label: "10+ AUDITS",
-            description: "Разработка смарт-контрактов для DeFi-протокола с автоматизированным управлением рисками.",
+            title: "Vision QC System",
+            result_label: "// COMPUTER VISION · QC · INDUSTRY",
+            description: "Система контроля качества на производстве с детекцией дефектов в реальном времени. Точность 99.8%.",
             category: "digital",
             lang: "ru",
-            image_url: "case_fintech.png"
+            image_url: "case-cv-industrial.jpg"
         },
         {
             id: 204,
-            title: "VisionScan Pro",
-            result_value: "0.1s",
-            result_label: "Latency",
-            description: "Высокопроизводительный SDK для распознавания лиц и биометрической аутентификации.",
+            title: "Smart City Observer",
+            result_label: "// IoT · SMART CITY · MONITORING",
+            description: "IoT-платформа мониторинга городской инфраструктуры: трафик, энергетика, экология. 1.48M активных узлов.",
             category: "digital",
             lang: "ru",
-            image_url: "rd_ai_tech.png"
-        },
-        {
-            id: 209,
-            title: "LegalVoice AI",
-            result_value: "99.8%",
-            result_label: "Accuracy",
-            description: "Специализированный транскрибатор для юристов: распознавание речи в судах с автоматическим выделением терминов и статей кодекса.",
-            category: "digital",
-            lang: "ru",
-            image_url: "case_luxury.png"
-        },
-        {
-            id: 210,
-            title: "SalesFlow CRM",
-            result_value: "+42%",
-            result_label: "Efficiency",
-            description: "Интеллектуальная CRM-экосистема: предиктивный скоринг лидов, авто-генерация офферов и AI-трекинг продуктивности отдела продаж.",
-            category: "digital",
-            lang: "ru",
-            image_url: "case_luxury_retail.png"
+            image_url: "case-smart-city.jpg"
         },
         // --- DIGITAL CATEGORY (EN) ---
         {
             id: 205,
-            title: "Lumina AI Support",
-            result_value: "85%",
-            result_label: "Automation",
-            description: "LLM assistant integration for a major marketplace. 85% of queries managed without humans.",
+            title: "AI Support Platform",
+            result_label: "// AI · NLP · CHATBOT",
+            description: "Intelligent customer support platform with NLP engine. 94.2% CSAT, average response time 1.2 sec.",
             category: "digital",
             lang: "en",
-            image_url: "rd_lumina_ai.png"
+            image_url: "case-ai-chatbot.jpg"
         },
         {
             id: 206,
-            title: "Supply Chain Predictor",
-            result_value: "-22%",
-            result_label: "Lead Time",
-            description: "Neural network model for demand forecasting and inventory optimization.",
+            title: "FinTech Banking App",
+            result_label: "// FINTECH · MOBILE · UX",
+            description: "Mobile banking app with portfolio management, market analytics, and instant transactions. 50K+ active users.",
             category: "digital",
             lang: "en",
-            image_url: "rd_industrial.png"
+            image_url: "case-fintech-app.jpg"
         },
         {
             id: 207,
-            title: "Defi Vault Shield",
-            result_value: "SECURE",
-            result_label: "10+ AUDITS",
-            description: "Smart contract development for a DeFi protocol with automated risk management.",
+            title: "Vision QC System",
+            result_label: "// COMPUTER VISION · QC · INDUSTRY",
+            description: "Industrial quality control system with real-time defect detection. 99.8% accuracy.",
             category: "digital",
             lang: "en",
-            image_url: "case_fintech.png"
+            image_url: "case-cv-industrial.jpg"
         },
         {
             id: 208,
-            title: "VisionScan Pro",
-            result_value: "0.1s",
-            result_label: "Latency",
-            description: "High-performance SDK for facial recognition and biometric authentication.",
+            title: "Smart City Observer",
+            result_label: "// IoT · SMART CITY · MONITORING",
+            description: "IoT platform for urban infrastructure monitoring: traffic, energy, and ecology. 1.48M active nodes.",
             category: "digital",
             lang: "en",
-            image_url: "rd_ai_tech.png"
-        },
-        {
-            id: 211,
-            title: "LegalVoice AI",
-            result_value: "99.8%",
-            result_label: "Accuracy",
-            description: "Specialized legal transcriber: court speech recognition with automated terminology and legal citation extraction.",
-            category: "digital",
-            lang: "en",
-            image_url: "case_luxury.png"
-        },
-        {
-            id: 212,
-            title: "SalesFlow CRM",
-            result_value: "+42%",
-            result_label: "Efficiency",
-            description: "Intelligent CRM ecosystem: predictive lead scoring, automated offer generation, and AI-driven sales team productivity tracking.",
-            category: "digital",
-            lang: "en",
-            image_url: "case_luxury_retail.png"
+            image_url: "case-smart-city.jpg"
         }
     ],
 
@@ -382,7 +334,9 @@ const ALabCases = {
                     imgPath = 'assets/img/' + imgPath;
                 }
 
-                card.className = 'case-card hover-trigger';
+                card.className = 'case-card';
+                // Only add is-restricted if you want styling indicating confidentiality, but disabled hover/click
+                // For layout purposes, keeping the class but removing the interaction:
                 if (isConfidential) card.classList.add('is-restricted');
 
                 card.innerHTML = `
@@ -395,13 +349,7 @@ const ALabCases = {
                     </div>
                 `;
 
-                card.onclick = (e) => {
-                    if (isConfidential) {
-                        triggerNDA(e);
-                    } else if (!e.target.closest('a')) {
-                        window.location.href = item.link_url || '#';
-                    }
-                };
+                // No onclick event for design and digital cases as per user request to not be clickable
             } else if (catLower === 'rd') {
                 const imgPath = item.image_url ? (item.image_url.startsWith('http') || item.image_url.startsWith('assets/') ? item.image_url : 'assets/img/' + item.image_url) : 'assets/img/rd_ai_tech.png';
                 card.className = `rd-card hover-trigger`;
@@ -473,23 +421,32 @@ const ALabCases = {
     }
 };
 
-// Updated detector
+// Updated detector — waits for Supabase to be ready before initializing
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('casesContainer');
-    if (container) {
-        // Priority 1: Data attribute on container
-        let cat = container.getAttribute('data-category');
+    if (!container) return;
 
-        // Priority 2: URL detection
-        if (!cat) {
-            const path = window.location.pathname.toLowerCase();
-            if (path.includes('design')) cat = 'design';
-            else if (path.includes('rd')) cat = 'rd';
-            else cat = 'marketing';
-        }
-
-        ALabCases.init(cat, 'casesContainer');
+    let cat = container.getAttribute('data-category');
+    if (!cat) {
+        const path = window.location.pathname.toLowerCase();
+        if (path.includes('design')) cat = 'design';
+        else if (path.includes('rd')) cat = 'rd';
+        else cat = 'marketing';
     }
+
+    // Wait up to 3 seconds for ALabCore.db (Supabase) to be initialized
+    let attempts = 0;
+    const maxAttempts = 60; // 60 × 50ms = 3s
+    function tryInit() {
+        attempts++;
+        const db = window.ALabCore && window.ALabCore.db;
+        if (db || attempts >= maxAttempts) {
+            ALabCases.init(cat, 'casesContainer');
+        } else {
+            setTimeout(tryInit, 50);
+        }
+    }
+    tryInit();
 });
 
 // Sync with i18n language changes

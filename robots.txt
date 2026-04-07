@@ -41,7 +41,7 @@ Disallow: /resident-admin-en.html
 Disallow: /resident-admin-ru.html
 Disallow: /resident-workspace-ru.html
 Disallow: /profile.html
-Disallow: /messages.html
+Disallow: *?tab=messages
 Disallow: /social-feed.html
 Disallow: /projects.html
 Disallow: /residents.html

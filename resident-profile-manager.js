@@ -526,7 +526,7 @@
             try {
                 const { data, error } = await db
                     .from('residents')
-                    .select('id, user_id, full_name, avatar_url, role, status')
+                    .select('id, user_id, full_name, email, avatar_url, role, status')
                     .neq('links->>visibility', 'hidden')
                     .order('full_name');
 
