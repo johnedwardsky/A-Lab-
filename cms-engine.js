@@ -626,24 +626,27 @@
                 const fileInput = document.getElementById('projectImageFile');
                 if (fileInput && fileInput.files && fileInput.files[0]) {
                     const file = fileInput.files[0];
-                    const fileName = 'design_case_' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '');
+                    // Using our own PHP uploader instead of Supabase Storage to avoid egress limits
+                    const uploadData = new FormData();
+                    uploadData.append('file', file);
                     
-                    const { data: upData, error: upErr } = await this.db.storage
-                        .from('portfolio')
-                        .upload(fileName, file, {
-                            contentType: file.type,
-                            upsert: true
+                    try {
+                        const upRes = await fetch('/upload.php', {
+                            method: 'POST',
+                            body: uploadData
                         });
-
-                    if (upErr) {
-                        console.error('[CMS] Upload error:', upErr);
-                        alert('⚠️ Загрузка файла в Storage не удалась: ' + upErr.message + '\nПопробуйте указать URL вручную.');
-                    } else {
-                        const { data: pubUrl } = this.db.storage
-                            .from('portfolio')
-                            .getPublicUrl(fileName);
-                        imageUrl = pubUrl?.publicUrl || imageUrl;
-                        console.log('[CMS] Image uploaded:', imageUrl);
+                        const upJson = await upRes.json();
+                        
+                        if (upJson.success) {
+                            imageUrl = upJson.url;
+                            console.log('[CMS] Image uploaded locally:', imageUrl);
+                        } else {
+                            console.error('[CMS] Upload error:', upJson.error);
+                            alert('⚠️ Ошибка загрузки файла на сервер: ' + upJson.error);
+                        }
+                    } catch (upErr) {
+                        console.error('[CMS] Upload request failed:', upErr);
+                        alert('⚠️ Сбой загрузки файла: ' + upErr.message);
                     }
                 }
 
