@@ -919,39 +919,39 @@
                     <div class="form-steps">
                         <div class="form-step form-step-active" id="step1dot">
                             <div class="step-dot">1</div>
-                            <div class="step-label">Задача</div>
+                            <div class="step-label" data-i18n="form_new.step1">Задача</div>
                         </div>
                         <div class="form-step-line"></div>
                         <div class="form-step" id="step2dot">
                             <div class="step-dot">2</div>
-                            <div class="step-label">Контакт</div>
+                            <div class="step-label" data-i18n="form_new.step2">Контакт</div>
                         </div>
                         <div class="form-step-line"></div>
                         <div class="form-step" id="step3dot">
                             <div class="step-dot">3</div>
-                            <div class="step-label">Отправка</div>
+                            <div class="step-label" data-i18n="form_new.step3">Отправка</div>
                         </div>
                     </div>
 
                     <!-- Service type pills -->
-                    <div class="form-section-label">// ЧТО ВАС ИНТЕРЕСУЕТ?</div>
+                    <div class="form-section-label" data-i18n="form_new.interest">// ЧТО ВАС ИНТЕРЕСУЕТ?</div>
                     <div class="service-pills" id="servicePills">
-                        <button type="button" class="service-pill" data-value="Брендинг" onclick="selectPill(this)">
+                        <button type="button" class="service-pill" data-value="Брендинг" onclick="selectPill(this)" data-i18n-html="form_new_design.opt1">
                             🎨 Брендинг
                         </button>
-                        <button type="button" class="service-pill" data-value="UI/UX Дизайн" onclick="selectPill(this)">
+                        <button type="button" class="service-pill" data-value="UI/UX Дизайн" onclick="selectPill(this)" data-i18n-html="form_new_design.opt2">
                             📱 UI/UX Дизайн
                         </button>
-                        <button type="button" class="service-pill" data-value="Промышленный дизайн" onclick="selectPill(this)">
+                        <button type="button" class="service-pill" data-value="Промышленный дизайн" onclick="selectPill(this)" data-i18n-html="form_new_design.opt3">
                             🏭 Промышленный дизайн
                         </button>
-                        <button type="button" class="service-pill" data-value="Веб-дизайн" onclick="selectPill(this)">
+                        <button type="button" class="service-pill" data-value="Веб-дизайн" onclick="selectPill(this)" data-i18n-html="form_new_design.opt4">
                             🌐 Веб-дизайн
                         </button>
-                        <button type="button" class="service-pill" data-value="Презентация / Питч" onclick="selectPill(this)">
+                        <button type="button" class="service-pill" data-value="Презентация / Питч" onclick="selectPill(this)" data-i18n-html="form_new_design.opt5">
                             📊 Презентация
                         </button>
-                        <button type="button" class="service-pill" data-value="Другое" onclick="selectPill(this)">
+                        <button type="button" class="service-pill" data-value="Другое" onclick="selectPill(this)" data-i18n-html="form_new_design.opt6">
                             💡 Другое
                         </button>
                     </div>
@@ -960,32 +960,32 @@
                     <!-- Floating label inputs -->
                     <div class="float-group">
                         <input type="text" id="formName" class="float-input" placeholder=" " required autocomplete="name">
-                        <label for="formName" class="float-label">Ваше имя *</label>
+                        <label for="formName" class="float-label" data-i18n="form_new.name">Ваше имя *</label>
                         <div class="float-line"></div>
                     </div>
 
                     <div class="float-group">
                         <input type="text" id="formContact" class="float-input" placeholder=" " required autocomplete="tel">
-                        <label for="formContact" class="float-label">Telegram / Email / Телефон *</label>
+                        <label for="formContact" class="float-label" data-i18n="form_new.contact">Telegram / Email / Телефон *</label>
                         <div class="float-line"></div>
                     </div>
 
                     <div class="float-group">
                         <textarea id="formMessage" class="float-input float-textarea" placeholder=" " rows="3"></textarea>
-                        <label for="formMessage" class="float-label">Кратко о проекте</label>
+                        <label for="formMessage" class="float-label" data-i18n="form_new.message_brief_project">Кратко о проекте</label>
                         <div class="float-line"></div>
                     </div>
 
                     <button type="submit" class="btn-modern-submit" id="modernSubmitBtn">
-                        <span id="submitText">Отправить запрос →</span>
+                        <span id="submitText" data-i18n="form_new.submit_btn">Отправить запрос →</span>
                         <div class="btn-glow"></div>
                     </button>
 
                     <!-- Success state -->
                     <div class="form-success" id="formSuccess" style="display:none;">
                         <div class="success-icon">✓</div>
-                        <div class="success-title">Запрос отправлен!</div>
-                        <div class="success-sub">Наш арт-директор свяжется с вами в течение 4 часов.</div>
+                        <div class="success-title" data-i18n="form_new.success_title">Запрос отправлен!</div>
+                        <div class="success-sub" data-i18n="form_new_design.success_sub">Наш арт-директор свяжется с вами в течение 4 часов.</div>
                     </div>
                 </form>
             </div>

@@ -404,7 +404,7 @@
         "lab_tag": "// RESEARCH & DEVELOPMENT",
         "lab_title": "Value Modeling",
         "lab_desc": "Marketing at A-LAB is not just advertising, it's an extension of laboratory research. We are engaged in <strong>«Value Modeling»</strong> — a scientific approach to communication design that closely intersects with our R&D laboratory developments.",
-        "lab_link": "GO TO LABORATORY \u2192",
+        "lab_link": "GO TO LABORATORY →",
         "cases_title": "Marketing Cases",
         "form_title": "Launch growth?",
         "form_subtitle": "// FILL OUT THE FORM AND WE'LL CONDUCT AN INITIAL ANALYSIS OF YOUR CHANNELS.",
@@ -649,7 +649,7 @@
         "quiz_other": "OTHER (SPECIFY)",
         "quiz_next": "NEXT",
         "quiz_step2_title": "Your experience in years?",
-        "quiz_back": "\u2190 BACK",
+        "quiz_back": "← BACK",
         "quiz_step3_title": "Tell us about yourself",
         "quiz_step3_placeholder": "Your motivation...",
         "quiz_step4_title": "Recommendation (ID)",
@@ -798,5 +798,35 @@
         "s4_p3_desc": "Listing on DEX (Uniswap). Creation of liquidity pools. Ability for external investors to exchange ASTRA for fiat money.",
         "footer_line1": "A-LAB.TECH // INTELLIGENCE DIVISION",
         "footer_line2": "NOT FINANCIAL ADVICE. FOR INTERNAL USE ONLY."
+    },
+    "form_new": {
+        "step1": "Task",
+        "step2": "Contact",
+        "step3": "Send",
+        "interest": "// WHAT ARE YOU INTERESTED IN?",
+        "name": "Your name *",
+        "contact": "Telegram / Email / Phone *",
+        "message_brief_task": "Brief task description",
+        "message_brief_project": "Brief project description",
+        "submit_btn": "Send Request →",
+        "success_title": "Request sent!"
+    },
+    "form_new_digital": {
+        "opt1": "🤖 AI Integration",
+        "opt2": "🌐 Web Development",
+        "opt3": "⚙️ CRM / Automation",
+        "opt4": "🔍 Tech Audit",
+        "opt5": "👁️ Computer Vision",
+        "opt6": "💡 Other",
+        "success_sub": "Our technical director will contact you within 24 hours."
+    },
+    "form_new_design": {
+        "opt1": "🎨 Branding",
+        "opt2": "📱 UI/UX Design",
+        "opt3": "🏭 Industrial Design",
+        "opt4": "🌐 Web Design",
+        "opt5": "📊 Presentation / Pitch",
+        "opt6": "💡 Other",
+        "success_sub": "Our art director will contact you within 4 hours."
     }
 }
