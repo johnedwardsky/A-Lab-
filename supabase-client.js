@@ -90,9 +90,55 @@ window.ALabCore = {
                 metadata: data.metadata || {}
             });
 
+            if (!error) {
+                // Send Telegram notification via our own server proxy
+                this._notifyTelegram(data).catch(() => {});
+            }
+
             return { success: !error, error };
         } catch (err) {
             return { error: err.message };
+        }
+    },
+
+    // Send Telegram notification via tg.php (bypasses blocks & CORS)
+    async _notifyTelegram(data) {
+        const now = new Date().toLocaleString('ru-RU', {
+            timeZone: 'Europe/Moscow',
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+
+        const sourceMap = {
+            'digital': '💻 Digital Page',
+            'design':  '🎨 Design Page',
+            'contacts':'📞 Contacts Page',
+            'web':     '🌐 Website'
+        };
+        const sourceName = sourceMap[data.source] || data.source || '🌐 Website';
+
+        const text = [
+            '🔔 Новая заявка с сайта A-LAB!',
+            '',
+            `Источник: ${sourceName}`,
+            `Имя: ${data.name || '—'}`,
+            `Контакт: ${data.contact || '—'}`,
+            data.message ? `Сообщение: ${data.message}` : '',
+            `Время: ${now} (МСК)`
+        ].filter(Boolean).join('\n');
+
+        try {
+            // Call our own PHP script on the same server
+            await fetch('/tg.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'send_lead',
+                    text: text
+                })
+            });
+        } catch (err) {
+            console.warn('[A-LAB] Proxy Telegram error:', err);
         }
     },
 
