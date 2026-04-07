@@ -121,24 +121,33 @@ window.ALabCore = {
         const sourceName = sourceMap[data.source] || data.source || '🌐 Website';
 
         const text = [
-            '🔔 *Новая заявка с сайта A-LAB!*',
+            '🔔 Новая заявка с сайта A-LAB!',
             '',
-            `📌 *Источник:* ${sourceName}`,
-            `👤 *Имя:* ${data.name || '—'}`,
-            `📞 *Контакт:* ${data.contact || '—'}`,
-            data.message ? `💬 *Сообщение:* ${data.message}` : '',
-            `⏰ *Время:* ${now} (МСК)`
+            `Источник: ${sourceName}`,
+            `Имя: ${data.name || '—'}`,
+            `Контакт: ${data.contact || '—'}`,
+            data.message ? `Сообщение: ${data.message}` : '',
+            `Время: ${now} (МСК)`
         ].filter(Boolean).join('\n');
 
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: text,
-                parse_mode: 'Markdown'
-            })
-        });
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: text
+                })
+            });
+            const json = await res.json();
+            if (json.ok) {
+                console.log('[A-LAB] Telegram notification sent ✓');
+            } else {
+                console.warn('[A-LAB] Telegram error:', json.description);
+            }
+        } catch (err) {
+            console.warn('[A-LAB] Telegram fetch failed:', err.message);
+        }
     },
 
     // Record a donation transaction
