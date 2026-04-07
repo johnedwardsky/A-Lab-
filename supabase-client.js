@@ -89,10 +89,56 @@ window.ALabCore = {
                 source_detail: data.source_detail || '',
                 metadata: data.metadata || {}
             });
+
+            if (!error) {
+                // Send Telegram notification (non-blocking)
+                this._notifyTelegram(data).catch(() => {});
+            }
+
             return { success: !error, error };
         } catch (err) {
             return { error: err.message };
         }
+    },
+
+    // Send Telegram notification on new lead
+    async _notifyTelegram(data) {
+        const BOT_TOKEN = '8643085801:AAEAhaXgg-RWy3KuKYziNjuqAE87m0zLmaI';
+        const CHAT_ID   = '7209334862';
+
+        const now = new Date().toLocaleString('ru-RU', {
+            timeZone: 'Europe/Moscow',
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+
+        const sourceMap = {
+            'digital': '💻 Digital Page',
+            'design':  '🎨 Design Page',
+            'contacts':'📞 Contacts Page',
+            'web':     '🌐 Website'
+        };
+        const sourceName = sourceMap[data.source] || data.source || '🌐 Website';
+
+        const text = [
+            '🔔 *Новая заявка с сайта A-LAB!*',
+            '',
+            `📌 *Источник:* ${sourceName}`,
+            `👤 *Имя:* ${data.name || '—'}`,
+            `📞 *Контакт:* ${data.contact || '—'}`,
+            data.message ? `💬 *Сообщение:* ${data.message}` : '',
+            `⏰ *Время:* ${now} (МСК)`
+        ].filter(Boolean).join('\n');
+
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: text,
+                parse_mode: 'Markdown'
+            })
+        });
     },
 
     // Record a donation transaction
