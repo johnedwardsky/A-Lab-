@@ -184,17 +184,19 @@
             const fileName = `${this.userId}/avatar.${ext}`;
 
             try {
-                const { error: uploadError } = await db.storage
-                    .from('avatars')
-                    .upload(fileName, file, { upsert: true, contentType: file.type });
+                const uploadData = new FormData();
+                uploadData.append('file', file);
+                uploadData.append('type', 'avatar');
 
-                if (uploadError) throw uploadError;
+                const upRes = await fetch('/upload.php', {
+                    method: 'POST',
+                    body: uploadData
+                });
+                const upJson = await upRes.json();
 
-                const { data: urlData } = db.storage
-                    .from('avatars')
-                    .getPublicUrl(fileName);
+                if (!upJson.success) throw new Error(upJson.error || 'Upload failed');
 
-                const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
+                const avatarUrl = upJson.url + '?t=' + Date.now();
 
                 const { data, error: updateError } = await db
                     .from('residents')
