@@ -224,27 +224,54 @@ const I18n = (() => {
         const saved = localStorage.getItem('alab_lang');
         if (saved) return saved;
 
-        // 1. Primary check: Geo-IP (Targeting non-RF users)
+        // CIS countries that should see Russian by default
+        const ruCountries = ['RU', 'KZ', 'BY', 'UZ'];
+
+        // 1. Primary check: Geo-IP
         try {
-            const response = await fetch('https://ipapi.co/json/', { mode: 'cors' });
-            if (response.ok) {
-                const data = await response.json();
-                if (data.country_code && data.country_code !== 'RU') {
-                    console.log('[i18n] Non-RU Geo detected:', data.country_code);
+            // Try multiple geo-IP services (some may be blocked in certain regions)
+            let countryCode = null;
+
+            // Attempt 1: ip-api.com (works well from RU, no CORS issues with http)
+            try {
+                const r1 = await fetch('https://ip-api.com/json/?fields=countryCode', { signal: AbortSignal.timeout(3000) });
+                if (r1.ok) {
+                    const d1 = await r1.json();
+                    countryCode = d1.countryCode;
+                }
+            } catch (_) {}
+
+            // Attempt 2: fallback to ipapi.co
+            if (!countryCode) {
+                try {
+                    const r2 = await fetch('https://ipapi.co/json/', { mode: 'cors', signal: AbortSignal.timeout(3000) });
+                    if (r2.ok) {
+                        const d2 = await r2.json();
+                        countryCode = d2.country_code;
+                    }
+                } catch (_) {}
+            }
+
+            if (countryCode) {
+                if (ruCountries.includes(countryCode.toUpperCase())) {
+                    console.log('[i18n] CIS Geo detected:', countryCode, '→ ru');
+                    return 'ru';
+                } else {
+                    console.log('[i18n] Non-CIS Geo detected:', countryCode, '→ en');
                     return 'en';
                 }
             }
         } catch (e) {
-            // Silently skip geo-detection if API blocked
+            // Silently skip geo-detection if all APIs fail
         }
 
-        // 2. Secondary check: Browser Language
+        // 2. Fallback: Browser Language
         const browserLang = navigator.language || navigator.userLanguage;
-        if (browserLang && !browserLang.startsWith('ru')) {
-            return 'en';
+        if (browserLang && (browserLang.startsWith('ru') || browserLang.startsWith('kk') || browserLang.startsWith('be') || browserLang.startsWith('uz'))) {
+            return 'ru';
         }
 
-        return 'ru'; // Default for RF or fallback
+        return 'en'; // Default for unknown geo = English
     }
 
     /**
