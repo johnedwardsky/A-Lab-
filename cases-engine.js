@@ -265,7 +265,9 @@ const ALabCases = {
             // Try to fetch from Supabase if client is initialized
             if (window.ALabCore && window.ALabCore.db) {
                 console.log('[ALabCases] Fetching from Supabase...');
-                const { data, error } = await window.ALabCore.db
+                
+                // First try: current language
+                let { data, error } = await window.ALabCore.db
                     .from('projects')
                     .select('*')
                     .eq('category', catLower)
@@ -274,12 +276,26 @@ const ALabCases = {
 
                 if (error) throw error;
 
+                // Second try fallback: if we requested English but got nothing, load Russian
+                if ((!data || data.length === 0) && currentLang !== 'ru') {
+                    console.log(`[ALabCases] No ${currentLang} projects found in DB. Falling back to 'ru' versions.`);
+                    const fallbackResp = await window.ALabCore.db
+                        .from('projects')
+                        .select('*')
+                        .eq('category', catLower)
+                        .eq('lang', 'ru')
+                        .order('order_index', { ascending: true });
+                    
+                    data = fallbackResp.data;
+                    if (fallbackResp.error) throw fallbackResp.error;
+                }
+
                 if (data && data.length > 0) {
                     console.log(`[ALabCases] Found ${data.length} projects in DB`);
                     this.render(data, container, catLower);
                     return;
                 } else {
-                    console.log('[ALabCases] No projects found in DB for this category/lang');
+                    console.log('[ALabCases] No projects found in DB for this category (even with fallback)');
                 }
             } else {
                 console.warn('[ALabCases] Supabase not connected, skipping DB fetch');
