@@ -4,8 +4,83 @@
  */
 
 const ALabCases = {
-    // Mock data removed. Completely relying on Supabase now.
-    projects: [],
+    // Digital cases fallbacks embedded so we don't have to bypass Supabase RLS limits
+    projects: [
+        // --- DIGITAL RU ---
+        {
+            id: 201,
+            title: "Lumina AI Chatbot",
+            result_label: "// AI · NLP · AUTOMATION",
+            description: "Разработка генеративного AI-ассистента для корпоративной экосистемы. Снижение нагрузки на саппорт на 70%, среднее время решения проблемы — 0.8 секунд. Интеграция с внутренними ERP-системами.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case-ai-chatbot.jpg"
+        },
+        {
+            id: 202,
+            title: "Nexus FinTech App",
+            result_label: "// FINTECH · MOBILE · WEB3",
+            description: "Проектирование и запуск необанка премиум-сегмента. Реализован AI-модуль управления портфелем, предиктивная аналитика криптоактивов и ультра-чистый UX/UI. 150K установок за первый месяц.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case-fintech-app.jpg"
+        },
+        {
+            id: 203,
+            title: "Aegis Vision QC",
+            result_label: "// COMPUTER VISION · INDUSTRY 4.0",
+            description: "Внедрение системы компьютерного зрения на конвейерном производстве. Нейросеть детектирует микродефекты металлоконструкций в реальном времени с точностью 99.9%.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case-cv-industrial.jpg"
+        },
+        {
+            id: 204,
+            title: "Urban Node",
+            result_label: "// SMART CITY · BIG DATA",
+            description: "Платформа омниканального экологического и транспортного мониторинга для 'умного города'. Анализ данных с 2.5 млн IoT сонаров в реальном времени с помощью машинного обучения.",
+            category: "digital",
+            lang: "ru",
+            image_url: "case-smart-city.jpg"
+        },
+        // --- DIGITAL EN ---
+        {
+            id: 205,
+            title: "Lumina AI Chatbot",
+            result_label: "// AI · NLP · AUTOMATION",
+            description: "Generative AI corporate assistant development. Reduced support dependency by 70%, decreasing average ticket resolution time to 0.8 seconds. Full internal ERP integration.",
+            category: "digital",
+            lang: "en",
+            image_url: "case-ai-chatbot.jpg"
+        },
+        {
+            id: 206,
+            title: "Nexus FinTech App",
+            result_label: "// FINTECH · MOBILE · WEB3",
+            description: "Design and launch of a premium segment neobank. Implemented an AI-driven portfolio management module, predictive crypto analytics, and ultra-sleek UX/UI. 150K downloads in the first month.",
+            category: "digital",
+            lang: "en",
+            image_url: "case-fintech-app.jpg"
+        },
+        {
+            id: 207,
+            title: "Aegis Vision QC",
+            result_label: "// COMPUTER VISION · INDUSTRY 4.0",
+            description: "Implementation of a computer vision quality control system on manufacturing lines. The neural network detects metal micro-defects in real-time with 99.9% accuracy.",
+            category: "digital",
+            lang: "en",
+            image_url: "case-cv-industrial.jpg"
+        },
+        {
+            id: 208,
+            title: "Urban Node",
+            result_label: "// SMART CITY · BIG DATA",
+            description: "Omnichannel ecological and transport monitoring platform for smart cities. Real-time machine learning analysis of data points from over 2.5 million IoT nodes.",
+            category: "digital",
+            lang: "en",
+            image_url: "case-smart-city.jpg"
+        }
+    ],
 
     async init(category, containerId) {
         const container = document.getElementById(containerId);
