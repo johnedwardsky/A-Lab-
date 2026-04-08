@@ -33,8 +33,11 @@ const I18n = (() => {
         if (loaded) return;
         try {
             const basePath = getBasePath();
+            // Cache buster using app version or timestamp to prevent old JSON caching
+            const cb = '?v=26.4'; 
+            
             // 1. Load current language first for speed
-            const currentResp = await fetch(`${basePath}lang/${currentLang}.json`);
+            const currentResp = await fetch(`${basePath}lang/${currentLang}.json${cb}`);
             if (currentResp.ok) translations[currentLang] = await currentResp.json();
 
             // Mark as loaded (partially) so we can start applying
@@ -43,7 +46,7 @@ const I18n = (() => {
 
             // 2. Load other language in background
             const otherLang = currentLang === 'ru' ? 'en' : 'ru';
-            fetch(`${basePath}lang/${otherLang}.json`)
+            fetch(`${basePath}lang/${otherLang}.json${cb}`)
                 .then(resp => resp.ok ? resp.json() : null)
                 .then(json => {
                     if (json) translations[otherLang] = json;
