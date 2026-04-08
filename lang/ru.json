@@ -367,7 +367,16 @@
         "form_name": "Ваше имя",
         "form_company": "Название компании",
         "form_task": "Описание задачи",
-        "form_submit": "Отправить запрос"
+        "form_submit": "Отправить запрос",
+        "connect_tag": "// DESIGN REQUEST",
+        "connect_title": "Нужен<br>сильный<br><span style=\"color:var(--accent)\">дизайн?</span>",
+        "connect_desc": "Выберите тип задачи и оставьте контакт — наш арт-директор проведёт бесплатный разбор вашего проекта в течение 4 часов.",
+        "trust1_title": "Ответ за 4ч",
+        "trust1_sub": "Арт-директор лично",
+        "trust2_title": "NDA по запросу",
+        "trust2_sub": "Полная конфиденциальность",
+        "trust3_title": "Бесплатный мудборд",
+        "trust3_sub": "Визуальный концепт под ваш бриф"
     },
     "page_digital": {
         "title": "A-LAB.TECH | DIGITAL & AI SOLUTIONS",
@@ -390,7 +399,16 @@
         "opt_ai": "AI Интеграция",
         "opt_web": "Веб-разработка",
         "opt_crm": "CRM / Автоматизация",
-        "opt_audit": "Технологический аудит"
+        "opt_audit": "Технологический аудит",
+        "connect_tag": "// CONNECT",
+        "connect_title": "Время<br>внедрять<br><span style=\"color:var(--tech-blue)\">интеллект.</span>",
+        "connect_desc": "Выберите тип задачи и оставьте контакт — наш технический директор проведёт бесплатный разбор вашего проекта в течение 24 часов.",
+        "trust1_title": "Ответ за 24ч",
+        "trust1_sub": "Без менеджеров и бюрократии",
+        "trust2_title": "NDA по запросу",
+        "trust2_sub": "Полная конфиденциальность",
+        "trust3_title": "Бесплатный аудит",
+        "trust3_sub": "Технический разбор вашего стека"
     },
     "page_marketing": {
         "hero_tag": "// DATA-DRIVEN MARKETING",

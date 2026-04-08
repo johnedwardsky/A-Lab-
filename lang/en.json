@@ -367,7 +367,16 @@
         "form_name": "Your name",
         "form_company": "Company name",
         "form_task": "Task description",
-        "form_submit": "Send request"
+        "form_submit": "Send request",
+        "connect_tag": "// DESIGN REQUEST",
+        "connect_title": "Need a<br>strong<br><span style=\"color:var(--accent)\">design?</span>",
+        "connect_desc": "Choose the task type and leave your contact — our art director will conduct a free review of your project within 4 hours.",
+        "trust1_title": "Reply in 4h",
+        "trust1_sub": "Art director personally",
+        "trust2_title": "NDA on request",
+        "trust2_sub": "Full confidentiality",
+        "trust3_title": "Free moodboard",
+        "trust3_sub": "Visual concept for your brief"
     },
     "page_digital": {
         "title": "A-LAB.TECH | DIGITAL & AI SOLUTIONS",
@@ -390,7 +399,16 @@
         "opt_ai": "AI Integration",
         "opt_web": "Web Development",
         "opt_crm": "CRM / Automation",
-        "opt_audit": "Technology Audit"
+        "opt_audit": "Technology Audit",
+        "connect_tag": "// CONNECT",
+        "connect_title": "Time to<br>implement<br><span style=\"color:var(--tech-blue)\">intelligence.</span>",
+        "connect_desc": "Choose the task type and leave your contact — our technical director will conduct a free review of your project within 24 hours.",
+        "trust1_title": "Reply in 24h",
+        "trust1_sub": "No managers, no bureaucracy",
+        "trust2_title": "NDA on request",
+        "trust2_sub": "Full confidentiality",
+        "trust3_title": "Free audit",
+        "trust3_sub": "Technical review of your stack"
     },
     "page_marketing": {
         "hero_tag": "// DATA-DRIVEN MARKETING",

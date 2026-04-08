@@ -34,7 +34,7 @@ const I18n = (() => {
         try {
             const basePath = getBasePath();
             // Cache buster using app version or timestamp to prevent old JSON caching
-            const cb = '?v=26.4'; 
+            const cb = '?v=26.5'; 
             
             // 1. Load current language first for speed
             const currentResp = await fetch(`${basePath}lang/${currentLang}.json${cb}`);
