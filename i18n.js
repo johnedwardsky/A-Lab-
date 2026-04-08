@@ -278,13 +278,24 @@ const I18n = (() => {
      * Auto-init on DOM ready
      */
     async function init() {
-        // Detect if it's the first time
+        // One-time migration: clear stale language from broken v1 geo-detection
+        const langVersion = localStorage.getItem('alab_lang_v');
+        if (langVersion !== '2') {
+            // Clear old broken value and force fresh detection
+            localStorage.removeItem('alab_lang');
+            localStorage.setItem('alab_lang_v', '2');
+            currentLang = 'ru'; // reset to default before detection
+        }
+
+        // Detect language if not saved (first visit or after migration reset)
         if (!localStorage.getItem('alab_lang')) {
             const detected = await detectLanguage();
             if (detected !== currentLang) {
                 await setLanguage(detected);
                 return;
             }
+            // Save the detected language so next visit is instant
+            localStorage.setItem('alab_lang', detected);
         }
 
         await loadTranslations();
